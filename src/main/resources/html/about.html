@@ -1,0 +1,127 @@
+<!-- Параметры -->
+<table style="text-align:left;" border="0" cellpadding="3">
+    <tbody>
+    <tr style="background: #${page_bg_color};"><td colspan="2"></td></tr>
+    <tr>
+        <td>Операционная система</td>
+        <td><em>${about_osname}</em></td>
+    </tr>
+    <tr>
+        <td>Версия ОС</td>
+        <td><em>${about_osversion}</em></td>
+    </tr>
+    <tr>
+        <td>Архитектура</td>
+        <td><em>${about_osarch}</em></td>
+    </tr>
+    <tr style="background: #${page_bg_color};"><td colspan="2"></td></tr>
+    <tr>
+        <td>Версия java</td>
+        <td><em>${about_javaversion}</em></td>
+    </tr>
+    <tr style="background: #${page_bg_color};"><td colspan="2"></td></tr>
+    <tr>
+        <td>Сервер баз данных</td>
+        <td title="Относительное имя"><em>${about_dbserver}</em></td>
+    </tr>
+    <tr>
+        <td title="Система Управления Базами Данных">СУБД</td>
+        <td><em>${about_dbmsystem}</em></td>
+    </tr>
+    <tr>
+        <td>База данных</td>
+        <td><em>${about_dbname}</em></td>
+    </tr>
+    <tr style="background: #${page_bg_color};"><td colspan="2"></td></tr>
+    <tr>
+        <td>Проект</td>
+        <td><b><em>${about_project}</em></b></td>
+    </tr>
+    <tr>
+        <td>Решение</td>
+        <td><em>${about_solution}</em></td>
+    </tr>
+    <tr>
+        <td>Сайт проекта</td>
+        <td><em><a href="http://www.staffbot.ru" title="Сайт проекта" target="_blank">www.staffbot.ru</a><em></td>
+    </tr>
+    </tbody>
+</table>
+</p>
+
+<table style="text-align: left" cellpadding="3" border="0" cellspacing="0">
+    <tbody>
+
+    <tr style="font-weight: bold; background: #${page_bg_color}">
+        <td>Устройство</td>
+        <td>Описание</td>
+        <td colspan="2">Пины</td>
+    </tr>
+        ${about_devicelist}
+    </tbody>
+</table>
+
+<p>
+<table style="display:${device_display}; background: #${page_bg_color}; text-align:left;" cellpadding="3" >
+    <tr>
+        <td>
+            <p style="font-weight: bold;">Работа с устройствами отключена</p>
+        </td>
+    </tr>
+    <tr>
+        <td >
+            <table style="background:white" cellpadding="10">
+                <tr>
+                    <td>
+                        Это обусловлено одной из причин:
+                        <li>параметр <em>pi.used</em> в файле конфигурации равен <em>false</em>;</li>
+                        <li>сработала автоматическая блокировка, так как операционная система отлична от Raspbian</li>
+                        <small>
+                            <p>В таком режиме работы программный комплекс не имеет доступа к реальным устройствам.</p>
+                            <p>Файл конфигурации <em>staffbot.cfg</em> рассположен в одной директории с запускаемым jar-файлом</p>
+                        </small>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+
+</p>
+<p>
+<table style="display:${database_display}; background: #${page_bg_color}; text-align:left;" cellpadding="3">
+    <tr>
+        <td style="font-weight: bold;">
+            <p>Нет подключнения к базе данных</p>
+        </td>
+    </tr>
+    <tr>
+        <td >
+            <table style="text-align: left; background:white;" cellpadding="3" cellspacing="0">
+                <tr>
+                    <td>
+                        <p>Это ограничивает возможности программного комплекса, а именно:
+                        <li>авторизация доступна только для системного пользователя ${about_admin};</li>
+                        <li>отключён журнал событий;</li>
+                        <li>не доступна история состояний устройств и параметров управления;</li>
+                        <li>невозможна работа с конфигурациями параметров управления.</li></p>
+
+                        <p>Сообщение об ошибке подключеия:<br>${about_message}</p>
+
+                        <p> Для полнофункцинальной работы программного комплекса неоходимо <br> установить
+                            <a href="https://www.mysql.com/" title="сайт MySQL" target="_blank">MySQL-сервер</a> версии 5.6.4 и старше.</p>
+                        <small>
+                        <p>Логин и пароль для доступа к серверу баз данных (как и многое другое) задаётся в файле конфигурации.</p>
+
+                        <p>Файл конфигурации <em>staffbot.cfg</em> рассположен в одной директории с запускаемым jar-файлом</p>
+
+                        <p><small>Trace:<br>${about_trace}</small></p>
+                        </small>
+                   </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+
+</table>
+</p>

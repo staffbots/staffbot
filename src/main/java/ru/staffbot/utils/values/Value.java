@@ -1,0 +1,179 @@
+package ru.staffbot.utils.values;
+
+import ru.staffbot.utils.Converter;
+import ru.staffbot.webserver.WebServer;
+import ru.staffbot.database.Database;
+import java.util.Date;
+
+/**
+ * <b>Контейнер значения</b> содержит именованное значение типа {@code Double}.<br>
+ * Его дочерние классы предоставляют интерфейс для работы со значениями других типов данных:<br>
+ *  - {@code BooleanValue} для значений типа {@code Boolean}<br>
+ *  - {@code DoubleValue} для значений типа {@code Double}<br>
+ *  - {@code DateValue} для значений типа {@code Date}<br>
+ *  - {@code LongValue} для значений типа {@code Long}<br>
+ *  - {@code EmptyValue} для внутренних нужд, а именно - для группировки рычагов управлкния в {@link WebServer}.<br>
+ * Однако, вне зависимости от типа предоставляемого значения, все перечисленные дочерние классы для хранения используют тип Double,
+ * используя функции преобразования типов из {@link Converter}.<br>
+ * Благодоря этому, Value и все его дочерние классы имееют унифицированный интерфейс
+ * и единый тип значений - {@code Double}, что значительно облегчает работу с БД.
+ */
+abstract public class Value{
+
+    protected ValueType valueType;
+
+    public ValueType getValueType() {
+        return valueType;
+    }
+
+    /**
+     * <b>Название</b><br>
+     * соответствует имени таблицы в БД.
+     */
+    protected String name;
+
+    /**
+     * <b>Описание</b>,
+     * используется при формировании веб-интерфейса в {@link WebServer}.
+     */
+    protected String note;
+
+    /**
+     * <b>Хранение в БД</b>:<br>
+     *  - если да ({@code dbStorage = true}), значение хранится в БД, в value дублируется;<br>
+     *  - если нет ({@code dbStorage = false}), значение хранится в value, БД не задействовано.<br>
+     * нициализируется в конструкторе.
+     */
+    public boolean dbStorage;
+
+    public boolean getDbStorage() {
+        return dbStorage;
+    }
+    /**
+     * <b>Значение</b>, используется при {@code dbStorage = false},<br>
+     * в противном случае сюда дублируется значение из БД.
+     */
+    protected long value;
+
+
+    /**
+     * <b>Получить дату</b> последнего изменения
+     * @return дата последнего изменения
+     */
+    public Date getDate(){
+        // Вытаскиваем из БД
+        return new Date();
+    }
+
+    private void init(String name, String note, long value, ValueType valueType, Boolean dbStorage){
+        this.value = value;
+        this.name = name;
+        this.note = note;
+        this.dbStorage = dbStorage;
+        this.valueType = valueType;
+        if(dbStorage) {
+            Database.createValueTable("val_" + name);
+            this.value = get();
+        }
+    }
+    /**
+     * @param name название
+     * @param note описание
+     * @param dbStorage признак хранения в БД
+     * @param value значение
+     */
+    public Value(String name, String note, long value, ValueType valueType, Boolean dbStorage) {
+        init(name, note, value, valueType, dbStorage);
+    }
+
+    public Value(String name, String note, long value, ValueType valueType) {
+        init(name, note, value, valueType, true);
+    }
+
+    /**
+     * <b>Получить значение</b> на указанную дату<br>
+     * При этом, если ({@code dbStorage = true}), то значение на дату по честному ищется в БД,
+     * в противном случае, значение просто берётся из {@code value}.<br>
+     * @param date дата
+     * @return значение из на указанную дату
+     */
+    public long get(Date date) {
+        long dbValue;
+        try {
+            dbValue = dbStorage ? Database.getValue("val_" + name, date) : value;
+        } catch (Exception e){
+            dbValue = value;
+        }
+        return dbValue;
+    }
+
+    /**
+     * <b>Получить значение</b><br>
+     * При этом, если ({@code dbStorage = true}), то значение берётся из БД,
+     * в противном случае - из {@code value}.<br>
+     * @return значение
+     */
+    public long get() {
+        return get(new Date());
+    }
+
+    /**
+     * <b>Установить</b> значение<br>
+     * @param newValue - устанавлевоемое значение
+     * @return установленное значение
+     */
+    synchronized public long set(long newValue) {
+        if (dbStorage)
+            if (newValue != get())
+                Database.setValue("val_" + name, newValue);
+        value = newValue;
+        return value;
+    }
+
+    /**
+     * <b>Сбросить</b> значение на заачение по умолчанию ({@code defaultValue})
+     */
+    public void reset() {
+        value = 0;
+    }
+
+    /**
+     * <b>Получить название</b><br>
+     * @return название
+     */
+    public String getName(){
+        return name;
+    }
+
+    /**
+     * <b>Получить описание</b><br>
+     * @return описание
+     */
+    public String getNote(){
+        return note;
+    }
+
+
+
+
+    public static int stringValueSize = 1;
+    /**
+     */
+    public int getStringValueSize(){
+        return (stringValueSize < 0) ? getValueAsString().length() : stringValueSize;
+    };
+    /**
+     * <b>Получить значение для отображения</b><br>
+     * @return Значение для отображения
+     */
+    public String getValueAsString(){
+        return Long.toString(get());
+    }
+
+    public void setValueFromString(String value){
+        if(value != null)
+            set(Long.parseLong(value));
+    }
+
+}
+

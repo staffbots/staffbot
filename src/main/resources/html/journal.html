@@ -1,0 +1,63 @@
+<!-- Журнал -->
+<p>
+<form action="/journal" method="post">
+    <table style="text-align:left; background: #${page_bg_color}" cellpadding="3">
+        <tbody>
+        <tr>
+            <td style="font-weight: bold" colspan="2" rowspan="1">Период:</td>
+            <td>
+                <input type="checkbox" name="journal_confirm" ${journal_confirm}>
+            </td>
+            <td>
+                Информация
+            </td>
+        </tr>
+        <tr>
+            <td>c</td>
+            <td>
+                <input name="journal_fromdate" value="${journal_fromdate}" size="${journal_datesize}">
+            </td>
+            <td>
+                <input type="checkbox" name="journal_wrining" ${journal_wrining}>
+            </td>
+            <td>Предуреждения</td>
+        </tr>
+        <tr>
+            <td>по</td>
+            <td>
+                <input name="journal_todate" value="${journal_todate}" size="${journal_datesize}">
+            </td>
+            <td>
+                <input type="checkbox" name="journal_error" ${journal_error}>
+            </td>
+            <td>Ошибки</td>
+            <td>
+                <!--<button name="journal_apply" title="Применить фильтр" value="journal_apply">-->
+                <!--Применить-->
+                <!--</button>-->
+                <input type="submit" value="Показать">
+            </td>
+            <td style="width:100%">
+            </td>
+        </tr>
+        <tr>
+            <td colspan="6">
+
+                <table style="width: 100%; background: white" border="0" cellpadding="5" cellspacing="0">
+                    <tbody>
+                    <tr  style="font-weight: bold">
+                        <td align="right">Дата</td>
+                        <td>Событие</td>
+                    </tr>
+                    ${journal_page}
+
+                    </tbody>
+                </table>
+
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</form>
+</p>

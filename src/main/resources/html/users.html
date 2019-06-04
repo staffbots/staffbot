@@ -1,0 +1,61 @@
+<p>
+<form name="users_form" action="/users" method="post">
+    <table style="text-align:right; background: #${page_bg_color}" cellpadding="3">
+        <tr>
+            <td>
+                <input id="users_radiobox_new" name="users_radiobox" type="radio" value="new" ${users_radiobox_new} onclick="users_radioboxClick();">
+            </td>
+            <td>
+                <input id="users_new_login" name="users_new_login" ${users_new_disabled} title="Новый пользователь" autocomplete="off"/>
+            </td>
+            <td>
+            </td>
+        </tr>
+        <tr>
+                <td>
+                    <input id="users_radiobox_old" name="users_radiobox" type="radio" value="old" ${users_radiobox_old} ${users_empty_enabled} onclick="users_radioboxClick();">
+                </td>
+                <td>
+                        <select id="users_select_login" name="users_select_login" style="text-align:right; width: 100%;" ${users_new_enabled} title="Существующий пользователь" onchange="users_radioboxClick();">
+                            ${users_login_list}
+                        </select>
+                </td>
+                <td align="center" nowrap="nowrap" valign="middle">
+                    <button id="users_delete" name="users_delete" value="users_delete" ${users_new_enabled} title="Удалить из БД конфигурацию с указанным именем">
+                        Удалить
+                    </button>
+                </td>
+        </tr>
+        <tr>
+            <td colspan="3" rowspan="1">
+
+                <table style="width: 100%; background: white" border="0" cellpadding="5" cellspacing="0">
+                    <tbody>
+                    <tr>
+                        <td>Роль:</td>
+                        <td>
+                            <select name="users_role" style="text-align:right; width: 100%;"  title="Роль пользователя">
+                                ${users_role_list}
+                            </select>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Пароль:</td>
+                        <td style="width: 100px;"><input name="users_password" type="password" autocomplete="off"></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
+                            <button name="users_apply" title="Применить введённые параметры" value="users_apply">
+                                Применить
+                            </button>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
+            </td>
+        </tr>
+    </table>
+</form>
+</p>

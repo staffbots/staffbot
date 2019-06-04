@@ -1,0 +1,81 @@
+
+<form action="/system" method="post">
+    <p>
+    <table style="display:${system_display}; text-align: left;" cellpadding="3">
+
+        <tr style="background: #${page_bg_color};" >
+            <td colspan="2">
+                <b>
+                    Параметры работы с базой данных
+                </b>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Чистка журнала
+            </td>
+            <td>
+                <select name="name" style="text-align:right;" align="middle">
+                    <option>при каждом запуске</option>
+                    <option>по дате устаревания</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                Чистка истории значений
+            </td>
+            <td>
+                <select name="name" style="text-align:right;" align="middle">
+                    <option>при каждом запуске</option>
+                    <option>по дате устаревания</option>
+                </select>
+            </td>
+        </tr>
+        <tr style="background: #${page_bg_color}">
+            <td colspan="2" align="right">
+                <button name="control_apply" title="Применить введённые параметры" value="control_apply">
+                    Применить
+                </button>
+            </td>
+        </tr>
+
+    </table>
+    </p>
+    <p>
+    <table style="text-align: center; background: #${page_bg_color}" cellpadding="3" >
+        <tr>
+            <td>
+                <img src="/resource?name=/img/logo.png">
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <table style="background:white" cellpadding="10">
+                    <tr>
+                        <td>
+                            <button name="system_reboot" title="Перезагрузка операционной системы">
+                                Перезагрузить систему
+                            </button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <button name="system_shutdown" title="Завершение работы операционной системы">
+                                Завершить работу
+                            </button>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <button name="system_exit" title="Выключение программы">
+                    Выключить программу
+                </button>
+            </td>
+        </tr>
+    </table>
+    </p>
+</form>

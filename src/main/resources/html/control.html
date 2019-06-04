@@ -1,0 +1,75 @@
+<!-- Кнопки управления -->
+<p>
+<form action="/control" method="post">
+<table style="text-align: right" border="0" cellpadding="3">
+  <tbody>
+    <tr>
+      <td align="center" nowrap="nowrap" valign="middle">
+        <button name="control_start" value="control_start" ${control_start} title="Запустить выполнение процесса">
+          Пуск
+        </button>
+      </td>
+      <td align="center" nowrap="nowrap" valign="middle">
+        <button name="control_pause" value="control_pause" ${control_pause} title="Приостановить выполнение процесса">
+          Пауза
+        </button>
+      </td>
+      <td align="center" nowrap="nowrap" valign="middle">
+        <button name="control_stop" value="control_stop" ${control_stop} title="Закончить выполнение процесса">
+          Стоп
+        </button></td>
+    </tr>
+  </tbody>
+</table>
+</form>
+<!-- Параметры (рычаги управления) -->
+<form action="/control" method="post">
+<table style="text-align:right;" border="0" cellpadding="3">
+  <tbody>
+
+    ${control_leverlist}
+
+    <tr style="background: #${page_bg_color}">
+      <td colspan="2" rowspan="1" align="right">
+        <button name="control_apply" title="Применить введённые параметры" value="control_apply">
+          Применить
+        </button>
+      </td>
+    </tr>
+
+  </tbody>
+</table>
+</form>
+
+<!-- Конфигурация -->
+<form action="/control" method="post">
+  <table style="display:${control_display}; text-align:right;" border="0" cellpadding="0" cellspacing="5" nowrap="nowrap">
+
+    <tr>
+      <td align="center" nowrap="nowrap" valign="middle">
+        <input list="control_configlist" name="control_configname" title="Имя конфигурации" autocomplete="off"/>
+        <datalist id="control_configlist">
+            ${control_configlist}
+        </datalist>
+      </td>
+
+      <td align="center" nowrap="nowrap" valign="middle">
+        <button name="control_save" value="control_save" title="Сохранить конфигурацию в БД под указанным именем">
+          Сохранить
+        </button>
+      </td>
+      <td align="center" nowrap="nowrap" valign="middle">
+        <button name="control_load" value="control_load" title="Загрузить из БД конфигурацию с указанным именем">
+          Загрузить
+        </button>
+      </td>
+      <td align="center" nowrap="nowrap" valign="middle">
+        <button name="control_delete" value="control_delete" title="Удалить из БД конфигурацию с указанным именем">
+          Удалить
+        </button>
+      </td>
+    </tr>
+
+  </table>
+</form>
+</p>
