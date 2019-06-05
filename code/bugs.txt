@@ -1,4 +1,5 @@
 ﻿Command line for maven is "compile package exec:java"
+Изменения
 ======= STAFFBOT ========
 - РЕФАКТОРИНГ always actual
 - при запуске из jar-файла, не создаётся cfg-файл
