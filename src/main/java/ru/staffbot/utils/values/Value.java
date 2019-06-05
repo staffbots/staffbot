@@ -9,7 +9,6 @@ import ru.staffbot.database.Database;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -148,20 +147,18 @@ abstract public class Value extends DBTable {
     synchronized public long set(long newValue) {
         if (dbStorage)
             if (newValue != get()) {
-                //Database.setValue("val_" + name, newValue);
-                //if(Database.connected())
                 try {
                     if(!Database.connected()) throw new Exception("Нет подключения к базе данных");
-                    PreparedStatement ps = Database.getConnection().prepareStatement(
+                    PreparedStatement statement = Database.getConnection().prepareStatement(
                             "INSERT INTO " + getTableName() +
                                     " (value) VALUES (?)");
-                    ps.setLong(1, value);
-                    ps.executeUpdate();
-                    Journal.add("В таблицу " + getTableName() + " добавлено значение " + value);
+                    statement.setLong(1, newValue);
+                    statement.executeUpdate();
+                    String stringValue = (valueType != ValueType.BOOLEAN) ? getValueAsString() : Long.toString(value);
+                    Journal.add(getNote() + " - установлено заначение: " + stringValue);
                 } catch (Exception e) {
                     Journal.add("Ошибка записи в таблицу " + getTableName() + e.getMessage(), NoteType.ERROR);
                 }
-
             }
         value = newValue;
         return value;

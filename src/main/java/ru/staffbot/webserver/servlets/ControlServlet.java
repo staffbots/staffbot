@@ -2,6 +2,7 @@ package ru.staffbot.webserver.servlets;
 
 import ru.staffbot.database.Database;
 import ru.staffbot.database.configs.Configs;
+import ru.staffbot.utils.levers.BooleanLever;
 import ru.staffbot.utils.levers.Lever;
 import ru.staffbot.utils.levers.Levers;
 import ru.staffbot.utils.tasks.TaskStatus;
@@ -24,7 +25,7 @@ public class ControlServlet extends MainServlet {
         super(PageType.CONTROL, accountService);
     }
 
-    // Вызывается при запросе странице с сервера
+    // Вызывается при запросе страницы с сервера
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map<String, Object> pageVariables = new HashMap();
@@ -79,8 +80,8 @@ public class ControlServlet extends MainServlet {
         pageVariables.put("page_bg_color", page_bg_color);
         for (Lever lever : Levers.list){
             pageVariables.put("name", "control_" + lever.getName().toLowerCase());
-            pageVariables.put("note", lever.getNote());
             pageVariables.put("value", lever.getValueAsString());
+            pageVariables.put("note", lever.getNote());
             pageVariables.put("size", lever.getStringValueSize());
             context += PageGenerator.getPage(lever.getTemplateFile(),pageVariables);
         }

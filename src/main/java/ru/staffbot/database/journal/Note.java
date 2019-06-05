@@ -1,7 +1,5 @@
 package ru.staffbot.database.journal;
 
-import ru.staffbot.database.journal.NoteType;
-
 import java.util.Date;
 
 public class Note {
@@ -18,7 +16,7 @@ public class Note {
 
     @Override
     public String toString() {
-        return type.getDescription() + ": " + value;
+        return type.getDescription() + ". " + value;
     }
 
     public Date getDate() {
@@ -34,7 +32,7 @@ public class Note {
     }
 
     public String getMessage() {
-        return getType().getDescription() + ": " + getValue();
+        return toString();
     }
 
 

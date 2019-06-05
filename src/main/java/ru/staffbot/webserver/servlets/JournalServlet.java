@@ -82,15 +82,15 @@ public class JournalServlet extends MainServlet {
     //
     private String getJournalPage(Map<Integer, Boolean> typesForShow) {
         ArrayList<Note> journalList = journal.getJournal(typesForShow);
-        String thmlCode = (!journalList.isEmpty()) ? "" :
+        String htmlCode = (!journalList.isEmpty()) ? "" :
                 "<tr><td></td><td>По указанному фильтру записей нет</td></tr>";
         String title;
         for (Note note : journalList) {
             title = Converter.dateToString(note.getDate(), DateFormat.FULLTIMEDATE);
-            thmlCode += "<tr><td  align=\"right\" title=\""+title+"\">"
+            htmlCode += "<tr><td  align=\"right\" title=\""+title+"\">"
                     + Converter.dateToString(note.getDate(), DateFormat.CUTSHORTDATETIME)
                     + "</td><td>" + note.getMessage() + "</td></tr>";
         }
-        return thmlCode;
+        return htmlCode;
     }
 }

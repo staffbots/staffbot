@@ -38,6 +38,7 @@ public class BooleanValue extends Value {
      * <b>Получить значение для отображения</b><br>
      * @return Значение для отображения
      */
+    @Override
     public String getValueAsString(){
         return get() == 1 ? trueValue : falseValue;
     }
