@@ -15,7 +15,7 @@ public class Period {
 
     public Period(DateFormat dateFormat){
         this.dateFormat = dateFormat;
-        set((String)null, (String)null);
+        set();
     }
 
     public Period(DateFormat dateFormat, String fromDate, String toDate){
@@ -27,6 +27,11 @@ public class Period {
         this.dateFormat = dateFormat;
         set(fromDate, toDate);
     }
+
+    public void set(){
+        set("", "");
+    }
+
 
     public void set(String fromDate, String toDate){
         Date defaultFromDate = new Date();

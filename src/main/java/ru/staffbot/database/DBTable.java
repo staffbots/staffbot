@@ -23,24 +23,22 @@ public abstract class DBTable {
         createTable();
     }
 
-    public DBTable(String tableName, String sql, boolean dbStorage){
+    public DBTable(String tableName, String tableFields, boolean dbStorage){
         this.tableName = tableName;
+        this.tableFields = tableFields;
         if (dbStorage) createTable();
     }
 
-    public boolean tableExists(String tableName) throws Exception{
+    public boolean tableExists(){
         if(!Database.connected())return false;
-        boolean result = false;
-        DatabaseMetaData metaData = Database.getConnection().getMetaData();
-        ResultSet rs = metaData.getTables(tableName,"","%",null);
-        while (rs.next()) {
-            if (tableName.toLowerCase().equals(rs.getString(3))) {
-                result = true;
-                break;
-            }
+        try {
+            DatabaseMetaData metaData = Database.getConnection().getMetaData();
+            ResultSet tables = metaData.getTables(Database.NAME, null, tableName, null);
+            return (tables.next());
+        } catch (SQLException exception) {
+            Journal.add("Ошибка поиска таблицы " + tableName + " - " + exception.getMessage(), NoteType.ERROR);
+            return false;
         }
-        rs.close();
-        return result;
     }
 
     public boolean createTable(){
@@ -48,47 +46,48 @@ public abstract class DBTable {
     }
 
     public boolean createTable(boolean drop){
-        if(!Database.connected())return false;
-        try {
-            if (drop) dropTable();
-            if(!tableExists(tableName)) {
+        if (!Database.connected()) return false;
+        if (drop) dropTable();
+        if (!tableExists())
+            try {
                 Statement statement = Database.getConnection().createStatement();
                 statement.execute("CREATE TABLE " + tableName + " (" + tableFields + ")");
                 Journal.add("Создана таблица " + tableName + " (" + tableFields + ")", NoteType.WRINING);
+            } catch (Exception exception) {
+                //connection = null;
+                Journal.add("Не удалось создать таблицу " + tableName + " - " + exception.getMessage(), NoteType.ERROR);
+                return false;
             }
-        } catch (Exception e) {
-            //connection = null;
-            Journal.add("Не удалось создать таблицу " + tableName + e.getMessage(), NoteType.ERROR);
-            return false;
-        }
+
         return true;
     }
 
     public boolean eraseTable(){
         if(!Database.connected())return false;
         try {
-            Statement statement = Database.getConnection().createStatement();
-            statement.execute("DELETE FROM " + tableName);
-            statement.close();
-            Journal.add("Таблица " + tableName + " очищена");
-            return true;
-        } catch (SQLException e) {
-            Journal.add(e.getMessage(), NoteType.ERROR);
-            return false;
+            if (tableExists()) {
+                Statement statement = Database.getConnection().createStatement();
+                statement.execute("DELETE FROM " + tableName);
+                statement.close();
+                Journal.add("Таблица " + tableName + " очищена");
+                return true;
+            }
+        } catch (Exception exception) {
+            Journal.add(exception.getMessage(), NoteType.ERROR);
         }
+        return false;
     }
 
     public boolean dropTable(){
         if(!Database.connected())return false;
         try {
-            if (tableExists(tableName)){
+            if (tableExists()){
                 Statement statement = Database.getConnection().createStatement();
                 statement.execute("DROP TABLE " + tableName);
                 Journal.add("Удалена таблица " + tableName, NoteType.WRINING);
             }
-        } catch (Exception e) {
-            //connection = null;
-            Journal.add("Не удалось создать таблицу " + tableName + e.getMessage(), NoteType.ERROR);
+        } catch (Exception exception) {
+            Journal.add("Не удалось удалить таблицу " + tableName + exception.getMessage(), NoteType.ERROR);
             return false;
         }
         return true;

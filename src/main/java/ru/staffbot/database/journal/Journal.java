@@ -15,7 +15,7 @@ import java.util.Date;
  */
 public class Journal extends DBTable {
 
-    public static final String DB_TABLE_NAME = "sys_jornal";
+    public static final String DB_TABLE_NAME = "sys_journal";
     public static final String DB_TABLE_FIELDS = "moment TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3), note VARCHAR(255) CHARACTER SET utf8, noteType INT DEFAULT 0";
     public static final DateFormat DATE_FORMAT = DateFormat.SHORTDATETIME;
 
@@ -53,7 +53,6 @@ public class Journal extends DBTable {
 
     public Journal(){
         super(DB_TABLE_NAME, DB_TABLE_FIELDS);
-        period.set((String)null, (String)null);
     }
 
     public Journal(String fromDate, String toDate){

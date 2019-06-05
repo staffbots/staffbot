@@ -27,9 +27,10 @@ public abstract class Staffbot{
 
     public static String solutionVersion;
 
-    public static String projectName = "Staffbot";
+    public static String projectName = new Object(){}.getClass().getEnclosingClass().getSimpleName(); //"Staffbot"
 
     public static void propertiesInit(){
+        // Считываем версию
         try {
             Properties property = new Properties();
             property.load(Staffbot.class.getResourceAsStream("/properties"));
@@ -38,45 +39,30 @@ public abstract class Staffbot{
         } catch (IOException exception) {
             Journal.add("Ошибка чтения файла свойств проекта (properties):\n"+ exception.getMessage());
         }
-
-        // Имя файла конфигурации
-        String projectCfgFileName = "/" + projectName + ".cfg"; // внутри jar-пакета
+        // Имя исходного файла конфигурации, лежащего внутри jar-пакета
+        String projectCfgFileName = "/" + projectName.toLowerCase() + ".cfg"; // внутри jar-пакета
+        // Имя внешнего файла конфигурации, лежащего рядом с jar-пакетом
         String solutionCfgFileName = "/" + solutionName + "-" + solutionVersion + ".cfg";
-        System.out.println(projectCfgFileName);
-        System.out.println(solutionCfgFileName);
         try {
-            // Расположение файла конфигурации в той же директории, что и запускаемый jar-пакет
+            // Полный путь до jar-пакета
             String jarFileName = Staffbot.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-            System.out.println(jarFileName);
+            // Полный путь до каталога jar-пакета
             String jarDirName = (new File(jarFileName)).getParent();
-            System.out.println(jarDirName);
-            File cfgFile = new File((new File(jarFileName)).getParent() + solutionCfgFileName);
-            System.out.println(cfgFile.toPath());
-            // Если файл конфигурации ещё не существует,
+            // Полный путь до внешнего файла конфигурации
+            File cfgFile = new File(jarDirName + solutionCfgFileName);
+            // Если таковой файл конфигурации ещё не существует,
             if (!cfgFile.exists())
             try {
                 // то копируем его из ресурсов, заархивированных внутри jar-файла
-                System.out.println("Copy resource " + projectCfgFileName);
                 InputStream inputStream = Staffbot.class.getResourceAsStream(projectCfgFileName);
-                //InputStream inputStream = Staffbot.class.getResourceAsStream(resourceName);
-                System.out.println("to " + cfgFile.getPath());
                 FileOutputStream outputStream = new FileOutputStream(cfgFile.getPath());
-                System.out.println("before write");
                 outputStream.write(inputStream.readAllBytes());
-                System.out.println("OK - coped");
-
-                //File targetFile = new File(cfgFile.getPath());
-                //OpenOption[] options = new OpenOption[] { StandardOpenOption.WRITE, StandardOpenOption.CREATE };
-                //java.nio.file.Files.copy(inputStream,targetFile.toPath(),StandardCopyOption.REPLACE_EXISTING);
-                //FileUtils.copyInputStreamToFile(initialStream, targetFile);
-                } catch (Exception exception){
-
+            } catch (Exception exception){
                 System.out.println("Error of coping: " + exception.getMessage());
                 System.out.println("StackTrace: " + exception.getStackTrace());
-
             }
 
-            // Читаем файл конфигурации
+            // Читаем свойства из (внешнего) файла конфигурации
             FileInputStream inputStream = new FileInputStream(cfgFile);
             Properties property = new Properties();
             property.load(inputStream);
