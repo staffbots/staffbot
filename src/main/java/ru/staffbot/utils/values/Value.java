@@ -1,8 +1,16 @@
 package ru.staffbot.utils.values;
 
+import ru.staffbot.database.DBTable;
+import ru.staffbot.database.journal.Journal;
+import ru.staffbot.database.journal.NoteType;
 import ru.staffbot.utils.Converter;
 import ru.staffbot.webserver.WebServer;
 import ru.staffbot.database.Database;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Date;
 
 /**
@@ -18,7 +26,9 @@ import java.util.Date;
  * Благодоря этому, Value и все его дочерние классы имееют унифицированный интерфейс
  * и единый тип значений - {@code Double}, что значительно облегчает работу с БД.
  */
-abstract public class Value{
+abstract public class Value extends DBTable {
+
+    public static final String DB_TABLE_FIELDS = "moment TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3), value BIGINT";
 
     protected ValueType valueType;
 
@@ -71,10 +81,7 @@ abstract public class Value{
         this.note = note;
         this.dbStorage = dbStorage;
         this.valueType = valueType;
-        if(dbStorage) {
-            Database.createValueTable("val_" + name);
-            this.value = get();
-        }
+        if(dbStorage) this.value = get();
     }
     /**
      * @param name название
@@ -83,10 +90,12 @@ abstract public class Value{
      * @param value значение
      */
     public Value(String name, String note, long value, ValueType valueType, Boolean dbStorage) {
+        super("val_" + name.toLowerCase(), DB_TABLE_FIELDS, dbStorage);
         init(name, note, value, valueType, dbStorage);
     }
 
     public Value(String name, String note, long value, ValueType valueType) {
+        super("val_" + name.toLowerCase(), DB_TABLE_FIELDS);
         init(name, note, value, valueType, true);
     }
 
@@ -100,7 +109,21 @@ abstract public class Value{
     public long get(Date date) {
         long dbValue;
         try {
-            dbValue = dbStorage ? Database.getValue("val_" + name, date) : value;
+            if(!dbStorage) return value;
+            if(!Database.connected()) throw new Exception("Нет подключения к базе данных");
+            PreparedStatement ps = Database.getConnection().prepareStatement(
+                    "SELECT value FROM " + getTableName() + " WHERE (moment <= ?) ORDER BY moment DESC LIMIT 1");
+            ps.setTimestamp(1, new Timestamp(date.getTime()));
+            if (ps.execute()) {
+                ResultSet rs = ps.getResultSet();
+                //return (rs.next() ? rs.getDouble(0) : Double.NaN);
+                if (rs.next())
+                    return rs.getBigDecimal(1).longValue();
+                else
+                    throw new Exception("Таблица значений пуста, впрочем как и все феномены этой жизни...");
+            } else
+                throw new Exception("Значение не найдено в базе данных");
+
         } catch (Exception e){
             dbValue = value;
         }
@@ -124,8 +147,22 @@ abstract public class Value{
      */
     synchronized public long set(long newValue) {
         if (dbStorage)
-            if (newValue != get())
-                Database.setValue("val_" + name, newValue);
+            if (newValue != get()) {
+                //Database.setValue("val_" + name, newValue);
+                //if(Database.connected())
+                try {
+                    if(!Database.connected()) throw new Exception("Нет подключения к базе данных");
+                    PreparedStatement ps = Database.getConnection().prepareStatement(
+                            "INSERT INTO " + getTableName() +
+                                    " (value) VALUES (?)");
+                    ps.setLong(1, value);
+                    ps.executeUpdate();
+                    Journal.add("В таблицу " + getTableName() + " добавлено значение " + value);
+                } catch (Exception e) {
+                    Journal.add("Ошибка записи в таблицу " + getTableName() + e.getMessage(), NoteType.ERROR);
+                }
+
+            }
         value = newValue;
         return value;
     }

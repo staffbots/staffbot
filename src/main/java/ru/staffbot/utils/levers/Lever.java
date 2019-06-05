@@ -64,4 +64,6 @@ public interface Lever{
     boolean getDbStorage();
 
     ValueType getValueType();
+
+    boolean createTable();
 }

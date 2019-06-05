@@ -1,5 +1,6 @@
 package ru.staffbot.database.configs;
 
+import ru.staffbot.database.DBTable;
 import ru.staffbot.database.Database;
 import ru.staffbot.utils.levers.Lever;
 
@@ -9,9 +10,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.*;
 
-public class Configs {
+public class Configs extends DBTable {
 
-    public static final String DB_TABLE_NAME = "sys_configs";
+    private static final String DB_TABLE_NAME = "sys_configs";
+    private static final String DB_TABLE_FIELDS = "configname VARCHAR(50), configvalue TEXT";
+
+    private PreparedStatement statement;
 
     private String name;
 
@@ -19,9 +23,8 @@ public class Configs {
         return name;
     }
 
-    private PreparedStatement statement;
-
     public Configs(String name){
+        super(DB_TABLE_NAME, DB_TABLE_FIELDS);
         this.name = name;
     }
 
@@ -37,7 +40,7 @@ public class Configs {
             if (!(lever.getName().trim().equals("") || (lever.getName()==null)))
                 config.put(lever.getName(), Long.toString(lever.get()));
         delete(); // Удяляем что бы избежать повторений
-        statement = getStatement("INSERT INTO " + DB_TABLE_NAME + " (configname, configvalue) VALUES (?, ?)");
+        statement = getStatement("INSERT INTO " + getTableName() + " (configname, configvalue) VALUES (?, ?)");
         statement.setString(1, name);
         statement.setString(2, config.toString());
         statement.executeUpdate();
@@ -46,7 +49,7 @@ public class Configs {
 
     public void load() throws Exception {
         String value = "";
-        statement = getStatement("SELECT configvalue FROM " + DB_TABLE_NAME + " WHERE (configname = ?)");
+        statement = getStatement("SELECT configvalue FROM " + getTableName() + " WHERE (configname = ?)");
         statement.setString(1, name);
         if (statement.execute()) {
             ResultSet resultSet = statement.getResultSet();
@@ -69,7 +72,7 @@ public class Configs {
     }
 
     public void delete() throws Exception {
-        statement = getStatement("DELETE FROM " + DB_TABLE_NAME + " WHERE (configname = ?)");
+        statement = getStatement("DELETE FROM " + getTableName() + " WHERE (configname = ?)");
         statement.setString(1, name);
         statement.executeUpdate();
         statement.close();

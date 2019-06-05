@@ -57,7 +57,7 @@ public class JournalServlet extends MainServlet {
 
         pageVariables.put("journal_fromdate", journal.period.fromDate.getValueAsString());
         pageVariables.put("journal_todate", journal.period.toDate.getValueAsString());
-        pageVariables.put("journal_datesize", journal.dateFormat.get().length());
+        pageVariables.put("journal_datesize", journal.DATE_FORMAT.get().length());
         pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("journal_page", getJournalPage(checkboxes));
         String content = PageGenerator.getPage(pageType.getName() + ".html", pageVariables);

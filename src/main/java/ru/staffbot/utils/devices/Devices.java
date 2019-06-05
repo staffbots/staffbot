@@ -66,7 +66,7 @@ public class Devices{
             list.add(device);
             for (Value value : device.getValues())
                 if (value.dbStorage)
-                    Database.createValueTable("val_" + value.getName());
+                    value.createTable();
         }
         Journal.add("Устройства успешно проинициализированы");
     }

@@ -22,7 +22,7 @@ public class Levers{
         for (Lever lever:levers) {
             list.add(lever);
             if (lever.getDbStorage())
-                Database.createValueTable("val_" + lever.getName());
+                lever.createTable();
             lever.set(lever.get());
         }
     }

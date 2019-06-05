@@ -32,7 +32,7 @@ public class StatusServlet extends MainServlet {
         Map<String, Object> pageVariables = new HashMap();
         HttpSession session = request.getSession();
 
-        Period period = new Period(Journal.dateFormat);
+        Period period = new Period(Journal.DATE_FORMAT);
 
         String toDateStr = accountService.getAttribute(session,"status_todate");
         if (toDateStr.equals("")) toDateStr = request.getParameter("status_todate");

@@ -1,5 +1,6 @@
 package ru.staffbot.database.users;
 
+import ru.staffbot.database.DBTable;
 import ru.staffbot.database.Database;
 import ru.staffbot.database.journal.Journal;
 import ru.staffbot.database.journal.NoteType;
@@ -8,9 +9,14 @@ import ru.staffbot.webserver.WebServer;
 import java.sql.*;
 import java.util.ArrayList;
 
-public class Users {
+public class Users extends DBTable {
 
     public static final String DB_TABLE_NAME = "sys_users";
+    public static final String DB_TABLE_FIELDS = "configname VARCHAR(50), configvalue TEXT";
+
+    public Users(){
+        super(DB_TABLE_NAME, DB_TABLE_FIELDS);
+    }
 
     public boolean isAdmin(String login){
         return WebServer.ADMIN.equalsIgnoreCase(login);
@@ -19,7 +25,7 @@ public class Users {
     public void delete(String login){
         try {
             PreparedStatement statement = Database.getConnection().prepareStatement(
-                    "DELETE FROM " + DB_TABLE_NAME + " WHERE (login = ?)");
+                    "DELETE FROM " + getTableName() + " WHERE (login = ?)");
             statement.setString(1, login);
             statement.executeUpdate();
             Journal.add("Пользоатель " + login + " удалён");
@@ -37,8 +43,8 @@ public class Users {
             boolean newLogin = (getUserList(user.login).size() == 0);
             PreparedStatement statement = Database.getConnection().prepareStatement(
                 newLogin ?
-                    "INSERT INTO " + DB_TABLE_NAME + " (password, role, login) VALUES (?, ?, ?)" :
-                    "UPDATE " + DB_TABLE_NAME + " SET password = ? , role = ? WHERE login = ?"
+                    "INSERT INTO " + getTableName() + " (password, role, login) VALUES (?, ?, ?)" :
+                    "UPDATE " + getTableName() + " SET password = ? , role = ? WHERE login = ?"
             );
             statement.setString(3, user.login);
             statement.setString(1, user.password);
@@ -54,12 +60,6 @@ public class Users {
         }
     }
 
-    public User getUser(String login){
-        if (login == null) return null;
-        ArrayList<User> userList = getUserList(login);
-        return (userList.size() > 0) ? userList.get(0) : null;
-    }
-
     public int verify(String login, String password){
         User user = getUser(login);
         return (user == null) ? -1 : user.password.equals(password) ? user.role.getAccessLevel() : -1;
@@ -68,6 +68,12 @@ public class Users {
     public UserRole getRole(String login){
         User user = getUser(login);
         return user.role;
+    }
+
+    public User getUser(String login){
+        if (login == null) return null;
+        ArrayList<User> userList = getUserList(login);
+        return (userList.size() > 0) ? userList.get(0) : null;
     }
 
     public ArrayList<User> getUserList() {
@@ -79,7 +85,7 @@ public class Users {
         if (!Database.connected()) return userList;
         try {
             PreparedStatement statement = Database.getConnection().prepareStatement(
-                    "SELECT login, password, role FROM "  + DB_TABLE_NAME
+                    "SELECT login, password, role FROM "  + getTableName()
                             + ((login == null) ? "" : " WHERE (login = ?)"));
             if (login != null) statement.setString(1, login);
             if(statement.execute()) {
