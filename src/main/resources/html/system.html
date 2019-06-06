@@ -4,7 +4,7 @@
     <table style="display:${system_display}; text-align: left;" cellpadding="3">
 
         <tr style="background: #${page_bg_color};" >
-            <td colspan="2">
+            <td colspan="3">
                 <b>
                     Чистка с базы данных
                 </b>
@@ -14,8 +14,8 @@
             <td>
                 Объект(ы):
             </td>
-            <td>
-                <select name="name" style="text-align:right;" align="middle">
+            <td colspan="2">
+                <select name="name" style="width:100%">
                     <option>журнал событий</option>
                     <option>все таблицы значений</option>
                 </select>
@@ -25,16 +25,18 @@
             <td>
                 Оставить поседние
             </td>
+            <td align="right">
+                <input value="20" size="3">
+            </td>
             <td>
-                <input value="20">
-                <select name="name" style="text-align:right;" align="middle">
+                <select name="name" style="width:100%">
                     <option>строк</option>
                     <option>суток</option>
                 </select>
             </td>
         </tr>
         <tr style="background: #${page_bg_color}">
-            <td colspan="2" align="right">
+            <td colspan="3" align="right">
                 <button name="control_apply" title="Применить введённые параметры" value="control_apply">
                     Применить
                 </button>
@@ -43,40 +45,29 @@
 
     </table>
     </p>
-    <p>
-    <table style="text-align: center; background: #${page_bg_color}" cellpadding="3" >
+</form>
+
+<!--  -->
+<form action="/system" method="post">
+    <table cellspacing="5" >
         <tr>
             <td>
-                <img src="/resource?name=/img/logo.png">
+                <button name="system_reboot" title="Перезагрузка операционной системы">
+                    Перезагрузить систему
+                </button>
             </td>
-        </tr>
-        <tr>
             <td>
-                <table style="background:#${site_bg_color}" cellpadding="10">
-                    <tr>
-                        <td>
-                            <button name="system_reboot" title="Перезагрузка операционной системы">
-                                Перезагрузить систему
-                            </button>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>
-                            <button name="system_shutdown" title="Завершение работы операционной системы">
-                                Завершить работу
-                            </button>
-                        </td>
-                    </tr>
-                </table>
+                <button name="system_shutdown" title="Завершение работы операционной системы">
+                    Завершить работу
+                </button>
             </td>
-        </tr>
-        <tr>
             <td>
                 <button name="system_exit" title="Выключение программы">
                     Выключить программу
                 </button>
             </td>
         </tr>
+
     </table>
-    </p>
 </form>
+</p>
