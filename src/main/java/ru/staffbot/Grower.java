@@ -1,6 +1,7 @@
 package ru.staffbot;
 
 import com.pi4j.io.gpio.RaspiPin;
+import ru.staffbot.database.settings.Settings;
 import ru.staffbot.utils.Converter;
 import ru.staffbot.utils.DateFormat;
 import ru.staffbot.utils.devices.hardware.SensorDHT22Device;
@@ -39,7 +40,7 @@ public class Grower extends Staffbot {
      * Заполняется список устройств {@code WebServer.devices}<br>
      */
     public static void devicesInit() {
-        Devices.init( sunRelay, sensor, funRelay, sonar);
+        Devices.init(  sensor, sonar, sunRelay, funRelay);
     }
 
     public static SensorDHT22Device sensor = new SensorDHT22Device("sensor",

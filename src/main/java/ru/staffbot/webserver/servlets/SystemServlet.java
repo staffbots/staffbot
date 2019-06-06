@@ -25,6 +25,7 @@ public class SystemServlet extends MainServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map<String, Object> pageVariables = new HashMap();
+        pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("system_display", Database.connected() ? "inline-table" : "none");
         String content = PageGenerator.getPage(pageType.getName() + ".html", pageVariables);

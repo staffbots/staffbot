@@ -58,6 +58,7 @@ public class JournalServlet extends MainServlet {
         pageVariables.put("journal_fromdate", journal.period.fromDate.getValueAsString());
         pageVariables.put("journal_todate", journal.period.toDate.getValueAsString());
         pageVariables.put("journal_datesize", journal.DATE_FORMAT.get().length());
+        pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("journal_page", getJournalPage(checkboxes));
         String content = PageGenerator.getPage(pageType.getName() + ".html", pageVariables);
@@ -82,14 +83,19 @@ public class JournalServlet extends MainServlet {
     //
     private String getJournalPage(Map<Integer, Boolean> typesForShow) {
         ArrayList<Note> journalList = journal.getJournal(typesForShow);
-        String htmlCode = (!journalList.isEmpty()) ? "" :
-                "<tr><td></td><td>По указанному фильтру записей нет</td></tr>";
-        String title;
-        for (Note note : journalList) {
-            title = Converter.dateToString(note.getDate(), DateFormat.FULLTIMEDATE);
-            htmlCode += "<tr><td  align=\"right\" title=\""+title+"\">"
-                    + Converter.dateToString(note.getDate(), DateFormat.CUTSHORTDATETIME)
-                    + "</td><td>" + note.getMessage() + "</td></tr>";
+        Map<String, Object> pageVariables = new HashMap();
+        String htmlCode = "<tr><td><em>По указанному фильтру записей нет</em></td></tr>";
+        if(!journalList.isEmpty()) {
+            pageVariables.put("note_title", "");
+            pageVariables.put("note_date", "<b>Дата</b>");
+            pageVariables.put("note_value", "<b>Сообщение</b>");
+            htmlCode = PageGenerator.getPage("journal/note.html",pageVariables);
+            for (Note note : journalList) {
+                pageVariables.put("note_title", Converter.dateToString(note.getDate(), DateFormat.FULLTIMEDATE));
+                pageVariables.put("note_date", Converter.dateToString(note.getDate(), DateFormat.CUTSHORTDATETIME));
+                pageVariables.put("note_value", note.getMessage());
+                htmlCode += PageGenerator.getPage("journal/note.html",pageVariables);
+            }
         }
         return htmlCode;
     }

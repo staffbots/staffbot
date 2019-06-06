@@ -15,9 +15,11 @@ import java.util.Map;
  */
 public abstract class MainServlet extends BaseServlet {
 
-    public static String main_bg_color = "e7d8df";
+    public static String site_bg_color = "f7f7f7";//"ffdeef";
 
-    public static String page_bg_color = "ccaabb";
+    public static String main_bg_color = "dddddd";
+
+    public static String page_bg_color = "bbbbbb";
 
     protected PageType pageType = PageType.ENTRY;
 
@@ -69,6 +71,7 @@ public abstract class MainServlet extends BaseServlet {
         pageVariables.put("main_content", content);
         pageVariables.put("main_login", login);
         pageVariables.put("main_role", accountService.getUserRole(login).getDescription());
+        pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("main_bg_color", main_bg_color);
 
         String result = PageGenerator.getPage("main.html", pageVariables);

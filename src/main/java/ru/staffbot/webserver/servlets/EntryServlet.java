@@ -29,6 +29,7 @@ public class EntryServlet extends MainServlet {
             accountService.forgetSession(request.getSession());
 
         Map<String, Object> pageVariables = new HashMap();
+        pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("entry_login", login);
         response.getWriter().println(PageGenerator.getPage("entry.html", pageVariables));

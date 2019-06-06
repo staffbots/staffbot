@@ -52,6 +52,7 @@ public class UsersServlet extends MainServlet {
         pageVariables.put("users_new_disabled", newlogin ? "" : "disabled");
         pageVariables.put("users_login_list", getLoginList(userList, login));
         pageVariables.put("users_role_list", getRoleList(role.getAccessLevel()));
+        pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("page_bg_color", page_bg_color);
         String content = PageGenerator.getPage(pageType.getName()+".html", pageVariables);
         super.doGet(request, response, content);

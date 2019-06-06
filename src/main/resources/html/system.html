@@ -6,29 +6,30 @@
         <tr style="background: #${page_bg_color};" >
             <td colspan="2">
                 <b>
-                    Параметры работы с базой данных
+                    Чистка с базы данных
                 </b>
             </td>
         </tr>
         <tr>
             <td>
-                Чистка журнала
+                Объект(ы):
             </td>
             <td>
                 <select name="name" style="text-align:right;" align="middle">
-                    <option>при каждом запуске</option>
-                    <option>по дате устаревания</option>
+                    <option>журнал событий</option>
+                    <option>все таблицы значений</option>
                 </select>
             </td>
         </tr>
         <tr>
             <td>
-                Чистка истории значений
+                Оставить поседние
             </td>
             <td>
+                <input value="20">
                 <select name="name" style="text-align:right;" align="middle">
-                    <option>при каждом запуске</option>
-                    <option>по дате устаревания</option>
+                    <option>строк</option>
+                    <option>суток</option>
                 </select>
             </td>
         </tr>
@@ -51,7 +52,7 @@
         </tr>
         <tr>
             <td>
-                <table style="background:white" cellpadding="10">
+                <table style="background:#${site_bg_color}" cellpadding="10">
                     <tr>
                         <td>
                             <button name="system_reboot" title="Перезагрузка операционной системы">

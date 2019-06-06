@@ -3,10 +3,7 @@ package ru.staffbot.database;
 import ru.staffbot.database.journal.Journal;
 import ru.staffbot.database.journal.NoteType;
 
-import java.sql.DatabaseMetaData;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 
 public abstract class DBTable {
 
@@ -50,8 +47,7 @@ public abstract class DBTable {
         if (drop) dropTable();
         if (!tableExists())
             try {
-                Statement statement = Database.getConnection().createStatement();
-                statement.execute("CREATE TABLE " + tableName + " (" + tableFields + ")");
+                getStatement("CREATE TABLE " + tableName + " (" + tableFields + ")").execute();
                 Journal.add("Создана таблица " + tableName + " (" + tableFields + ")", NoteType.WRINING);
             } catch (Exception exception) {
                 //connection = null;
@@ -66,9 +62,7 @@ public abstract class DBTable {
         if(!Database.connected())return false;
         try {
             if (tableExists()) {
-                Statement statement = Database.getConnection().createStatement();
-                statement.execute("DELETE FROM " + tableName);
-                statement.close();
+                getStatement("DELETE FROM " + tableName).execute();
                 Journal.add("Таблица " + tableName + " очищена");
                 return true;
             }
@@ -82,8 +76,7 @@ public abstract class DBTable {
         if(!Database.connected())return false;
         try {
             if (tableExists()){
-                Statement statement = Database.getConnection().createStatement();
-                statement.execute("DROP TABLE " + tableName);
+                getStatement("DROP TABLE " + tableName).execute();
                 Journal.add("Удалена таблица " + tableName, NoteType.WRINING);
             }
         } catch (Exception exception) {
@@ -91,6 +84,42 @@ public abstract class DBTable {
             return false;
         }
         return true;
+    }
+
+    protected PreparedStatement statement;
+
+    protected PreparedStatement getStatement(String query) throws Exception {
+        if (!Database.connected())
+            throw Database.getException();
+        return Database.getConnection().prepareStatement(query);
+    }
+
+    public ResultSet getSelectResult(String fields, String condition){
+        if (!Database.connected()) return null;
+        if (!tableExists()) return null;
+        try {
+            PreparedStatement statement = getStatement(
+                    "SELECT " + fields + " FROM " + getTableName() + " WHERE " + condition);
+            statement.execute();
+            if (statement.execute())
+                return statement.getResultSet();
+        } catch (Exception exception) {
+            Journal.add(exception.getMessage(), NoteType.ERROR);
+        }
+        return null;
+    }
+
+    public int deleteFromTable(String condition){
+        if (!Database.connected()) return 0;
+        if (!tableExists()) return 0;
+        try {
+            PreparedStatement statement = getStatement(
+                    "DELETE FROM " + getTableName() + " WHERE " + condition);
+            return statement.executeUpdate();
+        } catch (Exception exception) {
+            Journal.add(exception.getMessage(), NoteType.ERROR);
+            return 0;
+        }
     }
 
 }

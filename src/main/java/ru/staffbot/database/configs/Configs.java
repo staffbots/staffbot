@@ -16,8 +16,6 @@ public class Configs extends DBTable {
     private static final String DB_TABLE_NAME = "sys_configs";
     private static final String DB_TABLE_FIELDS = "configname VARCHAR(50), configvalue VARCHAR(500)";
 
-    private PreparedStatement statement;
-
     private String name;
 
     public String getName(){
@@ -29,11 +27,6 @@ public class Configs extends DBTable {
         this.name = name;
     }
 
-    private PreparedStatement getStatement(String query) throws Exception {
-        if (!Database.connected())
-            throw Database.getException();
-        return Database.getConnection().prepareStatement(query);
-    }
 
     public void save() throws Exception {
         Map<String, String> config = new HashMap<>();

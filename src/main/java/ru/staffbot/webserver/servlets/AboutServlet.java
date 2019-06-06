@@ -52,7 +52,7 @@ public class AboutServlet extends MainServlet {
         pageVariables.put("device_display", Devices.USED ? "none" : "inline-table");
         pageVariables.put("database_display", Database.connected() ? "none" : "inline-table");
         pageVariables.put("about_devicelist", getDeviceList());
-
+        pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("page_bg_color", page_bg_color);
         String content = PageGenerator.getPage(pageType.getName()+".html", pageVariables);
         super.doGet(request, response, content);

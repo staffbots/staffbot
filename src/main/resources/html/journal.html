@@ -32,9 +32,6 @@
             </td>
             <td>Ошибки</td>
             <td>
-                <!--<button name="journal_apply" title="Применить фильтр" value="journal_apply">-->
-                <!--Применить-->
-                <!--</button>-->
                 <input type="submit" value="Показать">
             </td>
             <td style="width:100%">
@@ -43,14 +40,9 @@
         <tr>
             <td colspan="6">
 
-                <table style="width: 100%; background: white" border="0" cellpadding="5" cellspacing="0">
+                <table style="width: 100%; background: #${site_bg_color}" cellpadding="3" cellspacing="0">
                     <tbody>
-                    <tr  style="font-weight: bold">
-                        <td align="right">Дата</td>
-                        <td>Событие</td>
-                    </tr>
-                    ${journal_page}
-
+                        ${journal_page}
                     </tbody>
                 </table>
 

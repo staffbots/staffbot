@@ -3,6 +3,7 @@ package ru.staffbot;
 import ru.staffbot.database.DBMS;
 import ru.staffbot.database.Database;
 import ru.staffbot.database.journal.Journal;
+import ru.staffbot.database.settings.Settings;
 import ru.staffbot.utils.devices.Devices;
 import ru.staffbot.webserver.WebServer;
 import ru.staffbot.webserver.servlets.MainServlet;
@@ -79,6 +80,7 @@ public abstract class Staffbot{
             WebServer.PORT = Integer.parseInt(property.getProperty("web.port", WebServer.PORT.toString()));
             WebServer.ADMIN = property.getProperty("web.admin", WebServer.ADMIN);
             WebServer.PASSWORD = property.getProperty("web.password", WebServer.PASSWORD);
+            MainServlet.site_bg_color = property.getProperty("web.site_bg_color", MainServlet.site_bg_color);
             MainServlet.main_bg_color = property.getProperty("web.main_bg_color", MainServlet.main_bg_color);
             MainServlet.page_bg_color = property.getProperty("web.page_bg_color", MainServlet.page_bg_color);
 
