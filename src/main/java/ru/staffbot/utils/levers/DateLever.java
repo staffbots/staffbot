@@ -17,15 +17,4 @@ public class DateLever extends DateValue implements Lever  {
         super(name, note, Converter.stringToDate(value, format), format);
     }
 
-    /**
-     * <b>Следующий момент</b><br>
-     */
-    public Date getNextMoment(){
-        Date x = getValue();
-        long ms = 24*60*60*1000;
-        long z = (long) Math.floor(((new Date()).getTime() - x.getTime())/ms);
-        if (z > 0) z++;
-        return Converter.longToDate(x.getTime() + z * ms);
-    }
-
 }

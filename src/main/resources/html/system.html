@@ -15,12 +15,12 @@
                 В журнале событий оставлять последние
             </td>
             <td>
-                <input name="dbclean_journal_value" value="20" size="3">
+                <input name="dbclean_journal_value" value="${dbclean_journal_value}" size="3">
             </td>
             <td>
                 <select name="dbclean_journal_measure" style="width:100%">
-                    <option value="record">строк</option>
-                    <option value="day">суток</option>
+                    <option value="record" ${dbclean_journal_measure_record}>строк</option>
+                    <option value="day" ${dbclean_journal_measure_day}>суток</option>
                 </select>
             </td>
         </tr>
@@ -29,25 +29,25 @@
                 В таблицах значений оставлять последние
             </td>
             <td>
-                <input name="dbclean_tables_value" value="20" size="3">
+                <input name="dbclean_tables_value" value="${dbclean_tables_value}" size="3">
             </td>
             <td>
                 <select name="dbclean_tables_measure" style="width:100%">
-                    <option value="record">строк</option>
-                    <option value="day">суток</option>
+                    <option value="record" ${dbclean_tables_measure_record}>строк</option>
+                    <option value="day" ${dbclean_tables_measure_day}>суток</option>
                 </select>
             </td>
         </tr>
         <tr style="background: #${page_bg_color}">
             <td colspan="4">
-                <button name="dbclean_now" value="control_apply">
+                <button name="dbclean_now" value="dbclean_now">
                     Очистить сейчас
                 </button>
             </td>
         </tr>
         <tr>
             <td>
-                <input name="dbclean_auto_cleaning" type="radio" value="off" onclick="system_radioboxClick();">
+                <input name="dbclean_auto_cleaning" type="radio" value="off" ${dbclean_auto_cleaning_off} onclick="system_radioboxClick();">
             </td>
             <td align="left">
                 Отключить автоматическую очистку
@@ -55,33 +55,33 @@
         </tr>
         <tr>
             <td>
-                <input name="dbclean_auto_cleaning" type="radio" value="on" onclick="system_radioboxClick();">
+                <input name="dbclean_auto_cleaning" type="radio" value="on" ${dbclean_auto_cleaning_on} onclick="system_radioboxClick();">
             </td>
             <td align="left">
                Запускать автоматическую очистку каждые
             </td>
             <td>
-                <input  name="dbclean_auto_value" value="20" size="3">
+                <input  name="dbclean_auto_value" value="${dbclean_auto_value}" size="3">
             </td>
             <td>
                 <select name="dbclean_auto_measure" style="width:100%">
-                    <option value="minute">минут</option>
-                    <option value="hour">часов</option>
-                    <option value="day">суток</option>
+                    <option value="minute" ${dbclean_auto_measure_minute}>минут</option>
+                    <option value="hour" ${dbclean_auto_measure_hour}>часов</option>
+                    <option value="day" ${dbclean_auto_measure_day}>суток</option>
                 </select>
             </td>
         </tr>
         <tr>
-            <td colspan="3">
+            <td colspan="2">
                 начиная с
             </td>
-            <td>
-                <input name="dbclean_auto_start" value="18:00" size="3">
+            <td colspan="2">
+                <input name="dbclean_auto_start" value="${dbclean_auto_start}" size="17">
             </td>
         </tr>
         <tr style="background: #${page_bg_color}">
             <td colspan="4">
-                <button name="dbclean_apply" title="Применить введённые параметры" value="control_apply">
+                <button name="dbclean_apply" title="Применить введённые параметры" value="dbclean_apply">
                     Применить
                 </button>
             </td>
@@ -89,7 +89,9 @@
     </table>
     </p>
 </form>
-
+<!--  -->
+<script type="text/javascript" src="/resource?name=/html/scripts/main.js"></script>
+<script type="text/javascript"> system_radioboxClick(); </script>
 <!--  -->
 <form action="/system" method="post">
     <table cellspacing="5" >
@@ -113,3 +115,4 @@
     </table>
 </form>
 </p>
+

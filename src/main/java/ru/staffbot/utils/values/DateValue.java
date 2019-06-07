@@ -2,6 +2,7 @@ package ru.staffbot.utils.values;
 
 import ru.staffbot.utils.Converter;
 import ru.staffbot.utils.DateFormat;
+import ru.staffbot.utils.DateScale;
 
 import java.util.Date;
 
@@ -48,6 +49,19 @@ public class DateValue extends Value{
     @Override
     public void setValueFromString(String value){
         setValue(Converter.stringToDate(value,format));
+    }
+
+    /*
+     * Получить ближайший момент времени, у которого часы и минуты
+     * совпадают с текущим значением времени
+     *
+     */
+    public Date getNearFutureTime(){
+        Date x = getValue();
+        long ms = DateScale.DAY.getValue();
+        long z = (long) Math.floor(((new Date()).getTime() - x.getTime())/ms);
+        if (z > 0) z++;
+        return Converter.longToDate(x.getTime() + z * ms);
     }
 
 }

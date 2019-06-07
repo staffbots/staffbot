@@ -4,6 +4,7 @@ import com.pi4j.io.gpio.RaspiPin;
 import ru.staffbot.database.settings.Settings;
 import ru.staffbot.utils.Converter;
 import ru.staffbot.utils.DateFormat;
+import ru.staffbot.utils.DateScale;
 import ru.staffbot.utils.devices.hardware.SensorDHT22Device;
 import ru.staffbot.utils.devices.hardware.SonarHCSR04Device;
 import ru.staffbot.utils.levers.*;
@@ -18,6 +19,7 @@ import java.util.Date;
 public class Grower extends Staffbot {
 
     public static void main(String[] args) {
+
         propertiesInit(); // Загружаем конфигурацию сборки
         databaseInit(); // Подключаемся к базе данных
         devicesInit(); // Инициализируем список устройств
@@ -118,7 +120,7 @@ public class Grower extends Staffbot {
      */
     public static Task sunriseTask = new Task("Включение света", () -> {
         // Получаем дату и время следующего включения
-        Date momentOn = sunriseLever.getNextMoment();
+        Date momentOn = sunriseLever.getNearFutureTime();
         // Расчитываем количество милисекунд, оставшееся до момента запуска
         long delay = momentOn.getTime() - (new Date()).getTime();
         try {
@@ -136,7 +138,7 @@ public class Grower extends Staffbot {
      */
     public static Task sunsetTask = new Task("Выключение света", () -> {
         // Получаем дату и время следующего включения
-        Date momentOn = sunsetLever.getNextMoment();
+        Date momentOn = sunsetLever.getNearFutureTime();
         // Расчитываем количество милисекунд, оставшееся до момента запуска
         long delay = momentOn.getTime() - (new Date()).getTime();
         try {
@@ -155,7 +157,7 @@ public class Grower extends Staffbot {
     public static Task funriseTask = new Task("Включение вентилятора", () -> {
         // Получаем дату и время следующего включения
         Date momentOn = Converter.longToDate(
-                sunriseLever.getNextMoment().getTime() - funDelayLever.getValue() * 60 * 1000);
+                sunriseLever.getNearFutureTime().getTime() - funDelayLever.getValue() * 60 * 1000);
         // Расчитываем количество милисекунд, оставшееся до момента запуска
         long delay = momentOn.getTime() - (new Date()).getTime();
         try {

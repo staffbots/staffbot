@@ -1,5 +1,6 @@
 package ru.staffbot.database;
 
+import ru.staffbot.database.cleaner.Cleaner;
 import ru.staffbot.database.journal.Journal;
 import ru.staffbot.database.journal.NoteType;
 import ru.staffbot.database.users.User;
@@ -23,7 +24,7 @@ public class Database {
 
     public static Boolean DROP = false;
 
-    public static DBCleaner bdCleaner;
+    public static Cleaner cleaner;
 
     private static Connection connection;
 
@@ -47,9 +48,9 @@ public class Database {
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD));
             createDatabase(DROP);
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD), NAME);
-            bdCleaner = new DBCleaner();
             Journal.erase();
             Journal.add("База данных " + NAME + " готова к использованию");
+            cleaner = new Cleaner();
         } catch (Exception exception) {
             Database.exception = exception;
         }

@@ -4,7 +4,7 @@ function users_radioboxClick() {
 
 
 function system_radioboxClick() {
-    var radios = document.getElementsByName('dbclean_radiobox');
+    var radios = document.getElementsByName('dbclean_auto_cleaning');
     for (var i = 0, length = radios.length; i < length; i++){
         if (radios[i].checked){
             var disabled = (radios[i].value == "off");

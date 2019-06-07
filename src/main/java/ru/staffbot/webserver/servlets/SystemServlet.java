@@ -21,7 +21,6 @@ public class SystemServlet extends MainServlet {
             super(PageType.SYSTEM, accountService);
         }
 
-    //private ArrayList<String>[] dbcleanVariables = {};
     private List<String> dbcleanVariables = Arrays.asList(
             "dbclean_journal_value",
             "dbclean_journal_measure",
@@ -31,10 +30,35 @@ public class SystemServlet extends MainServlet {
             "dbclean_auto_value",
             "dbclean_auto_measure",
             "dbclean_auto_start");
+
     // Вызывается при запросе странице с сервера
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map<String, Object> pageVariables = new HashMap();
+
+        Database.cleaner.refresh();
+
+        for (String variable : dbcleanVariables)
+            if (!variable.contains("_measure") && !variable.contains("_cleaning"))
+                pageVariables.put(variable, (new Settings(variable)).load());
+
+        for (String variable : dbcleanVariables)
+            if (variable.contains("_measure")){
+                List<String> values = (variable.contains("_auto_")) ?
+                        Arrays.asList("minute", "hour", "day") : Arrays.asList("record", "day");
+                String dbValue = (new Settings(variable)).load();
+                for (String value : values)
+                    pageVariables.put(variable + "_" + value,
+                            dbValue.equalsIgnoreCase(value) ? "selected" : "");
+            }
+
+        String variable = "dbclean_auto_cleaning";
+        List<String> values = Arrays.asList("on", "off");
+        for (String value : values)
+            pageVariables.put(variable + "_" + value,
+                    (new Settings(variable)).load().equalsIgnoreCase(value) ? "checked" : "");
+
+
         pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("system_display", Database.connected() ? "inline-table" : "none");
@@ -46,10 +70,15 @@ public class SystemServlet extends MainServlet {
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getParameter("dbclean_apply") != null){
-            for(String variable : dbcleanVariables)
-            {
+            for (String variable : dbcleanVariables)
                 (new Settings(variable)).save(request.getParameter(variable));
-            }
+            Database.cleaner.update();
+        }
+        if (request.getParameter("dbclean_now") != null){
+            for (String variable : dbcleanVariables)
+                if (!variable.contains("_auto_"))
+                    (new Settings(variable)).save(request.getParameter(variable));
+            Database.cleaner.clean();
         }
         boolean exiting = false;
         if (request.getParameter("system_shutdown") != null) exiting = shutdown(false);
