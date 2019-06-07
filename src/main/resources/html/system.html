@@ -19,8 +19,8 @@
             </td>
             <td>
                 <select name="dbclean_journal_measure" style="width:100%">
-                    <option>строк</option>
-                    <option>суток</option>
+                    <option value="record">строк</option>
+                    <option value="day">суток</option>
                 </select>
             </td>
         </tr>
@@ -33,8 +33,8 @@
             </td>
             <td>
                 <select name="dbclean_tables_measure" style="width:100%">
-                    <option>строк</option>
-                    <option>суток</option>
+                    <option value="record">строк</option>
+                    <option value="day">суток</option>
                 </select>
             </td>
         </tr>
@@ -47,7 +47,7 @@
         </tr>
         <tr>
             <td>
-                <input name="dbclean_radiobox" type="radio" value="off" onclick="system_radioboxClick();">
+                <input name="dbclean_auto_cleaning" type="radio" value="off" onclick="system_radioboxClick();">
             </td>
             <td align="left">
                 Отключить автоматическую очистку
@@ -55,7 +55,7 @@
         </tr>
         <tr>
             <td>
-                <input name="dbclean_radiobox" type="radio" value="on" onclick="system_radioboxClick();">
+                <input name="dbclean_auto_cleaning" type="radio" value="on" onclick="system_radioboxClick();">
             </td>
             <td align="left">
                Запускать автоматическую очистку каждые
@@ -65,9 +65,9 @@
             </td>
             <td>
                 <select name="dbclean_auto_measure" style="width:100%">
-                    <option>минут</option>
-                    <option>часов</option>
-                    <option>суток</option>
+                    <option value="minute">минут</option>
+                    <option value="hour">часов</option>
+                    <option value="day">суток</option>
                 </select>
             </td>
         </tr>

@@ -3,14 +3,14 @@ package ru.staffbot.webserver.servlets;
 import ru.staffbot.database.Database;
 import ru.staffbot.database.journal.Journal;
 import ru.staffbot.database.journal.NoteType;
+import ru.staffbot.database.settings.Settings;
 import ru.staffbot.webserver.AccountService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -21,6 +21,16 @@ public class SystemServlet extends MainServlet {
             super(PageType.SYSTEM, accountService);
         }
 
+    //private ArrayList<String>[] dbcleanVariables = {};
+    private List<String> dbcleanVariables = Arrays.asList(
+            "dbclean_journal_value",
+            "dbclean_journal_measure",
+            "dbclean_tables_value",
+            "dbclean_tables_measure",
+            "dbclean_auto_cleaning",
+            "dbclean_auto_value",
+            "dbclean_auto_measure",
+            "dbclean_auto_start");
     // Вызывается при запросе странице с сервера
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -35,6 +45,12 @@ public class SystemServlet extends MainServlet {
     // Вызывается при отправке страницы на сервер
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (request.getParameter("dbclean_apply") != null){
+            for(String variable : dbcleanVariables)
+            {
+                (new Settings(variable)).save(request.getParameter(variable));
+            }
+        }
         boolean exiting = false;
         if (request.getParameter("system_shutdown") != null) exiting = shutdown(false);
         if (request.getParameter("system_reboot") != null) exiting = shutdown(true);
@@ -43,6 +59,7 @@ public class SystemServlet extends MainServlet {
             //response.getWriter().println(PageGenerator.toCode("Прощай юный мой друг!"));
             System.exit(0);
         } else
+
         doGet(request, response);
     }
 
