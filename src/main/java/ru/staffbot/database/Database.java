@@ -2,13 +2,9 @@ package ru.staffbot.database;
 
 import ru.staffbot.database.journal.Journal;
 import ru.staffbot.database.journal.NoteType;
-import ru.staffbot.database.configs.Configs;
-import ru.staffbot.database.settings.Settings;
 import ru.staffbot.database.users.User;
-import ru.staffbot.database.users.Users;
 
 import java.sql.*;
-import java.util.Date;
 
 
 public class Database {
@@ -27,13 +23,15 @@ public class Database {
 
     public static Boolean DROP = false;
 
+    public static DBCleaner bdCleaner;
+
     private static Connection connection;
+
+    private static Exception exception = new Exception("Попытки подключения не было");
 
     public static Connection getConnection () {
         return connection;
     }
-
-    private static Exception exception = new Exception("Попытки подключения не было");;
 
     public static Exception getException() {
         return exception;
@@ -43,22 +41,19 @@ public class Database {
         return (exception.getMessage().equals(""));
     }
 
-    public static boolean connect(){
+    public static boolean init(){
         exception = new Exception("");
         try {
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD));
             createDatabase(DROP);
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD), NAME);
+            bdCleaner = new DBCleaner();
             Journal.erase();
             Journal.add("База данных " + NAME + " готова к использованию");
         } catch (Exception exception) {
             Database.exception = exception;
         }
         return connected();
-    }
-
-    public static boolean init(){
-        return connect();
     }
 
     private static boolean dbExists() throws Exception{

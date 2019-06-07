@@ -4,6 +4,8 @@ import ru.staffbot.database.DBTable;
 import ru.staffbot.database.Database;
 import ru.staffbot.database.journal.Journal;
 import ru.staffbot.database.journal.NoteType;
+import ru.staffbot.utils.Converter;
+
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
@@ -62,6 +64,22 @@ public class Settings extends DBTable {
             return null;
         }
         return settingValue;
+    }
+
+    public boolean loadAsBollean(String trueValue, boolean defaultValue){
+        String stringValue = load();
+        if(stringValue == null) return defaultValue;
+        return stringValue.equalsIgnoreCase(trueValue);
+    }
+
+    public long loadAsLong(long defaultValue){
+        String stringValue = load();
+        if(stringValue == null) return defaultValue;
+        try {
+            return Long.valueOf(stringValue);
+        } catch (NumberFormatException exception) {
+            return defaultValue;
+        }
     }
 
     public int delete(){
