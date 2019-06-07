@@ -39,7 +39,7 @@ public class PageGenerator {
         //return stream.toString();
     }
 
-    private static String toCode(String data) {
+    public static String toCode(String data) {
         StringBuffer result = new StringBuffer("");
         for (int i = 0; i < data.length(); i++) {
             String c = data.substring(i, i + 1);

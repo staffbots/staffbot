@@ -29,20 +29,24 @@ public class SystemServlet extends MainServlet {
         pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("system_display", Database.connected() ? "inline-table" : "none");
         String content = PageGenerator.getPage(pageType.getName() + ".html", pageVariables);
-        //String content = PageGenerator.getPage("sys.html", pageVariables);
         super.doGet(request, response, content);
     }
 
     // Вызывается при отправке страницы на сервер
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (request.getParameter("system_shutdown") != null) shutdown(false);
-        if (request.getParameter("system_reboot") != null) shutdown(true);
-        if (request.getParameter("system_exit") != null) System.exit(0);
+        boolean exiting = false;
+        if (request.getParameter("system_shutdown") != null) exiting = shutdown(false);
+        if (request.getParameter("system_reboot") != null) exiting = shutdown(true);
+        if (request.getParameter("system_exit") != null) exiting = true;
+        if (exiting) {
+            //response.getWriter().println(PageGenerator.toCode("Прощай юный мой друг!"));
+            System.exit(0);
+        } else
         doGet(request, response);
     }
 
-    public static void shutdown(boolean reboot) throws RuntimeException {
+    public static boolean shutdown(boolean reboot) throws RuntimeException {
         String operatingSystem = System.getProperty("os.name").toLowerCase();
         String shutdownCommand = (operatingSystem.contains("windows")) ?
             "shutdown -" + (reboot ? "r" : "s") + " -t 0" :
@@ -51,8 +55,9 @@ public class SystemServlet extends MainServlet {
             Runtime.getRuntime().exec(shutdownCommand);
         } catch (IOException exception) {
             Journal.add("Ошибка выполнения команды " + shutdownCommand + "\n" + exception.getMessage(), NoteType.ERROR);
+            return false;
         }
-        System.exit(0);
+        return true;
     }
 
     }
