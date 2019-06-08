@@ -39,12 +39,13 @@ public class MainWindow extends Application{
             stage.getIcons().add(new Image(
                 getClass().getResourceAsStream("/img/icon.png")));
             stage.setOnCloseRequest((WindowEvent event1) -> {
-                Journal.add("Close application by GUI");
+                Journal.add("Закрытие программы из пользовательского приложения на сервере", NoteType.WRINING);
                 System.exit(0);
             });
             stage.show();
         } catch (Exception exception) {
             Journal.add(exception.getMessage());
+            Journal.add("Закрытие программы из-за ошибки пользовательского приложения на сервере", NoteType.ERROR);
             System.exit(0);
         }
     }

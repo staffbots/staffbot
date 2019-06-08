@@ -1,5 +1,6 @@
 package ru.staffbot.utils.levers;
 
+import ru.staffbot.database.DBTable;
 import ru.staffbot.utils.values.Value;
 import ru.staffbot.utils.values.ValueType;
 
@@ -66,4 +67,6 @@ public interface Lever{
     ValueType getValueType();
 
     boolean createTable();
+
+    DBTable getTable();
 }

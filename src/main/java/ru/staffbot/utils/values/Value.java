@@ -209,5 +209,8 @@ abstract public class Value extends DBTable {
             set(Long.parseLong(value));
     }
 
+    public DBTable getTable(){
+        return this;
+    }
 }
 

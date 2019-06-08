@@ -45,8 +45,9 @@ public class StatusServlet extends MainServlet {
         String radiobox = accountService.getAttribute(session,"status_radiobox");
         boolean noneChoice = (radiobox.equals("") || radiobox.equalsIgnoreCase("none_choice"));
 
-        pageVariables.put("status_fromdate", period.fromDate.getValueAsString());
-        pageVariables.put("status_todate", period.toDate.getValueAsString());
+        pageVariables.put("dateformat", Journal.DATE_FORMAT.getFormat());
+        pageVariables.put("status_fromdate", period.getFromDateAsString());
+        pageVariables.put("status_todate", period.getToDateAsString());
         pageVariables.put("radio_value", noneChoice ? "checked" : "");
         pageVariables.put("status_devicelist", getDeviceList(session));
         pageVariables.put("status_display", Database.connected() ? "inline-table" : "none");

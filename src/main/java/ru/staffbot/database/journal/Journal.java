@@ -89,18 +89,24 @@ public class Journal extends DBTable {
                             condition += noteType.getValue();
                             condition += ")";
                     }
-            condition = (condition == null) ? "(noteType = -1) AND" : condition + ") AND ";
+            condition = (condition == null) ? "(noteType = -1)" : condition + ")";
+            String fromCondition = (period.fromDate == null) ? "" : " AND (? <= moment)";
+            String toCondition = (period.toDate == null) ? "" : " AND (moment <= ?)";
             PreparedStatement statement = Database.getConnection().prepareStatement(
                     "SELECT moment, note, noteType FROM " + getTableName() + " WHERE "
-                            + condition
-                            + "(? <= moment) AND (moment <= ?) ORDER BY moment");
-            // Формат даты для журнала (DateFormat.TIMEDATE) не учитывает секунды,
-            // которые прошли с начала минуты (для начальной даты):
-            long time = period.fromDate.getValue().getTime() - period.fromDate.getValue().getTime() % DATE_FORMAT.accuracy.getValue();
-            statement.setTimestamp(1, new Timestamp(time));
-            // и которые остались до конца минуты (для конечной даты):
-            time = period.toDate.getValue().getTime() + (DATE_FORMAT.accuracy.getValue() - period.toDate.getValue().getTime() % DATE_FORMAT.accuracy.getValue());
-            statement.setTimestamp(2, new Timestamp(time));
+                            + condition + fromCondition + toCondition
+                            + " ORDER BY moment");
+            if (period.fromDate != null) {
+                // Формат даты для журнала (DateFormat.TIMEDATE) не учитывает секунды,
+                // которые прошли с начала минуты (для начальной даты):
+                long time = period.fromDate.getTime() - period.fromDate.getTime() % DATE_FORMAT.accuracy.getValue();
+                statement.setTimestamp(1, new Timestamp(time));
+            }
+            if (period.toDate != null) {
+                // и которые остались до конца минуты (для конечной даты):
+                long time = period.toDate.getTime() + (DATE_FORMAT.accuracy.getValue() - period.toDate.getTime() % DATE_FORMAT.accuracy.getValue());
+                statement.setTimestamp((period.fromDate == null) ? 1 : 2, new Timestamp(time));
+            }
             if(statement.execute()) {
                 ResultSet resultSet = statement.getResultSet();
                 while (resultSet.next()) {

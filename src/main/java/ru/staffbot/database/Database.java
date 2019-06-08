@@ -48,11 +48,11 @@ public class Database {
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD));
             createDatabase(DROP);
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD), NAME);
-            Journal.erase();
-            Journal.add("База данных " + NAME + " готова к использованию");
             cleaner = new Cleaner();
+            Journal.add("База данных " + NAME + " готова к использованию");
         } catch (Exception exception) {
             Database.exception = exception;
+            Journal.add("Ошибка инициализации базы данных " + NAME + " " + exception.getMessage());
         }
         return connected();
     }

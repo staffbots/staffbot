@@ -4,7 +4,7 @@
     <table style="text-align:left; background: #${page_bg_color}" cellpadding="3">
         <tbody>
         <tr>
-            <td style="font-weight: bold" colspan="2" rowspan="1">Период:</td>
+            <td style="font-weight: bold" colspan="3">Период:</td>
             <td>
                 <input type="checkbox" name="journal_confirm" ${journal_confirm}>
             </td>
@@ -13,9 +13,12 @@
             </td>
         </tr>
         <tr>
+            <td>
+                <input type="checkbox" name="journal_fromdate_on" ${journal_fromdate_on} onclick="journal_fromdate_onClick();">
+            </td>
             <td>c</td>
             <td>
-                <input name="journal_fromdate" value="${journal_fromdate}" size="${journal_datesize}">
+                <input name="journal_fromdate" value="${journal_fromdate}" size="${journal_datesize}" placeholder="${dateformat}">
             </td>
             <td>
                 <input type="checkbox" name="journal_wrining" ${journal_wrining}>
@@ -23,9 +26,12 @@
             <td>Предуреждения</td>
         </tr>
         <tr>
+            <td>
+                <input type="checkbox" name="journal_todate_on" ${journal_todate_on} onclick="journal_todate_onClick();">
+            </td>
             <td>по</td>
             <td>
-                <input name="journal_todate" value="${journal_todate}" size="${journal_datesize}">
+                <input name="journal_todate" value="${journal_todate}" size="${journal_datesize}" placeholder="${dateformat}">
             </td>
             <td>
                 <input type="checkbox" name="journal_error" ${journal_error}>
@@ -38,7 +44,7 @@
             </td>
         </tr>
         <tr>
-            <td colspan="6">
+            <td colspan="7">
 
                 <table style="width: 100%; background: #${site_bg_color}" cellpadding="3" cellspacing="0">
                     <tbody>
@@ -53,3 +59,5 @@
 
 </form>
 </p>
+<script type="text/javascript" src="/resource?name=/html/scripts/main.js"></script>
+<script type="text/javascript"> journal_fromdate_onClick(); journal_todate_onClick(); </script>

@@ -44,6 +44,10 @@ public enum DateFormat {
         return value;
     }
 
+    public String getFormat() {
+        return format;
+    }
+
     public String get() {
         return format;
     }

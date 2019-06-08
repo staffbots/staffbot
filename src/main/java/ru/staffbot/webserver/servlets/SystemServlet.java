@@ -1,6 +1,7 @@
 package ru.staffbot.webserver.servlets;
 
 import ru.staffbot.database.Database;
+import ru.staffbot.database.cleaner.Cleaner;
 import ru.staffbot.database.journal.Journal;
 import ru.staffbot.database.journal.NoteType;
 import ru.staffbot.database.settings.Settings;
@@ -59,6 +60,7 @@ public class SystemServlet extends MainServlet {
                     (new Settings(variable)).load().equalsIgnoreCase(value) ? "checked" : "");
 
 
+        pageVariables.put("dateformat", Cleaner.DATE_FORMAT.getFormat());
         pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("system_display", Database.connected() ? "inline-table" : "none");
@@ -81,23 +83,25 @@ public class SystemServlet extends MainServlet {
             Database.cleaner.clean();
         }
         boolean exiting = false;
-        if (request.getParameter("system_shutdown") != null) exiting = shutdown(false);
-        if (request.getParameter("system_reboot") != null) exiting = shutdown(true);
+        String message = " из веб-интерфейса (пользователь: " + accountService.getUserLogin(request.getSession()) + ", адрес: " + request.getRemoteAddr() + ")";
+        if (request.getParameter("system_shutdown") != null) exiting = shutdown(false, "Выключение системы " + message);
+        if (request.getParameter("system_reboot") != null) exiting = shutdown(true, "Перезагрузка системы " + message);
         if (request.getParameter("system_exit") != null) exiting = true;
         if (exiting) {
-            //response.getWriter().println(PageGenerator.toCode("Прощай юный мой друг!"));
+            Journal.add("Закрытие программы" + message , NoteType.WRINING);
             System.exit(0);
         } else
 
         doGet(request, response);
     }
 
-    public static boolean shutdown(boolean reboot) throws RuntimeException {
+    public static boolean shutdown(boolean reboot, String message) throws RuntimeException {
         String operatingSystem = System.getProperty("os.name").toLowerCase();
         String shutdownCommand = (operatingSystem.contains("windows")) ?
             "shutdown -" + (reboot ? "r" : "s") + " -t 0" :
             "shutdown -" + (reboot ? "r" : "h") + " now";
         try {
+            Journal.add(message, NoteType.WRINING);
             Runtime.getRuntime().exec(shutdownCommand);
         } catch (IOException exception) {
             Journal.add("Ошибка выполнения команды " + shutdownCommand + "\n" + exception.getMessage(), NoteType.ERROR);

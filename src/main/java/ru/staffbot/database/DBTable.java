@@ -88,7 +88,7 @@ public abstract class DBTable {
 
     protected PreparedStatement statement;
 
-    protected PreparedStatement getStatement(String query) throws Exception {
+    public PreparedStatement getStatement(String query) throws Exception {
         if (!Database.connected())
             throw Database.getException();
         return Database.getConnection().prepareStatement(query);
@@ -99,7 +99,8 @@ public abstract class DBTable {
         if (!tableExists()) return null;
         try {
             PreparedStatement statement = getStatement(
-                    "SELECT " + fields + " FROM " + getTableName() + " WHERE " + condition);
+                "SELECT " + fields + " FROM " + getTableName() +
+                ((condition == null) ? "" : " WHERE " + condition));
             statement.execute();
             if (statement.execute())
                 return statement.getResultSet();
@@ -109,17 +110,45 @@ public abstract class DBTable {
         return null;
     }
 
-    public int deleteFromTable(String condition){
+    public long deleteFromTableByCondition(String condition){
+        return deleteFromTable("DELETE FROM " + getTableName() + " WHERE " + condition);
+    }
+
+    public long deleteFromTable(PreparedStatement statement){
         if (!Database.connected()) return 0;
         if (!tableExists()) return 0;
         try {
-            PreparedStatement statement = getStatement(
-                    "DELETE FROM " + getTableName() + " WHERE " + condition);
-            return statement.executeUpdate();
+            long count = statement.executeUpdate();
+            if (count > 0)
+                Journal.add("Удаление в таблице " + getTableName() + ". Удалено записей: " + count);
+            return count;
+        } catch (Exception exception) {
+            return 0;
+        }
+
+    }
+
+    public long deleteFromTable(String query){
+        if (!Database.connected()) return 0;
+        if (!tableExists()) return 0;
+        try {
+            return deleteFromTable(getStatement(query));
         } catch (Exception exception) {
             Journal.add(exception.getMessage(), NoteType.ERROR);
             return 0;
         }
     }
 
+    public long getRecordsCount(){
+        ResultSet resultSet = getSelectResult("COUNT(1)", null);
+        if (resultSet == null) return 0;
+        try {
+            if (resultSet.next())
+                return resultSet.getLong(1);
+            else
+                return 0;
+        } catch (SQLException e) {
+            return 0;
+        }
+    }
 }

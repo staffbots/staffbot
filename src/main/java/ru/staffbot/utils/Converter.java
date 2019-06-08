@@ -105,10 +105,15 @@ public class Converter {
         }
     }
 
-    public static String dateToString(Date value, DateFormat format){
+    public static String dateToString(Date value, DateFormat format, String defaultValue){
+        if (value == null) return defaultValue;
         SimpleDateFormat simpleFormat = new SimpleDateFormat();
         simpleFormat.applyPattern(format.get());
         return simpleFormat.format(value);
+    }
+
+    public static String dateToString(Date value, DateFormat format){
+        return dateToString(value, format, "");
     }
 
     public static long[] doublesToLongs(Double... values) {

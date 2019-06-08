@@ -13,16 +13,19 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class JournalServlet extends MainServlet {
 
     public Journal journal = new Journal();
 
+    private ArrayList<String> checkboxes;
+
     public JournalServlet(AccountService accountService) {
         super(PageType.JOURNAL, accountService);
+        checkboxes = new ArrayList<>(Arrays.asList("journal_fromdate_on", "journal_todate_on"));
+        for (NoteType pageType : NoteType.values())
+            checkboxes.add("journal_" + pageType.name().toLowerCase());
     }
 
     // Вызывается при запросе странице с сервера
@@ -34,19 +37,6 @@ public class JournalServlet extends MainServlet {
         HttpSession session = request.getSession();
         Map<String, Object> pageVariables = new HashMap();
 
-        Map<Integer, Boolean> checkboxes = new HashMap<>();
-        for (NoteType pageType : NoteType.values()) {
-            String checkboxName = "journal_" + pageType.name().toLowerCase();
-            String checkboxValueStr = accountService.getAttribute(session,checkboxName); // Читаем из сессии
-            if (checkboxValueStr.equals("")) {
-                checkboxValueStr = "true"; // Значение при первой загрузке
-                accountService.setAttribute(session, checkboxName, checkboxValueStr);
-            }
-            Boolean checkboxValue = Boolean.parseBoolean(checkboxValueStr);
-            pageVariables.put(checkboxName, checkboxValue ? "checked" : "");
-            checkboxes.put(pageType.getValue(), checkboxValue);
-        }
-
         String toDateStr = accountService.getAttribute(session,"journal_todate");
         if (toDateStr.equals("")) toDateStr = request.getParameter("journal_todate");
 
@@ -55,12 +45,35 @@ public class JournalServlet extends MainServlet {
 
         journal.period.set(fromDateStr, toDateStr);
 
-        pageVariables.put("journal_fromdate", journal.period.fromDate.getValueAsString());
-        pageVariables.put("journal_todate", journal.period.toDate.getValueAsString());
+        Map<Integer, Boolean> typesForShow = new HashMap<>();
+
+        for (String checkboxName : checkboxes){
+            String checkboxValueStr = accountService.getAttribute(session,checkboxName); // Читаем из сессии
+            if (checkboxValueStr.equals("")) {
+                checkboxValueStr = "true"; // Значение при первой загрузке
+                accountService.setAttribute(session, checkboxName, checkboxValueStr);
+            }
+            Boolean checkboxValue = Boolean.parseBoolean(checkboxValueStr);
+            pageVariables.put(checkboxName, checkboxValue ? "checked" : "");
+            for (NoteType pageType : NoteType.values())
+                if (checkboxName.equalsIgnoreCase("journal_" + pageType.name()))
+                    typesForShow.put(pageType.getValue(), checkboxValue);
+
+            if (checkboxName.equals("journal_fromdate_on") && checkboxValue && (journal.period.fromDate == null))
+                journal.period.initFromDate();
+
+            if (checkboxName.equals("journal_todate_on") && checkboxValue && (journal.period.toDate == null))
+                journal.period.initToDate();
+        }
+
+
+        pageVariables.put("dateformat", Journal.DATE_FORMAT.getFormat());
+        pageVariables.put("journal_fromdate", journal.period.getFromDateAsString());
+        pageVariables.put("journal_todate", journal.period.getToDateAsString());
         pageVariables.put("journal_datesize", journal.DATE_FORMAT.get().length());
         pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("page_bg_color", page_bg_color);
-        pageVariables.put("journal_page", getJournalPage(checkboxes));
+        pageVariables.put("journal_page", getJournalPage(typesForShow));
         String content = PageGenerator.getPage(pageType.getName() + ".html", pageVariables);
         super.doGet(request, response, content);
         //request.setAttribute("fromdate", Converter.dateToString(fromDate, DateFormat.TIMEDATE));
@@ -69,8 +82,7 @@ public class JournalServlet extends MainServlet {
     // Вызывается при отправке страницы на сервер
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         HttpSession session = request.getSession();
-        for (NoteType pageType : NoteType.values()) {
-            String checkboxName = "journal_" + pageType.name().toLowerCase();
+        for (String checkboxName : checkboxes){
             String checkboxValueStr = request.getParameter(checkboxName); // Читаем со страницы
             checkboxValueStr = (checkboxValueStr == null) ? "false" : "true";
             accountService.setAttribute(session, checkboxName, checkboxValueStr);
@@ -96,6 +108,10 @@ public class JournalServlet extends MainServlet {
                 pageVariables.put("note_value", note.getMessage());
                 htmlCode += PageGenerator.getPage("journal/note.html",pageVariables);
             }
+            pageVariables.put("note_title", "");
+            pageVariables.put("note_date", "Всего выбрано");
+            pageVariables.put("note_value", journalList.size() + " сообщений");
+            htmlCode += PageGenerator.getPage("journal/note.html",pageVariables);
         }
         return htmlCode;
     }

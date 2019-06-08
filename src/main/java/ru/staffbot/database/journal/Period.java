@@ -2,16 +2,24 @@ package ru.staffbot.database.journal;
 
 import ru.staffbot.utils.Converter;
 import ru.staffbot.utils.DateFormat;
-import ru.staffbot.utils.values.DateValue;
 
+import java.util.Calendar;
 import java.util.Date;
 
 public class Period {
 
     public DateFormat dateFormat;
 
-    public DateValue fromDate;
-    public DateValue toDate;
+    public Date fromDate;
+    public Date toDate;
+
+    public String getFromDateAsString(){
+        return Converter.dateToString(fromDate, dateFormat);
+    }
+
+    public String getToDateAsString(){
+        return Converter.dateToString(toDate, dateFormat);
+    }
 
     public Period(DateFormat dateFormat){
         this.dateFormat = dateFormat;
@@ -29,31 +37,54 @@ public class Period {
     }
 
     public void set(){
-        set("", "");
+        fromDate = null;
+        toDate = null;
     }
 
 
     public void set(String fromDate, String toDate){
-        Date defaultFromDate = new Date();
-        Date defaultToDate = new Date(defaultFromDate.getTime() - dateFormat.accuracy.getNext().getValue());
-        set(
-                Converter.stringToDate(fromDate, dateFormat, defaultFromDate),
-                Converter.stringToDate(toDate, dateFormat, defaultToDate));
+        set(Converter.stringToDate(fromDate, dateFormat, null),
+            Converter.stringToDate(toDate, dateFormat, null));
     }
 
     public void set(Date fromDate, Date toDate){
+        if ((fromDate != null) && (toDate != null))
         if (fromDate.after(toDate)){
             Date date = fromDate;
             fromDate = toDate;
             toDate = date;
         }
-        if (this.fromDate == null)
-            this.fromDate = new DateValue("journal_fromDate","",fromDate, dateFormat,false);
-        else this.fromDate.setValue(fromDate);
-
-        if (this.toDate == null)
-            this.toDate = new DateValue("journal_todate","", toDate, dateFormat,false);
-        else this.toDate.setValue(toDate);
+        this.fromDate = fromDate;
+        this.toDate  = toDate;
     }
 
+    public void initFromDate(){
+        Date date = (toDate == null) ? new Date() : toDate;
+        fromDate = atStartOfDay(date);
+    }
+
+    public void initToDate(){
+        Date date = (fromDate == null) ? new Date() : fromDate;
+        toDate = atEndOfDay(date);
+    }
+
+    public Date atEndOfDay(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 23);
+        calendar.set(Calendar.MINUTE, 59);
+        calendar.set(Calendar.SECOND, 59);
+        calendar.set(Calendar.MILLISECOND, 999);
+        return calendar.getTime();
+    }
+
+    public Date atStartOfDay(Date date) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+        return calendar.getTime();
+    }
 }
