@@ -12,6 +12,8 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Предоставляет функцию, которая заполняет html-шаблон данными
@@ -47,4 +49,22 @@ public class PageGenerator {
         }
         return result.toString();
     }
+
+    public static String fromCode(String data) {
+        StringBuffer result = new StringBuffer("");
+        String regex = "&#\\d{4};";
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(data);
+        int index = 0;
+        while (matcher.find()) {
+            int code = Integer.parseInt(data.substring(matcher.start() + 2, matcher.end()-1));
+            if (matcher.start() != index)
+                result.append(data.substring(index,matcher.start()));
+            result.append((char)code);
+            index = matcher.end();
+        }
+        result.append(data.substring(index, data.length()));
+        return result.toString();
+    }
+
 }

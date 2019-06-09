@@ -76,6 +76,7 @@ public abstract class Staffbot{
             Database.USER = property.getProperty("db.user", Database.USER);
             Database.PASSWORD = property.getProperty("db.password", Database.PASSWORD);
             Database.DROP = Boolean.parseBoolean(property.getProperty("db.drop", Database.DROP.toString()));
+            MainWindow.USED = Boolean.parseBoolean(property.getProperty("gui.used", MainWindow.USED.toString()));
             Devices.USED = Boolean.parseBoolean(property.getProperty("pi.used", Devices.USED.toString()));
             WebServer.PORT = Integer.parseInt(property.getProperty("web.port", WebServer.PORT.toString()));
             WebServer.ADMIN = property.getProperty("web.admin", WebServer.ADMIN);

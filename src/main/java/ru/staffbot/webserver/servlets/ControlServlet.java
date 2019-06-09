@@ -2,6 +2,7 @@ package ru.staffbot.webserver.servlets;
 
 import ru.staffbot.database.Database;
 import ru.staffbot.database.configs.Configs;
+import ru.staffbot.database.settings.Settings;
 import ru.staffbot.utils.levers.BooleanLever;
 import ru.staffbot.utils.levers.Lever;
 import ru.staffbot.utils.levers.Levers;
@@ -13,6 +14,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,6 +39,9 @@ public class ControlServlet extends MainServlet {
             else
                 pageVariables.put(statusName, status == Tasks.getStatus() ? "disabled" : "");
         }
+
+//        pageVariables.put("control_status", Tasks.getStatus());
+        pageVariables.put("control_start_time", Long.toString(Tasks.getStartTime()));
         pageVariables.put("control_display", Database.connected() ? "inline-table" : "none");
         pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("control_leverlist", getLeverList());
@@ -53,6 +58,7 @@ public class ControlServlet extends MainServlet {
             for (TaskStatus status : TaskStatus.values())
                 if (request.getParameter("control_" + status.name().toLowerCase()) != null)
                     Tasks.setStatus(status);
+
             // Обработка кнопок для работы с конфигурацией (сохранить, загрузить, удалить)
             String configName = request.getParameter("control_configname");
             if (configName != null)

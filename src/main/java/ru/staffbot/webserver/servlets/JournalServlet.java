@@ -66,14 +66,15 @@ public class JournalServlet extends MainServlet {
                 journal.period.initToDate();
         }
 
-
+        String searchString = accountService.getAttribute(session,"journal_search");
+        pageVariables.put("journal_search", searchString);
         pageVariables.put("dateformat", Journal.DATE_FORMAT.getFormat());
         pageVariables.put("journal_fromdate", journal.period.getFromDateAsString());
         pageVariables.put("journal_todate", journal.period.getToDateAsString());
         pageVariables.put("journal_datesize", journal.DATE_FORMAT.get().length());
         pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("page_bg_color", page_bg_color);
-        pageVariables.put("journal_page", getJournalPage(typesForShow));
+        pageVariables.put("journal_page", getJournalPage(typesForShow, searchString));
         String content = PageGenerator.getPage(pageType.getName() + ".html", pageVariables);
         super.doGet(request, response, content);
         //request.setAttribute("fromdate", Converter.dateToString(fromDate, DateFormat.TIMEDATE));
@@ -87,14 +88,16 @@ public class JournalServlet extends MainServlet {
             checkboxValueStr = (checkboxValueStr == null) ? "false" : "true";
             accountService.setAttribute(session, checkboxName, checkboxValueStr);
         }
+        accountService.setAttribute(request.getSession(), "journal_search",
+                PageGenerator.fromCode(request.getParameter("journal_search")));
         accountService.setAttribute(request.getSession(),"journal_todate", request.getParameter("journal_todate"));
         accountService.setAttribute(request.getSession(),"journal_fromdate", request.getParameter("journal_fromdate"));
         doGet(request, response);
     }
 
     //
-    private String getJournalPage(Map<Integer, Boolean> typesForShow) {
-        ArrayList<Note> journalList = journal.getJournal(typesForShow);
+    private String getJournalPage(Map<Integer, Boolean> typesForShow, String searchString) {
+        ArrayList<Note> journalList = journal.getJournal(typesForShow, searchString);
         Map<String, Object> pageVariables = new HashMap();
         String htmlCode = "<tr><td><em>По указанному фильтру записей нет</em></td></tr>";
         if(!journalList.isEmpty()) {
@@ -109,8 +112,8 @@ public class JournalServlet extends MainServlet {
                 htmlCode += PageGenerator.getPage("journal/note.html",pageVariables);
             }
             pageVariables.put("note_title", "");
-            pageVariables.put("note_date", "Всего выбрано");
-            pageVariables.put("note_value", journalList.size() + " сообщений");
+            pageVariables.put("note_date", "<em>Выбрано записей:</em>");
+            pageVariables.put("note_value", "<em>" + journalList.size() + "</em>");
             htmlCode += PageGenerator.getPage("journal/note.html",pageVariables);
         }
         return htmlCode;

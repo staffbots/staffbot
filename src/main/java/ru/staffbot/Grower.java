@@ -1,10 +1,8 @@
 package ru.staffbot;
 
 import com.pi4j.io.gpio.RaspiPin;
-import ru.staffbot.database.settings.Settings;
 import ru.staffbot.utils.Converter;
 import ru.staffbot.utils.DateFormat;
-import ru.staffbot.utils.DateScale;
 import ru.staffbot.utils.devices.hardware.SensorDHT22Device;
 import ru.staffbot.utils.devices.hardware.SonarHCSR04Device;
 import ru.staffbot.utils.levers.*;
@@ -19,7 +17,6 @@ import java.util.Date;
 public class Grower extends Staffbot {
 
     public static void main(String[] args) {
-
         propertiesInit(); // Загружаем конфигурацию сборки
         databaseInit(); // Подключаемся к базе данных
         devicesInit(); // Инициализируем список устройств

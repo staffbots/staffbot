@@ -39,8 +39,8 @@ public class EntryServlet extends MainServlet {
 
     // Вызывается при отправке страницы
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-        String login = request.getParameter("entry_login");
-        String password = request.getParameter("entry_password");
+        String login = PageGenerator.fromCode(request.getParameter("entry_login"));
+        String password = PageGenerator.fromCode(request.getParameter("entry_password"));
         if (accountService.verifyUser(login, password) > -1) {
             accountService.addSession(request.getSession(), login);
             response.sendRedirect("/control");

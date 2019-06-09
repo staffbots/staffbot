@@ -22,10 +22,14 @@ public class MainWindow extends Application{
 
     private static String title;
 
+    public static Boolean USED = true;
+
     public static void init(String windowTilte){
-        title = windowTilte;
-        Journal.add("Главное окно приложения открыто");
-        launch();
+        if (USED) {
+            title = windowTilte;
+            Journal.add("Главное окно приложения открыто");
+            launch();
+        }
     }
 
     @Override

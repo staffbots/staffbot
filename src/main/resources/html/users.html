@@ -3,25 +3,25 @@
     <table style="text-align:right; background: #${page_bg_color}" cellpadding="3">
         <tr>
             <td>
-                <input id="users_radiobox_new" name="users_radiobox" type="radio" value="new" ${users_radiobox_new} onclick="users_radioboxClick();">
+                <input name="users_radiobox" type="radio" value="new" onclick="users_radioboxClick();">
             </td>
             <td>
-                <input id="users_new_login" name="users_new_login" ${users_new_disabled} title="Новый пользователь" autocomplete="off"/>
+                <input name="users_new_login" title="Новый пользователь" placeholder="Новый логин..."/>
             </td>
             <td>
             </td>
         </tr>
         <tr>
                 <td>
-                    <input id="users_radiobox_old" name="users_radiobox" type="radio" value="old" ${users_radiobox_old} ${users_empty_enabled} onclick="users_radioboxClick();">
+                    <input name="users_radiobox" type="radio" value="old" checked onclick="users_radioboxClick();">
                 </td>
                 <td>
-                        <select id="users_select_login" name="users_select_login" style="text-align:right; width: 100%;" ${users_new_enabled} title="Существующий пользователь" onchange="users_radioboxClick();">
+                        <select name="users_select_login" style="text-align:right; width: 100%;" title="Существующий пользователь" onchange="this.form.submit();">
                             ${users_login_list}
                         </select>
                 </td>
                 <td align="center" nowrap="nowrap" valign="middle">
-                    <button id="users_delete" name="users_delete" value="users_delete" ${users_new_enabled} title="Удалить из БД конфигурацию с указанным именем">
+                    <button name="users_delete" value="users_delete" title="Удалить из БД конфигурацию с указанным именем">
                         Удалить
                     </button>
                 </td>
@@ -59,3 +59,5 @@
     </table>
 </form>
 </p>
+<script type="text/javascript" src="/resource?name=/html/scripts/main.js"></script>
+<script type="text/javascript"> users_radioboxClick(); </script>

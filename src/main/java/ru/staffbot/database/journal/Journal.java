@@ -65,17 +65,17 @@ public class Journal extends DBTable {
         period.set(fromDate, toDate);
     }
 
-    public ArrayList<Note> getJournal(Date fromDate, Date toDate, Map<Integer, Boolean> checkboxes){
+    public ArrayList<Note> getJournal(Date fromDate, Date toDate, Map<Integer, Boolean> checkboxes, String searchString){
         period.set(fromDate, toDate);
-        return getJournal(checkboxes);
+        return getJournal(checkboxes, searchString);
     }
 
-    public ArrayList<Note> getJournal(String fromDate, String toDate, Map<Integer, Boolean> checkboxes){
+    public ArrayList<Note> getJournal(String fromDate, String toDate, Map<Integer, Boolean> checkboxes, String searchString){
         period.set(fromDate, toDate);
-        return getJournal(checkboxes);
+        return getJournal(checkboxes, searchString);
     }
 
-    public ArrayList<Note> getJournal(Map<Integer, Boolean> typesForShow){
+    public ArrayList<Note> getJournal(Map<Integer, Boolean> typesForShow, String searchString){
         ArrayList<Note> journal = new ArrayList<>();
         try {
             String condition = null;
@@ -95,7 +95,7 @@ public class Journal extends DBTable {
             PreparedStatement statement = Database.getConnection().prepareStatement(
                     "SELECT moment, note, noteType FROM " + getTableName() + " WHERE "
                             + condition + fromCondition + toCondition
-                            + " ORDER BY moment");
+                            + " AND (LOWER(note) LIKE '%" + searchString.toLowerCase() + "%') ORDER BY moment");
             if (period.fromDate != null) {
                 // Формат даты для журнала (DateFormat.TIMEDATE) не учитывает секунды,
                 // которые прошли с начала минуты (для начальной даты):

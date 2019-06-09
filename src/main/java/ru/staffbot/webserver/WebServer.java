@@ -10,6 +10,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import ru.staffbot.database.journal.Journal;
 import ru.staffbot.database.journal.NoteType;
 import ru.staffbot.webserver.servlets.*;
+import ru.staffbot.windows.MainWindow;
 
 import java.net.*;
 
@@ -59,6 +60,8 @@ public class WebServer {
         try {
             server.start();
             Journal.add("Веб-сервер запущен");
+            if (!MainWindow.USED)
+                server.join();
         } catch (Exception e){
             Journal.add("Ошибка запуска веб-сервера", NoteType.ERROR);
             System.exit(0);
