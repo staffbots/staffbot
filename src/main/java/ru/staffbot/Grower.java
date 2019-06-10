@@ -1,12 +1,15 @@
 package ru.staffbot;
 
 import com.pi4j.io.gpio.RaspiPin;
+import ru.staffbot.database.journal.NoteType;
 import ru.staffbot.utils.Converter;
 import ru.staffbot.utils.DateFormat;
+import ru.staffbot.utils.DateScale;
 import ru.staffbot.utils.devices.hardware.SensorDHT22Device;
 import ru.staffbot.utils.devices.hardware.SonarHCSR04Device;
 import ru.staffbot.utils.levers.*;
 import ru.staffbot.utils.tasks.Task;
+import ru.staffbot.utils.tasks.TaskStatus;
 import ru.staffbot.utils.tasks.Tasks;
 import ru.staffbot.database.journal.Journal;
 import ru.staffbot.utils.devices.Devices;
@@ -38,17 +41,17 @@ public class Grower extends Staffbot {
      * <b>инициализация устройств</b><br>
      * Заполняется список устройств {@code WebServer.devices}<br>
      */
-    public static void devicesInit() {
+    private static void devicesInit() {
         Devices.init(  sensor, sonar, sunRelay, funRelay);
     }
 
-    public static SensorDHT22Device sensor = new SensorDHT22Device("sensor",
+    private static SensorDHT22Device sensor = new SensorDHT22Device("sensor",
             "Датчик температуры и влажности",RaspiPin.GPIO_07);
-    public static SonarHCSR04Device sonar = new SonarHCSR04Device("sonar",
+    private static SonarHCSR04Device sonar = new SonarHCSR04Device("sonar",
             "Сонар определения уровня воды, м", RaspiPin.GPIO_03, RaspiPin.GPIO_02);
-    public static RelayDevice sunRelay = new RelayDevice("sunRelay",
+    private static RelayDevice sunRelay = new RelayDevice("sunRelay",
             "Реле включения/выключения света", false, RaspiPin.GPIO_00);
-    public static RelayDevice funRelay = new RelayDevice("funRelay",
+    private static RelayDevice funRelay = new RelayDevice("funRelay",
             "Реле включения вентилятора", true, RaspiPin.GPIO_01);
 
 
@@ -61,34 +64,34 @@ public class Grower extends Staffbot {
      * Заполняется список рычагов управления {@code WebServer.levers}<br>
      * Внимание! Порядок перечисления групп и рычагов повторяется в веб-интерфейсе
      */
-    public static void leversInit() {
+    private static void leversInit() {
         Levers.initGroup("Освещение и вентиляция", sunriseLever, sunsetLever, funDelayLever);
         Levers.initGroup("Подготовка раствора", volumeLever, phLever, ecLever, soluteLever);
         Levers.initGroup("Орошение", dayRateLever, nightRateLever, durationLever);
         Journal.add("Рычаги управления успешно проинициализированы");
     }
 
-    public static DateLever sunriseLever = new DateLever("sunriseLever",
+    private static DateLever sunriseLever = new DateLever("sunriseLever",
             "Время включения света", "8:30", DateFormat.SHORTTIME);
-    public static DateLever sunsetLever = new DateLever("sunsetLever",
+    private static DateLever sunsetLever = new DateLever("sunsetLever",
             "Время выключения света", "16:45", DateFormat.SHORTTIME);
-    public static LongLever funDelayLever = new LongLever("funDelayLever",
+    private static LongLever funDelayLever = new LongLever("funDelayLever",
             "Инертность вентилятора, мин", 0, 20, 2 * 60);
 
-    public static LabelLever volumeLever = new LabelLever("52л",
+    private static LabelLever volumeLever = new LabelLever("52л",
             "Объём раствора");
-    public static DoubleLever phLever = new DoubleLever("phLever",
+    private static DoubleLever phLever = new DoubleLever("phLever",
             "Водородный показатель (кислотность), pH", 0.0, 5.6, 10.0);
-    public static DoubleLever ecLever = new DoubleLever("ecLever",
+    private static DoubleLever ecLever = new DoubleLever("ecLever",
             "Удельная электролитическая проводимость, EC", 0.0, 8.1, 10.0);
-    public static BooleanLever soluteLever = new BooleanLever("soluteLever",
+    private static BooleanLever soluteLever = new BooleanLever("soluteLever",
             "Подготовка раствора", false);
 
-    public static LongLever dayRateLever = new LongLever("dayRateLever",
+    private static LongLever dayRateLever = new LongLever("dayRateLever",
             "Дневная периодичность, мин", 0, 60, 24 * 60);
-    public static LongLever nightRateLever = new LongLever("nightRateLever",
+    private static LongLever nightRateLever = new LongLever("nightRateLever",
             "Ночьная периодичность, мин", 0, 120, 24 * 60);
-    public static LongLever durationLever = new LongLever("durationLever",
+    private static LongLever durationLever = new LongLever("durationLever",
             "Продолжительность, мин", 0, 15, 24 * 60);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -99,92 +102,89 @@ public class Grower extends Staffbot {
      * <b>инициализация задач</b><br>
      * Заполняется список задач {@code tasks}<br>
      */
-    public static void tasksInit() {
-        Tasks.init(initTask, sunriseTask, sunsetTask, funriseTask, funsetTask, irrigationTask);
+    private static void tasksInit() {
+        Tasks.init(lightTask, ventingTask, irrigationTask);
     }
 
     /**
-     * Расчёт времени запуска
+     * Управление светом
      */
-    public static Runnable initTask = () -> {
-        //Grower.funTask.init(new Date((new Date()).getTime() + 1700),0);
-        //Grower.irrigationTask.init(new Date(), 2000);
-        //Journal.add(" < < < Расчёт времени запуска");
-    };
+    private static String lightTaskNote = "Управление светом";
+    private static Task lightTask = new Task(
+            lightTaskNote,
+            () -> {// Метод расчёта времени запуска
+                //Date actionDate = sunriseLever.getValue();
+                return new Date(System.currentTimeMillis() + 10000);
+            },
+            () -> {// Метод самой
+                try {
+                    sunRelay.set(true);
+                    Journal.add(lightTaskNote + ": Свет включён");
+                    // "От заката до рассвета"
+                    // long dt = sunsetLever.getValue().getTime() - sunriseLever.getValue().getTime();
+                    long dt = 10000;
+                    Thread.sleep(dt);
+                    // Выключаем
+                    sunRelay.set(false);
+                    Journal.add(lightTaskNote + ": Свет выключен");
+                } catch (Exception exception) {
+                    Journal.add(lightTaskNote + ": "+ exception.getMessage(),NoteType.ERROR);
+                }
+            });
 
     /**
-     * Включение света
+     * Управление вентилятором
      */
-    public static Task sunriseTask = new Task("Включение света", () -> {
-        // Получаем дату и время следующего включения
-        Date momentOn = sunriseLever.getNearFutureTime();
-        // Расчитываем количество милисекунд, оставшееся до момента запуска
-        long delay = momentOn.getTime() - (new Date()).getTime();
-        try {
-            // Ложимся спать до момента запуска
-            Thread.sleep(delay);
-        } catch (InterruptedException e) {
-            return;
-        }
-        // Просыпаемся и выполняем операцию
-        sunRelay.set(true);
-    });
-
-    /**
-     * Выключение света
-     */
-    public static Task sunsetTask = new Task("Выключение света", () -> {
-        // Получаем дату и время следующего включения
-        Date momentOn = sunsetLever.getNearFutureTime();
-        // Расчитываем количество милисекунд, оставшееся до момента запуска
-        long delay = momentOn.getTime() - (new Date()).getTime();
-        try {
-            // Ложимся спать до момента запуска
-            Thread.sleep(delay);
-        } catch (InterruptedException e) {
-            return;
-        }
-        // Просыпаемся и выполняем операцию
-        sunRelay.set(false);
-    });
-
-    /**
-     * Включение вентилятора
-     */
-    public static Task funriseTask = new Task("Включение вентилятора", () -> {
-        // Получаем дату и время следующего включения
-        Date momentOn = Converter.longToDate(
-                sunriseLever.getNearFutureTime().getTime() - funDelayLever.getValue() * 60 * 1000);
-        // Расчитываем количество милисекунд, оставшееся до момента запуска
-        long delay = momentOn.getTime() - (new Date()).getTime();
-        try {
-            // Ложимся спать до момента запуска
-            Thread.sleep(delay);
-        } catch (InterruptedException e) {
-            return;
-        }
-        // Просыпаемся и выполняем операцию
-        funRelay.set(true);
-    });
-
-    /**
-     * Выключение вентилятора
-     */
-    public static Task funsetTask = new Task("Выключение вентилятора", () -> {
-
-    });
+    private static String ventingTaskNote = "Вентиляция";
+    private static Task ventingTask = new Task(
+            ventingTaskNote,
+            () -> {// Метод расчёта времени запуска
+                //Date actionDate = sunriseLever.getValue().getTime() - funDelayLever.getValue() * DateScale.MINUTE;
+                return new Date(System.currentTimeMillis() + 8000);
+            },
+            () -> {// Метод самой
+                try {
+                    funRelay.set(true);
+                    Journal.add(ventingTaskNote + ": Вентилятор включён");
+                    // long dt = sunsetLever.getValue().getTime() - sunriseLever.getValue().getTime();
+                    //dt = dt - 2 * funDelayLever.getValue() * DateScale.MINUTE;
+                    long dt = 12000;
+                    Thread.sleep(dt);
+                    funRelay.set(false);
+                    Journal.add(ventingTaskNote + ": Вентилятор выключен");
+                } catch (Exception exception) {
+                    Journal.add(ventingTaskNote + ": "+ exception.getMessage(),NoteType.ERROR);
+                }
+            });
 
     /**
      * Включаем орошение:
      * - подготовка раствора
      * - продолжительность орошения задаётся параметром
      */
-    public static Task irrigationTask = new Task("Орошение", () -> {
-        try {
-            Thread.sleep(1000);
-            Journal.add(" ----- Орошение закончилось");
-        } catch (InterruptedException e) {
-            Tasks.stop();
-        }
-    });
+    private static String irrigationTaskNote = "Орошение";
+    private static Task irrigationTask = new Task(
+        irrigationTaskNote,
+        ()->{// Метод расчёта времени запуска
+            return new Date(System.currentTimeMillis() + 5000);
+            },
+        () -> {// Метод самой
+            try {
+                Journal.add(irrigationTaskNote + ": Проверка уровня воды");
+                double level = sonar.get();
+                //Вырввнивание уровня
+                Thread.sleep(1000);
+                Journal.add(irrigationTaskNote + ": Проверка раствора на Ph и EC");
+                //Замес Ph и EC
+                Thread.sleep(1000);
+                Journal.add(irrigationTaskNote + ": Затопление");
+                // Продолжительность затопления определена durationLever
+                Thread.sleep(2000);
+                Journal.add(irrigationTaskNote + ": Слив");
+                Journal.add(irrigationTaskNote + ": Орошение закончилось");
+//                if(Tasks.getStatus() == TaskStatus.PAUSE);
+            } catch (Exception exception) {
+                Journal.add(irrigationTaskNote + ": " + exception.getMessage(), NoteType.ERROR);
+            }
+        });
 }

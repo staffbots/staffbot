@@ -4,19 +4,20 @@ import ru.staffbot.database.journal.Journal;
 import ru.staffbot.database.journal.NoteType;
 import ru.staffbot.database.settings.Settings;
 
-import java.util.ArrayList;
-import java.util.Date;
+import java.util.*;
 
 public class Tasks{
+
+
 
     private static long startTime = 0;
 
     private static TaskStatus status = TaskStatus.STOP;
 
-    private static ArrayList<Task> list = new ArrayList<Task>(0);
+    private static ArrayList<Task> list = new ArrayList();
 
     public static TaskStatus getStatus(){
-        return Tasks.status;
+        return status;
     }
 
     public static TaskStatus setStatus(TaskStatus status){
@@ -29,11 +30,22 @@ public class Tasks{
         return Tasks.status;
     }
 
-    /**
-     * Управляющий поток (расчёт даты и периода запуска)
-     */
-    private static Runnable tasksInit;
-
+    public static void reSchedule(Task... tasks) {
+        if (tasks.length == 0)
+            tasks = list.toArray(new Task[list.size()]);
+        //timer.purge();
+        for (Task task : tasks)
+            // Если задача уже выполнена, то
+            if (task.isCompleted) {
+                // Следующий запуск ещё не выполнен
+                // Ставим задачу в рассписание
+                task.cancel();
+                task.timer.purge();
+                task = new Task(task.note, task.delay, task.action);
+                task.timer.schedule(task, task.getDelay());
+            }
+        //timer.purge();
+    }
     /**
      * Пуск всех заданий
      */
@@ -42,6 +54,7 @@ public class Tasks{
             if (status != TaskStatus.PAUSE)
                 setStartTime((new Date()).getTime());
             status = TaskStatus.START;
+            reSchedule();
             Journal.add("Выполнен пуск", NoteType.WRINING);
         }
     }
@@ -70,12 +83,10 @@ public class Tasks{
     /*
      * Выполняем инициализацию перед первым пуском
      */
-    public static void init(Runnable tasksInit, Task... tasks){
-        status = (getStartTime() == 0) ? TaskStatus.STOP : TaskStatus.PAUSE;
-        Tasks.tasksInit = tasksInit;
+    public static void init(Task... tasks){
         list.clear();
-        for (Task task:tasks)
-            list.add(task);
+        for (Task task:tasks) list.add(task);
+        setStatus((getStartTime() == 0) ? TaskStatus.STOP : TaskStatus.PAUSE);
         Journal.add("Задачи проинициализированы");
     }
 
@@ -85,6 +96,7 @@ public class Tasks{
         try {
             startTime = Long.parseLong(startTimeString);
         } catch (Exception exception){
+            //Ignore
         }
         return startTime;
     }
@@ -96,5 +108,7 @@ public class Tasks{
         if (startTime != 0)
             (new Settings("control_start_time")).save(Long.toString(startTime));
     }
+
+
 
 }

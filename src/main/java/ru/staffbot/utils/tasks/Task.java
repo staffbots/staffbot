@@ -1,79 +1,44 @@
 package ru.staffbot.utils.tasks;
 
-import ru.staffbot.webserver.WebServer;
-import ru.staffbot.database.journal.Journal;
-
 import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  *
  */
-public class Task extends Thread {
+public class Task extends TimerTask implements DelayFunction{
 
-    /**
-     * <b>Описание</b>,
-     * используется при формировании веб-интерфейса в {@link WebServer}.
-     */
-    protected final String note;
+    public Timer timer = new Timer();
 
-    /**
-     * <b>Дата и время запуска</b>
-     */
-    private Date date = null;
+    public boolean isCompleted;
 
-    /**
-     * <b>Период запуска</b>
-     */
-    private long rate = 0;
+    public String note;
 
-    /**
-     * <b>Действие</b>
-     */
-    protected Runnable action;
+    public DelayFunction delay = null;
 
-    public Task(String note, Runnable action){
-        this.action = action;
-        this.note = note;
+    public Date getDelay(){
+        return delay.getDelay();
     }
 
-    private long getDelay(){
-        return this.date.getTime() - (new Date()).getTime();
+    protected Runnable action;
+
+    public Task(String note, DelayFunction delay, Runnable action){
+        this.note = note;
+        this.delay = delay;
+        this.action = action;
+        isCompleted = true;
     }
 
     @Override
     public void run() {
-
-        try {
-            while (true) {
-                if (this.date == null)
-                    break;
-                while (getDelay() <= 0) { // пока дата запуска в прошлом
-                    if (rate <= 0)
-                        return;
-                    this.date = new Date(this.date.getTime() + rate);
-                }
-                sleep(getDelay());
-                Journal.add(note + " по расписанию запуска задач");
-                this.action.run();
-                sleep(0); // помогает отлавливать InterruptedException из action
-            }
-        } catch (InterruptedException e) {
-            return;
-        }
+        isCompleted = false;
+        // Выполняем задачу
+        action.run();
+        // Отмечаем, что задача выполнена
+        isCompleted = true;
+        // Просим запланировать следующий запуск
+        Tasks.reSchedule(this);
+        //customHandler.postDelayed(this, 1000);
     }
-
-
-    /**
-     * <b>Получить описание</b><br>
-     * @return описание
-     */
-    public String getNote(){
-        return note;
-    }
-
-    synchronized public void init(Date date, long rate){
-        this.date = date;
-        this.rate = rate;
-    }
-
 }
