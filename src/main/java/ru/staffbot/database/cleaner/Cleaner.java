@@ -54,7 +54,7 @@ public class Cleaner {
             timer.purge();
         }
         if (autoCleaning) {
-            long period = autoValue * autoMeasure.getValue();
+            long period = autoValue * autoMeasure.getMilliseconds();
             timer = new Timer(true);
             TimerTask cleanTask = new TimerTask() {
                 @Override
@@ -136,7 +136,7 @@ public class Cleaner {
         try {
             PreparedStatement statement = Database.getConnection().prepareStatement(
                     "DELETE FROM " + table.getTableName() + " WHERE moment < ?");
-            long lastTime = System.currentTimeMillis() - days * DateScale.DAY.getValue();
+            long lastTime = System.currentTimeMillis() - days * DateScale.DAY.getMilliseconds();
             statement.setTimestamp(1, new Timestamp(lastTime));
             return table.deleteFromTable(statement);
         } catch (Exception exception) {

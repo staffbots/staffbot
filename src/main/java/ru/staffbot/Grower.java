@@ -15,11 +15,27 @@ import ru.staffbot.database.journal.Journal;
 import ru.staffbot.utils.devices.Devices;
 import ru.staffbot.utils.devices.hardware.RelayDevice;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class Grower extends Staffbot {
 
+    public static Date getNearFutureTime(String date){
+        Calendar currentCalendar = Calendar.getInstance();
+        currentCalendar.setTime(Converter.stringToDate(date, DateFormat.SHORTTIME));
+        Calendar resultCalendar = Calendar.getInstance();
+        resultCalendar.set(Calendar.HOUR_OF_DAY, currentCalendar.get(Calendar.HOUR_OF_DAY));
+        resultCalendar.set(Calendar.MINUTE, currentCalendar.get(Calendar.MINUTE));
+        resultCalendar.set(Calendar.SECOND, currentCalendar.get(Calendar.SECOND));
+        resultCalendar.set(Calendar.MILLISECOND, currentCalendar.get(Calendar.MILLISECOND));
+        if (resultCalendar.getTime().before(new Date())) resultCalendar.add(Calendar.DAY_OF_MONTH, 1);
+        return resultCalendar.getTime();
+    }
+
     public static void main(String[] args) {
+        System.out.println(Converter.dateToString(getNearFutureTime("13:00"), DateFormat.FULLDATETIME));
+
         propertiesInit(); // Загружаем конфигурацию сборки
         databaseInit(); // Подключаемся к базе данных
         devicesInit(); // Инициализируем список устройств
@@ -34,33 +50,11 @@ public class Grower extends Staffbot {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////  Devices
+    ////  Levers - Рычаги
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * <b>инициализация устройств</b><br>
-     * Заполняется список устройств {@code WebServer.devices}<br>
-     */
-    private static void devicesInit() {
-        Devices.init(  sensor, sonar, sunRelay, funRelay);
-    }
-
-    private static SensorDHT22Device sensor = new SensorDHT22Device("sensor",
-            "Датчик температуры и влажности",RaspiPin.GPIO_07);
-    private static SonarHCSR04Device sonar = new SonarHCSR04Device("sonar",
-            "Сонар определения уровня воды, м", RaspiPin.GPIO_03, RaspiPin.GPIO_02);
-    private static RelayDevice sunRelay = new RelayDevice("sunRelay",
-            "Реле включения/выключения света", false, RaspiPin.GPIO_00);
-    private static RelayDevice funRelay = new RelayDevice("funRelay",
-            "Реле включения вентилятора", true, RaspiPin.GPIO_01);
-
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////  Levers
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * <b>инициализация рычагов управления</b><br>
+     * <b>Инициализация рычагов управления</b><br>
      * Заполняется список рычагов управления {@code WebServer.levers}<br>
      * Внимание! Порядок перечисления групп и рычагов повторяется в веб-интерфейсе
      */
@@ -95,11 +89,32 @@ public class Grower extends Staffbot {
             "Продолжительность, мин", 0, 15, 24 * 60);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////  Tasks
+    ////  Devices - Устройства
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
-     * <b>инициализация задач</b><br>
+     * <b>Инициализация устройств</b><br>
+     * Заполняется список устройств {@code WebServer.devices}<br>
+     */
+    private static void devicesInit() {
+        Devices.init(  sensor, sonar, sunRelay, funRelay);
+    }
+
+    private static SensorDHT22Device sensor = new SensorDHT22Device("sensor",
+            "Датчик температуры и влажности",RaspiPin.GPIO_07);
+    private static SonarHCSR04Device sonar = new SonarHCSR04Device("sonar",
+            "Сонар определения уровня воды, м", RaspiPin.GPIO_03, RaspiPin.GPIO_02);
+    private static RelayDevice sunRelay = new RelayDevice("sunRelay",
+            "Реле включения/выключения света", false, RaspiPin.GPIO_00);
+    private static RelayDevice funRelay = new RelayDevice("funRelay",
+            "Реле включения вентилятора", true, RaspiPin.GPIO_01);
+
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+    ////  Tasks - Зададия
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * <b>Инициализация заданий</b><br>
      * Заполняется список задач {@code tasks}<br>
      */
     private static void tasksInit() {
@@ -113,22 +128,32 @@ public class Grower extends Staffbot {
     private static Task lightTask = new Task(
             lightTaskNote,
             () -> {// Метод расчёта времени запуска
-                //Date actionDate = sunriseLever.getValue();
-                return new Date(System.currentTimeMillis() + 10000);
+                    Date sunriseTime = sunriseLever.getNearFuture();
+                    Date sunsetTime = sunsetLever.getNearFuture();
+                    // Если ближайший закат наступает раньше чем рассвет, то
+                    if (sunsetTime.before(sunriseTime))
+                        // за окном-то день!
+                        sunriseTime = new Date();
+                    Journal.add("# " + lightTaskNote + ": Очередное включение запланировано на "
+                            + Converter.dateToString(sunriseTime,DateFormat.DATETIME));
+                    return sunriseTime;
             },
             () -> {// Метод самой
                 try {
-                    sunRelay.set(true);
-                    Journal.add(lightTaskNote + ": Свет включён");
                     // "От заката до рассвета"
-                    // long dt = sunsetLever.getValue().getTime() - sunriseLever.getValue().getTime();
-                    long dt = 10000;
-                    Thread.sleep(dt);
+                    long dayLength = sunsetLever.getNearFuture().getTime() - System.currentTimeMillis();
+                    long min = (long) Math.floor(dayLength / DateScale.MINUTE.getMilliseconds());
+                    long sec = (long) Math.floor((dayLength % DateScale.MINUTE.getMilliseconds()) / DateScale.SECOND.getMilliseconds());
+                    Journal.add("# " + lightTaskNote + ": включение на " + min + " мин. " + sec + " сек. (до " +
+                     Converter.dateToString(sunsetLever.getNearFuture(),DateFormat.DATETIME) + ")");
+                    // Включаем
+                    sunRelay.set(true);
+                    Thread.sleep(dayLength);
                     // Выключаем
                     sunRelay.set(false);
-                    Journal.add(lightTaskNote + ": Свет выключен");
+                    Journal.add("# " + lightTaskNote + ": выключение");
                 } catch (Exception exception) {
-                    Journal.add(lightTaskNote + ": "+ exception.getMessage(),NoteType.ERROR);
+                    Journal.add("# " + lightTaskNote + ": "+ exception.getMessage(),NoteType.ERROR);
                 }
             });
 
@@ -140,7 +165,7 @@ public class Grower extends Staffbot {
             ventingTaskNote,
             () -> {// Метод расчёта времени запуска
                 //Date actionDate = sunriseLever.getValue().getTime() - funDelayLever.getValue() * DateScale.MINUTE;
-                return new Date(System.currentTimeMillis() + 8000);
+                return new Date(System.currentTimeMillis() + 800000);
             },
             () -> {// Метод самой
                 try {
@@ -166,7 +191,7 @@ public class Grower extends Staffbot {
     private static Task irrigationTask = new Task(
         irrigationTaskNote,
         ()->{// Метод расчёта времени запуска
-            return new Date(System.currentTimeMillis() + 5000);
+            return new Date(System.currentTimeMillis() + 500000);
             },
         () -> {// Метод самой
             try {

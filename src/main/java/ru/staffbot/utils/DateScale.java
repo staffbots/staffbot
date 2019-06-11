@@ -13,11 +13,11 @@ public enum DateScale {
     WEEK(1000 * 60 * 60 * 24 * 7, "Неделя");
 
     private String description;
-    private long value;
+    private long milliseconds;
     private static Map valueMap = new HashMap<>();
 
-    DateScale(long value, String description) {
-        this.value = value;
+    DateScale(long milliseconds, String description) {
+        this.milliseconds = milliseconds;
         this.description = description;
     }
 
@@ -28,7 +28,7 @@ public enum DateScale {
 
     static {
         for (DateScale dateScale : DateScale.values()) {
-            valueMap.put(dateScale.value, dateScale);
+            valueMap.put(dateScale.milliseconds, dateScale);
         }
     }
 
@@ -36,8 +36,8 @@ public enum DateScale {
         return (DateScale) valueMap.get(dateScaleValue);
     }
 
-    public long getValue() {
-        return value;
+    public long getMilliseconds() {
+        return milliseconds;
     }
 
     public DateScale getNext(){

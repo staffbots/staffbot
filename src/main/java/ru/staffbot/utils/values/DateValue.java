@@ -4,7 +4,9 @@ import ru.staffbot.utils.Converter;
 import ru.staffbot.utils.DateFormat;
 import ru.staffbot.utils.DateScale;
 
+import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 /**
  * <b>Контейнер {@code Date}-значения</b> расширяет {@link Value},
@@ -56,12 +58,17 @@ public class DateValue extends Value{
      * совпадают с текущим значением времени
      *
      */
-    public Date getNearFutureTime(){
-        Date x = getValue();
-        long ms = DateScale.DAY.getValue();
-        long z = (long) Math.floor(((new Date()).getTime() - x.getTime())/ms);
-        if (z > 0) z++;
-        return Converter.longToDate(x.getTime() + z * ms);
+    public Date getNearFuture(){
+        Calendar currentCalendar = Calendar.getInstance();
+        currentCalendar.setTime(getValue());
+        Calendar resultCalendar = Calendar.getInstance();
+        resultCalendar.set(Calendar.HOUR_OF_DAY, currentCalendar.get(Calendar.HOUR_OF_DAY));
+        resultCalendar.set(Calendar.MINUTE, currentCalendar.get(Calendar.MINUTE));
+        resultCalendar.set(Calendar.SECOND, currentCalendar.get(Calendar.SECOND));
+        resultCalendar.set(Calendar.MILLISECOND, currentCalendar.get(Calendar.MILLISECOND));
+        if (resultCalendar.getTime().before(new Date()))
+                resultCalendar.add(Calendar.DAY_OF_MONTH, 1);
+        return resultCalendar.getTime();
     }
 
 }

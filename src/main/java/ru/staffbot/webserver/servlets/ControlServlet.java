@@ -76,6 +76,7 @@ public class ControlServlet extends MainServlet {
                 String leverValue = request.getParameter(leverName);
                 lever.setValueFromString(leverValue);
             }
+            Tasks.reSchedule();
         }
         doGet(request, response);
     }

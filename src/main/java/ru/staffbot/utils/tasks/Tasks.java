@@ -33,8 +33,11 @@ public class Tasks{
     public static void reSchedule(Task... tasks) {
         if (tasks.length == 0)
             tasks = list.toArray(new Task[list.size()]);
+        // Чистим список, для последующего заполения теми же заданиями,
+        // кроме уже выполненных и с добавлением планируемых
+        list.clear();
         //timer.purge();
-        for (Task task : tasks)
+        for (Task task : tasks) {
             // Если задача уже выполнена, то
             if (task.isCompleted) {
                 // Следующий запуск ещё не выполнен
@@ -44,6 +47,8 @@ public class Tasks{
                 task = new Task(task.note, task.delay, task.action);
                 task.timer.schedule(task, task.getDelay());
             }
+            list.add(task);
+        }
         //timer.purge();
     }
     /**

@@ -99,12 +99,12 @@ public class Journal extends DBTable {
             if (period.fromDate != null) {
                 // Формат даты для журнала (DateFormat.TIMEDATE) не учитывает секунды,
                 // которые прошли с начала минуты (для начальной даты):
-                long time = period.fromDate.getTime() - period.fromDate.getTime() % DATE_FORMAT.accuracy.getValue();
+                long time = period.fromDate.getTime() - period.fromDate.getTime() % DATE_FORMAT.accuracy.getMilliseconds();
                 statement.setTimestamp(1, new Timestamp(time));
             }
             if (period.toDate != null) {
                 // и которые остались до конца минуты (для конечной даты):
-                long time = period.toDate.getTime() + (DATE_FORMAT.accuracy.getValue() - period.toDate.getTime() % DATE_FORMAT.accuracy.getValue());
+                long time = period.toDate.getTime() + (DATE_FORMAT.accuracy.getMilliseconds() - period.toDate.getTime() % DATE_FORMAT.accuracy.getMilliseconds());
                 statement.setTimestamp((period.fromDate == null) ? 1 : 2, new Timestamp(time));
             }
             if(statement.execute()) {
