@@ -1,6 +1,6 @@
 ﻿Command line for maven is "compile package exec:java"
 ======= STAFFBOT ========
-- РЕФАКТОРИНГ always actual
+- РЕФАКТОРИНГ always actual (переименовать <Empty...> в <Void...>)
 - РЕАЛИЗОВАТЬ ПОТОКИ ЗАДАЧ!
 
 

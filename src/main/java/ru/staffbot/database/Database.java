@@ -10,7 +10,7 @@ import java.sql.*;
 
 public class Database {
 
-    public static DBMS DBMSystem = DBMS.MySQL;
+    public static final DBMS DBMSystem = DBMS.MySQL;
 
     public static String SERVER = "localhost";
 

@@ -5,42 +5,26 @@ import ru.staffbot.database.journal.NoteType;
 import ru.staffbot.utils.Converter;
 import ru.staffbot.utils.DateFormat;
 import ru.staffbot.utils.DateScale;
+import ru.staffbot.utils.botprocess.BotProcess;
+import ru.staffbot.utils.botprocess.BotTask;
 import ru.staffbot.utils.devices.hardware.SensorDHT22Device;
 import ru.staffbot.utils.devices.hardware.SonarHCSR04Device;
 import ru.staffbot.utils.levers.*;
-import ru.staffbot.utils.tasks.Task;
-import ru.staffbot.utils.tasks.TaskStatus;
-import ru.staffbot.utils.tasks.Tasks;
 import ru.staffbot.database.journal.Journal;
 import ru.staffbot.utils.devices.Devices;
 import ru.staffbot.utils.devices.hardware.RelayDevice;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 public class Grower extends Staffbot {
 
-    public static Date getNearFutureTime(String date){
-        Calendar currentCalendar = Calendar.getInstance();
-        currentCalendar.setTime(Converter.stringToDate(date, DateFormat.SHORTTIME));
-        Calendar resultCalendar = Calendar.getInstance();
-        resultCalendar.set(Calendar.HOUR_OF_DAY, currentCalendar.get(Calendar.HOUR_OF_DAY));
-        resultCalendar.set(Calendar.MINUTE, currentCalendar.get(Calendar.MINUTE));
-        resultCalendar.set(Calendar.SECOND, currentCalendar.get(Calendar.SECOND));
-        resultCalendar.set(Calendar.MILLISECOND, currentCalendar.get(Calendar.MILLISECOND));
-        if (resultCalendar.getTime().before(new Date())) resultCalendar.add(Calendar.DAY_OF_MONTH, 1);
-        return resultCalendar.getTime();
-    }
-
     public static void main(String[] args) {
-        System.out.println(Converter.dateToString(getNearFutureTime("13:00"), DateFormat.FULLDATETIME));
-
         propertiesInit(); // Загружаем конфигурацию сборки
         databaseInit(); // Подключаемся к базе данных
         devicesInit(); // Инициализируем список устройств
         leversInit(); // Инициализируем список элементов управления
-        tasksInit(); // Инициализируем список задач
+        botProcessInit(); // Инициализируем список задач
         webserverInit(); // Запускаем вебсервер
         windowInit(); // Открываем окно
     }
@@ -117,26 +101,22 @@ public class Grower extends Staffbot {
      * <b>Инициализация заданий</b><br>
      * Заполняется список задач {@code tasks}<br>
      */
-    private static void tasksInit() {
-        Tasks.init(lightTask, ventingTask, irrigationTask);
+    private static void botProcessInit() {
+        BotProcess.init(lightTask, ventingTask, irrigationTask);
     }
 
     /**
      * Управление светом
      */
     private static String lightTaskNote = "Управление светом";
-    private static Task lightTask = new Task(
+    private static BotTask lightTask = new BotTask(
             lightTaskNote,
-            () -> {// Метод расчёта времени запуска
-                    Date sunriseTime = sunriseLever.getNearFuture();
-                    Date sunsetTime = sunsetLever.getNearFuture();
+            () -> {// Расчёт задержки перед следующим запуском
+                    long sunriseTime = sunriseLever.getNearFuture().getTime();
+                    long sunsetTime = sunsetLever.getNearFuture().getTime();
                     // Если ближайший закат наступает раньше чем рассвет, то
-                    if (sunsetTime.before(sunriseTime))
-                        // за окном-то день!
-                        sunriseTime = new Date();
-                    Journal.add("# " + lightTaskNote + ": Очередное включение запланировано на "
-                            + Converter.dateToString(sunriseTime,DateFormat.DATETIME));
-                    return sunriseTime;
+                    long delay = (sunsetTime < sunriseTime)? 0 : (sunriseTime - System.currentTimeMillis());
+                    return delay;
             },
             () -> {// Метод самой
                 try {
@@ -145,15 +125,16 @@ public class Grower extends Staffbot {
                     long min = (long) Math.floor(dayLength / DateScale.MINUTE.getMilliseconds());
                     long sec = (long) Math.floor((dayLength % DateScale.MINUTE.getMilliseconds()) / DateScale.SECOND.getMilliseconds());
                     Journal.add("# " + lightTaskNote + ": включение на " + min + " мин. " + sec + " сек. (до " +
-                     Converter.dateToString(sunsetLever.getNearFuture(),DateFormat.DATETIME) + ")");
+                            Converter.dateToString(sunsetLever.getNearFuture(), DateFormat.DATETIME) + ")");
                     // Включаем
                     sunRelay.set(true);
                     Thread.sleep(dayLength);
+                } catch (InterruptedException exception) {
+                    Journal.add("# " + lightTaskNote + ": Задание прервано", NoteType.WRINING);
+                } finally {
                     // Выключаем
-                    sunRelay.set(false);
                     Journal.add("# " + lightTaskNote + ": выключение");
-                } catch (Exception exception) {
-                    Journal.add("# " + lightTaskNote + ": "+ exception.getMessage(),NoteType.ERROR);
+                    sunRelay.set(false);
                 }
             });
 
@@ -161,24 +142,24 @@ public class Grower extends Staffbot {
      * Управление вентилятором
      */
     private static String ventingTaskNote = "Вентиляция";
-    private static Task ventingTask = new Task(
+    private static BotTask ventingTask = new BotTask(
             ventingTaskNote,
             () -> {// Метод расчёта времени запуска
                 //Date actionDate = sunriseLever.getValue().getTime() - funDelayLever.getValue() * DateScale.MINUTE;
-                return new Date(System.currentTimeMillis() + 800000);
+                return 10000;
             },
             () -> {// Метод самой
                 try {
                     funRelay.set(true);
-                    Journal.add(ventingTaskNote + ": Вентилятор включён");
-                    // long dt = sunsetLever.getValue().getTime() - sunriseLever.getValue().getTime();
-                    //dt = dt - 2 * funDelayLever.getValue() * DateScale.MINUTE;
-                    long dt = 12000;
+                    Journal.add("# " + ventingTaskNote + ": включение");
+                    long dt = 20000;
                     Thread.sleep(dt);
+                } catch (InterruptedException exception) {
+                    Journal.add("# " + ventingTaskNote + ": Задание прервано",NoteType.WRINING);
+                } finally {
+                    // Выключаем
+                    Journal.add("# " + ventingTaskNote + ": выключение");
                     funRelay.set(false);
-                    Journal.add(ventingTaskNote + ": Вентилятор выключен");
-                } catch (Exception exception) {
-                    Journal.add(ventingTaskNote + ": "+ exception.getMessage(),NoteType.ERROR);
                 }
             });
 
@@ -188,10 +169,10 @@ public class Grower extends Staffbot {
      * - продолжительность орошения задаётся параметром
      */
     private static String irrigationTaskNote = "Орошение";
-    private static Task irrigationTask = new Task(
+    private static BotTask irrigationTask = new BotTask(
         irrigationTaskNote,
         ()->{// Метод расчёта времени запуска
-            return new Date(System.currentTimeMillis() + 500000);
+            return 500000;
             },
         () -> {// Метод самой
             try {
@@ -206,10 +187,11 @@ public class Grower extends Staffbot {
                 // Продолжительность затопления определена durationLever
                 Thread.sleep(2000);
                 Journal.add(irrigationTaskNote + ": Слив");
-                Journal.add(irrigationTaskNote + ": Орошение закончилось");
-//                if(Tasks.getStatus() == TaskStatus.PAUSE);
-            } catch (Exception exception) {
-                Journal.add(irrigationTaskNote + ": " + exception.getMessage(), NoteType.ERROR);
+            } catch (InterruptedException exception) {
+                Journal.add("# " + irrigationTaskNote + ": Задание прервано",NoteType.WRINING);
+            } finally {
+                // Выключаем
+                Journal.add("# " + irrigationTaskNote + ": выполнено");
             }
         });
 }

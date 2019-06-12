@@ -1,20 +1,13 @@
 package ru.staffbot;
 
-import ru.staffbot.database.DBMS;
 import ru.staffbot.database.Database;
 import ru.staffbot.database.journal.Journal;
-import ru.staffbot.database.settings.Settings;
 import ru.staffbot.utils.devices.Devices;
 import ru.staffbot.webserver.WebServer;
 import ru.staffbot.webserver.servlets.MainServlet;
-import ru.staffbot.webserver.servlets.ResourceServlet;
 import ru.staffbot.windows.MainWindow;
 
 import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.OpenOption;
-import java.nio.file.StandardCopyOption;
-import java.nio.file.StandardOpenOption;
 import java.util.Properties;
 
 
@@ -69,7 +62,6 @@ public abstract class Staffbot{
             property.load(inputStream);
             inputStream.close();
             // Применяем конфигурацию
-            Database.DBMSystem = DBMS.getByName(property.getProperty("db.dbms", null), Database.DBMSystem);
             Database.SERVER = property.getProperty("db.server", Database.SERVER);
             Database.PORT = Integer.parseInt(property.getProperty("db.port", Database.PORT.toString()));
             Database.NAME = property.getProperty("db.name", (projectName + "_" + solutionName).toLowerCase());

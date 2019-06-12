@@ -1,9 +1,9 @@
-package ru.staffbot.utils.tasks;
+package ru.staffbot.utils.botprocess;
 
 import java.util.HashMap;
 import java.util.Map;
 
-public enum TaskStatus {
+public enum BotProcessStatus {
 
     START(0, "Пуск"),
     PAUSE(1, "Пауза"),
@@ -13,7 +13,7 @@ public enum TaskStatus {
     private int value;
     private static Map map = new HashMap<>();
 
-    TaskStatus(int value, String description) {
+    BotProcessStatus(int value, String description) {
         this.value = value;
         this.description = description;
     }
@@ -24,12 +24,12 @@ public enum TaskStatus {
     }
 
     static {
-        for (TaskStatus pageType : TaskStatus.values()) {
-            map.put(pageType.value, pageType);
+        for (BotProcessStatus status : BotProcessStatus.values()) {
+            map.put(status.value, status);
         }
     }
-    public static TaskStatus valueOf(int noteType) {
-        return (TaskStatus) map.get(noteType);
+    public static BotProcessStatus valueOf(int noteType) {
+        return (BotProcessStatus) map.get(noteType);
     }
 
     public int getValue() {
