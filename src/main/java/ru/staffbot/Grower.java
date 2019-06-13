@@ -127,15 +127,14 @@ public class Grower extends Staffbot {
                     Journal.add("# " + lightTaskNote + ": включение на " + min + " мин. " + sec + " сек. (до " +
                             Converter.dateToString(sunsetLever.getNearFuture(), DateFormat.DATETIME) + ")");
                     // Включаем
-                    sunRelay.set(true);
+                    //sunRelay.set(true);
                     Thread.sleep(dayLength);
                 } catch (InterruptedException exception) {
                     Journal.add("# " + lightTaskNote + ": Задание прервано", NoteType.WRINING);
-                } finally {
-                    // Выключаем
-                    Journal.add("# " + lightTaskNote + ": выключение");
-                    sunRelay.set(false);
                 }
+                Journal.add("# " + lightTaskNote + ": выключение");
+                //Выключаем
+                //sunRelay.set(false);
             });
 
     /**
@@ -146,21 +145,22 @@ public class Grower extends Staffbot {
             ventingTaskNote,
             () -> {// Метод расчёта времени запуска
                 //Date actionDate = sunriseLever.getValue().getTime() - funDelayLever.getValue() * DateScale.MINUTE;
-                return 10000;
+                return 5000;
             },
             () -> {// Метод самой
                 try {
-                    funRelay.set(true);
                     Journal.add("# " + ventingTaskNote + ": включение");
-                    long dt = 20000;
+                    //Включаем
+                    //funRelay.set(true);
+                    long dt = 5000;
                     Thread.sleep(dt);
                 } catch (InterruptedException exception) {
                     Journal.add("# " + ventingTaskNote + ": Задание прервано",NoteType.WRINING);
-                } finally {
-                    // Выключаем
-                    Journal.add("# " + ventingTaskNote + ": выключение");
-                    funRelay.set(false);
+                    //Thread.currentThread().interrupt();
                 }
+                    Journal.add("# " + ventingTaskNote + ": выключение");
+                    //Выключаем
+                    //funRelay.set(false);
             });
 
     /**

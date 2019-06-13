@@ -1,6 +1,7 @@
 package ru.staffbot.utils.botprocess;
 
 import ru.staffbot.database.journal.Journal;
+import ru.staffbot.database.journal.NoteType;
 import ru.staffbot.utils.Converter;
 import ru.staffbot.utils.DateFormat;
 
@@ -11,19 +12,18 @@ import java.util.Date;
  */
 public class BotTask extends Thread implements DelayFunction {
 
-    public boolean isNew(){
+    synchronized public boolean isNew(){
         return (status == BotTaskStatus.NEW);
     }
-
-    public boolean isWaiting(){
+    synchronized public boolean isWaiting(){
         return (status == BotTaskStatus.WAITING);
     }
 
-    public boolean isExecution(){
+    synchronized public boolean isExecution(){
         return (status == BotTaskStatus.EXECUTION);
     }
 
-    public boolean isOld(){
+    synchronized public boolean isOld(){
         return (status == BotTaskStatus.OLD);
     }
 
@@ -43,9 +43,10 @@ public class BotTask extends Thread implements DelayFunction {
         this.note = note;
         this.delay = delay;
         this.action = action;
+
     }
 
-    @Override
+    //@Override
     public void run() {
         status = BotTaskStatus.WAITING;
         try {
@@ -54,16 +55,20 @@ public class BotTask extends Thread implements DelayFunction {
                     + Converter.dateToString(new Date(System.currentTimeMillis() + delay), DateFormat.DATETIME));
             // Ожидаем запуск
             Thread.sleep(delay);
-        } catch (InterruptedException e) {
-            return;
+
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            Journal.add("# " + note + ": Ожидание прервано", NoteType.WRINING);
         }
 
-        status = BotTaskStatus.EXECUTION;
-        // Выполняем задачу
-        action.run();
-
+        if (!isInterrupted()) {
+            status = BotTaskStatus.EXECUTION;
+            // Выполняем задачу
+            action.run();
+            // Просим запланировать следующий запуск
+        }
         status = BotTaskStatus.OLD;
-        // Просим запланировать следующий запуск
+        //if (!isInterrupted())
         BotProcess.reSchedule(this);
     }
 }

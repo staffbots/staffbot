@@ -25,6 +25,7 @@ public class BotProcess {
             case STOP: stop(); break;
             default: break;
         }
+        reSchedule();
         return BotProcess.status;
     }
 
@@ -38,20 +39,28 @@ public class BotProcess {
         for (BotTask task : tasks) {
             // Если
             if (status == BotProcessStatus.STOP) {
-                if (task.isAlive())
+                if (task.isAlive()) {
+                    Journal.add("@@@@ " + task.note + ": interrupt by STOP");
                     task.interrupt();
+                    //task.status = BotTaskStatus.OLD;
+                }
                 continue;
             }
 
             if (status == BotProcessStatus.PAUSE) {
-                if (task.isWaiting())
+
+                if (task.isWaiting()) {
+                    Journal.add("@ " + task.note + ": interrupt by PAUSE");
                     task.interrupt();
+                }else
+                System.out.println(task.note + ": " + task.status);
                 continue;
             }
 
 
             if (status == BotProcessStatus.START) {
                 if (task.isWaiting()) { // Обновление параметров
+                    Journal.add("@ " + task.note + ": interrupt by START and Waiting");
                     task.interrupt();
                     task = new BotTask(task.note, task.delay, task.action);
                     task.start();
@@ -72,12 +81,11 @@ public class BotProcess {
     /**
      * Пуск всех заданий
      */
-    public static void start(){
+    private static void start(){
         if(status != BotProcessStatus.START){
             if (status != BotProcessStatus.PAUSE)
                 setStartTime((new Date()).getTime());
             status = BotProcessStatus.START;
-            reSchedule();
             Journal.add("Выполнен пуск", NoteType.WRINING);
         }
     }
@@ -85,10 +93,9 @@ public class BotProcess {
     /**
      * Приостановка всех заданий
      */
-    public static void pause(){
+    private static void pause(){
         if(status == BotProcessStatus.START) {
             status = BotProcessStatus.PAUSE;
-            reSchedule();
             Journal.add("Произведена приостановка", NoteType.WRINING);
         }
     }
@@ -96,11 +103,10 @@ public class BotProcess {
     /**
      * Остановка всех заданий
      */
-    public static void stop(){
+    private static void stop(){
         if(status != BotProcessStatus.STOP) {
             status = BotProcessStatus.STOP;
             setStartTime(0);
-            reSchedule();
             Journal.add("Произведена остановка", NoteType.WRINING);
         }
     }
