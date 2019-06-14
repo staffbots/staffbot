@@ -13,6 +13,7 @@ import ru.staffbot.utils.levers.*;
 import ru.staffbot.database.journal.Journal;
 import ru.staffbot.utils.devices.Devices;
 import ru.staffbot.utils.devices.hardware.RelayDevice;
+import ru.staffbot.utils.values.DateValue;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -111,28 +112,26 @@ public class Grower extends Staffbot {
     private static String lightTaskNote = "Управление светом";
     private static BotTask lightTask = new BotTask(
             lightTaskNote,
-            () -> {// Расчёт задержки перед следующим запуском
+            () -> { // Расчёт задержки перед следующим запуском задания
                     long sunriseTime = sunriseLever.getNearFuture().getTime();
                     long sunsetTime = sunsetLever.getNearFuture().getTime();
                     // Если ближайший закат наступает раньше чем рассвет, то
-                    long delay = (sunsetTime < sunriseTime)? 0 : (sunriseTime - System.currentTimeMillis());
+                    long delay = (sunsetTime < sunriseTime) ? 0 : (sunriseTime - System.currentTimeMillis());
                     return delay;
             },
-            () -> {// Метод самой
+            () -> { // Задание
                 try {
                     // "От заката до рассвета"
-                    long dayLength = sunsetLever.getNearFuture().getTime() - System.currentTimeMillis();
-                    long min = (long) Math.floor(dayLength / DateScale.MINUTE.getMilliseconds());
-                    long sec = (long) Math.floor((dayLength % DateScale.MINUTE.getMilliseconds()) / DateScale.SECOND.getMilliseconds());
-                    Journal.add("# " + lightTaskNote + ": включение на " + min + " мин. " + sec + " сек. (до " +
-                            Converter.dateToString(sunsetLever.getNearFuture(), DateFormat.DATETIME) + ")");
+                    long sunsetTime = sunsetLever.getNearFuture().getTime();
+                    Journal.add(lightTaskNote + ": включение до " +
+                            Converter.dateToString(new Date(sunsetTime), DateFormat.DATETIME));
                     // Включаем
                     //sunRelay.set(true);
-                    Thread.sleep(dayLength);
+                    Thread.sleep(sunsetTime - System.currentTimeMillis());
                 } catch (InterruptedException exception) {
-                    Journal.add("# " + lightTaskNote + ": Задание прервано", NoteType.WRINING);
+                    Journal.add(lightTaskNote + ": Задание прервано", NoteType.WRINING);
                 }
-                Journal.add("# " + lightTaskNote + ": выключение");
+                Journal.add(lightTaskNote + ": выключение");
                 //Выключаем
                 //sunRelay.set(false);
             });
@@ -143,24 +142,32 @@ public class Grower extends Staffbot {
     private static String ventingTaskNote = "Вентиляция";
     private static BotTask ventingTask = new BotTask(
             ventingTaskNote,
-            () -> {// Метод расчёта времени запуска
-                //Date actionDate = sunriseLever.getValue().getTime() - funDelayLever.getValue() * DateScale.MINUTE;
-                return 5000;
+            () -> { // Расчёт задержки перед следующим запуском
+                Date funriseDate = new Date(sunriseLever.getValue().getTime() - funDelayLever.getValue() * DateScale.MINUTE.getMilliseconds());
+                long funriseTime = DateValue.getNearFuture(funriseDate).getTime();
+                Date funsetDate = new Date(sunsetLever.getValue().getTime() + funDelayLever.getValue() * DateScale.MINUTE.getMilliseconds());
+                long funsetTime = DateValue.getNearFuture(funsetDate).getTime();
+                // Если ближайший закат наступает раньше чем рассвет, то
+                long delay = (funsetTime < funriseTime) ? 0 : (funriseTime - System.currentTimeMillis());
+                return delay;
             },
-            () -> {// Метод самой
+            () -> { // Задание
                 try {
-                    Journal.add("# " + ventingTaskNote + ": включение");
+                    Date funsetDate = new Date(sunsetLever.getValue().getTime() + funDelayLever.getValue() * DateScale.MINUTE.getMilliseconds());
+                    long funsetTime = DateValue.getNearFuture(funsetDate).getTime();
+                    Journal.add(ventingTaskNote + ": включение до " +
+                            Converter.dateToString(new Date(funsetTime), DateFormat.DATETIME));
                     //Включаем
                     //funRelay.set(true);
-                    long dt = 5000;
-                    Thread.sleep(dt);
+                    Thread.sleep(funsetTime - System.currentTimeMillis());
                 } catch (InterruptedException exception) {
                     Journal.add("# " + ventingTaskNote + ": Задание прервано",NoteType.WRINING);
                     //Thread.currentThread().interrupt();
-                }
-                    Journal.add("# " + ventingTaskNote + ": выключение");
+                } finally {
+                    Journal.add(ventingTaskNote + ": выключение");
                     //Выключаем
                     //funRelay.set(false);
+                }
             });
 
     /**
@@ -171,7 +178,7 @@ public class Grower extends Staffbot {
     private static String irrigationTaskNote = "Орошение";
     private static BotTask irrigationTask = new BotTask(
         irrigationTaskNote,
-        ()->{// Метод расчёта времени запуска
+        ()->{// Расчёт задержки перед следующим запуском
             return 500000;
             },
         () -> {// Метод самой

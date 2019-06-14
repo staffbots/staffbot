@@ -65,7 +65,7 @@ public class ControlServlet extends MainServlet {
                         if (request.getParameter("control_load") != null) config.load();
                         if (request.getParameter("control_delete") != null) config.delete();
                     } catch (Exception e) {} finally {
-                        BotProcess.reSchedule();
+                        BotProcess.reScheduleAll();
                     }
         } else {
             for (Lever lever : Levers.list) {
@@ -74,7 +74,7 @@ public class ControlServlet extends MainServlet {
                 String leverValue = request.getParameter(leverName);
                 lever.setValueFromString(leverValue);
             }
-            BotProcess.reSchedule();
+            BotProcess.reScheduleAll();
         }
 
         doGet(request, response);

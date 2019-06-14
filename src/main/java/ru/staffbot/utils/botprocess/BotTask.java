@@ -48,17 +48,18 @@ public class BotTask extends Thread implements DelayFunction {
 
     //@Override
     public void run() {
-        status = BotTaskStatus.WAITING;
+        long delay = getDelay();
+        if (delay < 0) return;
         try {
-            long delay = getDelay();
-            Journal.add("# " + note + ": Запуск задания запланирован на "
+            status = BotTaskStatus.WAITING;
+            Journal.add(note + ": Запуск ожидается "
                     + Converter.dateToString(new Date(System.currentTimeMillis() + delay), DateFormat.DATETIME));
             // Ожидаем запуск
             Thread.sleep(delay);
 
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
-            Journal.add("# " + note + ": Ожидание прервано", NoteType.WRINING);
+            Journal.add(note + ": Ожидание прервано", NoteType.WRINING);
         }
 
         if (!isInterrupted()) {

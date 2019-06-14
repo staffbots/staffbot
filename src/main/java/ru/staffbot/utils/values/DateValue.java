@@ -59,15 +59,19 @@ public class DateValue extends Value{
      *
      */
     public Date getNearFuture(){
+        return getNearFuture(getValue());
+    }
+
+    public static Date getNearFuture(Date date){
         Calendar currentCalendar = Calendar.getInstance();
-        currentCalendar.setTime(getValue());
+        currentCalendar.setTime(date);
         Calendar resultCalendar = Calendar.getInstance();
         resultCalendar.set(Calendar.HOUR_OF_DAY, currentCalendar.get(Calendar.HOUR_OF_DAY));
         resultCalendar.set(Calendar.MINUTE, currentCalendar.get(Calendar.MINUTE));
         resultCalendar.set(Calendar.SECOND, currentCalendar.get(Calendar.SECOND));
         resultCalendar.set(Calendar.MILLISECOND, currentCalendar.get(Calendar.MILLISECOND));
         if (resultCalendar.getTime().before(new Date()))
-                resultCalendar.add(Calendar.DAY_OF_MONTH, 1);
+            resultCalendar.add(Calendar.DAY_OF_MONTH, 1);
         return resultCalendar.getTime();
     }
 

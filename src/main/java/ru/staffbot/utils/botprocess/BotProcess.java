@@ -25,57 +25,30 @@ public class BotProcess {
             case STOP: stop(); break;
             default: break;
         }
-        reSchedule();
+        reScheduleAll();
         return BotProcess.status;
     }
 
-    public static void reSchedule(BotTask... tasks) {
-        if (tasks.length == 0)
-            tasks = list.toArray(new BotTask[list.size()]);
+    public static void reScheduleAll(){
+        for (BotTask task : list)
+            reSchedule(task);
+    }
 
-        // Чистим список, для последующего заполения теми же заданиями,
-        // кроме уже выполненных и с добавлением планируемых
-
-        for (BotTask task : tasks) {
-            // Если
-            if (status == BotProcessStatus.STOP) {
-                if (task.isAlive()) {
-                    Journal.add("@@@@ " + task.note + ": interrupt by STOP");
-                    task.interrupt();
-                    //task.status = BotTaskStatus.OLD;
-                }
-                continue;
-            }
-
-            if (status == BotProcessStatus.PAUSE) {
-
-                if (task.isWaiting()) {
-                    Journal.add("@ " + task.note + ": interrupt by PAUSE");
-                    task.interrupt();
-                }else
-                System.out.println(task.note + ": " + task.status);
-                continue;
-            }
-
-
-            if (status == BotProcessStatus.START) {
-                if (task.isWaiting()) { // Обновление параметров
-                    Journal.add("@ " + task.note + ": interrupt by START and Waiting");
-                    task.interrupt();
-                    task = new BotTask(task.note, task.delay, task.action);
-                    task.start();
-                    continue;
-                }
-
-                if (task.isOld()) {
-                    task = new BotTask(task.note, task.delay, task.action);
-                    task.start();
-                    continue;
-                }
-
-                if (task.isNew())
-                    task.start();
-            }
+    public static void reSchedule(BotTask task) {
+        if (task.isNew()) {
+            if (status == BotProcessStatus.START)
+                task.start();
+        } else if (task.isWaiting()) {
+            task.interrupt();
+        } else if (task.isExecution()) {
+            if (status == BotProcessStatus.STOP)
+                task.interrupt();
+        } else if (task.isOld()) {
+            list.remove(task);
+            task = new BotTask(task.note, task.delay, task.action);
+            list.add(task);
+            if (status == BotProcessStatus.START)
+                task.start();
         }
     }
     /**
