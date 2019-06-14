@@ -12,22 +12,34 @@ import java.util.Date;
  */
 public class BotTask extends Thread implements DelayFunction {
 
-    synchronized public boolean isNew(){
+    public boolean isNew(){
         return (status == BotTaskStatus.NEW);
     }
-    synchronized public boolean isWaiting(){
+
+    public boolean isWaiting(){
         return (status == BotTaskStatus.WAITING);
     }
 
-    synchronized public boolean isExecution(){
+    public boolean isExecution(){
         return (status == BotTaskStatus.EXECUTION);
     }
 
-    synchronized public boolean isOld(){
+    public boolean isOld(){
         return (status == BotTaskStatus.OLD);
     }
 
     public BotTaskStatus status = BotTaskStatus.NEW;
+
+    public String getStatusForWeb() {
+        long delay = getDelay();
+        if (delay < 0)
+            return null;
+        if (isWaiting())
+            return "Запуск ожидается " + Converter.dateToString(new Date(System.currentTimeMillis() + delay), DateFormat.DATETIME);
+        if (isExecution())
+            return "Выполняется";
+        return null;
+    }
 
     public String note;
 
@@ -46,10 +58,13 @@ public class BotTask extends Thread implements DelayFunction {
 
     }
 
-    //@Override
+    @Override
     public void run() {
         long delay = getDelay();
-        if (delay < 0) return;
+        if (delay < 0) {
+            status = BotTaskStatus.OLD;
+            return;
+        }
         try {
             status = BotTaskStatus.WAITING;
             Journal.add(note + ": Запуск ожидается "

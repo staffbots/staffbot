@@ -44,8 +44,8 @@ public class Grower extends Staffbot {
      * Внимание! Порядок перечисления групп и рычагов повторяется в веб-интерфейсе
      */
     private static void leversInit() {
-        Levers.initGroup("Освещение и вентиляция", sunriseLever, sunsetLever, funDelayLever);
-        Levers.initGroup("Подготовка раствора", volumeLever, phLever, ecLever, soluteLever);
+        Levers.initGroup("Освещение и вентиляция", sunriseLever, sunsetLever, funUsedLever, funDelayLever);
+        Levers.initGroup("Подготовка раствора", phLever, ecLever, soluteLever, volumeLever);
         Levers.initGroup("Орошение", dayRateLever, nightRateLever, durationLever);
         Journal.add("Рычаги управления успешно проинициализированы");
     }
@@ -54,17 +54,19 @@ public class Grower extends Staffbot {
             "Время включения света", "8:30", DateFormat.SHORTTIME);
     private static DateLever sunsetLever = new DateLever("sunsetLever",
             "Время выключения света", "16:45", DateFormat.SHORTTIME);
+    private static BooleanLever funUsedLever = new BooleanLever("funUsedLever",
+            "Включить вентиляцию", true);
     private static LongLever funDelayLever = new LongLever("funDelayLever",
             "Инертность вентилятора, мин", 0, 20, 2 * 60);
 
-    private static LabelLever volumeLever = new LabelLever("52л",
-            "Объём раствора");
     private static DoubleLever phLever = new DoubleLever("phLever",
             "Водородный показатель (кислотность), pH", 0.0, 5.6, 10.0);
     private static DoubleLever ecLever = new DoubleLever("ecLever",
             "Удельная электролитическая проводимость, EC", 0.0, 8.1, 10.0);
     private static BooleanLever soluteLever = new BooleanLever("soluteLever",
             "Подготовка раствора", false);
+    private static LabelLever volumeLever = new LabelLever("",
+            "Объём раствора, л");
 
     private static LongLever dayRateLever = new LongLever("dayRateLever",
             "Дневная периодичность, мин", 0, 60, 24 * 60);
@@ -126,14 +128,14 @@ public class Grower extends Staffbot {
                     Journal.add(lightTaskNote + ": включение до " +
                             Converter.dateToString(new Date(sunsetTime), DateFormat.DATETIME));
                     // Включаем
-                    //sunRelay.set(true);
+                    sunRelay.set(true);
                     Thread.sleep(sunsetTime - System.currentTimeMillis());
                 } catch (InterruptedException exception) {
                     Journal.add(lightTaskNote + ": Задание прервано", NoteType.WRINING);
                 }
                 Journal.add(lightTaskNote + ": выключение");
                 //Выключаем
-                //sunRelay.set(false);
+                sunRelay.set(false);
             });
 
     /**
@@ -143,6 +145,7 @@ public class Grower extends Staffbot {
     private static BotTask ventingTask = new BotTask(
             ventingTaskNote,
             () -> { // Расчёт задержки перед следующим запуском
+                if (!funUsedLever.getValue()) return -1;
                 Date funriseDate = new Date(sunriseLever.getValue().getTime() - funDelayLever.getValue() * DateScale.MINUTE.getMilliseconds());
                 long funriseTime = DateValue.getNearFuture(funriseDate).getTime();
                 Date funsetDate = new Date(sunsetLever.getValue().getTime() + funDelayLever.getValue() * DateScale.MINUTE.getMilliseconds());
@@ -158,7 +161,7 @@ public class Grower extends Staffbot {
                     Journal.add(ventingTaskNote + ": включение до " +
                             Converter.dateToString(new Date(funsetTime), DateFormat.DATETIME));
                     //Включаем
-                    //funRelay.set(true);
+                    funRelay.set(true);
                     Thread.sleep(funsetTime - System.currentTimeMillis());
                 } catch (InterruptedException exception) {
                     Journal.add("# " + ventingTaskNote + ": Задание прервано",NoteType.WRINING);
@@ -166,7 +169,7 @@ public class Grower extends Staffbot {
                 } finally {
                     Journal.add(ventingTaskNote + ": выключение");
                     //Выключаем
-                    //funRelay.set(false);
+                    funRelay.set(false);
                 }
             });
 
@@ -179,20 +182,23 @@ public class Grower extends Staffbot {
     private static BotTask irrigationTask = new BotTask(
         irrigationTaskNote,
         ()->{// Расчёт задержки перед следующим запуском
-            return 500000;
+            return 900000;
             },
         () -> {// Метод самой
             try {
                 Journal.add(irrigationTaskNote + ": Проверка уровня воды");
                 double level = sonar.get();
+                double volume = 3d / 5d;
+                volumeLever.setValueFromString(String.format("%.3f", volume));
+                volumeLever.setValueFromString(sunRelay.get() ? "День" : "Ночь" );
                 //Вырввнивание уровня
                 Thread.sleep(1000);
                 Journal.add(irrigationTaskNote + ": Проверка раствора на Ph и EC");
                 //Замес Ph и EC
-                Thread.sleep(1000);
+                Thread.sleep(5000);
                 Journal.add(irrigationTaskNote + ": Затопление");
                 // Продолжительность затопления определена durationLever
-                Thread.sleep(2000);
+                Thread.sleep(7000);
                 Journal.add(irrigationTaskNote + ": Слив");
             } catch (InterruptedException exception) {
                 Journal.add("# " + irrigationTaskNote + ": Задание прервано",NoteType.WRINING);

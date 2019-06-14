@@ -1,6 +1,6 @@
 <p>
 <form action="/control" method="post">
-<table style="text-align:right;" border="0" cellpadding="3">
+<table style="text-align:right;" cellpadding="3">
   <tbody>
     <!-- Кнопки управления -->
     <tr>
@@ -36,6 +36,19 @@
         </table>
       </td>
     </tr>
+    <!-- Задания -->
+    <tr>
+      <td colspan="2">
+        <small>
+        <table style="text-align: right; width:100%">
+          <tbody>
+
+              ${control_tasklist}
+          </tbody>
+        </table>
+        </small>
+      </td>
+    </tr>
     <!-- Параметры (рычаги управления) -->
     ${control_leverlist}
     <!-- ----------- -->
@@ -49,7 +62,7 @@
     <!-- Конфигурация -->
     <tr>
       <td colspan="2">
-        <table style="display:${control_display}; text-align:right;" border="0" cellpadding="0" cellspacing="5" nowrap="nowrap">
+        <table style="display:${control_display}; text-align:right;" border="0" cellpadding="0" cellspacing="5">
           <tr>
             <td align="center" valign="middle" width="100%">
               <input list="control_configlist" name="control_configname" title="Имя конфигурации" autocomplete="off"/>

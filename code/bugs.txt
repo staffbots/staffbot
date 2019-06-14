@@ -21,3 +21,8 @@
 - Написать классы <xxx>Device (!!!)
 - Создать дополнительное окно для настройки Ph и EC датчиков
 - Создать информационные странички по каждому из устройств
+
+
+Сделать обновление статуса заданий без загрузки страницы:
+http://qaru.site/questions/90316/refresh-part-of-page-div
+https://stackoverflow.com/questions/17636528/how-do-i-load-an-html-page-in-a-div-using-javascript

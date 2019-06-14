@@ -114,7 +114,7 @@ public class JournalServlet extends MainServlet {
             pageVariables.put("note_title", "");
             pageVariables.put("note_date", "<em>Выбрано записей:</em>");
             pageVariables.put("note_value", "<em>" + journalList.size() + "</em>");
-            htmlCode += PageGenerator.getPage("journal/note.html",pageVariables);
+            htmlCode += PageGenerator.getPage("other/note.html",pageVariables);
         }
         return htmlCode;
     }

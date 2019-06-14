@@ -4,6 +4,7 @@ import ru.staffbot.database.Database;
 import ru.staffbot.database.configs.Configs;
 import ru.staffbot.utils.botprocess.BotProcess;
 import ru.staffbot.utils.botprocess.BotProcessStatus;
+import ru.staffbot.utils.botprocess.BotTask;
 import ru.staffbot.utils.levers.Lever;
 import ru.staffbot.utils.levers.Levers;
 import ru.staffbot.utils.values.ValueType;
@@ -40,6 +41,7 @@ public class ControlServlet extends MainServlet {
         pageVariables.put("control_start_time", Long.toString(BotProcess.getStartTime()));
         pageVariables.put("control_display", Database.connected() ? "inline-table" : "none");
         pageVariables.put("page_bg_color", page_bg_color);
+        pageVariables.put("control_tasklist", getTaskList());
         pageVariables.put("control_leverlist", getLeverList());
         pageVariables.put("control_configlist", getConfigList());
         String content = PageGenerator.getPage(pageType.getName() + ".html", pageVariables);
@@ -78,6 +80,20 @@ public class ControlServlet extends MainServlet {
         }
 
         doGet(request, response);
+    }
+
+    public String getTaskList() {
+        String context = "";
+        Map<String, Object> pageVariables = new HashMap();
+        for (int index = 0; index < BotProcess.list.size(); index++){
+            BotTask task = BotProcess.list.get(index);
+            String status = task.getStatusForWeb();
+            if (status == null) continue;
+            pageVariables.put("note", task.note);
+            pageVariables.put("status", status);
+            context += PageGenerator.getPage("other/task.html",pageVariables);
+        }
+        return context;
     }
 
     public String getLeverList() {

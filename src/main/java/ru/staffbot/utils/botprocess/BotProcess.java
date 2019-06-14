@@ -12,7 +12,7 @@ public class BotProcess {
 
     private static BotProcessStatus status = BotProcessStatus.STOP;
 
-    private static ArrayList<BotTask> list = new ArrayList();
+    public static ArrayList<BotTask> list = new ArrayList();
 
     public static BotProcessStatus getStatus(){
         return status;
@@ -30,8 +30,8 @@ public class BotProcess {
     }
 
     public static void reScheduleAll(){
-        for (BotTask task : list)
-            reSchedule(task);
+        for (int index = 0; index<list.size(); index++)
+            reSchedule(list.get(index));
     }
 
     public static void reSchedule(BotTask task) {
@@ -44,9 +44,10 @@ public class BotProcess {
             if (status == BotProcessStatus.STOP)
                 task.interrupt();
         } else if (task.isOld()) {
+            int index = list.indexOf(task);
             list.remove(task);
             task = new BotTask(task.note, task.delay, task.action);
-            list.add(task);
+            list.add(index, task);
             if (status == BotProcessStatus.START)
                 task.start();
         }
