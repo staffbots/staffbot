@@ -17,7 +17,7 @@ import java.util.*;
 
 public class JournalServlet extends MainServlet {
 
-    public Journal journal = new Journal();
+    //public Journal journal = new Journal();
 
     private ArrayList<String> checkboxes;
 
@@ -43,7 +43,7 @@ public class JournalServlet extends MainServlet {
         String fromDateStr = accountService.getAttribute(session,"journal_fromdate");
         if (fromDateStr.equals("")) fromDateStr = request.getParameter("journal_fromdate");
 
-        journal.period.set(fromDateStr, toDateStr);
+        Database.journal.period.set(fromDateStr, toDateStr);
 
         Map<Integer, Boolean> typesForShow = new HashMap<>();
 
@@ -59,19 +59,19 @@ public class JournalServlet extends MainServlet {
                 if (checkboxName.equalsIgnoreCase("journal_" + pageType.name()))
                     typesForShow.put(pageType.getValue(), checkboxValue);
 
-            if (checkboxName.equals("journal_fromdate_on") && checkboxValue && (journal.period.fromDate == null))
-                journal.period.initFromDate();
+            if (checkboxName.equals("journal_fromdate_on") && checkboxValue && (Database.journal.period.fromDate == null))
+                Database.journal.period.initFromDate();
 
-            if (checkboxName.equals("journal_todate_on") && checkboxValue && (journal.period.toDate == null))
-                journal.period.initToDate();
+            if (checkboxName.equals("journal_todate_on") && checkboxValue && (Database.journal.period.toDate == null))
+                Database.journal.period.initToDate();
         }
 
         String searchString = accountService.getAttribute(session,"journal_search");
         pageVariables.put("journal_search", searchString);
         pageVariables.put("dateformat", Journal.DATE_FORMAT.getFormat());
-        pageVariables.put("journal_fromdate", journal.period.getFromDateAsString());
-        pageVariables.put("journal_todate", journal.period.getToDateAsString());
-        pageVariables.put("journal_datesize", journal.DATE_FORMAT.get().length());
+        pageVariables.put("journal_fromdate", Database.journal.period.getFromDateAsString());
+        pageVariables.put("journal_todate", Database.journal.period.getToDateAsString());
+        pageVariables.put("journal_datesize", Database.journal.DATE_FORMAT.get().length());
         pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("journal_page", getJournalPage(typesForShow, searchString));
@@ -97,24 +97,24 @@ public class JournalServlet extends MainServlet {
 
     //
     private String getJournalPage(Map<Integer, Boolean> typesForShow, String searchString) {
-        ArrayList<Note> journalList = journal.getJournal(typesForShow, searchString);
+        ArrayList<Note> journalList = Database.journal.getJournal(typesForShow, searchString);
         Map<String, Object> pageVariables = new HashMap();
         String htmlCode = "<tr><td><em>По указанному фильтру записей нет</em></td></tr>";
         if(!journalList.isEmpty()) {
             pageVariables.put("note_title", "");
             pageVariables.put("note_date", "<b>Дата</b>");
             pageVariables.put("note_value", "<b>Сообщение</b>");
-            htmlCode = PageGenerator.getPage("journal/note.html",pageVariables);
+            htmlCode = PageGenerator.getPage("items/journal_note.html",pageVariables);
             for (Note note : journalList) {
                 pageVariables.put("note_title", Converter.dateToString(note.getDate(), DateFormat.FULLTIMEDATE));
                 pageVariables.put("note_date", Converter.dateToString(note.getDate(), DateFormat.CUTSHORTDATETIME));
                 pageVariables.put("note_value", note.getMessage());
-                htmlCode += PageGenerator.getPage("journal/note.html",pageVariables);
+                htmlCode += PageGenerator.getPage("items/journal_note.html",pageVariables);
             }
             pageVariables.put("note_title", "");
             pageVariables.put("note_date", "<em>Выбрано записей:</em>");
             pageVariables.put("note_value", "<em>" + journalList.size() + "</em>");
-            htmlCode += PageGenerator.getPage("other/note.html",pageVariables);
+            htmlCode += PageGenerator.getPage("items/journal_note.html",pageVariables);
         }
         return htmlCode;
     }

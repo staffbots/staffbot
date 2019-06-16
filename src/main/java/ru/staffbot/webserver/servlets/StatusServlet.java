@@ -93,7 +93,7 @@ public class StatusServlet extends MainServlet {
             ArrayList<Value> values = device.getValues();
             int i = 0;
             if (device.getValues().size() == 0)
-                context += PageGenerator.getPage("devices/value.html",pageVariables);
+                context += PageGenerator.getPage("items/device_value.html",pageVariables);
             else
             for (Value value : values){
                 if (i>0){
@@ -118,7 +118,7 @@ public class StatusServlet extends MainServlet {
                 pageVariables.put("value_name", (value.dbStorage ? value.getName() : ""));
                 pageVariables.put("value_note", value.getNote());
                 pageVariables.put("value", value.getValueAsString());
-                context += PageGenerator.getPage("devices/value.html",pageVariables);
+                context += PageGenerator.getPage("items/device_value.html",pageVariables);
                 i++;
             }
 

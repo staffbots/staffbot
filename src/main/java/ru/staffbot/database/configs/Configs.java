@@ -14,7 +14,7 @@ import java.util.*;
 public class Configs extends DBTable {
 
     private static final String DB_TABLE_NAME = "sys_configs";
-    private static final String DB_TABLE_FIELDS = "configname VARCHAR(50), configvalue VARCHAR(500)";
+    private static final String DB_TABLE_FIELDS = "configname VARCHAR(100), configvalue VARCHAR(500)";
 
     private String name;
 

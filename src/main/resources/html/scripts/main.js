@@ -8,7 +8,7 @@ function show_control_time(){
         var min = Math.trunc(dt/60)%60;         min = (min > 9) ? min : '0' + min;
         var hou = Math.trunc(dt/(60*60))%60;    hou = (hou > 9) ? hou : '0' + hou;
         var day = Math.trunc(dt/(60*60*24))%24;
-        var str = 'days';
+        var str = '-';
 //        var str = 'дней';
 //        var ost = day%10;
 //        if ((ost == 1)&&(ost != 11)) str = 'день';

@@ -35,9 +35,9 @@ public class UsersServlet extends MainServlet {
 
         String login = accountService.getAttribute(session, "users_login");
         User user = accountService.userDAO.getUser(login);
-        UserRole role = (user == null) ? UserRole.GUEST : user.role;
+        UserRole role = (user == null) ? UserRole.INSPECTOR : user.role;
 
-        pageVariables.put("users_role", UserRole.GUEST.getName());
+        pageVariables.put("users_role", UserRole.INSPECTOR.getName());
         pageVariables.put("users_empty_enabled", (userList.size() == 0) ? "disabled" : "");
         pageVariables.put("users_login_list", getLoginList(userList, login));
         pageVariables.put("users_role_list", getRoleList(role.getAccessLevel()));

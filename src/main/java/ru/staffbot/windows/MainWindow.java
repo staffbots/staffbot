@@ -1,7 +1,6 @@
 package ru.staffbot.windows;
 
 import javafx.application.Application;
-import javafx.fxml.JavaFXBuilderFactory;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
@@ -35,8 +34,12 @@ public class MainWindow extends Application{
     @Override
     public void start(Stage stage) {
         try {
-            Parent root = (new FXMLLoader()).load(new ByteArrayInputStream(
-                getClass().getResourceAsStream("/fxml/MainWindow.fxml").readAllBytes()));
+            InputStream inputStream = getClass().getResourceAsStream("/fxml/MainWindow.fxml");
+            byte[] bytes = new byte[inputStream.available()];
+            inputStream.read(bytes);
+            Parent root = (new FXMLLoader()).load(new ByteArrayInputStream(bytes));
+//            Parent root = (new FXMLLoader()).load(new ByteArrayInputStream(
+//                getClass().getResourceAsStream("/fxml/MainWindow.fxml").readAllBytes()));
             stage.setTitle(title);
             stage.setScene(new Scene(root));
             stage.setResizable(false);

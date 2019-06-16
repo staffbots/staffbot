@@ -26,7 +26,12 @@ public class ResourceServlet extends BaseServlet {
 //                    return;
 //                }
             InputStream inputStream = ResourceServlet.class.getResourceAsStream(resourceName);
-            response.getOutputStream().write(inputStream.readAllBytes());
+
+            byte[] bytes = new byte[inputStream.available()];
+            inputStream.read(bytes);
+            response.getOutputStream().write(bytes);
+
+//            response.getOutputStream().write(inputStream.readAllBytes());
         } catch (Exception exception) {
             // Ignore
         }

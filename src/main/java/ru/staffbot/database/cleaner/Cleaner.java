@@ -43,6 +43,7 @@ public class Cleaner {
     }
 
     public void refresh(){
+        if(!Database.connected())return ;
         loadSettings();
         saveSettings();
     }

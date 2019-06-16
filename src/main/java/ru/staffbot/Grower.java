@@ -14,8 +14,6 @@ import ru.staffbot.database.journal.Journal;
 import ru.staffbot.utils.devices.Devices;
 import ru.staffbot.utils.devices.hardware.RelayDevice;
 import ru.staffbot.utils.values.DateValue;
-
-import java.util.Calendar;
 import java.util.Date;
 
 public class Grower extends Staffbot {
@@ -35,7 +33,7 @@ public class Grower extends Staffbot {
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////  Levers - Рычаги
+    //  Levers - Рычаги
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -71,12 +69,12 @@ public class Grower extends Staffbot {
     private static LongLever dayRateLever = new LongLever("dayRateLever",
             "Дневная периодичность, мин", 0, 60, 24 * 60);
     private static LongLever nightRateLever = new LongLever("nightRateLever",
-            "Ночьная периодичность, мин", 0, 120, 24 * 60);
+            "Ночная периодичность, мин", 0, 120, 24 * 60);
     private static LongLever durationLever = new LongLever("durationLever",
             "Продолжительность, мин", 0, 15, 24 * 60);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////  Devices - Устройства
+    //  Devices - Устройства
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -92,12 +90,12 @@ public class Grower extends Staffbot {
     private static SonarHCSR04Device sonar = new SonarHCSR04Device("sonar",
             "Сонар определения уровня воды, м", RaspiPin.GPIO_03, RaspiPin.GPIO_02);
     private static RelayDevice sunRelay = new RelayDevice("sunRelay",
-            "Реле включения/выключения света", false, RaspiPin.GPIO_00);
+            "Реле питания освещения", false, RaspiPin.GPIO_00);
     private static RelayDevice funRelay = new RelayDevice("funRelay",
-            "Реле включения вентилятора", true, RaspiPin.GPIO_01);
+            "Реле питания вентиляции", false, RaspiPin.GPIO_01);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    ////  Tasks - Зададия
+    //  Tasks - Зададия
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
     /**
@@ -108,76 +106,74 @@ public class Grower extends Staffbot {
         BotProcess.init(lightTask, ventingTask, irrigationTask);
     }
 
-    /**
-     * Управление светом
-     */
-    private static String lightTaskNote = "Управление светом";
+    /*****************************************************
+     * Освещение                                         *
+     *****************************************************/
+    private static String lightTaskNote = "Освещение";
     private static BotTask lightTask = new BotTask(
-            lightTaskNote,
-            () -> { // Расчёт задержки перед следующим запуском задания
-                    long sunriseTime = sunriseLever.getNearFuture().getTime();
-                    long sunsetTime = sunsetLever.getNearFuture().getTime();
-                    // Если ближайший закат наступает раньше чем рассвет, то
-                    long delay = (sunsetTime < sunriseTime) ? 0 : (sunriseTime - System.currentTimeMillis());
-                    return delay;
-            },
-            () -> { // Задание
-                try {
-                    // "От заката до рассвета"
-                    long sunsetTime = sunsetLever.getNearFuture().getTime();
-                    Journal.add(lightTaskNote + ": включение до " +
-                            Converter.dateToString(new Date(sunsetTime), DateFormat.DATETIME));
-                    // Включаем
-                    sunRelay.set(true);
-                    Thread.sleep(sunsetTime - System.currentTimeMillis());
-                } catch (InterruptedException exception) {
-                    Journal.add(lightTaskNote + ": Задание прервано", NoteType.WRINING);
-                }
-                Journal.add(lightTaskNote + ": выключение");
-                //Выключаем
-                sunRelay.set(false);
-            });
+        lightTaskNote,
+        () -> { // Расчёт задержки перед следующим запуском задания
+            long sunriseTime = sunriseLever.getNearFuture().getTime();
+            long sunsetTime = sunsetLever.getNearFuture().getTime();
+            // Если ближайший закат наступает раньше чем рассвет, то
+            long delay = (sunsetTime < sunriseTime) ? 0 : (sunriseTime - System.currentTimeMillis());
+            return delay;
+        },
+        () -> { // Задание
+            try {
+                // "От заката до рассвета"
+                long sunsetTime = sunsetLever.getNearFuture().getTime();
+                Journal.add(lightTaskNote + ": включение до " +
+                        Converter.dateToString(new Date(sunsetTime), DateFormat.DATETIME));
+                // Включаем
+                sunRelay.set(true);
+                Thread.sleep(sunsetTime - System.currentTimeMillis());
+            } catch (InterruptedException exception) {
+                Journal.add(lightTaskNote + ": Задание прервано", NoteType.WRINING);
+            }
+            Journal.add(lightTaskNote + ": выключение");
+            //Выключаем
+            sunRelay.set(false);
+        });
 
-    /**
-     * Управление вентилятором
-     */
+    /*****************************************************
+     * Вентиляция                                        *
+     *****************************************************/
     private static String ventingTaskNote = "Вентиляция";
     private static BotTask ventingTask = new BotTask(
-            ventingTaskNote,
-            () -> { // Расчёт задержки перед следующим запуском
-                if (!funUsedLever.getValue()) return -1;
-                Date funriseDate = new Date(sunriseLever.getValue().getTime() - funDelayLever.getValue() * DateScale.MINUTE.getMilliseconds());
-                long funriseTime = DateValue.getNearFuture(funriseDate).getTime();
+        ventingTaskNote,
+        () -> { // Расчёт задержки перед следующим запуском
+            if (!funUsedLever.getValue()) return -1;
+            Date funriseDate = new Date(sunriseLever.getValue().getTime() - funDelayLever.getValue() * DateScale.MINUTE.getMilliseconds());
+            long funriseTime = DateValue.getNearFuture(funriseDate).getTime();
+            Date funsetDate = new Date(sunsetLever.getValue().getTime() + funDelayLever.getValue() * DateScale.MINUTE.getMilliseconds());
+            long funsetTime = DateValue.getNearFuture(funsetDate).getTime();
+            // Если ближайший закат наступает раньше чем рассвет, то
+            long delay = (funsetTime < funriseTime) ? 0 : (funriseTime - System.currentTimeMillis());
+            return delay;
+        },
+        () -> { // Задание
+            try {
                 Date funsetDate = new Date(sunsetLever.getValue().getTime() + funDelayLever.getValue() * DateScale.MINUTE.getMilliseconds());
                 long funsetTime = DateValue.getNearFuture(funsetDate).getTime();
-                // Если ближайший закат наступает раньше чем рассвет, то
-                long delay = (funsetTime < funriseTime) ? 0 : (funriseTime - System.currentTimeMillis());
-                return delay;
-            },
-            () -> { // Задание
-                try {
-                    Date funsetDate = new Date(sunsetLever.getValue().getTime() + funDelayLever.getValue() * DateScale.MINUTE.getMilliseconds());
-                    long funsetTime = DateValue.getNearFuture(funsetDate).getTime();
-                    Journal.add(ventingTaskNote + ": включение до " +
-                            Converter.dateToString(new Date(funsetTime), DateFormat.DATETIME));
-                    //Включаем
-                    funRelay.set(true);
-                    Thread.sleep(funsetTime - System.currentTimeMillis());
-                } catch (InterruptedException exception) {
-                    Journal.add("# " + ventingTaskNote + ": Задание прервано",NoteType.WRINING);
-                    //Thread.currentThread().interrupt();
-                } finally {
-                    Journal.add(ventingTaskNote + ": выключение");
-                    //Выключаем
-                    funRelay.set(false);
-                }
-            });
+                Journal.add(ventingTaskNote + ": включение до " +
+                        Converter.dateToString(new Date(funsetTime), DateFormat.DATETIME));
+                //Включаем
+                funRelay.set(true);
+                Thread.sleep(funsetTime - System.currentTimeMillis());
+            } catch (InterruptedException exception) {
+                Journal.add(ventingTaskNote + ": Задание прервано", NoteType.WRINING);
+                //Thread.currentThread().interrupt();
+            } finally {
+                Journal.add(ventingTaskNote + ": выключение");
+                //Выключаем
+                funRelay.set(false);
+            }
+        });
 
-    /**
-     * Включаем орошение:
-     * - подготовка раствора
-     * - продолжительность орошения задаётся параметром
-     */
+    /*****************************************************
+     * Орошение                                          *
+     *****************************************************/
     private static String irrigationTaskNote = "Орошение";
     private static BotTask irrigationTask = new BotTask(
         irrigationTaskNote,
@@ -201,10 +197,10 @@ public class Grower extends Staffbot {
                 Thread.sleep(7000);
                 Journal.add(irrigationTaskNote + ": Слив");
             } catch (InterruptedException exception) {
-                Journal.add("# " + irrigationTaskNote + ": Задание прервано",NoteType.WRINING);
+                Journal.add(irrigationTaskNote + ": Задание прервано",NoteType.WRINING);
             } finally {
                 // Выключаем
-                Journal.add("# " + irrigationTaskNote + ": выполнено");
+                Journal.add(irrigationTaskNote + ": выполнено");
             }
         });
 }

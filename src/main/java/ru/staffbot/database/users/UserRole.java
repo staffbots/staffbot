@@ -6,15 +6,15 @@ import java.util.Map;
 public enum UserRole {
 
     ADMIN(0, "Администратор"),
-    USER(1, "Пользователь"),
-    GUEST(2, "Гость");
+    MANAGER(1, "Управляющий"),
+    INSPECTOR(2, "Инспектор");
 
     private String description;
     private int accessLevel;
     private static Map accessLevelMap = new HashMap<>();
     private static Map nameMap = new HashMap<>();
 
-    private static final UserRole defaultRole = UserRole.GUEST;
+    private static final UserRole defaultRole = UserRole.INSPECTOR;
 
     UserRole(int accessLevel, String description) {
         this.accessLevel = accessLevel;

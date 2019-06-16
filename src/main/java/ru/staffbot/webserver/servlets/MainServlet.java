@@ -51,10 +51,10 @@ public abstract class MainServlet extends BaseServlet {
         int accessLevel = accountService.getUserAccessLevel(login);
         if(pageType.getAccessLevel() < accessLevel){
             switch (UserRole.valueOf(accessLevel)) {
-                case USER:
+                case MANAGER:
                     response.sendRedirect("/control");
                     break;
-                case GUEST:
+                case INSPECTOR:
                     response.sendRedirect("/status");
                     break;
                 default:

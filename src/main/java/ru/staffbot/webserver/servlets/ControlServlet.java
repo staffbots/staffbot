@@ -62,7 +62,7 @@ public class ControlServlet extends MainServlet {
             if (configName != null)
                 if (!configName.equals(""))
                     try {
-                        Configs config = new Configs(configName);
+                        Configs config = new Configs(PageGenerator.fromCode(configName));
                         if (request.getParameter("control_save") != null) config.save();
                         if (request.getParameter("control_load") != null) config.load();
                         if (request.getParameter("control_delete") != null) config.delete();
@@ -91,7 +91,7 @@ public class ControlServlet extends MainServlet {
             if (status == null) continue;
             pageVariables.put("note", task.note);
             pageVariables.put("status", status);
-            context += PageGenerator.getPage("other/task.html",pageVariables);
+            context += PageGenerator.getPage("items/control_task.html",pageVariables);
         }
         return context;
     }

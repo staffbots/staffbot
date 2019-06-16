@@ -41,7 +41,7 @@ public class AboutServlet extends MainServlet {
         pageVariables.put("about_dbmsystem",Database.DBMSystem);
         pageVariables.put("about_dbname",Database.NAME);
         pageVariables.put("about_project", Grower.projectName);
-        pageVariables.put("about_solution", Grower.solutionName + "-" + Grower.solutionVersion);
+        pageVariables.put("about_solution", Grower.solutionName + "-" + Grower.projectVersion);
 
         pageVariables.put("about_message", Database.getException().getMessage());
         String trace = "";
@@ -77,7 +77,7 @@ public class AboutServlet extends MainServlet {
             ArrayList<Pin> pins = device.getPins();
             int i = 0;
             if (pins.size() == 0)
-                context += PageGenerator.getPage("devices/pin.html",pageVariables);
+                context += PageGenerator.getPage("items/device_pin.html",pageVariables);
             else
                 for (Pin pin : pins){
                     if (i>0){
@@ -87,7 +87,7 @@ public class AboutServlet extends MainServlet {
                     }
                     pageVariables.put("pin_note", Devices.pins.get(pin).pinNote);
                     pageVariables.put("pin_name", pin.getName());
-                    context += PageGenerator.getPage("devices/pin.html",pageVariables);
+                    context += PageGenerator.getPage("items/device_pin.html",pageVariables);
                     i++;
                 }
 

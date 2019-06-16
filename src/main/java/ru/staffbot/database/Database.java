@@ -26,6 +26,8 @@ public class Database {
 
     public static Cleaner cleaner;
 
+    public static Journal journal;
+
     private static Connection connection;
 
     private static Exception exception = new Exception("Попытки подключения не было");
@@ -48,6 +50,7 @@ public class Database {
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD));
             createDatabase(DROP);
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD), NAME);
+            journal = new Journal();
             cleaner = new Cleaner();
             Journal.add("База данных " + NAME + " готова к использованию");
         } catch (Exception exception) {

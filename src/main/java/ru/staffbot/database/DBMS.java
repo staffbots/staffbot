@@ -9,7 +9,7 @@ import java.util.TimeZone;
 
 public enum DBMS {
 
-    MySQL("com.mysql.jdbc.Driver");
+    MySQL("com.mysql.cj.jdbc.Driver");
 
     private String driver;
 

@@ -1,5 +1,7 @@
 package ru.staffbot;
 
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import ru.staffbot.database.Database;
 import ru.staffbot.database.journal.Journal;
 import ru.staffbot.utils.devices.Devices;
@@ -19,7 +21,7 @@ public abstract class Staffbot{
 
     public static String solutionName;
 
-    public static String solutionVersion;
+    public static String projectVersion;
 
     public static String projectName = new Object(){}.getClass().getEnclosingClass().getSimpleName(); //"Staffbot"
 
@@ -28,7 +30,7 @@ public abstract class Staffbot{
         try {
             Properties property = new Properties();
             property.load(Staffbot.class.getResourceAsStream("/properties"));
-            solutionVersion = property.getProperty(solutionName.toLowerCase() + ".version", "");
+            projectVersion = property.getProperty(projectName.toLowerCase() + ".version", "");
             Journal.add("Свойства проекта загружены");
         } catch (IOException exception) {
             Journal.add("Ошибка чтения файла свойств проекта (properties):\n"+ exception.getMessage());
@@ -36,7 +38,7 @@ public abstract class Staffbot{
         // Имя исходного файла конфигурации, лежащего внутри jar-пакета
         String projectCfgFileName = "/" + projectName.toLowerCase() + ".cfg"; // внутри jar-пакета
         // Имя внешнего файла конфигурации, лежащего рядом с jar-пакетом
-        String solutionCfgFileName = "/" + solutionName + "-" + solutionVersion + ".cfg";
+        String solutionCfgFileName = "/" + solutionName + "-" + projectVersion + ".cfg";
         try {
             // Полный путь до jar-пакета
             String jarFileName = Staffbot.class.getProtectionDomain().getCodeSource().getLocation().getPath();
@@ -50,7 +52,14 @@ public abstract class Staffbot{
                 // то копируем его из ресурсов, заархивированных внутри jar-файла
                 InputStream inputStream = Staffbot.class.getResourceAsStream(projectCfgFileName);
                 FileOutputStream outputStream = new FileOutputStream(cfgFile.getPath());
-                outputStream.write(inputStream.readAllBytes());
+
+                byte[] bytes = new byte[inputStream.available()];
+                inputStream.read(bytes);
+                outputStream.write(bytes);
+
+//                outputStream.write(inputStream.readAllBytes());
+
+
             } catch (Exception exception){
                 System.out.println("Error of coping: " + exception.getMessage());
                 System.out.println("StackTrace: " + exception.getStackTrace());
@@ -93,7 +102,7 @@ public abstract class Staffbot{
     }
 
     public static void windowInit(){
-        MainWindow.init(projectName + ":" + solutionName + "-" + solutionVersion);
+        MainWindow.init(projectName + ":" + solutionName + "-" + projectVersion);
     }
 
 }
