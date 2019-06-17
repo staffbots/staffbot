@@ -154,7 +154,7 @@ abstract public class Value extends DBTable {
                                     " (value) VALUES (?)");
                     statement.setLong(1, newValue);
                     statement.executeUpdate();
-                    String stringValue = (valueType != ValueType.BOOLEAN) ? getValueAsString() : Long.toString(value);
+                    String stringValue = (valueType != ValueType.BOOLEAN) ? getValueAsString() : Long.toString(newValue);
                     Journal.add(getNote() + " - установлено заначение: " + stringValue);
                 } catch (Exception e) {
                     Journal.add("Ошибка записи в таблицу " + getTableName() + e.getMessage(), NoteType.ERROR);

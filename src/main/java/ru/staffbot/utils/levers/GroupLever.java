@@ -1,13 +1,13 @@
 package ru.staffbot.utils.levers;
 
-import ru.staffbot.utils.values.EmptyValue;
+import ru.staffbot.utils.values.VoidValue;
 
 /**
  * Специальный класс-разделитель, используется для группировки рычагов управления
  */
-public class EmptyLever extends EmptyValue implements Lever {
+public class GroupLever extends VoidValue implements Lever {
 
-    public EmptyLever(String note) {
+    public GroupLever(String note) {
         super(note);
     }
 

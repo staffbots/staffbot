@@ -1,70 +1,70 @@
 package ru.staffbot.windows;
 
-import javafx.application.Application;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.image.Image;
-import javafx.stage.Stage;
-import javafx.fxml.FXMLLoader;
-import javafx.event.ActionEvent;
-import javafx.fxml.FXML;
-import javafx.stage.WindowEvent;
+import java.awt.Dimension;
+import java.awt.Container;
+import java.awt.FlowLayout;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import javax.imageio.ImageIO;
+import javax.swing.JFrame;
+import javax.swing.JButton;
+import javax.swing.ImageIcon;
+
 import ru.staffbot.database.journal.Journal;
 import ru.staffbot.database.journal.NoteType;
 import ru.staffbot.webserver.WebServer;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
+import java.io.IOException;
 import java.net.URI;
 
-public class MainWindow extends Application{
-
-    private static String title;
+public class MainWindow extends JFrame {
 
     public static Boolean USED = true;
 
-    public static void init(String windowTilte){
+    public static void init(String windowTilte) {
         if (USED) {
-            title = windowTilte;
+            new MainWindow(windowTilte);
             Journal.add("Главное окно приложения открыто");
-            launch();
         }
     }
 
-    @Override
-    public void start(Stage stage) {
+    public MainWindow(String tilte) {
+        super(tilte);
+        setDefaultCloseOperation(EXIT_ON_CLOSE);
         try {
-            InputStream inputStream = getClass().getResourceAsStream("/fxml/MainWindow.fxml");
-            byte[] bytes = new byte[inputStream.available()];
-            inputStream.read(bytes);
-            Parent root = (new FXMLLoader()).load(new ByteArrayInputStream(bytes));
-//            Parent root = (new FXMLLoader()).load(new ByteArrayInputStream(
-//                getClass().getResourceAsStream("/fxml/MainWindow.fxml").readAllBytes()));
-            stage.setTitle(title);
-            stage.setScene(new Scene(root));
-            stage.setResizable(false);
-            stage.getIcons().add(new Image(
-                getClass().getResourceAsStream("/img/icon.png")));
-            stage.setOnCloseRequest((WindowEvent event1) -> {
-                Journal.add("Закрытие программы из пользовательского приложения на сервере", NoteType.WRINING);
-                System.exit(0);
-            });
-            stage.show();
-        } catch (Exception exception) {
-            Journal.add(exception.getMessage());
-            Journal.add("Закрытие программы из-за ошибки пользовательского приложения на сервере", NoteType.ERROR);
-            System.exit(0);
+            setIconImage(new ImageIcon(ImageIO.read(
+                    getClass().getResourceAsStream("/img/logo.png"))).getImage());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
-    }
-
-    @FXML
-    private void manageButtonClick(ActionEvent event) {
-        try {
-            java.awt.Desktop.getDesktop().browse(new URI("http://localhost:"+ WebServer.PORT));
-        } catch (Exception exception) {
-            Journal.add("Неудачная попытка открыть браузер", NoteType.ERROR);
-        }
-
+        // Панель содержимого
+        Container container = getContentPane();
+        container.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 25));
+        // Создание кнопки
+        JButton button = new JButton("Управление");
+        button.setToolTipText("Перейти к управлению через веб-интерфейс");
+        button.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    java.awt.Desktop.getDesktop().browse(new URI("http://localhost:" + WebServer.PORT));
+                } catch (Exception exception) {
+                    Journal.add("Неудачная попытка открыть браузер", NoteType.ERROR);
+                }
+            }
+        });
+        container.add(button);
+        // Размеры и положение окна
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int width = 350;
+        int height = 100;
+        int locationX = (screenSize.width - width) / 2;
+        int locationY = (screenSize.height - height) / 2;
+        setBounds(locationX, locationY, width, height);
+        setResizable(false);
+        // Открываем окно
+        setSize(width, height);
+        setVisible(true);
     }
 
 }

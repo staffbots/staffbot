@@ -86,7 +86,7 @@ public class Converter {
     }
 
     public static boolean longToBoolean(long value) {
-        return (value > 0);
+        return (value > 0.5);
     }
 
     public static Date stringToDate(String value, DateFormat format){

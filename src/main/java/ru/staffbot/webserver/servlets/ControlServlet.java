@@ -71,7 +71,7 @@ public class ControlServlet extends MainServlet {
                     }
         } else {
             for (Lever lever : Levers.list) {
-                if (lever.getValueType() == ValueType.EMPTY) continue;
+                if (lever.getValueType() == ValueType.VOID) continue;
                 String leverName = "control_" + lever.getName().toLowerCase();
                 String leverValue = request.getParameter(leverName);
                 lever.setValueFromString(leverValue);

@@ -42,9 +42,9 @@ public class Devices{
      * @return возвращает true в случае если программа запущена в операционной системе Raspbian
      * (то есть на контроллере Raspberry Pi), иначе - false
      */
-    private static boolean isRaspbian() {
+    public static boolean isRaspbian() {
         String operatingSystem = System.getProperty("os.name").toLowerCase();
-        return operatingSystem.contains("raspbian");
+        return operatingSystem.contains("linux");
     }
 
     public static GpioController gpioController = getController();

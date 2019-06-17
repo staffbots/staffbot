@@ -1,6 +1,5 @@
 package ru.staffbot.utils.levers;
 
-import ru.staffbot.database.Database;
 import java.util.ArrayList;
 
 /**
@@ -14,7 +13,7 @@ public class Levers{
     public static ArrayList<Lever> list = new ArrayList<>(0);
 
     public static void initGroup(String groupName, Lever... levers) {
-        list.add(new EmptyLever(groupName));
+        list.add(new GroupLever(groupName));
         init(levers);
     }
 

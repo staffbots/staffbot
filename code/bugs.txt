@@ -1,9 +1,9 @@
 ﻿Command line for maven is "compile package exec:java -f pom.xml"
 ======= STAFFBOT ========
-- РЕФАКТОРИНГ always actual (переименовать <Empty...> в <Void...>)
+- РЕФАКТОРИНГ always actual
 
 ======= WEBSERVER =======
-- STATUS: ! передача инфы классу Plot (через /resource)
+- STATUS: ! Освоить jQuery.Flot
 - JOURNAL: ! добавить прокрутку листа
 - Обеспечить безопастное подключение (https)dfgdfgd
 - Разобраться с кодировкой

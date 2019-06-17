@@ -1,8 +1,8 @@
 package ru.staffbot.utils.levers;
 
-import ru.staffbot.utils.values.EmptyValue;
+import ru.staffbot.utils.values.VoidValue;
 
-public class LabelLever extends EmptyValue implements Lever {
+public class LabelLever extends VoidValue implements Lever {
 
     private String stringValue;
 

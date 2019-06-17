@@ -30,7 +30,7 @@ public class Database {
 
     private static Connection connection;
 
-    private static Exception exception = new Exception("Попытки подключения не было");
+    private static Exception exception = null;
 
     public static Connection getConnection () {
         return connection;
@@ -41,11 +41,10 @@ public class Database {
     }
 
     public static boolean connected(){
-        return (exception.getMessage().equals(""));
+        return (exception != null);
     }
 
     public static boolean init(){
-        exception = new Exception("");
         try {
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD));
             createDatabase(DROP);

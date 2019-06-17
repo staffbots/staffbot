@@ -7,7 +7,7 @@ public enum ValueType {
     BOOLEAN,
     DATE,
     LIST,
-    EMPTY;
+    VOID;
 
     ValueType(){
 

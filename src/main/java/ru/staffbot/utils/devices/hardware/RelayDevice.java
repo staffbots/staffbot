@@ -42,21 +42,17 @@ public class RelayDevice extends Device {
         this.value.falseValue = "<input type=\"checkbox\" disabled>";
 
         if(!Devices.USED)return;
-        gpioPin = Devices.gpioController.provisionDigitalOutputPin(getPins().get(0), getName(), PinState.HIGH);
+        gpioPin = Devices.gpioController.provisionDigitalOutputPin(getPins().get(0), getName(), PinState.LOW);
         gpioPin.setShutdownOptions(true, PinState.LOW);
-
-
     }
 
     public Boolean set(Boolean value) {
         Boolean acceptedValue = this.value.setValue(value);
         if (!Devices.USED) return acceptedValue;
-        if (acceptedValue != value) {
-            if (value) {
-                gpioPin.high();
-            } else {
-                gpioPin.low();
-            }
+        if (value) {
+            gpioPin.high();
+        } else {
+            gpioPin.low();
         }
         return acceptedValue;
     }
@@ -71,9 +67,7 @@ public class RelayDevice extends Device {
      */
     @Override
     public String getValueAsString(){
-
         return value.getValueAsString();
-        //return this.value.getValue() ? "Включен" : "Выключен";
     }
 
 }
