@@ -33,6 +33,7 @@ public abstract class MainServlet extends BaseServlet {
         Map<String, Object> menuVariables = new HashMap();
         for (PageType pageType: PageType.values()){
             if ((accessLevel <= pageType.getAccessLevel())&&(!pageType.getDatabaseDepend()||Database.connected())) {
+                menuVariables.put("bg_color", (pageType == this.pageType) ? page_bg_color : main_bg_color);
                 menuVariables.put("main_menuName", pageType.getCaption());
                 menuVariables.put("main_menuTitle", pageType.getDescription());
                 menuVariables.put("main_menuRef", (pageType == this.pageType) ? "" : "href=\"" + pageType.getName() + "\"");
@@ -71,6 +72,7 @@ public abstract class MainServlet extends BaseServlet {
         pageVariables.put("main_content", content);
         pageVariables.put("main_login", login);
         pageVariables.put("main_role", accountService.getUserRole(login).getDescription());
+        pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("main_bg_color", main_bg_color);
 

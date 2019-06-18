@@ -28,9 +28,9 @@ public class Database {
 
     public static Journal journal;
 
-    private static Connection connection;
+    private static Connection connection = null;
 
-    private static Exception exception = null;
+    private static Exception exception;
 
     public static Connection getConnection () {
         return connection;
@@ -41,7 +41,7 @@ public class Database {
     }
 
     public static boolean connected(){
-        return (exception != null);
+        return (connection != null);
     }
 
     public static boolean init(){
@@ -53,6 +53,7 @@ public class Database {
             cleaner = new Cleaner();
             Journal.add("База данных " + NAME + " готова к использованию");
         } catch (Exception exception) {
+            connection = null;
             Database.exception = exception;
             Journal.add("Ошибка инициализации базы данных " + NAME + " " + exception.getMessage());
         }

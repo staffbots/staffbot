@@ -44,6 +44,7 @@ public class ControlServlet extends MainServlet {
         pageVariables.put("control_tasklist", getTaskList());
         pageVariables.put("control_leverlist", getLeverList());
         pageVariables.put("control_configlist", getConfigList());
+        pageVariables.put("tasks_display", BotProcess.list.size() > 0 ? "inline-table" : "none");
         String content = PageGenerator.getPage(pageType.getName() + ".html", pageVariables);
 
         super.doGet(request, response, content);

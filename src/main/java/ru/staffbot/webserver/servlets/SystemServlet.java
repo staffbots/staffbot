@@ -37,27 +37,27 @@ public class SystemServlet extends MainServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map<String, Object> pageVariables = new HashMap();
 
-        Database.cleaner.refresh();
+        if (Database.connected())
+            Database.cleaner.refresh();
 
         for (String variable : dbcleanVariables)
             if (!variable.contains("_measure") && !variable.contains("_cleaning"))
-                pageVariables.put(variable, (new Settings(variable)).load());
+                pageVariables.put(variable, "" + (new Settings(variable)).load());
 
         for (String variable : dbcleanVariables)
             if (variable.contains("_measure")){
                 List<String> values = (variable.contains("_auto_")) ?
                         Arrays.asList("minute", "hour", "day") : Arrays.asList("record", "day");
-                String dbValue = (new Settings(variable)).load();
                 for (String value : values)
                     pageVariables.put(variable + "_" + value,
-                            dbValue.equalsIgnoreCase(value) ? "selected" : "");
+                            value.equalsIgnoreCase((new Settings(variable)).load()) ? "selected" : "");
             }
-
+        //dbclean_journal_value
         String variable = "dbclean_auto_cleaning";
         List<String> values = Arrays.asList("on", "off");
         for (String value : values)
             pageVariables.put(variable + "_" + value,
-                    (new Settings(variable)).load().equalsIgnoreCase(value) ? "checked" : "");
+                    (value.equalsIgnoreCase((new Settings(variable)).load()) ? "checked" : ""));
 
 
         pageVariables.put("dateformat", Cleaner.DATE_FORMAT.getFormat());

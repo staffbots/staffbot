@@ -1,6 +1,13 @@
 <!-- Параметры -->
 <table style="text-align:left;" border="0" cellpadding="3">
     <tbody>
+    <tr>
+        <td colspan="2" align="center">
+            <a href="http://www.staffbot.ru" title="staffbot.ru" target="_blank">
+                <img src="/resource?name=/img/logo.png">
+            </a>
+        </td>
+    </tr>
     <tr style="background: #${page_bg_color};"><td colspan="2"></td></tr>
     <tr>
         <td>Операционная система</td>
@@ -45,21 +52,26 @@
         <td>Сайт проекта</td>
         <td><em><a href="http://www.staffbot.ru" title="Сайт проекта" target="_blank">www.staffbot.ru</a><em></td>
     </tr>
+    <tr><td colspan="2"></td></tr>
+    <tr>
+        <td colspan="2">
+            <table style="text-align: left" cellpadding="5" border="0" cellspacing="0">
+                <tbody>
+
+                <tr style="font-weight: bold; background: #${page_bg_color}">
+                    <td>Устройство</td>
+                    <td>Описание</td>
+                    <td colspan="2">Пины</td>
+                </tr>
+                ${about_devicelist}
+                </tbody>
+            </table>
+        </td>
+    </tr>
     </tbody>
 </table>
 </p>
 
-<table style="text-align: left" cellpadding="3" border="0" cellspacing="0">
-    <tbody>
-
-    <tr style="font-weight: bold; background: #${page_bg_color}">
-        <td>Устройство</td>
-        <td>Описание</td>
-        <td colspan="2">Пины</td>
-    </tr>
-        ${about_devicelist}
-    </tbody>
-</table>
 
 <p>
 <table style="display:${device_display}; background: #${page_bg_color}; text-align:left;" cellpadding="3" >

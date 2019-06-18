@@ -183,7 +183,7 @@ public class Grower extends Staffbot {
         () -> {// Метод самой
             try {
                 Journal.add(irrigationTaskNote + ": Проверка уровня воды");
-                double level = sonar.get();
+                //double level = sonar.getDistance();
                 double volume = 3d / 5d;
                 volumeLever.setValueFromString(String.format("%.3f", volume));
                 volumeLever.setValueFromString(sunRelay.get() ? "День" : "Ночь" );
