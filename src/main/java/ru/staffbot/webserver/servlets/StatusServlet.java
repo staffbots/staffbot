@@ -37,18 +37,18 @@ public class StatusServlet extends MainServlet {
         HttpSession session = request.getSession();
 
         String getName = request.getParameter("get");
-//        if (getName != null) {
-//            System.out.println("Запрос " + getName);
-//            for (Device device : Devices.list)
-//                for (Value value : device.getValues())
-//                    if (getName.equals(value.getName())) {
-//                        response.getWriter().println(value.getValueAsString());
-//                        response.setContentType("text/html; charset=utf-8");
-//                        response.setStatus(HttpServletResponse.SC_OK);
-//                        return;
-//                    }
-//            return;
-//        }
+        if (getName != null) {
+            System.out.println("Запрос " + getName);
+            for (Device device : Devices.list)
+                for (Value value : device.getValues())
+                    if (getName.equals(value.getName())) {
+                        response.getWriter().println(value.getValueAsString());
+                        response.setContentType("text/html; charset=utf-8");
+                        response.setStatus(HttpServletResponse.SC_OK);
+                        return;
+                    }
+            return;
+        }
         System.out.println("Запрос страницы");
 
         for (String checkboxName : checkboxes) {

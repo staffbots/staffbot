@@ -20,6 +20,7 @@ public class ResourceServlet extends BaseServlet {
         try {
             String resourceName = request.getParameter("name");
             if (resourceName == null) return;
+
 //            if (!resourceName..equals("/img/logo.png")) // на страничке авторизации рисуем логотип вне зависимости от уровня доступа
 //                if (accountService.isAccessDenied(request.getSession())) {
 //                    response.sendRedirect("/entry");

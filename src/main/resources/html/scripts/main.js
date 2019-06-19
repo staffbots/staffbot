@@ -53,13 +53,15 @@ function update_control_tasklist(){
 
 // Обновление значения
 function update_status_value(name){
+    if (name == '') return;
     $.get(
         '/status?get=' + name,
         function(data) {
             $('#' + name + '_value').html(data);
         }
     );
-    setTimeout(update_status_value(name), 10000);
+    setTimeout(update_status_value, 1000, name);
+
 }
 
 
