@@ -93,7 +93,7 @@ public class Tester extends Staffbot {
      * Заполняется список задач {@code tasks}<br>
      */
     private static void botProcessInit() {
-        //BotProcess.init(ledTask);
+        BotProcess.init(ledTask);
     }
 
     /*****************************************************
@@ -104,14 +104,14 @@ public class Tester extends Staffbot {
             ledTaskNote,
         () -> { // Расчёт задержки перед следующим запуском задания
             //long delay = Math.round(ledOffLever.getValue() * DateScale.SECOND.getMilliseconds());
-            long delay = 10000;
+            long delay = 2000;
             return delay;
         },
         () -> { // Задание
             try {
                 // "От заката до рассвета"
                 //long delay = Math.round(ledOnLever.getValue() * DateScale.SECOND.getMilliseconds());
-                long delay = 10000;
+                long delay = 2000;
                 Journal.add(ledTaskNote + ": включение до " +
                         Converter.dateToString(new Date(System.currentTimeMillis() + delay), DateFormat.DATETIME));
                 // Включаем

@@ -6,6 +6,7 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
+        <module name="staffbot" />
         <module name="Staffbot" />
         <module name="test" />
       </profile>
@@ -17,7 +18,6 @@
       <module name="launcher" target="11" />
       <module name="st1affbotgrower" target="11" />
       <module name="Staff" target="11" />
-      <module name="staffbot" target="11" />
     </bytecodeTargetLevel>
   </component>
 </project>

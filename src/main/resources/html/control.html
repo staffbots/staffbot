@@ -1,100 +1,102 @@
 <p>
 <form action="/control" method="post">
-<table style="text-align:right;" cellpadding="3">
-  <tbody>
-    <!-- Кнопки управления -->
-    <tr>
-      <td colspan="2">
-        <table style="display:${tasks_display}; text-align: right; width:100%" border="0" cellpadding="3">
-          <tbody>
-          <tr>
-            <td align="center" valign="middle">
-              <button name="control_start" ${control_start} title="Запустить выполнение процесса" onclick="control_start_onClick()">
-                Пуск
-              </button>
+    <table style="text-align:right;" cellpadding="3">
+        <tbody>
+        <!-- Кнопки управления -->
+        <tr>
+            <td colspan="2">
+                <table style="display:${tasks_display}; text-align: right; width:100%" border="0" cellpadding="3">
+                    <tbody>
+                    <tr>
+                        <td align="center" valign="middle">
+                            <button name="control_start" ${control_start} title="Запустить выполнение процесса"
+                                    onclick="control_start_onClick()">
+                                Пуск
+                            </button>
+                        </td>
+                        <td align="center" valign="middle">
+                            <button name="control_pause" ${control_pause} title="Приостановить выполнение процесса"
+                                    onclick="control_pause_onClick()">
+                                Пауза
+                            </button>
+                        </td>
+                        <td align="center" valign="middle">
+                            <button name="control_stop" ${control_stop} title="Закончить выполнение процесса"
+                                    onclick="control_stop_onClick()">
+                                Стоп
+                            </button>
+                        </td>
+                        <td>
+                            <input type="hidden" name="control_start_time" value="${control_start_time}"></input>
+                        </td>
+                        <td valign="bottom" align="right" width="100%">
+                            <b>
+                                <output name="control_process_time" title="Время после запуска"></output>
+                            </b>
+                        </td>
+                    </tr>
+                    <!-- Список заданий -->
+                    <tr>
+                        <td colspan="5" style="text-align: right">
+                            <small>
+                                <div id="control_tasklist" title="Текущие задания">
+                                    <!-- Обновляется по udate_control_tasklist() -->
+                                </div>
+                            </small>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </td>
-            <td align="center" valign="middle">
-              <button name="control_pause" ${control_pause} title="Приостановить выполнение процесса" onclick="control_pause_onClick()">
-                Пауза
-              </button>
+        </tr>
+        <!-- Параметры (рычаги управления) -->
+        ${control_leverlist}
+        <tr style="background: #${page_bg_color}">
+            <td colspan="2" rowspan="1" align="right">
+                <button name="control_apply" title="Применить введённые параметры" value="control_apply">
+                    Применить
+                </button>
             </td>
-            <td align="center" valign="middle">
-              <button name="control_stop" ${control_stop} title="Закончить выполнение процесса"  onclick="control_stop_onClick()">
-                Стоп
-              </button>
+        </tr>
+        <!-- Конфигурация -->
+        <tr>
+            <td colspan="2">
+                <table style="display:${control_display}; text-align:right;" border="0" cellpadding="0" cellspacing="5">
+                    <tr>
+                        <td align="center" valign="middle" width="100%">
+                            <input list="control_configlist" name="control_configname" title="Имя конфигурации"
+                                   autocomplete="off"/>
+                            <datalist id="control_configlist">
+                                ${control_configlist}
+                            </datalist>
+                        </td>
+                        <td align="center" valign="middle">
+                            <button name="control_save" value="control_save"
+                                    title="Сохранить конфигурацию в БД под указанным именем">
+                                Сохранить
+                            </button>
+                        </td>
+                        <td align="center" valign="middle">
+                            <button name="control_load" value="control_load"
+                                    title="Загрузить из БД конфигурацию с указанным именем">
+                                Загрузить
+                            </button>
+                        </td>
+                        <td align="center" valign="middle">
+                            <button name="control_delete" value="control_delete"
+                                    title="Удалить из БД конфигурацию с указанным именем">
+                                Удалить
+                            </button>
+                        </td>
+                    </tr>
+                </table>
             </td>
-            <td>
-              <input  type="hidden" name="control_start_time" value = "${control_start_time}"></input>
-            </td>
-            <td valign="bottom"  align="right" width="100%">
-                <b>
-                    <output name="control_process_time" title="Время после запуска"></output>
-                </b>
-            </td>
-          </tr>
-          </tbody>
-        </table>
-      </td>
-    </tr>
-    <!-- Задания -->
-    <tr>
-      <td colspan="2">
-        <small>
-        <table style="text-align: right; width:100%">
-          <tbody>
-
-              ${control_tasklist}
-          </tbody>
-        </table>
-        </small>
-      </td>
-    </tr>
-    <!-- Параметры (рычаги управления) -->
-    ${control_leverlist}
-    <!-- ----------- -->
-    <tr style="background: #${page_bg_color}">
-      <td colspan="2" rowspan="1" align="right">
-        <button name="control_apply" title="Применить введённые параметры" value="control_apply">
-          Применить
-        </button>
-      </td>
-    </tr>
-    <!-- Конфигурация -->
-    <tr>
-      <td colspan="2">
-        <table style="display:${control_display}; text-align:right;" border="0" cellpadding="0" cellspacing="5">
-          <tr>
-            <td align="center" valign="middle" width="100%">
-              <input list="control_configlist" name="control_configname" title="Имя конфигурации" autocomplete="off"/>
-              <datalist id="control_configlist">
-                ${control_configlist}
-              </datalist>
-            </td>
-            <td align="center" valign="middle">
-              <button name="control_save" value="control_save" title="Сохранить конфигурацию в БД под указанным именем">
-                Сохранить
-              </button>
-            </td>
-            <td align="center" valign="middle">
-              <button name="control_load" value="control_load" title="Загрузить из БД конфигурацию с указанным именем">
-                Загрузить
-              </button>
-            </td>
-            <td align="center" valign="middle">
-              <button name="control_delete" value="control_delete" title="Удалить из БД конфигурацию с указанным именем">
-                Удалить
-              </button>
-            </td>
-          </tr>
-
-        </table>
-      </td>
-    </tr>
-  </tbody>
-</table>
+        </tr>
+        </tbody>
+    </table>
 </form>
 </p>
-<script type="text/javascript" src="/resource?name=/html/scripts/main.js"></script>
 <script type="text/javascript"> show_control_time(); </script>
+<script type="text/javascript"> update_control_tasklist(); </script>
 
 

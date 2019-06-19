@@ -4,6 +4,7 @@ import ru.staffbot.database.DBTable;
 import ru.staffbot.utils.Converter;
 import ru.staffbot.database.Database;
 import ru.staffbot.utils.DateFormat;
+import ru.staffbot.utils.values.LongValue;
 
 import java.sql.*;
 import java.util.*;
@@ -14,7 +15,8 @@ import java.util.Date;
  *
  */
 public class Journal extends DBTable {
-
+    public static final long MAX_NOTE_COUNT = 99;
+    public static final long DEFAULT_NOTE_COUNT = 20;
     public static final String DB_TABLE_NAME = "sys_journal";
     public static final String DB_TABLE_FIELDS = "moment TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3), note VARCHAR(255) CHARACTER SET utf8, noteType INT DEFAULT 0";
     public static final DateFormat DATE_FORMAT = DateFormat.DATETIME;
@@ -50,6 +52,25 @@ public class Journal extends DBTable {
     }
 
     public Period period = new Period(DATE_FORMAT);
+
+    private LongValue noteCount = new LongValue("","",false,
+            1, DEFAULT_NOTE_COUNT, MAX_NOTE_COUNT);
+
+    public void setCount(long newCount){
+        noteCount.setValue(newCount);
+    }
+
+    public void setCount(String newCount){
+        try {
+            noteCount.setValue(Long.parseLong(newCount));
+        } catch (NumberFormatException e) {
+            noteCount.setDefaultValue();
+        }
+    }
+
+    public long getCount(){
+        return noteCount.getValue();
+    }
 
     public Journal(){
         super(DB_TABLE_NAME, DB_TABLE_FIELDS);
@@ -93,9 +114,11 @@ public class Journal extends DBTable {
             String fromCondition = (period.fromDate == null) ? "" : " AND (? <= moment)";
             String toCondition = (period.toDate == null) ? "" : " AND (moment <= ?)";
             PreparedStatement statement = Database.getConnection().prepareStatement(
-                    "SELECT moment, note, noteType FROM " + getTableName() + " WHERE "
-                            + condition + fromCondition + toCondition
-                            + " AND (LOWER(note) LIKE '%" + searchString.toLowerCase() + "%') ORDER BY moment");
+                    "SELECT * FROM (SELECT moment, note, noteType FROM " + getTableName()
+                            + " WHERE " + condition + fromCondition + toCondition
+                            + " AND (LOWER(note) LIKE '%" + searchString.toLowerCase()
+                            + "%') ORDER BY moment DESC LIMIT "  + getCount()
+                            + ") sub ORDER BY moment ASC");
             if (period.fromDate != null) {
                 // Формат даты для журнала (DateFormat.TIMEDATE) не учитывает секунды,
                 // которые прошли с начала минуты (для начальной даты):

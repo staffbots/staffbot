@@ -6,6 +6,7 @@ import ru.staffbot.database.journal.Note;
 import ru.staffbot.database.journal.NoteType;
 import ru.staffbot.utils.Converter;
 import ru.staffbot.utils.DateFormat;
+import ru.staffbot.utils.DateScale;
 import ru.staffbot.webserver.AccountService;
 
 import javax.servlet.ServletException;
@@ -44,6 +45,7 @@ public class JournalServlet extends MainServlet {
         if (fromDateStr.equals("")) fromDateStr = request.getParameter("journal_fromdate");
 
         Database.journal.period.set(fromDateStr, toDateStr);
+        Database.journal.setCount(accountService.getAttribute(session,"journal_count"));
 
         Map<Integer, Boolean> typesForShow = new HashMap<>();
 
@@ -72,6 +74,7 @@ public class JournalServlet extends MainServlet {
         pageVariables.put("journal_fromdate", Database.journal.period.getFromDateAsString());
         pageVariables.put("journal_todate", Database.journal.period.getToDateAsString());
         pageVariables.put("journal_datesize", Database.journal.DATE_FORMAT.get().length());
+        pageVariables.put("journal_count", Database.journal.getCount());
         pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("journal_page", getJournalPage(typesForShow, searchString));
@@ -90,8 +93,12 @@ public class JournalServlet extends MainServlet {
         }
         accountService.setAttribute(request.getSession(), "journal_search",
                 PageGenerator.fromCode(request.getParameter("journal_search")));
-        accountService.setAttribute(request.getSession(),"journal_todate", request.getParameter("journal_todate"));
-        accountService.setAttribute(request.getSession(),"journal_fromdate", request.getParameter("journal_fromdate"));
+        accountService.setAttribute(request.getSession(),"journal_count",
+                request.getParameter("journal_count"));
+        accountService.setAttribute(request.getSession(),"journal_todate",
+                request.getParameter("journal_todate"));
+        accountService.setAttribute(request.getSession(),"journal_fromdate",
+                request.getParameter("journal_fromdate"));
         doGet(request, response);
     }
 

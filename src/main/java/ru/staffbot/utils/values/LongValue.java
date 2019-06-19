@@ -68,7 +68,13 @@ public class LongValue extends Value {
     }
 
     public void setValue(long value){
+        if (value < minValue) value = minValue;
+        if (value > maxValue) value = maxValue;
         set(value);
+    }
+
+    public void setDefaultValue(){
+        set(defaultValue);
     }
 
     public long getValue(){

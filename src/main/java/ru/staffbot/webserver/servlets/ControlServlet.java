@@ -29,7 +29,15 @@ public class ControlServlet extends MainServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map<String, Object> pageVariables = new HashMap();
-
+        String getName = request.getParameter("get");
+        if (getName != null) {
+            if (getName.equals("tasklist")) {
+                response.getWriter().println(getTaskList());
+                response.setContentType("text/html; charset=utf-8");
+                response.setStatus(HttpServletResponse.SC_OK);
+            }
+            return;
+        }
         for (BotProcessStatus status : BotProcessStatus.values()) {
             String statusName = "control_" + status.name().toLowerCase();
             if (status == BotProcessStatus.PAUSE)
@@ -41,7 +49,6 @@ public class ControlServlet extends MainServlet {
         pageVariables.put("control_start_time", Long.toString(BotProcess.getStartTime()));
         pageVariables.put("control_display", Database.connected() ? "inline-table" : "none");
         pageVariables.put("page_bg_color", page_bg_color);
-        pageVariables.put("control_tasklist", getTaskList());
         pageVariables.put("control_leverlist", getLeverList());
         pageVariables.put("control_configlist", getConfigList());
         pageVariables.put("tasks_display", BotProcess.list.size() > 0 ? "inline-table" : "none");
@@ -88,7 +95,7 @@ public class ControlServlet extends MainServlet {
         Map<String, Object> pageVariables = new HashMap();
         for (int index = 0; index < BotProcess.list.size(); index++){
             BotTask task = BotProcess.list.get(index);
-            String status = task.getStatusForWeb();
+            String status = task.getStatusString();
             if (status == null) continue;
             pageVariables.put("note", task.note);
             pageVariables.put("status", status);

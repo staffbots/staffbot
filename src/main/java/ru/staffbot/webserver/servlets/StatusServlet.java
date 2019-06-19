@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,14 +24,42 @@ import java.util.Map;
  */
 public class StatusServlet extends MainServlet {
 
+    private ArrayList<String> checkboxes;
+
     public StatusServlet(AccountService accountService) {
         super(PageType.STATUS, accountService);
+        checkboxes = new ArrayList<>(Arrays.asList("status_fromdate_on", "status_todate_on"));
     }
 
     // Вызывается при запросе странице с сервера
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map<String, Object> pageVariables = new HashMap();
         HttpSession session = request.getSession();
+
+        String getName = request.getParameter("get");
+//        if (getName != null) {
+//            System.out.println("Запрос " + getName);
+//            for (Device device : Devices.list)
+//                for (Value value : device.getValues())
+//                    if (getName.equals(value.getName())) {
+//                        response.getWriter().println(value.getValueAsString());
+//                        response.setContentType("text/html; charset=utf-8");
+//                        response.setStatus(HttpServletResponse.SC_OK);
+//                        return;
+//                    }
+//            return;
+//        }
+        System.out.println("Запрос страницы");
+
+        for (String checkboxName : checkboxes) {
+            String checkboxValueStr = accountService.getAttribute(session, checkboxName); // Читаем из сессии
+            if (checkboxValueStr.equals("")) {
+                checkboxValueStr = "true"; // Значение при первой загрузке
+                accountService.setAttribute(session, checkboxName, checkboxValueStr);
+            }
+            Boolean checkboxValue = Boolean.parseBoolean(checkboxValueStr);
+            pageVariables.put(checkboxName, checkboxValue ? "checked" : "");
+        }
 
         Period period = new Period(Journal.DATE_FORMAT);
 
@@ -42,13 +71,10 @@ public class StatusServlet extends MainServlet {
 
         period.set(fromDateStr, toDateStr);
 
-        String radiobox = accountService.getAttribute(session,"status_radiobox");
-        boolean noneChoice = (radiobox.equals("") || radiobox.equalsIgnoreCase("none_choice"));
 
         pageVariables.put("dateformat", Journal.DATE_FORMAT.getFormat());
         pageVariables.put("status_fromdate", period.getFromDateAsString());
         pageVariables.put("status_todate", period.getToDateAsString());
-        pageVariables.put("radio_value", noneChoice ? "checked" : "");
         pageVariables.put("status_devicelist", getDeviceList(session));
         pageVariables.put("status_display", Database.connected() ? "inline-table" : "none");
         pageVariables.put("page_bg_color", page_bg_color);
@@ -62,18 +88,23 @@ public class StatusServlet extends MainServlet {
         if (request.getParameter("status_apply") != null) {
             for (Device device : Devices.list)
                 for (Value value : device.getValues()){
-                    String choiceName = value.getName() + "_choice";
-                    String checkValue = (request.getParameter(choiceName) == null) ? "false" : "true";
-                    accountService.setAttribute(session, choiceName, checkValue);
+                    String checkName = value.getName() + "_checkbox";
+                    String checkValue = (request.getParameter(checkName) == null) ? "false" : "true";
+                    accountService.setAttribute(session, checkName, checkValue);
                 }
-            accountService.setAttribute(session,"status_radiobox", request.getParameter("status_radiobox"));
             accountService.setAttribute(session,"status_todate", request.getParameter("journal_todate"));
             accountService.setAttribute(session,"status_fromdate", request.getParameter("journal_fromdate"));
+            for (String checkboxName : checkboxes){
+                String checkboxValueStr = request.getParameter(checkboxName); // Читаем со страницы
+                checkboxValueStr = (checkboxValueStr == null) ? "false" : "true";
+                accountService.setAttribute(session, checkboxName, checkboxValueStr);
+            }
         }
         doGet(request, response);
     }
 
-    public String getDeviceList(HttpSession session ) {
+    public String getDeviceList(HttpSession session) {
+        //udate_value(value_name)
         String context = "";
         Map<String, Object> pageVariables = new HashMap();
         pageVariables.put("page_bg_color", page_bg_color);
@@ -87,7 +118,7 @@ public class StatusServlet extends MainServlet {
             pageVariables.put("check_name", device.getName() + "_check");
             pageVariables.put("check_value", "");
             pageVariables.put("value_name", "");
-            pageVariables.put("value", "");
+            //pageVariables.put("value", "");
             pageVariables.put("value_note", "");
 
             ArrayList<Value> values = device.getValues();
@@ -104,20 +135,22 @@ public class StatusServlet extends MainServlet {
                 pageVariables.put("radio_display", (value.dbStorage &&
                         (value.getValueType() == ValueType.BOOLEAN ) ? "inline" : "none"));
                 pageVariables.put("check_display", (value.dbStorage &&
-                        (value.getValueType() == ValueType.DOUBLE || value.getValueType() == ValueType.LONG ) ? "inline" : "none"));
+                        (value.getValueType() == ValueType.DOUBLE ||
+                         value.getValueType() == ValueType.LONG  ||
+                         value.getValueType() == ValueType.BOOLEAN ) ? "inline" : "none"));
 
-                String choiceName = value.getName() + "_choice";
-                String checkValue = accountService.getAttribute(session,choiceName); // Читаем из сессии
+                String checkName = value.getName() + "_checkbox";
+                String checkValue = accountService.getAttribute(session,checkName); // Читаем из сессии
                 if (checkValue.equals("")) {
                     checkValue = "false"; // Значение при первой загрузке
-                    accountService.setAttribute(session, choiceName, checkValue);
+                    accountService.setAttribute(session, checkName, checkValue);
                 }
-                pageVariables.put("radio_value", choiceName.equalsIgnoreCase(radiobox) ? "checked" : "");
+                pageVariables.put("radio_value", checkName.equalsIgnoreCase(radiobox) ? "checked" : "");
                 pageVariables.put("check_value", Boolean.parseBoolean(checkValue) ? "checked" : "");
-                pageVariables.put("choice_name", choiceName);
+                pageVariables.put("check_name", checkName);
                 pageVariables.put("value_name", (value.dbStorage ? value.getName() : ""));
                 pageVariables.put("value_note", value.getNote());
-                pageVariables.put("value", value.getValueAsString());
+               // pageVariables.put("value", value.getValueAsString());
                 context += PageGenerator.getPage("items/device_value.html",pageVariables);
                 i++;
             }

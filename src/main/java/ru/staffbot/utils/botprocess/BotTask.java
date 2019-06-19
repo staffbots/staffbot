@@ -30,15 +30,10 @@ public class BotTask extends Thread implements DelayFunction {
 
     public BotTaskStatus status = BotTaskStatus.NEW;
 
-    public String getStatusForWeb() {
-        long delay = getDelay();
-        if (delay < 0)
-            return null;
-        if (isWaiting())
-            return "Запуск ожидается " + Converter.dateToString(new Date(System.currentTimeMillis() + delay), DateFormat.DATETIME);
-        if (isExecution())
-            return "Выполняется";
-        return null;
+    public String statusString = null;
+
+    public String getStatusString() {
+        return statusString;
     }
 
     public String note;
@@ -63,12 +58,14 @@ public class BotTask extends Thread implements DelayFunction {
         long delay = getDelay();
         if (delay < 0) {
             status = BotTaskStatus.OLD;
+            statusString = null;
             return;
         }
         try {
             status = BotTaskStatus.WAITING;
-            Journal.add(note + ": Запуск ожидается "
-                    + Converter.dateToString(new Date(System.currentTimeMillis() + delay), DateFormat.DATETIME));
+            statusString = "Запуск ожидается "
+                    + Converter.dateToString(new Date(System.currentTimeMillis() + delay), DateFormat.DATETIME);
+            Journal.add(note + ": " + statusString);
             // Ожидаем запуск
             Thread.sleep(delay);
 
@@ -79,11 +76,13 @@ public class BotTask extends Thread implements DelayFunction {
 
         if (!isInterrupted()) {
             status = BotTaskStatus.EXECUTION;
+            statusString = "Выполняется";
             // Выполняем задачу
             action.run();
             // Просим запланировать следующий запуск
         }
         status = BotTaskStatus.OLD;
+        statusString = null;
         //if (!isInterrupted())
         BotProcess.reSchedule(this);
     }

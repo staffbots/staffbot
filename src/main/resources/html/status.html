@@ -1,44 +1,39 @@
 <p>
 <form action="/status" method="post">
-<table style="text-align: left" cellpadding="3" border="0" cellspacing="0">
-    <tbody>
+    <table style="text-align: left" cellpadding="3" border="0" cellspacing="0">
+        <tbody>
+        <tr style="font-weight: bold; background: #${page_bg_color}">
+            <td>Устройство</td>
+            <td>Описание</td>
+            <td colspan="2">Значение</td>
+            <td colspan="2">График</td>
+        </tr>
+            ${status_devicelist}
+        </tbody>
+    </table>
 
-    <tr style="font-weight: bold; background: #${page_bg_color}">
-        <td>Устройство</td>
-        <td>Описание</td>
-        <td colspan="2">Значение</td>
-        <td colspan="2">График</td>
-    </tr>
-        ${status_devicelist}
-    </tbody>
-    <tr>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-        <td>
-            <input type="radio" name="status_radiobox" value="none_choice" ${radio_value}>
-        </td>
-        <td>
-            без фона
-        </td>
-    </tr>
-
-</table>
-
-<!-- Период и график -->
+    <!-- Период и график -->
 <table style="display:${status_display}; text-align:left; width: 100%; background: #${page_bg_color}" cellpadding="3">
     <tbody>
     <tr>
-        <td style="font-weight: bold" colspan="2" rowspan="1">Период:</td>
-    </tr>
-    <tr>
+        <td style="font-weight: bold">Период:</td>
+        <td>
+            <input type="checkbox" name="status_fromdate_on" ${status_fromdate_on}
+                   onclick="date_onClick('status_fromdate_on','status_fromdate');">
+        </td>
         <td>c</td>
         <td>
             <input name="status_fromdate" value="${status_fromdate}" size="16" placeholder="${dateformat}">
         </td>
     </tr>
     <tr>
+        <td>
+
+        </td>
+        <td>
+            <input type="checkbox" name="status_todate_on" ${status_todate_on}
+                   onclick="date_onClick('status_todate_on','status_todate');">
+        </td>
         <td>по</td>
         <td>
             <input name="status_todate" value="${status_todate}" size="16" placeholder="${dateformat}">
@@ -52,7 +47,7 @@
         </td>
     </tr>
     <tr>
-        <td colspan="4" rowspan="1">
+        <td colspan="6" rowspan="1">
             <img style="width: 100%; float: left;" src="/resource?name=/img/picture.jpg">
         </td>
     </tr>
@@ -60,5 +55,12 @@
 </table>
 </form>
 </p>
+<script type="text/javascript" src="/resource?name=/html/scripts/main.js"></script>
+<script type="text/javascript">
+    date_onClick('status_fromdate_on', 'status_fromdate');
+    date_onClick('status_todate_on', 'status_todate');
+
+</script>
+
 
 
