@@ -1,3 +1,4 @@
+
 <p>
 <form action="/status" method="post">
     <table style="text-align: left" cellpadding="3" border="0" cellspacing="0">
@@ -12,7 +13,7 @@
         </tbody>
     </table>
 
-    <!-- Период и график -->
+<!-- Период и график -->
 <table style="display:${status_display}; text-align:left; width: 100%; background: #${page_bg_color}" cellpadding="3">
     <tbody>
     <tr>
@@ -46,9 +47,129 @@
         <td style="width:100%">
         </td>
     </tr>
+    <!-- График -->
     <tr>
-        <td colspan="6" rowspan="1">
-            <img style="width: 100%; float: left;" src="/resource?name=/img/picture.jpg">
+        <td style="background: #${site_bg_color}" colspan="6">
+            <script language="javascript" type="text/javascript" src="/resource?name=/html/scripts/jquery_old.js"></script>
+            <script language="javascript" type="text/javascript" src="/resource?name=/html/scripts/jquery.flot.js"></script>
+
+            <div id="placeholder" style="width:600px;height:300px;float:left;"></div>
+            <div id="legend" style="float:left;"></div>
+            <div style="clear: both;"></div>
+
+            <script language="javascript" type="text/javascript">
+// какие данные скрываем - заполняем позже
+var hide = [];
+var all_data = [
+  { label: "Данные 1", color: 0, data: [["2010/10/01 02:12", 0], ["2010/10/5", 11], ["2010/10/10", 7], ["2010/10/15", 8]]},
+  { label: "Данные 2", color: 99, data: [["2010/10/01 17:12", 13], ["2010/10/5", 23], ["2010/10/10", 32], ["2010/10/15", 33]]}
+];
+
+// преобразуем даты в UTC
+for(var j = 0; j < all_data.length; ++j) {
+  hide.push(false); // не скрываем j-ый ряд. пока что.
+  for(var i = 0; i < all_data[j].data.length; ++i)
+    all_data[j].data[i][0] = Date.parse(all_data[j].data[i][0]);
+}
+
+var plot_conf = {
+  series: {
+    lines: {
+      show: true,
+      lineWidth: 2
+    },
+    points: { show: true }
+  },
+  xaxis: {
+    mode: "time",
+    timeformat: "%y/%m/%d %h:%M:%S",
+  },
+  legend: {
+    container: $("#legend")
+  }
+};
+
+// рисуем графики в первый раз
+redraw();
+
+function redraw() {
+  var data = [];
+  for(var j = 0; j < all_data.length; ++j)
+    if(!hide[j]) // что скрываем, а что нет
+      data.push(all_data[j]);
+      $.plot($("#placeholder"), data, plot_conf);
+  // легенду рисуем только один раз
+  plot_conf.legend.show = false;
+}
+
+    function showTooltip(x, y, contents) {
+        $('<div id="tooltip">' + contents + '</div>').css( {
+            position: 'absolute',
+            display: 'none',
+            top: y + 5,
+            left: x + 5,
+            border: '1px solid #fdd',
+            padding: '2px',
+            'background-color': '#fee',
+            opacity: 0.80
+        }).appendTo("body").fadeIn(200);
+    }
+
+    var previousPoint = null;
+
+    $("#placeholder").bind("plothover", function (event, pos, item) {
+        $("#x").text(pos.x.toFixed(2));
+        $("#y").text(pos.y.toFixed(2));
+
+        if ($("#enableTooltip:checked").length > 0) {
+            if (item) {
+                if (previousPoint != item.dataIndex) {
+                    previousPoint = item.dataIndex;
+
+                    $("#tooltip").remove();
+                    var x = item.datapoint[0].toFixed(2),
+                        y = item.datapoint[1].toFixed(2);
+
+                    showTooltip(item.pageX, item.pageY,
+                                item.series.label + " of " + x + " = " + y);
+                }
+            }
+            else {
+                $("#tooltip").remove();
+                previousPoint = null;
+            }
+        }
+    });
+
+    $("#placeholder").bind("plotclick", function (event, pos, item) {
+        if (item) {
+            $("#clickdata").text("You clicked point " + item.dataIndex + " in " + item.series.label + ".");
+            plot.highlight(item.series, item.datapoint);
+        }
+    });
+
+// рисуем чекбоксы в легенде
+var legend = document.getElementById('legend'); // еще IE не умеет заменять innerHTML в table
+var legend_tbl = legend.getElementsByTagName('table')[0];
+var legend_html = '<table style="font-size: smaller; color: rgb(84, 84, 84);"><tbody>';
+for(var i = 0; i < legend_tbl.rows.length; i++) {
+  legend_html += '<tr>' +
+    '<td><input type="checkbox" onclick="hide['+ i +']=!hide['+ i +'];redraw();" checked="1"></td>'
+    + legend_tbl.rows[i].innerHTML
+    + '</tr>';
+}
+legend_html += "</tbody></table>";
+legend.innerHTML = legend_html;
+
+
+            </script>
+            <p id="hoverdata">Mouse hovers at
+                (
+                    <span id="x">0</span>,
+                    <span id="y">0</span>
+                ). <span id="clickdata"></span>
+            </p>
+            <p><input id="enableTooltip" type="checkbox">Enable tooltip</p>
         </td>
     </tr>
     </tbody>

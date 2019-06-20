@@ -1,12 +1,12 @@
 package ru.staffbot;
 
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import ru.staffbot.database.Database;
 import ru.staffbot.database.journal.Journal;
+import ru.staffbot.utils.Converter;
 import ru.staffbot.utils.devices.Devices;
 import ru.staffbot.webserver.WebServer;
 import ru.staffbot.webserver.servlets.MainServlet;
+import ru.staffbot.webserver.servlets.ResourceServlet;
 import ru.staffbot.windows.MainWindow;
 
 import java.io.*;
@@ -47,24 +47,14 @@ public abstract class Staffbot{
             // Полный путь до внешнего файла конфигурации
             File cfgFile = new File(jarDirName + solutionCfgFileName);
             // Если таковой файл конфигурации ещё не существует,
-            if (!cfgFile.exists())
-            try {
+            if (!cfgFile.exists()) {
                 // то копируем его из ресурсов, заархивированных внутри jar-файла
-                InputStream inputStream = Staffbot.class.getResourceAsStream(projectCfgFileName);
                 FileOutputStream outputStream = new FileOutputStream(cfgFile.getPath());
-
-                byte[] bytes = new byte[inputStream.available()];
-                inputStream.read(bytes);
-                outputStream.write(bytes);
-
-//                outputStream.write(inputStream.readAllBytes());
-
-
-            } catch (Exception exception){
-                System.out.println("Error of coping: " + exception.getMessage());
-                System.out.println("StackTrace: " + exception.getStackTrace());
+                outputStream.write(
+                        Converter.inputStreamToBytes(
+                                ResourceServlet.class.getResourceAsStream(
+                                        projectCfgFileName)));
             }
-
             // Читаем свойства из (внешнего) файла конфигурации
             FileInputStream inputStream = new FileInputStream(cfgFile);
             Properties property = new Properties();

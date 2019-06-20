@@ -78,6 +78,7 @@ public class StatusServlet extends MainServlet {
         pageVariables.put("status_devicelist", getDeviceList(session));
         pageVariables.put("status_display", Database.connected() ? "inline-table" : "none");
         pageVariables.put("page_bg_color", page_bg_color);
+        pageVariables.put("site_bg_color", site_bg_color);
         String content = PageGenerator.getPage(pageType.getName()+".html", pageVariables);
         super.doGet(request, response, content);
     }

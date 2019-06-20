@@ -1,14 +1,16 @@
 package ru.staffbot.webserver.servlets;
 
+import ru.staffbot.utils.Converter;
 import ru.staffbot.webserver.AccountService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.InputStream;
 
-///resource?name=/img/logo.png
+// Обработка запроса ресурса
+// вида: <server>:<port>/resource?name=<resourceName>
+// например: localhost:8055/resource?name=/html/scripts/jquery.js
 public class ResourceServlet extends BaseServlet {
 
     public ResourceServlet(AccountService accountService) {
@@ -20,21 +22,13 @@ public class ResourceServlet extends BaseServlet {
         try {
             String resourceName = request.getParameter("name");
             if (resourceName == null) return;
-
-//            if (!resourceName..equals("/img/logo.png")) // на страничке авторизации рисуем логотип вне зависимости от уровня доступа
-//                if (accountService.isAccessDenied(request.getSession())) {
-//                    response.sendRedirect("/entry");
-//                    return;
-//                }
-            InputStream inputStream = ResourceServlet.class.getResourceAsStream(resourceName);
-
-            byte[] bytes = new byte[inputStream.available()];
-            inputStream.read(bytes);
-            response.getOutputStream().write(bytes);
-
-//            response.getOutputStream().write(inputStream.readAllBytes());
+            response.getOutputStream().write(
+                Converter.inputStreamToBytes(
+                    ResourceServlet.class.getResourceAsStream(resourceName)
+                )
+            );
         } catch (Exception exception) {
-            // Ignore
+            response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         }
     }
 

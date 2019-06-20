@@ -1,5 +1,8 @@
 package ru.staffbot.utils;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -7,46 +10,48 @@ import java.util.Date;
 
 /**
  * <b>Конвертер</b><br>
- * Содержит всевозможные функции конвертирования типов и константы форматирования
+ * Содержит всевозможные функции конвертирования типов
  */
+// Следует приобщить преобразование типов к самим типам
+// т.е. включить эти методы в классы DoubleValue и т.д.
 public class Converter {
 
     public static byte[] longToBytes(long value) {
-//        ByteBuffer buffer = ByteBuffer.allocate(8);
-//        buffer.putLong(value);
-//        return buffer.array();
         byte[] bytes = new byte[8];
         ByteBuffer.wrap(bytes).putLong(value);
         return bytes;
     }
 
     public static long bytesToLong(byte[] bytes) {
-//        ByteBuffer buffer = ByteBuffer.allocate(8);
-//        buffer.put(value);
-//        buffer.flip();
-//        return buffer.getLong();
         return ByteBuffer.wrap(bytes).getLong();
+    }
+
+    public static byte[] inputStreamToBytes(InputStream inputStream) {
+        try {
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            int nRead;
+            byte[] data = new byte[1024];
+            while ((nRead = inputStream.read(data, 0, data.length)) != -1) {
+                buffer.write(data, 0, nRead);
+            }
+            buffer.flush();
+            return buffer.toByteArray();
+        } catch (IOException exception) {
+            return new byte[0];
+        }
     }
 
     public static byte[] doubleToBytes(double value) {
         byte[] bytes = new byte[8];
         ByteBuffer.wrap(bytes).putDouble(value);
         return bytes;
-//        ByteBuffer buffer = ByteBuffer.allocate(8);
-//        buffer.putDouble(value);
-//        return buffer.array();
     }
 
     public static double bytesToDouble(byte[] bytes) {
         return ByteBuffer.wrap(bytes).getDouble();
-//        ByteBuffer buffer = ByteBuffer.allocate(8);
-//        buffer.put(value);
-//        buffer.flip();
-//        return buffer.getDouble();
     }
 
     public static Date longToDate(long value) {
-        //return new Date(value + Converter.stringToDate("00:00", "HH:mm").getTime()); // Задаем количество миллисекунд
         return new Date(value); // Задаем количество миллисекунд
     }
 
@@ -55,21 +60,10 @@ public class Converter {
     }
 
     public static double longToDouble(long value) {
-//        Long l = (new Long(value)).doubleValue();
-//        double d = l.doubleValue();
-//        return ((Long)value).doubleValue();
-//        return Double.longBitsToDouble(value);
-//        return value;
         return bytesToDouble(longToBytes(value));
     }
 
     public static long doubleToLong(double value) {
-//        Double l = new Double(value);
-//        double d = l.doubleValue();
-//        return ((Double)value).longValue();
-//        return Double.doubleToRawLongBits(value);
-//        return Double.doubleToLongBits(value);
-//        return (long) value;
         return bytesToLong(doubleToBytes(value));
     }
 
