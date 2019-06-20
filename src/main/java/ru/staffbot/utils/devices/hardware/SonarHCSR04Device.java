@@ -63,7 +63,8 @@ public class SonarHCSR04Device extends Device {
         triggerSensor();
         waitForSignal();
         long duration = measureSignal(); //микроскекунд
-        return duration * SOUND_SPEED / ( 2 * 10000 ); //см
+        value.setValue(duration * SOUND_SPEED / ( 2 * 10000 ));
+        return value.getValue(); //см
     }
 
     /**

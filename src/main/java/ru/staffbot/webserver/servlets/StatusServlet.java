@@ -38,7 +38,7 @@ public class StatusServlet extends MainServlet {
 
         String getName = request.getParameter("get");
         if (getName != null) {
-            System.out.println("Запрос " + getName);
+           // System.out.println("Запрос " + getName);
             for (Device device : Devices.list)
                 for (Value value : device.getValues())
                     if (getName.equals(value.getName())) {
@@ -49,7 +49,7 @@ public class StatusServlet extends MainServlet {
                     }
             return;
         }
-        System.out.println("Запрос страницы");
+        //System.out.println("Запрос страницы");
 
         for (String checkboxName : checkboxes) {
             String checkboxValueStr = accountService.getAttribute(session, checkboxName); // Читаем из сессии

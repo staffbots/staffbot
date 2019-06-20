@@ -11,6 +11,7 @@ import ru.staffbot.utils.botprocess.BotTask;
 import ru.staffbot.utils.devices.Devices;
 import ru.staffbot.utils.devices.hardware.ButtonDevice;
 import ru.staffbot.utils.devices.hardware.RelayDevice;
+import ru.staffbot.utils.devices.hardware.SensorDHT22Device;
 import ru.staffbot.utils.devices.hardware.SonarHCSR04Device;
 import ru.staffbot.utils.levers.*;
 
@@ -60,22 +61,26 @@ public class Tester extends Staffbot {
      * Заполняется список устройств {@code WebServer.devices}<br>
      */
     private static void devicesInit() {
-        Devices.init(  ledRelay, sonar, button);
+        Devices.init(  ledRelay, sensor, sonar, button);
     }
 
     private static RelayDevice ledRelay = new RelayDevice("ledRelay",
             "Светодиод", false, RaspiPin.GPIO_01);
+    private static SensorDHT22Device sensor = new SensorDHT22Device("sensor",
+            "Датчик температуры и влажности", RaspiPin.GPIO_25);
     private static SonarHCSR04Device sonar = new SonarHCSR04Device("sonar",
         "Сонар", RaspiPin.GPIO_04, RaspiPin.GPIO_05);
     private static ButtonDevice button = new ButtonDevice("button",
-            "Кнопка", RaspiPin.GPIO_06, false, () -> {
+            "Кнопка", RaspiPin.GPIO_06, () -> {
         // Обработка нажатия кнопки
         //System.out.println(" Обработка нажатия кнопки");
         double distance = -1;
         if (!usedLever.getValue()) return;
         try {
             distance = sonar.getDistance();
-            System.out.println("distance = " + distance);
+            System.out.println("distance = " + distance + "cm");
+            System.out.println("temperature = " + sensor.getTemperature() + "C");
+            System.out.println("humidity = " + sensor.getHumidity() + "%");
         } catch (Exception e) {
             System.out.println(e.getMessage());
             ledRelay.set(false);
