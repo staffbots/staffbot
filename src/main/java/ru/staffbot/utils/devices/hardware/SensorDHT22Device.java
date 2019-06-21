@@ -37,8 +37,8 @@ public class SensorDHT22Device extends Device {
         this.model = "Датчик DHT22"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
         this.note = note; // Описание устройства (например, "Сонар для измерения уровня воды")
         this.name = name; // Уникальное имя устройства, используется для именования таблиц в БД (например, "WaterSonar")
-        this.temperature = new DoubleValue(name + "_temperature", "Температура", dbStorage);
-        this.humidity = new DoubleValue(name + "_humidity", "Влажность", dbStorage);
+        this.temperature = new DoubleValue(name + "_temperature", "Температура, C", dbStorage);
+        this.humidity = new DoubleValue(name + "_humidity", "Влажность, %", dbStorage);
 
         values.add(temperature);
         values.add(humidity);

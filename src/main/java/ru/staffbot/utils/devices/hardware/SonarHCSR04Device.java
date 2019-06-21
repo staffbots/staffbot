@@ -43,7 +43,7 @@ public class SonarHCSR04Device extends Device {
         this.model = "Сонар HC-SR04"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
         this.note = note; // Описание устройства (например, "Сонар для измерения уровня воды")
         this.name = name; // Уникальное имя устройства, используется для именования таблиц в БД (например, "WaterSonar")
-        this.value = new DoubleValue(name, "", dbStorage);
+        this.value = new DoubleValue(name, "Дистанция, см", dbStorage);
 
         values.add(this.value);
         Devices.putToPins(pinTRIG, new DevicePin(name, "TRIG"));

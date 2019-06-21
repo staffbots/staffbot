@@ -18,7 +18,8 @@ public enum DateFormat {
     DATE(6, "dd.MM.yyyy", DateScale.DAY),
     TIME(7, "HH:mm:ss", DateScale.SECOND),
     SHORTTIME(8, "HH:mm", DateScale.MINUTE),
-    FULLTIME(9, "HH:mm:ss.SSS", DateScale.SECOND);
+    FULLTIME(9, "HH:mm:ss.SSS", DateScale.SECOND),
+    JSDATETIME(10, "yyyy/MM/dd HH:mm:ss", DateScale.SECOND);
 
     private String format;
     private int value;

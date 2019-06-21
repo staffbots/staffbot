@@ -73,6 +73,10 @@ public class DoubleValue extends Value{
         return getValue(new Date());
     }
 
+    public static Double getValue(long value){
+        return Converter.longToDouble(value);
+    }
+
     public Double getValue(Date date){
         return Converter.longToDouble(super.get(date));
     }
@@ -99,6 +103,11 @@ public class DoubleValue extends Value{
     @Override
     public String getValueAsString(){
         return Double.toString(round(getValue()));
+    }
+
+    @Override
+    public String getValueAsString(long value){
+        return Double.toString(round(getValue(value)));
     }
 
     @Override

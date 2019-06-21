@@ -1,15 +1,20 @@
 package ru.staffbot.utils.values;
 
 import ru.staffbot.database.DBTable;
+import ru.staffbot.database.DBValue;
 import ru.staffbot.database.journal.Journal;
+import ru.staffbot.database.journal.Note;
 import ru.staffbot.database.journal.NoteType;
+import ru.staffbot.database.journal.Period;
 import ru.staffbot.utils.Converter;
 import ru.staffbot.webserver.WebServer;
 import ru.staffbot.database.Database;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -164,6 +169,27 @@ abstract public class Value extends DBTable {
         return value;
     }
 
+    public long set(Date moment, long newValue) {
+        if (dbStorage)
+            if (newValue != get()) {
+                try {
+                    if(!Database.connected()) throw new Exception("Нет подключения к базе данных");
+                    PreparedStatement statement = Database.getConnection().prepareStatement(
+                            "INSERT INTO " + getTableName() +
+                                    " (moment, value) VALUES (?, ?)");
+                    statement.setTimestamp(1, new Timestamp(moment.getTime()));
+                    statement.setLong(2, newValue);
+                    statement.executeUpdate();
+                    String stringValue = (valueType != ValueType.BOOLEAN) ? getValueAsString() : Long.toString(newValue);
+                    Journal.add(getNote() + " - установлено заначение: " + stringValue);
+                } catch (Exception e) {
+                    Journal.add("Ошибка записи в таблицу " + getTableName() + e.getMessage(), NoteType.ERROR);
+                }
+            }
+        value = newValue;
+        return value;
+    }
+
     /**
      * <b>Сбросить</b> значение на заачение по умолчанию ({@code defaultValue})
      */
@@ -196,12 +222,17 @@ abstract public class Value extends DBTable {
     public int getStringValueSize(){
         return (stringValueSize < 0) ? getValueAsString().length() : stringValueSize;
     };
+
     /**
      * <b>Получить значение для отображения</b><br>
      * @return Значение для отображения
      */
     public String getValueAsString(){
         return Long.toString(get());
+    }
+
+    public String getValueAsString(long value){
+        return Long.toString(value);
     }
 
     public void setValueFromString(String value){
@@ -211,6 +242,62 @@ abstract public class Value extends DBTable {
 
     public DBTable getTable(){
         return this;
+    }
+
+    public ArrayList<DBValue> getDataSet(Period period){
+        ArrayList<DBValue> dbValues = new ArrayList<>();
+        try {
+            String condition = null;
+            if (period.fromDate != null) {
+                condition = (period.fromDate == null) ? "" : " (? <= moment)";
+            }
+            if (period.toDate != null) {
+                condition =
+                    (period.toDate == null) ? "" :
+                            ((condition == null) ? "" : "AND") + " (moment <= ?)";
+            }
+            condition = ((condition == null) ? "" : "WHERE " + condition);
+
+            PreparedStatement statement = Database.getConnection().prepareStatement(
+                    "SELECT moment, value FROM " + getTableName()
+                            + " "+ condition + " ORDER BY moment ASC");
+
+            if (period.fromDate != null) {
+                // Формат даты для журнала (DateFormat.TIMEDATE) не учитывает секунды,
+                // которые прошли с начала минуты (для начальной даты):
+                long time = period.fromDate.getTime() - period.fromDate.getTime() % period.dateFormat.accuracy.getMilliseconds();
+                statement.setTimestamp(1, new Timestamp(time));
+            }
+
+            if (period.toDate != null) {
+                // и которые остались до конца минуты (для конечной даты):
+                long time = period.toDate.getTime() + (period.dateFormat.accuracy.getMilliseconds() - period.toDate.getTime() % period.dateFormat.accuracy.getMilliseconds());
+                statement.setTimestamp((period.fromDate == null) ? 1 : 2, new Timestamp(time));
+            }
+
+            if(statement.execute()) {
+                ResultSet resultSet = statement.getResultSet();
+                String previousValue = null;
+                while (resultSet.next()) {
+                    if (getValueType() == ValueType.BOOLEAN)
+                        if (previousValue !=null)
+                            dbValues.add(new DBValue(
+                                    new Date(resultSet.getTimestamp(1).getTime()),
+                                    previousValue));
+                    previousValue = getValueAsString(resultSet.getBigDecimal(2).longValue());
+                    dbValues.add(new DBValue(
+                            new Date(resultSet.getTimestamp(1).getTime()),
+                            previousValue));
+                }
+            }
+
+        } catch (SQLException exception) {
+            Journal.add("Value " + getName() + ": " + exception.getMessage(), NoteType.ERROR);
+        }
+
+
+
+        return dbValues;
     }
 }
 

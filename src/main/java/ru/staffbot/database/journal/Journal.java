@@ -138,8 +138,8 @@ public class Journal extends DBTable {
                 }
             }
 
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (SQLException exception) {
+            Journal.add("Journal: " + exception.getMessage(), NoteType.ERROR);
         }
 
         return journal;

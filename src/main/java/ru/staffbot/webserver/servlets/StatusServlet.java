@@ -1,8 +1,11 @@
 package ru.staffbot.webserver.servlets;
 
+import ru.staffbot.database.DBValue;
 import ru.staffbot.database.Database;
 import ru.staffbot.database.journal.Journal;
 import ru.staffbot.database.journal.Period;
+import ru.staffbot.utils.Converter;
+import ru.staffbot.utils.DateFormat;
 import ru.staffbot.utils.devices.Device;
 import ru.staffbot.utils.devices.Devices;
 import ru.staffbot.utils.values.Value;
@@ -14,10 +17,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Sysadmin on 25.05.2017.
@@ -79,6 +79,7 @@ public class StatusServlet extends MainServlet {
         pageVariables.put("status_display", Database.connected() ? "inline-table" : "none");
         pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("site_bg_color", site_bg_color);
+        pageVariables.put("datasets", getDataSets(period));
         String content = PageGenerator.getPage(pageType.getName()+".html", pageVariables);
         super.doGet(request, response, content);
     }
@@ -105,7 +106,6 @@ public class StatusServlet extends MainServlet {
     }
 
     public String getDeviceList(HttpSession session) {
-        //udate_value(value_name)
         String context = "";
         Map<String, Object> pageVariables = new HashMap();
         pageVariables.put("page_bg_color", page_bg_color);
@@ -150,8 +150,7 @@ public class StatusServlet extends MainServlet {
                 pageVariables.put("check_value", Boolean.parseBoolean(checkValue) ? "checked" : "");
                 pageVariables.put("check_name", checkName);
                 pageVariables.put("value_name", (value.dbStorage ? value.getName() : ""));
-                pageVariables.put("value_note", value.getNote());
-               // pageVariables.put("value", value.getValueAsString());
+                pageVariables.put("value_note", value.getNote().equals(device.getNote()) ? "" : value.getNote());
                 context += PageGenerator.getPage("items/device_value.html",pageVariables);
                 i++;
             }
@@ -160,4 +159,27 @@ public class StatusServlet extends MainServlet {
         return context;
     }
 
+    private String getDataSets(Period period){
+        String context = "";
+        for (Device device : Devices.list)
+            for (Value value : device.getValues())
+                if (value.dbStorage)
+                    context +=(context.equals("") ? "" : ",") + "\n" + getDataSet(value, period);
+        return context;
+    }
+
+    private String getDataSet(Value value, Period period) {
+        String context = "'" + value.getName()
+                + "':{label:'" + value.getNote() + "',\ndata:[";
+        ArrayList<DBValue> dbValues = value.getDataSet(period);
+        boolean first = true;
+        for (DBValue dbValue : dbValues){
+            context += (first ? "" : ",") + "['"
+                    + (dbValue.moment.getTime() / 1000) + "',"
+                    + dbValue.value + "]";
+             first = false;
+        }
+        System.out.println(context);
+        return context + "]}";
+    }
 }
