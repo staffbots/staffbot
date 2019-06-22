@@ -8,6 +8,7 @@ import ru.staffbot.utils.Converter;
 import ru.staffbot.utils.DateFormat;
 import ru.staffbot.utils.devices.Device;
 import ru.staffbot.utils.devices.Devices;
+import ru.staffbot.utils.values.BooleanValue;
 import ru.staffbot.utils.values.Value;
 import ru.staffbot.utils.values.ValueType;
 import ru.staffbot.webserver.AccountService;
@@ -17,6 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -119,7 +121,6 @@ public class StatusServlet extends MainServlet {
             pageVariables.put("check_name", device.getName() + "_check");
             pageVariables.put("check_value", "");
             pageVariables.put("value_name", "");
-            //pageVariables.put("value", "");
             pageVariables.put("value_note", "");
 
             ArrayList<Value> values = device.getValues();
@@ -169,8 +170,15 @@ public class StatusServlet extends MainServlet {
     }
 
     private String getDataSet(Value value, Period period) {
-        String context = "'" + value.getName()
-                + "':{label:'" + value.getNote() + "',\ndata:[";
+        String[] booleans = {"false", "true"};
+        int index = (value.getValueType() == ValueType.BOOLEAN) ? 1 : 0;
+
+        String context = "'" + value.getName() + "':{";
+        context += "label:'" + value.getNote() + "',\n";
+        context += "lines:{show:" + booleans[index] + "},\n";
+        context += "splines: {show: " + booleans[1 - index] + "},\n";
+        context += "points: {show: " + booleans[1 - index] + "},\n";
+        context += "data:[";
         ArrayList<DBValue> dbValues = value.getDataSet(period);
         boolean first = true;
         for (DBValue dbValue : dbValues){
@@ -179,7 +187,8 @@ public class StatusServlet extends MainServlet {
                     + dbValue.value + "]";
              first = false;
         }
+        context += "],\n";
         System.out.println(context);
-        return context + "]}";
+        return context + "}";
     }
 }

@@ -165,13 +165,13 @@ public class Tester extends Staffbot {
                             if (value.dbStorage) {
                                 value.eraseTable();
                                 moment = period.fromDate.getTime();
-                                double dis = Math.random() * 10;
-                                double mat = Math.random() * 20;
+                                double dis = Math.random() * 30 - 10;
+                                double mat = Math.random() * 20 - 9;
                                 while (moment < period.toDate.getTime()) {
-                                    moment += timePeriod / count;
+                                    moment += (Math.random() + 0.5) * timePeriod / count;
                                     newValue = 0;
                                     if (value.getValueType() == ValueType.DOUBLE)
-                                        newValue = new DoubleValue("", "", Math.random() * mat - dis).get();
+                                        newValue = new DoubleValue("", "", Math.random() * mat + dis).get();
                                     if (value.getValueType() == ValueType.BOOLEAN)
                                         newValue = Math.round(Math.random());
                                     if (value.getValueType() == ValueType.LONG)

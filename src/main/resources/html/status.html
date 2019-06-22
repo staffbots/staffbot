@@ -95,18 +95,13 @@
 <script language="javascript" type="text/javascript" src="/resource?name=/html/scripts/flot/jquery.flot.legend.js"></script>
 <script language="javascript" type="text/javascript" src="/resource?name=/html/scripts/flot/jquery.event.drag.js"></script>
 <script language="javascript" type="text/javascript" src="/resource?name=/html/scripts/flot/jquery.mousewheel.js"></script>
+<script language="javascript" type="text/javascript" src="/resource?name=/html/scripts/flot/jquery.flot.spline.js"></script>
 <script type="text/javascript">
 
 	$(function() {
 
 		var datasets = {${datasets}
 		};
-
-//        $.each(datasets, function(key, val){
-//            for(var i = 0; i < datasets[key].data.length; ++i){
-//                datasets[key].data[i][0] = new Date(Date.parse(datasets[key].data[i][0])/1000);
-//            }
-//        });
 
 		var i = 0;
 		$.each(datasets, function(key, val) {
@@ -117,24 +112,14 @@
 
 
     function status_checkbox_onClick(){
-            //alert (new Date(Date.parse('1995/09/23 12:56:30')));
 			var data = [];
 
 			$.each(datasets, function(key, val) {
-				//var key = $(this).attr("name");
 				if ($("#" + key + "_checkbox").is(":checked"))
 					data.push(datasets[key]);
 			});
 
 		var plot = $.plot("#placeholder", data, {
-			series: {
-				lines: {
-					show: true
-				},
-				points: {
-					show: true
-				}
-			},
 			grid: {
 				hoverable: true,
 				clickable: true
@@ -163,9 +148,9 @@
 
 			if (item) {
 				var x = item.datapoint[0].toFixed(2),
-					y = item.datapoint[1].toFixed(2);
-
-				$("#tooltip").html(item.series.label + ": " + y)
+					y = item.datapoint[1].toFixed(2),
+                    d = moment(new Date(x * 1000)).format('DD.MM.YYYY HH:mm:ss');
+				$("#tooltip").html(item.series.label + ": <b>" + y + "</b><br>" + d)
 					.css({top: item.pageY+5, left: item.pageX+5})
 					.fadeIn(200);
 			} else {
