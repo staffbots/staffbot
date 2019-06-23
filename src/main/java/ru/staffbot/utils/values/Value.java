@@ -299,5 +299,45 @@ abstract public class Value extends DBTable {
 
         return dbValues;
     }
+
+    // Возможено ли построение графика
+    public boolean isPlotPossible(){
+        return dbStorage && (
+            (valueType == ValueType.BOOLEAN) ||
+            (valueType == ValueType.LONG) ||
+            (valueType == ValueType.DOUBLE));
+    }
+
+    public Value toValue(){
+        return this;
+    }
+
+
+    public void setRandom(Period period){
+        double average = Math.random() * 30;
+        double dispersion = Math.random() * 10;
+        setRandom(period, average, dispersion);
+    }
+
+    public void setRandom(Period period, double average, double dispersion){
+        if (!isPlotPossible()) return;
+        eraseTable();
+        long timePeriod = period.toDate.getTime() - period.fromDate.getTime();
+        long count = 80;
+        long moment = period.fromDate.getTime();
+        while (moment < period.toDate.getTime()) {
+            moment += (Math.random() + 0.5) * timePeriod / count;
+            long newValue = 0;
+            if (valueType == ValueType.DOUBLE)
+                newValue = new DoubleValue("", "", average + (Math.random() - 0.5) * dispersion).get();
+            if (valueType == ValueType.BOOLEAN)
+                newValue = Math.round(Math.random());
+            if (valueType == ValueType.LONG)
+                newValue = Math.round(average + (Math.random() - 0.5) * dispersion);
+            set(new Date(moment), newValue);
+        }
+
+    }
+
 }
 

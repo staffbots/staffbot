@@ -11,8 +11,12 @@ import java.util.Date;
  */
 public class BooleanValue extends Value {
 
-    public String trueValue = "true";
-    public String falseValue = "false";
+//    public String trueValue = "true";
+//    public String falseValue = "false";
+
+    public String trueValue = "<input type=\"checkbox\" checked disabled>";
+    public String falseValue = "<input type=\"checkbox\" disabled>";
+
 
     public BooleanValue(String name, String note, boolean value, Boolean dbStorage) {
         super(name, note, Converter.booleanToLong(value), ValueType.BOOLEAN, dbStorage);

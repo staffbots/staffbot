@@ -9,8 +9,4 @@ public enum ValueType {
     LIST,
     VOID;
 
-    ValueType(){
-
-    }
-
 }

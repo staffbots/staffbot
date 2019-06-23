@@ -33,8 +33,8 @@ public class ButtonDevice extends Device {
         values.add(this.value);
         Devices.putToPins(pin, new DevicePin(name));
 
-        this.value.trueValue = "<input type=\"checkbox\" checked disabled>";
-        this.value.falseValue = "<input type=\"checkbox\" disabled>";
+//        this.value.trueValue = "<input type=\"checkbox\" checked disabled>";
+//        this.value.falseValue = "<input type=\"checkbox\" disabled>";
 
         if(!Devices.USED)return;
         gpioPin = Devices.gpioController.provisionDigitalInputPin(pin, PinPullResistance.PULL_DOWN);

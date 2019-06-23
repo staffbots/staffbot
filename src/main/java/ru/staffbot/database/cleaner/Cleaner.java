@@ -92,8 +92,8 @@ public class Cleaner {
 
         for (Lever lever : Levers.list)
             count += (tablesMeasureIsRecord) ?
-                    cleanByCount(lever.getTable(), tablesValue) :
-                    cleanByDate(lever.getTable(), tablesValue);
+                    cleanByCount(lever.toValue().getTable(), tablesValue) :
+                    cleanByDate(lever.toValue().getTable(), tablesValue);
 
         Journal.add("Очистка базы. Всего удалено записей: " + count);
     }

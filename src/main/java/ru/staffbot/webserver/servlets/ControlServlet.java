@@ -79,10 +79,10 @@ public class ControlServlet extends MainServlet {
                     }
         } else {
             for (Lever lever : Levers.list) {
-                if (lever.getValueType() == ValueType.VOID) continue;
-                String leverName = "control_" + lever.getName().toLowerCase();
+                if (lever.toValue().getValueType() == ValueType.VOID) continue;
+                String leverName = "control_" + lever.toValue().getName().toLowerCase();
                 String leverValue = request.getParameter(leverName);
-                lever.setValueFromString(leverValue);
+                lever.toValue().setValueFromString(leverValue);
             }
             BotProcess.reScheduleAll();
         }
@@ -109,10 +109,13 @@ public class ControlServlet extends MainServlet {
         Map<String, Object> pageVariables = new HashMap();
         pageVariables.put("page_bg_color", page_bg_color);
         for (Lever lever : Levers.list){
-            pageVariables.put("name", "control_" + lever.getName().toLowerCase());
-            pageVariables.put("value", lever.getValueAsString());
-            pageVariables.put("note", lever.getNote());
-            pageVariables.put("size", lever.getStringValueSize());
+            pageVariables.put("name", "control_" + lever.toValue().getName().toLowerCase());
+            String value = lever.toValue().getValueAsString();
+            if (lever.toValue().getValueType() == ValueType.BOOLEAN)
+                value = (lever.toValue().get() == 0) ? "" : "checked";
+            pageVariables.put("value", value);
+            pageVariables.put("note", lever.toValue().getNote());
+            pageVariables.put("size", lever.toValue().getStringValueSize());
             context += PageGenerator.getPage(lever.getTemplateFile(),pageVariables);
         }
         return context;

@@ -1,6 +1,6 @@
 <tr>
-    <td title="Модель устройства">${device_model}</td>
-    <td title="Описание устройства"><em>${device_note}</em></td>
+
+    <td title="Описание параметра управления" colspan="2"><em>${value_note}</em></td>
     <td title="Значение параметра">
         <b>
             <div id="${value_name}_value" title="Текущие значение">
@@ -11,7 +11,7 @@
                 update_status_value("${value_name}");
         </script>
     </td>
-    <td title="Описание параметра">${value_note}</td>
+    <td></td>
     <td title="Показать график">
         <input style="display:${check_display};" type="checkbox" name="${check_name}"
                id="${check_name}" ${check_value}>

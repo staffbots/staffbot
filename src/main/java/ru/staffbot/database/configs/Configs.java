@@ -31,8 +31,8 @@ public class Configs extends DBTable {
     public void save() throws Exception {
         Map<String, String> config = new HashMap<>();
         for (Lever lever : ru.staffbot.utils.levers.Levers.list)
-            if (!(lever.getName().trim().equals("") || (lever.getName()==null)))
-                config.put(lever.getName(), Long.toString(lever.get()));
+            if (!(lever.toValue().getName().trim().equals("") || (lever.toValue().getName()==null)))
+                config.put(lever.toValue().getName(), Long.toString(lever.toValue().get()));
         delete(); // Удяляем что бы избежать повторений
         statement = getStatement("INSERT INTO " + getTableName() + " (configname, configvalue) VALUES (?, ?)");
         statement.setString(1, name);
@@ -62,8 +62,8 @@ public class Configs extends DBTable {
             config.put((String)e.getKey(), (String) e.getValue());
         }
         for (Lever lever : ru.staffbot.utils.levers.Levers.list)
-            if (config.containsKey(lever.getName()))
-                lever.set(Long.parseLong(config.get(lever.getName())));
+            if (config.containsKey(lever.toValue().getName()))
+                lever.toValue().set(Long.parseLong(config.get(lever.toValue().getName())));
         Journal.add("Загружена конфигурация параметров управления с именем: " + name);
     }
 

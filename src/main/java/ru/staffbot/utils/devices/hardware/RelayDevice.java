@@ -38,8 +38,8 @@ public class RelayDevice extends Device {
         values.add(this.value);
         Devices.putToPins(pin, new DevicePin(name));
 
-        this.value.trueValue = "<input type=\"checkbox\" checked disabled>";
-        this.value.falseValue = "<input type=\"checkbox\" disabled>";
+//        this.value.trueValue = "<input type=\"checkbox\" checked disabled>";
+//        this.value.falseValue = "<input type=\"checkbox\" disabled>";
 
         if(!Devices.USED)return;
         gpioPin = Devices.gpioController.provisionDigitalOutputPin(getPins().get(0), getName(), PinState.LOW);

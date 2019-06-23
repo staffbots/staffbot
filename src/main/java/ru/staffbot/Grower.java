@@ -63,7 +63,7 @@ public class Grower extends Staffbot {
             "Удельная электролитическая проводимость, EC", 0.0, 8.1, 10.0);
     private static BooleanLever soluteLever = new BooleanLever("soluteLever",
             "Подготовка раствора", false);
-    private static LabelLever volumeLever = new LabelLever("",
+    private static DoubleLever volumeLever = new DoubleLever("volumeLever",
             "Объём раствора, л");
 
     private static LongLever dayRateLever = new LongLever("dayRateLever",

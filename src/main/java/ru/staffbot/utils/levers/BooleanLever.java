@@ -18,9 +18,9 @@ public class BooleanLever extends BooleanValue implements Lever {
         setValue(trueValue.equalsIgnoreCase(stringValue));
     }
 
-    @Override
-    public String getValueAsString(){
-        return (get() == 1) ? "checked" : "";
-    }
+//    @Override
+//    public String getValueAsString(){
+//        return (get() == 1) ? "checked" : "";
+//    }
 
 }

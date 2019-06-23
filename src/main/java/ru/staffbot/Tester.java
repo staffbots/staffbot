@@ -156,29 +156,13 @@ public class Tester extends Staffbot {
                     // "От заката до рассвета"
                     //long delay = Math.round(ledOnLever.getValue() * DateScale.SECOND.getMilliseconds());
                     long timePeriod = DateScale.WEEK.getMilliseconds();
-                    long count = 80;
                     Period period = new Period(DateFormat.DATE, new Date(System.currentTimeMillis() - timePeriod), new Date());
-                    long moment = period.fromDate.getTime();
-                    long newValue = 0;
                     for (Device device : Devices.list)
                         for (Value value : device.getValues())
-                            if (value.dbStorage) {
-                                value.eraseTable();
-                                moment = period.fromDate.getTime();
-                                double dis = Math.random() * 30 - 10;
-                                double mat = Math.random() * 20 - 9;
-                                while (moment < period.toDate.getTime()) {
-                                    moment += (Math.random() + 0.5) * timePeriod / count;
-                                    newValue = 0;
-                                    if (value.getValueType() == ValueType.DOUBLE)
-                                        newValue = new DoubleValue("", "", Math.random() * mat + dis).get();
-                                    if (value.getValueType() == ValueType.BOOLEAN)
-                                        newValue = Math.round(Math.random());
-                                    if (value.getValueType() == ValueType.LONG)
-                                        newValue = Math.round(Math.random()  * mat - dis);
-                                    value.set(new Date(moment), newValue);
-                                }
-                            }
+                            value.setRandom(period);
+                    for (Lever lever : Levers.list)
+                        lever.toValue().setRandom(period);
+
                     long delay = 2000000;
                     Thread.sleep(delay);
                 } catch (InterruptedException exception) {
