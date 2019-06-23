@@ -18,12 +18,12 @@ public class BooleanValue extends Value {
     public String falseValue = "<input type=\"checkbox\" disabled>";
 
 
-    public BooleanValue(String name, String note, boolean value, Boolean dbStorage) {
-        super(name, note, Converter.booleanToLong(value), ValueType.BOOLEAN, dbStorage);
+    public BooleanValue(String name, String note, Boolean dbStorage, boolean value) {
+        super(name, note, dbStorage, ValueType.BOOLEAN, Converter.booleanToLong(value));
     }
 
     public BooleanValue(String name, String note, boolean value) {
-        super(name, note, Converter.booleanToLong(value), ValueType.BOOLEAN);
+        super(name, note, ValueType.BOOLEAN, Converter.booleanToLong(value));
     }
 
     public Boolean setValue(Boolean value){

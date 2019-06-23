@@ -20,20 +20,20 @@ public class RelayDevice extends Device {
 
     private BooleanValue value;
 
-    public RelayDevice(String name, String note, Boolean value, Pin pin) {
-        init(name, note, value, pin, true);
+    public RelayDevice(String name, String note, Pin pin, Boolean value) {
+        init(name, note, true, pin, value);
     }
 
-    public RelayDevice(String name, String note, Boolean value, Pin pin, Boolean dbStorage) {
-        init(name, note, value, pin, dbStorage);
+    public RelayDevice(String name, String note, Boolean dbStorage, Pin pin, Boolean value) {
+        init(name, note, dbStorage, pin, value);
     }
 
-    private void init(String name, String note, Boolean value, Pin pin, Boolean dbStorage) {
+    private void init(String name, String note, Boolean dbStorage, Pin pin, Boolean value) {
 
         this.model = "Реле"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
         this.note = note; // Описание устройства (например, "Сонар для измерения уровня воды")
         this.name = name; // Уникальное имя устройства, используется для именования таблиц в БД (например, "WaterSonar")
-        this.value = new BooleanValue(name, note, value, dbStorage);
+        this.value = new BooleanValue(name, note, dbStorage, value);
 
         values.add(this.value);
         Devices.putToPins(pin, new DevicePin(name));

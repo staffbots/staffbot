@@ -31,14 +31,14 @@ public class SonarHCSR04Device extends Device {
     private DoubleValue value;
 
     public SonarHCSR04Device(String name, String note, Pin pinTRIG, Pin pinECHO) {
-        init(name, note, pinTRIG, pinECHO, true);
+        init(name, note, true, pinTRIG, pinECHO);
     }
 
-    public SonarHCSR04Device(String name, String note, Pin pinTRIG, Pin pinECHO, Boolean dbStorage) {
-        init(name, note, pinTRIG, pinECHO, dbStorage);
+    public SonarHCSR04Device(String name, String note, boolean dbStorage, Pin pinTRIG, Pin pinECHO) {
+        init(name, note, dbStorage, pinTRIG, pinECHO);
     }
 
-    private void init(String name, String note, Pin pinTRIG, Pin pinECHO, Boolean dbStorage) {
+    private void init(String name, String note, boolean dbStorage, Pin pinTRIG, Pin pinECHO) {
 
         this.model = "Сонар HC-SR04"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
         this.note = note; // Описание устройства (например, "Сонар для измерения уровня воды")

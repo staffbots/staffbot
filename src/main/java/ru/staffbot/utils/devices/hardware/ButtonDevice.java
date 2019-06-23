@@ -28,7 +28,7 @@ public class ButtonDevice extends Device {
         this.model = "Кнопка"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
         this.note = note; // Описание устройства (например, "Сонар для измерения уровня воды")
         this.name = name; // Уникальное имя устройства, используется для именования таблиц в БД (например, "WaterSonar")
-        this.value = new BooleanValue(name, note, false, dbStorage);
+        this.value = new BooleanValue(name, note, dbStorage, false);
 
         values.add(this.value);
         Devices.putToPins(pin, new DevicePin(name));

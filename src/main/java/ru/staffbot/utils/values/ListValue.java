@@ -30,9 +30,7 @@ public class ListValue extends Value {
 
     /**
      * <b>Установить диапазон</b> значений и значение по умолчанию
-     * @param minValue минимальное значение
      * @param defaultValue значение по умолчанию
-     * @param maxValue максимальное значение
      */
     private void init(long defaultValue, String... values){
         this.value = defaultValue;
@@ -44,13 +42,13 @@ public class ListValue extends Value {
     }
 
 
-    public ListValue(String name, String note, long defaultValue, Boolean dbStorage, String... values) {
-        super(name, note, defaultValue, ValueType.LIST, dbStorage);
+    public ListValue(String name, String note, Boolean dbStorage, long defaultValue, String... values) {
+        super(name, note, dbStorage, ValueType.LIST, defaultValue);
         init(defaultValue, values);
     }
 
     public ListValue(String name, String note, long defaultValue, String... values) {
-        super(name, note, defaultValue, ValueType.LIST);
+        super(name, note, ValueType.LIST, defaultValue);
         init(defaultValue, values);
     }
 

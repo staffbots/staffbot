@@ -9,12 +9,24 @@ import java.util.Date;
 // Поле ввода даты/времени в указанном формате format
 public class DateLever extends DateValue implements Lever  {
 
-    public DateLever(String name, String note, String value, DateFormat format, Boolean dbStorage) {
-        super(name, note, Converter.stringToDate(value, format), format, dbStorage);
+
+    public DateLever(String name, String note, Boolean dbStorage, DateFormat format, String value) {
+        super(name, note, dbStorage, format, Converter.stringToDate(value, format));
     }
 
-    public DateLever(String name, String note, String value, DateFormat format) {
-        super(name, note, Converter.stringToDate(value, format), format);
+    public DateLever(String name, String note, DateFormat format, String value) {
+        super(name, note, format, Converter.stringToDate(value, format));
     }
+
+    public DateLever(String name, String note, Boolean dbStorage, LeverMode mode, DateFormat format, String value) {
+        super(name, note, dbStorage, format, Converter.stringToDate(value, format));
+        this.mode = mode;
+    }
+
+    public DateLever(String name, String note, LeverMode mode, DateFormat format, String value) {
+        super(name, note, format, Converter.stringToDate(value, format));
+        this.mode = mode;
+    }
+
 
 }

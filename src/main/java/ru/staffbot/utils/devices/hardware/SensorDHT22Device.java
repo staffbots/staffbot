@@ -25,14 +25,14 @@ public class SensorDHT22Device extends Device {
     private DoubleValue humidity;
 
     public SensorDHT22Device(String name, String note, Pin pin) {
-        init(name, note, pin, true);
+        init(name, note, true, pin);
     }
 
-    public SensorDHT22Device(String name, String note, Pin pin, Boolean dbStorage) {
-        init(name, note, pin, dbStorage);
+    public SensorDHT22Device(String name, String note, Boolean dbStorage, Pin pin) {
+        init(name, note, dbStorage, pin);
     }
 
-    private void init(String name, String note, Pin pin, Boolean dbStorage) {
+    private void init(String name, String note, Boolean dbStorage, Pin pin) {
 
         this.model = "Датчик DHT22"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
         this.note = note; // Описание устройства (например, "Сонар для измерения уровня воды")

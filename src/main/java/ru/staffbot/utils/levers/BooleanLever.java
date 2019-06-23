@@ -4,8 +4,18 @@ import ru.staffbot.utils.values.BooleanValue;
 
 public class BooleanLever extends BooleanValue implements Lever {
 
-    public BooleanLever(String name, String note, boolean value, Boolean dbStorage) {
-        super(name, note, value, dbStorage);
+    public BooleanLever(String name, String note, boolean dbStorage, LeverMode mode, boolean value) {
+        super(name, note, dbStorage, value);
+        this.mode = mode;
+    }
+
+    public BooleanLever(String name, String note, boolean dbStorage, boolean value) {
+        super(name, note, dbStorage, value);
+    }
+
+    public BooleanLever(String name, String note, LeverMode mode, boolean value) {
+        super(name, note, value);
+        this.mode = mode;
     }
 
     public BooleanLever(String name, String note, boolean value) {
@@ -17,10 +27,5 @@ public class BooleanLever extends BooleanValue implements Lever {
         String stringValue = "on".equalsIgnoreCase(value) ? trueValue : falseValue;
         setValue(trueValue.equalsIgnoreCase(stringValue));
     }
-
-//    @Override
-//    public String getValueAsString(){
-//        return (get() == 1) ? "checked" : "";
-//    }
 
 }

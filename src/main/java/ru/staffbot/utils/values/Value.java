@@ -7,6 +7,7 @@ import ru.staffbot.database.journal.Note;
 import ru.staffbot.database.journal.NoteType;
 import ru.staffbot.database.journal.Period;
 import ru.staffbot.utils.Converter;
+import ru.staffbot.utils.levers.LeverMode;
 import ru.staffbot.webserver.WebServer;
 import ru.staffbot.database.Database;
 
@@ -58,11 +59,11 @@ abstract public class Value extends DBTable {
      *  - если нет ({@code dbStorage = false}), значение хранится в value, БД не задействовано.<br>
      * нициализируется в конструкторе.
      */
-    public boolean dbStorage;
+    //public boolean dbStorage = true;
 
-    public boolean getDbStorage() {
-        return dbStorage;
-    }
+    //public boolean getDbStorage() {
+//        return dbStorage;
+  //  }
     /**
      * <b>Значение</b>, используется при {@code dbStorage = false},<br>
      * в противном случае сюда дублируется значение из БД.
@@ -79,28 +80,27 @@ abstract public class Value extends DBTable {
         return new Date();
     }
 
-    private void init(String name, String note, long value, ValueType valueType, Boolean dbStorage){
+    private void init(String name, String note, ValueMode valueMode, ValueType valueType, long value){
         this.value = value;
         this.name = name;
         this.note = note;
-        this.dbStorage = dbStorage;
+        this.valueMode = valueMode;
         this.valueType = valueType;
-        if(dbStorage) this.value = get();
+        if(isStorable()) this.value = get();
     }
     /**
      * @param name название
      * @param note описание
-     * @param dbStorage признак хранения в БД
      * @param value значение
      */
-    public Value(String name, String note, long value, ValueType valueType, Boolean dbStorage) {
-        super("val_" + name.toLowerCase(), DB_TABLE_FIELDS, dbStorage);
-        init(name, note, value, valueType, dbStorage);
+    public Value(String name, String note, ValueMode valueMode, ValueType valueType, long value) {
+        super("val_" + name.toLowerCase(), DB_TABLE_FIELDS, (valueMode == ValueMode.STORABLE));
+        init(name, note, valueMode, valueType, value);
     }
 
-    public Value(String name, String note, long value, ValueType valueType) {
+    public Value(String name, String note, ValueType valueType, long value) {
         super("val_" + name.toLowerCase(), DB_TABLE_FIELDS);
-        init(name, note, value, valueType, true);
+        init(name, note, valueMode, valueType, value);
     }
 
     /**
@@ -113,7 +113,7 @@ abstract public class Value extends DBTable {
     public long get(Date date) {
         long dbValue;
         try {
-            if(!dbStorage) return value;
+            if(!isStorable()) return value;
             if(!Database.connected()) throw new Exception("Нет подключения к базе данных");
             PreparedStatement ps = Database.getConnection().prepareStatement(
                     "SELECT value FROM " + getTableName() + " WHERE (moment <= ?) ORDER BY moment DESC LIMIT 1");
@@ -150,7 +150,7 @@ abstract public class Value extends DBTable {
      * @return установленное значение
      */
     synchronized public long set(long newValue) {
-        if (dbStorage)
+        if (isStorable())
             if (newValue != get()) {
                 try {
                     if(!Database.connected()) throw new Exception("Нет подключения к базе данных");
@@ -170,7 +170,7 @@ abstract public class Value extends DBTable {
     }
 
     public long set(Date moment, long newValue) {
-        if (dbStorage)
+        if (isStorable())
             if (newValue != get()) {
                 try {
                     if(!Database.connected()) throw new Exception("Нет подключения к базе данных");
@@ -302,7 +302,7 @@ abstract public class Value extends DBTable {
 
     // Возможено ли построение графика
     public boolean isPlotPossible(){
-        return dbStorage && (
+        return isStorable() && (
             (valueType == ValueType.BOOLEAN) ||
             (valueType == ValueType.LONG) ||
             (valueType == ValueType.DOUBLE));
@@ -337,6 +337,18 @@ abstract public class Value extends DBTable {
             set(new Date(moment), newValue);
         }
 
+    }
+
+    protected LeverMode leverMode = LeverMode.CHANGEABLE;
+
+    public boolean isChangeable(){
+        return (leverMode == LeverMode.CHANGEABLE);
+    }
+
+    protected ValueMode valueMode = ValueMode.STORABLE;
+
+    public boolean isStorable(){
+        return (valueMode == ValueMode.STORABLE);
     }
 
 }

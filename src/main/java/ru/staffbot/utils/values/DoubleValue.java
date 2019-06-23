@@ -60,12 +60,12 @@ public class DoubleValue extends Value{
     }
 
     public DoubleValue(String name, String note,  Boolean dbStorage, Double... values) {
-        super(name, note, 0, ValueType.DOUBLE, dbStorage);
+        super(name, note, dbStorage, ValueType.DOUBLE, 0);
         initValues(values);
     }
 
     public DoubleValue(String name, String note, Double... values) {
-        super(name, note, 0, ValueType.DOUBLE);
+        super(name, note, ValueType.DOUBLE, 0);
         initValues(values);
     }
 

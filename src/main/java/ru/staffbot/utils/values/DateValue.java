@@ -17,13 +17,13 @@ public class DateValue extends Value{
 
     private DateFormat format;
 
-    public DateValue(String name, String note, Date value, DateFormat format, Boolean dbStorage) {
-        super(name, note, Converter.dateToLong(value), ValueType.DATE, dbStorage);
+    public DateValue(String name, String note, Boolean dbStorage, DateFormat format, Date value) {
+        super(name, note, dbStorage, ValueType.DATE, Converter.dateToLong(value));
         this.format = format;
     }
 
-    public DateValue(String name, String note, Date value, DateFormat format) {
-        super(name, note, Converter.dateToLong(value), ValueType.DATE);
+    public DateValue(String name, String note, DateFormat format, Date value) {
+        super(name, note, ValueType.DATE, Converter.dateToLong(value));
         this.format = format;
     }
 

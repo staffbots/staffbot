@@ -20,10 +20,10 @@ public abstract class DBTable {
         createTable();
     }
 
-    public DBTable(String tableName, String tableFields, boolean dbStorage){
+    public DBTable(String tableName, String tableFields, boolean isStorable){
         this.tableName = tableName;
         this.tableFields = tableFields;
-        if (dbStorage) createTable();
+        if (isStorable) createTable();
     }
 
     public boolean tableExists(){
