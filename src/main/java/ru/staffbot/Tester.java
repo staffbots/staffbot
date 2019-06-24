@@ -146,21 +146,22 @@ public class Tester extends Staffbot {
      *****************************************************/
     private static String testTaskNote = "Заполнение БД";
     private static BotTask testTask = new BotTask(
-            testTaskNote,
-            () -> { // Расчёт задержки перед следующим запуском задания
-                long delay = 0;
-                return delay;
-            },
-            () -> { // Задание без повторений
-                long timePeriod = DateScale.WEEK.getMilliseconds();
-                Period period = new Period(DateFormat.DATE, new Date(System.currentTimeMillis() - timePeriod), new Date());
-                for (Device device : Devices.list)
-                    for (Value value : device.getValues())
-                        value.setRandom(period);
-                for (Lever lever : Levers.list)
-                    lever.toValue().setRandom(period);
-                BotProcess.setStatus(BotProcessStatus.STOP);
-                Journal.add(ledTaskNote + ": Задание выполнено");
-            });
+        testTaskNote,
+        () -> { // Расчёт задержки перед следующим запуском задания
+            long delay = 0;
+            return delay;
+        },
+        () -> { // Задание без повторений
+            long timePeriod = DateScale.WEEK.getMilliseconds();
+            Period period = new Period(DateFormat.DATE, new Date(System.currentTimeMillis() - timePeriod), new Date());
+            for (Device device : Devices.list)
+                for (Value value : device.getValues())
+                    value.setRandom(period);
+            for (Lever lever : Levers.list)
+                lever.toValue().setRandom(period);
+            BotProcess.setStatus(BotProcessStatus.STOP);
+            Journal.add(testTaskNote + ": Задание выполнено");
+        }
+    );
 
 }

@@ -123,3 +123,16 @@ function system_radioboxClick() {
     element('dbclean_auto_start').disabled = disabled;
 }
 
+// Возращает масиив размером length с перемешанными в нём целыми числами от 0 до (length - 1)
+function utils_getRandomArray(length) {
+	var result = [];
+    var resource = [];
+    for (var i = 0; i < length; i++)
+        resource.push(i);
+    for (var i = 0; i < length; i++){
+        k = Math.floor(Math.random() * (length - i));
+        result.push(resource[k]);
+        resource.splice(k, 1);
+    }
+    return result;
+}

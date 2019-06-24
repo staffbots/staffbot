@@ -144,13 +144,15 @@
 		var datasets = {${datasets}
 		};
 
-        //var series = datasets.getData();
+        var n = Object.keys(datasets).length;
+        var a = utils_getRandomArray(n);
 		var i = 0;
 		$.each(datasets, function(key, val) {
 		    $("#" + key + "_checkbox").click(status_checkbox_onClick);
-		//	val.color = i;
-		//	$("#" + num[i]).css('background', series[i].color);
-		//	++i;
+			var h =  (a[i] * 360 / (n + 1));
+			val.color = "hsl(" + h + ",80%,50%)";
+			$("#" + key).css('background', "hsl(" + h + ",80%,85%)");
+			++i;
 		});
 
 

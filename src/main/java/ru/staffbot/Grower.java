@@ -2,11 +2,14 @@ package ru.staffbot;
 
 import com.pi4j.io.gpio.RaspiPin;
 import ru.staffbot.database.journal.NoteType;
+import ru.staffbot.database.journal.Period;
 import ru.staffbot.utils.Converter;
 import ru.staffbot.utils.DateFormat;
 import ru.staffbot.utils.DateScale;
 import ru.staffbot.utils.botprocess.BotProcess;
+import ru.staffbot.utils.botprocess.BotProcessStatus;
 import ru.staffbot.utils.botprocess.BotTask;
+import ru.staffbot.utils.devices.Device;
 import ru.staffbot.utils.devices.hardware.SensorDHT22Device;
 import ru.staffbot.utils.devices.hardware.SonarHCSR04Device;
 import ru.staffbot.utils.levers.*;
@@ -14,6 +17,8 @@ import ru.staffbot.database.journal.Journal;
 import ru.staffbot.utils.devices.Devices;
 import ru.staffbot.utils.devices.hardware.RelayDevice;
 import ru.staffbot.utils.values.DateValue;
+import ru.staffbot.utils.values.Value;
+
 import java.util.Date;
 
 public class Grower extends Staffbot {
@@ -103,7 +108,8 @@ public class Grower extends Staffbot {
      * Заполняется список задач {@code tasks}<br>
      */
     private static void botProcessInit() {
-        BotProcess.init(lightTask, ventingTask, irrigationTask);
+
+        BotProcess.init(testTask, lightTask, ventingTask, irrigationTask);
     }
 
     /*****************************************************
@@ -203,4 +209,27 @@ public class Grower extends Staffbot {
                 Journal.add(irrigationTaskNote + ": выполнено");
             }
         });
+
+    /*****************************************************
+     * Заполнение БД тестовыми случайными значениями                              *
+     *****************************************************/
+    private static String testTaskNote = "Заполнение БД";
+    private static BotTask testTask = new BotTask(
+            testTaskNote,
+            () -> { // Расчёт задержки перед следующим запуском задания
+                long delay = 0;
+                return delay;
+            },
+            () -> { // Задание без повторений
+                long timePeriod = DateScale.WEEK.getMilliseconds();
+                Period period = new Period(DateFormat.DATE, new Date(System.currentTimeMillis() - timePeriod), new Date());
+                for (Device device : Devices.list)
+                    for (Value value : device.getValues())
+                        value.setRandom(period);
+                for (Lever lever : Levers.list)
+                    lever.toValue().setRandom(period);
+                BotProcess.setStatus(BotProcessStatus.STOP);
+                Journal.add(testTaskNote + ": Задание выполнено");
+            }
+    );
 }
