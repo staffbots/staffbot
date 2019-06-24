@@ -22,8 +22,10 @@
 - Создать дополнительное окно для настройки Ph и EC датчиков (или просто сделать ещё одно маленькое решение!)
 - Создать информационные странички по каждому из устройств (на сайте staffbot.ru)
 
+====================================================
 Порядок аргументов для конструкторов
 классов Value, Lever и Device (и их наследников):
+
 String name
 String note
 ValueMode valueMode
@@ -33,3 +35,4 @@ Runnable action       ButtonDevice only
 ValueType valueType
 DateFormat format     For DateType only
 value or values
+====================================================
