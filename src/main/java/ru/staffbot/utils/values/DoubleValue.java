@@ -59,8 +59,8 @@ public class DoubleValue extends Value{
         }
     }
 
-    public DoubleValue(String name, String note,  Boolean dbStorage, Double... values) {
-        super(name, note, dbStorage, ValueType.DOUBLE, 0);
+    public DoubleValue(String name, String note,  ValueMode valueMode, Double... values) {
+        super(name, note, valueMode, ValueType.DOUBLE, 0);
         initValues(values);
     }
 

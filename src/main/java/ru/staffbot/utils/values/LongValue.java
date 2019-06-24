@@ -57,8 +57,8 @@ public class LongValue extends Value {
         }
     }
 
-    public LongValue(String name, String note, Boolean dbStorage, long... values) {
-        super(name, note, dbStorage, ValueType.LONG, 0);
+    public LongValue(String name, String note, ValueMode valueMode, long... values) {
+        super(name, note, valueMode, ValueType.LONG, 0);
         initValues(values);
     }
 

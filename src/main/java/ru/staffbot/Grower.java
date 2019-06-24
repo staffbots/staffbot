@@ -49,9 +49,9 @@ public class Grower extends Staffbot {
     }
 
     private static DateLever sunriseLever = new DateLever("sunriseLever",
-            "Время включения света", "8:30", DateFormat.SHORTTIME);
+            "Время включения света", DateFormat.SHORTTIME, "8:30");
     private static DateLever sunsetLever = new DateLever("sunsetLever",
-            "Время выключения света", "16:45", DateFormat.SHORTTIME);
+            "Время выключения света", DateFormat.SHORTTIME, "16:45");
     private static BooleanLever funUsedLever = new BooleanLever("funUsedLever",
             "Включить вентиляцию", true);
     private static LongLever funDelayLever = new LongLever("funDelayLever",
@@ -64,7 +64,7 @@ public class Grower extends Staffbot {
     private static BooleanLever soluteLever = new BooleanLever("soluteLever",
             "Подготовка раствора", false);
     private static DoubleLever volumeLever = new DoubleLever("volumeLever",
-            "Объём раствора, л");
+            "Объём раствора, л", LeverMode.OBSERVABLE);
 
     private static LongLever dayRateLever = new LongLever("dayRateLever",
             "Дневная периодичность, мин", 0, 60, 24 * 60);
@@ -90,9 +90,9 @@ public class Grower extends Staffbot {
     private static SonarHCSR04Device sonar = new SonarHCSR04Device("sonar",
             "Сонар определения уровня воды, м", RaspiPin.GPIO_03, RaspiPin.GPIO_02);
     private static RelayDevice sunRelay = new RelayDevice("sunRelay",
-            "Реле питания освещения", false, RaspiPin.GPIO_00);
+            "Реле питания освещения", RaspiPin.GPIO_00, false);
     private static RelayDevice funRelay = new RelayDevice("funRelay",
-            "Реле питания вентиляции", false, RaspiPin.GPIO_01);
+            "Реле питания вентиляции", RaspiPin.GPIO_01, false);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  Tasks - Зададия

@@ -6,6 +6,7 @@ import ru.staffbot.utils.devices.DevicePin;
 import ru.staffbot.utils.devices.Devices;
 import ru.staffbot.utils.values.BooleanValue;
 import ru.staffbot.utils.values.Value;
+import ru.staffbot.utils.values.ValueMode;
 
 import java.util.ArrayList;
 
@@ -21,19 +22,19 @@ public class RelayDevice extends Device {
     private BooleanValue value;
 
     public RelayDevice(String name, String note, Pin pin, Boolean value) {
-        init(name, note, true, pin, value);
+        init(name, note, ValueMode.STORABLE, pin, value);
     }
 
-    public RelayDevice(String name, String note, Boolean dbStorage, Pin pin, Boolean value) {
-        init(name, note, dbStorage, pin, value);
+    public RelayDevice(String name, String note, ValueMode valueMode, Pin pin, Boolean value) {
+        init(name, note, valueMode, pin, value);
     }
 
-    private void init(String name, String note, Boolean dbStorage, Pin pin, Boolean value) {
+    private void init(String name, String note, ValueMode valueMode, Pin pin, Boolean value) {
 
         this.model = "Реле"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
         this.note = note; // Описание устройства (например, "Сонар для измерения уровня воды")
         this.name = name; // Уникальное имя устройства, используется для именования таблиц в БД (например, "WaterSonar")
-        this.value = new BooleanValue(name, note, dbStorage, value);
+        this.value = new BooleanValue(name, note, valueMode, value);
 
         values.add(this.value);
         Devices.putToPins(pin, new DevicePin(name));

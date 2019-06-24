@@ -6,6 +6,8 @@ import ru.staffbot.database.journal.Journal;
 import ru.staffbot.database.journal.Period;
 import ru.staffbot.utils.Converter;
 import ru.staffbot.utils.DateFormat;
+import ru.staffbot.utils.botprocess.BotProcess;
+import ru.staffbot.utils.botprocess.BotTask;
 import ru.staffbot.utils.devices.Device;
 import ru.staffbot.utils.devices.Devices;
 import ru.staffbot.utils.levers.Lever;
@@ -28,12 +30,12 @@ import java.util.*;
  */
 public class StatusServlet extends MainServlet {
 
-    private ArrayList<String> checkboxes;
+    private ArrayList<String> checkboxes =  new ArrayList<>();
 
     public StatusServlet(AccountService accountService) {
         super(PageType.STATUS, accountService);
-        checkboxes = new ArrayList<>(Arrays.asList("status_fromdate_on", "status_todate_on"));
-
+        checkboxes.add("status_fromdate_on");
+        checkboxes.add("status_todate_on");
         for (Device device : Devices.list)
             for (Value value : device.getValues())
                 if (value.isPlotPossible())
@@ -56,7 +58,19 @@ public class StatusServlet extends MainServlet {
 
         String getName = request.getParameter("get");
         if (getName != null) {
-           // System.out.println("Запрос " + getName);
+            if (getName.equals("tasklist")) {
+                response.getWriter().println(getTaskList());
+                response.setContentType("text/html; charset=utf-8");
+                response.setStatus(HttpServletResponse.SC_OK);
+                return;
+            }
+            if (getName.equals("processstatus")) {
+                response.getWriter().println(
+                        PageGenerator.toCode(BotProcess.getStatus().getDescription()));
+                response.setContentType("text/html; charset=utf-8");
+                response.setStatus(HttpServletResponse.SC_OK);
+                return;
+            }
             for (Device device : Devices.list)
                 for (Value value : device.getValues())
                     if (getName.equals(value.getName())) {
@@ -70,6 +84,17 @@ public class StatusServlet extends MainServlet {
                 }
             return;
         }
+
+        Period period = new Period(Journal.DATE_FORMAT);
+
+        String toDateStr = accountService.getAttribute(session,"status_todate");
+        if (toDateStr.equals("")) toDateStr = request.getParameter("status_todate");
+
+        String fromDateStr = accountService.getAttribute(session,"status_fromdate");
+        if (fromDateStr.equals("")) fromDateStr = request.getParameter("status_fromdate");
+
+        period.set(fromDateStr, toDateStr);
+
 
         for (String checkboxName : checkboxes) {
             String checkboxValueStr = accountService.getAttribute(session, checkboxName); // Читаем из сессии
@@ -85,19 +110,15 @@ public class StatusServlet extends MainServlet {
             }
             Boolean checkboxValue = Boolean.parseBoolean(checkboxValueStr);
             pageVariables.put(checkboxName, checkboxValue ? "checked" : "");
+
+            if (checkboxName.equals("status_fromdate_on") && checkboxValue && (period.fromDate == null))
+                period.initFromDate();
+
+            if (checkboxName.equals("status_todate_on") && checkboxValue && (period.toDate == null))
+                period.initToDate();
         }
 
-        Period period = new Period(Journal.DATE_FORMAT);
-
-        String toDateStr = accountService.getAttribute(session,"status_todate");
-        if (toDateStr.equals("")) toDateStr = request.getParameter("status_todate");
-
-        String fromDateStr = accountService.getAttribute(session,"status_fromdate");
-        if (fromDateStr.equals("")) fromDateStr = request.getParameter("status_fromdate");
-
-        period.set(fromDateStr, toDateStr);
-
-
+        pageVariables.put("start_time", Long.toString(BotProcess.getStartTime()));
         pageVariables.put("dateformat", Journal.DATE_FORMAT.getFormat());
         pageVariables.put("status_fromdate", period.getFromDateAsString());
         pageVariables.put("status_todate", period.getToDateAsString());
@@ -115,8 +136,8 @@ public class StatusServlet extends MainServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         HttpSession session = request.getSession();
         if (request.getParameter("status_apply") != null) {
-            accountService.setAttribute(session,"status_todate", request.getParameter("journal_todate"));
-            accountService.setAttribute(session,"status_fromdate", request.getParameter("journal_fromdate"));
+            accountService.setAttribute(session,"status_todate", request.getParameter("status_todate"));
+            accountService.setAttribute(session,"status_fromdate", request.getParameter("status_fromdate"));
 
             for (String checkboxName : checkboxes){
                 String checkboxValueStr = (request.getParameter(checkboxName) == null) ? "false" : "true";
@@ -160,7 +181,7 @@ public class StatusServlet extends MainServlet {
                 }
                 pageVariables.put("check_value", Boolean.parseBoolean(checkValue) ? "checked" : "");
                 pageVariables.put("check_name", checkName);
-                pageVariables.put("value_name", (value.dbStorage ? value.getName() : ""));
+                pageVariables.put("value_name", (value.isStorable() ? value.getName() : ""));
                 pageVariables.put("value_note", value.getNote().equals(device.getNote()) ? "" : value.getNote());
                 context += PageGenerator.getPage("items/device_value.html",pageVariables);
                 i++;
@@ -187,7 +208,7 @@ public class StatusServlet extends MainServlet {
             }
             pageVariables.put("check_value", Boolean.parseBoolean(checkValue) ? "checked" : "");
             pageVariables.put("check_name", checkName);
-            pageVariables.put("value_name", (value.dbStorage ? value.getName() : ""));
+            pageVariables.put("value_name", (value.isStorable() ? value.getName() : ""));
             if (value.getValueType() == ValueType.VOID)
                 pageVariables.put("value_note", "<b>" + value.getNote() + "</b>");
             else
@@ -230,4 +251,19 @@ public class StatusServlet extends MainServlet {
         context += "],\n";
         return context + "}";
     }
+
+    public String getTaskList() {
+        String context = "";
+        Map<String, Object> pageVariables = new HashMap();
+        for (int index = 0; index < BotProcess.list.size(); index++){
+            BotTask task = BotProcess.list.get(index);
+            String status = task.getStatusString();
+            if (status == null) continue;
+            pageVariables.put("note", task.note);
+            pageVariables.put("status", status);
+            context += PageGenerator.getPage("items/control_task.html",pageVariables);
+        }
+        return context;
+    }
+
 }

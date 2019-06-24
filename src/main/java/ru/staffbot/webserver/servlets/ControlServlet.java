@@ -29,15 +29,6 @@ public class ControlServlet extends MainServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         Map<String, Object> pageVariables = new HashMap();
-        String getName = request.getParameter("get");
-        if (getName != null) {
-            if (getName.equals("tasklist")) {
-                response.getWriter().println(getTaskList());
-                response.setContentType("text/html; charset=utf-8");
-                response.setStatus(HttpServletResponse.SC_OK);
-            }
-            return;
-        }
         for (BotProcessStatus status : BotProcessStatus.values()) {
             String statusName = "control_" + status.name().toLowerCase();
             if (status == BotProcessStatus.PAUSE)
@@ -46,7 +37,7 @@ public class ControlServlet extends MainServlet {
                 pageVariables.put(statusName, status == BotProcess.getStatus() ? "disabled" : "");
         }
 
-        pageVariables.put("control_start_time", Long.toString(BotProcess.getStartTime()));
+        pageVariables.put("start_time", Long.toString(BotProcess.getStartTime()));
         pageVariables.put("control_display", Database.connected() ? "inline-table" : "none");
         pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("control_leverlist", getLeverList());
@@ -90,25 +81,13 @@ public class ControlServlet extends MainServlet {
         doGet(request, response);
     }
 
-    public String getTaskList() {
-        String context = "";
-        Map<String, Object> pageVariables = new HashMap();
-        for (int index = 0; index < BotProcess.list.size(); index++){
-            BotTask task = BotProcess.list.get(index);
-            String status = task.getStatusString();
-            if (status == null) continue;
-            pageVariables.put("note", task.note);
-            pageVariables.put("status", status);
-            context += PageGenerator.getPage("items/control_task.html",pageVariables);
-        }
-        return context;
-    }
 
     public String getLeverList() {
         String context = "";
         Map<String, Object> pageVariables = new HashMap();
         pageVariables.put("page_bg_color", page_bg_color);
         for (Lever lever : Levers.list){
+            if (!lever.toValue().isChangeable()) continue;
             pageVariables.put("name", "control_" + lever.toValue().getName().toLowerCase());
             String value = lever.toValue().getValueAsString();
             if (lever.toValue().getValueType() == ValueType.BOOLEAN)

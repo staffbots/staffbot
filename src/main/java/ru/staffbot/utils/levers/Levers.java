@@ -20,7 +20,7 @@ public class Levers{
     public static void init(Lever... levers) {
         for (Lever lever:levers) {
             list.add(lever);
-            if (lever.toValue().getDbStorage())
+            if (lever.toValue().isStorable())
                 lever.toValue().createTable();
             lever.toValue().set(lever.toValue().get());
         }

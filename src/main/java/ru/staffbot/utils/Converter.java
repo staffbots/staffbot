@@ -84,7 +84,7 @@ public class Converter {
     }
 
     public static Date stringToDate(String value, DateFormat format){
-        Date date = stringToDate(value, format, new Date());
+        //Date date = stringToDate(value, format, new Date());
         return stringToDate(value, format, new Date());
     }
 
@@ -94,7 +94,7 @@ public class Converter {
         simpleFormat.applyPattern(format.get());
         try {
             return simpleFormat.parse(value);
-        } catch (ParseException e) {
+        } catch (Exception exception) {
             return defaultDate;
         }
     }

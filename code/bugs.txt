@@ -1,12 +1,9 @@
 ﻿Command line for maven is "compile package exec:java -f pom.xml"
+
 ======= STAFFBOT ========
 - РЕФАКТОРИНГ always actual
 
-======= CONTROL =========
-- Добавить ObserveMode для Lever (см. объём раствора)
-
 ======= STATUS ==========
-- Доделать period (нач.значения, сохоанение)
 - Добавить цвет графиков к списку checkBox'ов
 
 ======= WEBSERVER =======
@@ -17,6 +14,7 @@
 - Надо бы сохранять в БД первоначальные значения Lever'сов
 
 ======= UTILS ===========
+- Функции из Converter'а перетащить в соответствующие xxxValue
 - Добавить Value.stringValueSize в staffbot.cfg (чтоли) - привести в порядок
 
 ======= RASPBERRYY PI ===
@@ -24,4 +22,14 @@
 - Создать дополнительное окно для настройки Ph и EC датчиков (или просто сделать ещё одно маленькое решение!)
 - Создать информационные странички по каждому из устройств (на сайте staffbot.ru)
 
-
+Порядок аргументов для конструкторов
+классов Value, Lever и Device (и их наследников):
+String name
+String note
+ValueMode valueMode
+LeverMode leverMode   Lever only
+Pin pin               Device only
+Runnable action       ButtonDevice only
+ValueType valueType
+DateFormat format     For DateType only
+value or values

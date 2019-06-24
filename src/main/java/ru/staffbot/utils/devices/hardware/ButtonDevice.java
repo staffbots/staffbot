@@ -7,6 +7,7 @@ import ru.staffbot.utils.devices.Device;
 import ru.staffbot.utils.devices.DevicePin;
 import ru.staffbot.utils.devices.Devices;
 import ru.staffbot.utils.values.BooleanValue;
+import ru.staffbot.utils.values.ValueMode;
 
 public class ButtonDevice extends Device {
 
@@ -16,19 +17,19 @@ public class ButtonDevice extends Device {
     private BooleanValue value;
 
     public ButtonDevice(String name, String note, Pin pin, Runnable action) {
-        init(name, note, pin, true, action);
+        init(name, note, ValueMode.STORABLE, pin, action);
     }
 
-    public ButtonDevice(String name, String note, Pin pin, Boolean dbStorage, Runnable action) {
-        init(name, note, pin, dbStorage, action);
+    public ButtonDevice(String name, String note, ValueMode valueMode, Pin pin, Runnable action) {
+        init(name, note, valueMode, pin, action);
     }
 
-    private void init(String name, String note, Pin pin, Boolean dbStorage, Runnable action) {
+    private void init(String name, String note, ValueMode valueMode, Pin pin, Runnable action) {
 
         this.model = "Кнопка"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
         this.note = note; // Описание устройства (например, "Сонар для измерения уровня воды")
         this.name = name; // Уникальное имя устройства, используется для именования таблиц в БД (например, "WaterSonar")
-        this.value = new BooleanValue(name, note, dbStorage, false);
+        this.value = new BooleanValue(name, note, valueMode, false);
 
         values.add(this.value);
         Devices.putToPins(pin, new DevicePin(name));

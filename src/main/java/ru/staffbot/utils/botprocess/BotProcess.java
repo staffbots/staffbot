@@ -92,8 +92,9 @@ public class BotProcess {
         list.clear();
         for (BotTask task:tasks)
             list.add(task);
+        status = BotProcessStatus.START;
         setStatus((getStartTime() == 0) ? BotProcessStatus.STOP : BotProcessStatus.PAUSE);
-        Journal.add("Задачи проинициализированы");
+        Journal.add("Задания проинициализированы");
         //Timer timer = new Timer();
     }
 

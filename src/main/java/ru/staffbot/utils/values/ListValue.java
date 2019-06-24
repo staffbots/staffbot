@@ -42,8 +42,8 @@ public class ListValue extends Value {
     }
 
 
-    public ListValue(String name, String note, Boolean dbStorage, long defaultValue, String... values) {
-        super(name, note, dbStorage, ValueType.LIST, defaultValue);
+    public ListValue(String name, String note, ValueMode valueMode, long defaultValue, String... values) {
+        super(name, note, valueMode, ValueType.LIST, defaultValue);
         init(defaultValue, values);
     }
 

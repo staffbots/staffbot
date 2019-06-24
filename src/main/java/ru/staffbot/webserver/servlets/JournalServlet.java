@@ -18,8 +18,6 @@ import java.util.*;
 
 public class JournalServlet extends MainServlet {
 
-    //public Journal journal = new Journal();
-
     private ArrayList<String> checkboxes;
 
     public JournalServlet(AccountService accountService) {
@@ -45,6 +43,7 @@ public class JournalServlet extends MainServlet {
         if (fromDateStr.equals("")) fromDateStr = request.getParameter("journal_fromdate");
 
         Database.journal.period.set(fromDateStr, toDateStr);
+
         Database.journal.setCount(accountService.getAttribute(session,"journal_count"));
 
         Map<Integer, Boolean> typesForShow = new HashMap<>();

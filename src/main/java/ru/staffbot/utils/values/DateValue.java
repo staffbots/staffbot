@@ -17,8 +17,8 @@ public class DateValue extends Value{
 
     private DateFormat format;
 
-    public DateValue(String name, String note, Boolean dbStorage, DateFormat format, Date value) {
-        super(name, note, dbStorage, ValueType.DATE, Converter.dateToLong(value));
+    public DateValue(String name, String note, ValueMode valueMode, DateFormat format, Date value) {
+        super(name, note, valueMode, ValueType.DATE, Converter.dateToLong(value));
         this.format = format;
     }
 

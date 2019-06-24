@@ -7,6 +7,7 @@ import ru.staffbot.utils.devices.Device;
 import ru.staffbot.utils.devices.DevicePin;
 import ru.staffbot.utils.devices.Devices;
 import ru.staffbot.utils.values.DoubleValue;
+import ru.staffbot.utils.values.ValueMode;
 
 
 /**
@@ -31,19 +32,19 @@ public class SonarHCSR04Device extends Device {
     private DoubleValue value;
 
     public SonarHCSR04Device(String name, String note, Pin pinTRIG, Pin pinECHO) {
-        init(name, note, true, pinTRIG, pinECHO);
+        init(name, note, ValueMode.STORABLE, pinTRIG, pinECHO);
     }
 
-    public SonarHCSR04Device(String name, String note, boolean dbStorage, Pin pinTRIG, Pin pinECHO) {
-        init(name, note, dbStorage, pinTRIG, pinECHO);
+    public SonarHCSR04Device(String name, String note, ValueMode valueMode, Pin pinTRIG, Pin pinECHO) {
+        init(name, note, valueMode, pinTRIG, pinECHO);
     }
 
-    private void init(String name, String note, boolean dbStorage, Pin pinTRIG, Pin pinECHO) {
+    private void init(String name, String note, ValueMode valueMode, Pin pinTRIG, Pin pinECHO) {
 
         this.model = "Сонар HC-SR04"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
         this.note = note; // Описание устройства (например, "Сонар для измерения уровня воды")
         this.name = name; // Уникальное имя устройства, используется для именования таблиц в БД (например, "WaterSonar")
-        this.value = new DoubleValue(name, "Дистанция, см", dbStorage);
+        this.value = new DoubleValue(name, "Дистанция, см", valueMode);
 
         values.add(this.value);
         Devices.putToPins(pinTRIG, new DevicePin(name, "TRIG"));

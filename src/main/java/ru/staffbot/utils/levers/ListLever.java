@@ -1,34 +1,35 @@
 package ru.staffbot.utils.levers;
 
 import ru.staffbot.utils.values.ListValue;
+import ru.staffbot.utils.values.ValueMode;
 
 public class ListLever extends ListValue implements Lever {
 
-    public ListLever(String name, String note, Boolean dbStorage, long defaultValue, String... values) {
-        super(name, note, dbStorage, defaultValue, values);
+    public ListLever(String name, String note, ValueMode valueMode, long defaultValue, String... values) {
+        super(name, note, valueMode, defaultValue, values);
     }
 
-    public ListLever(String name, String note, Boolean dbStorage, String... values) {
-        super(name, note, dbStorage, 0, values);
+    public ListLever(String name, String note, ValueMode valueMode, String... values) {
+        super(name, note, valueMode, 0, values);
     }
 
     public ListLever(String name, String note, String... values) {
         super(name, note, 0, values);
     }
 
-    public ListLever(String name, String note, Boolean dbStorage, LeverMode mode, long defaultValue, String... values) {
-        super(name, note, dbStorage, defaultValue, values);
-        this.mode = mode;
+    public ListLever(String name, String note, ValueMode valueMode, LeverMode leverMode, long defaultValue, String... values) {
+        super(name, note, valueMode, defaultValue, values);
+        this.leverMode = leverMode;
     }
 
-    public ListLever(String name, String note, Boolean dbStorage, LeverMode mode, String... values) {
-        super(name, note, dbStorage, 0, values);
-        this.mode = mode;
+    public ListLever(String name, String note, ValueMode valueMode, LeverMode leverMode, String... values) {
+        super(name, note, valueMode, 0, values);
+        this.leverMode = leverMode;
     }
 
-    public ListLever(String name, String note, LeverMode mode, String... values) {
+    public ListLever(String name, String note, LeverMode leverMode, String... values) {
         super(name, note, 0, values);
-        this.mode = mode;
+        this.leverMode = leverMode;
     }
 
 

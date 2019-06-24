@@ -3,6 +3,38 @@
 <form action="/status" method="post">
     <table style="text-align: left" cellpadding="3" border="0" cellspacing="0">
         <tbody>
+        <tr>
+            <td colspan="1">
+                Состояние процесса:
+            </td>
+            <td colspan="3">
+                <b>
+                    <em>
+                        <div id="process_status" title="Текущие состояние процесса">
+                        <!-- Обновляется по udate_processs_tatus() -->
+                        </div>
+                    </em>
+                </b>
+            </td>
+            <td colspan="2" align="right">
+                <b>
+                    <input type="hidden" name="start_time" value="${start_time}"></input>
+                    <output name="process_time" title="Время после запуска"></output>
+                </b>
+            </td>
+        </tr>
+        <!-- Список заданий -->
+        <tr>
+            <td colspan="6" style="text-align: right">
+                <small>
+                    <div id="task_list" title="Текущие задания">
+                        <!-- Обновляется по udate_control_tasklist() -->
+                    </div>
+                </small>
+            </td>
+        </tr>
+
+
         <tr style="font-weight: bold; background: #${page_bg_color}">
             <td colspan="2">Параметры управления</td>
             <td colspan="2">Значение</td>
@@ -69,13 +101,16 @@
 </form>
 </p>
 
-
 <script language="javascript" type="text/javascript" src="/resource?name=/html/scripts/main.js"></script>
 <script language="javascript" type="text/javascript" src="/resource?name=/html/scripts/moment.js"></script>
 <script type="text/javascript">
     date_onClick('status_fromdate_on', 'status_fromdate');
     date_onClick('status_todate_on', 'status_todate');
 </script>
+<script language="javascript" type="text/javascript"> update_process_time(); </script>
+<script language="javascript" type="text/javascript"> update_task_list(); </script>
+<script language="javascript" type="text/javascript"> update_process_status(); </script>
+
 <script language="javascript" type="text/javascript" src="/resource?name=/html/scripts/flot/jquery.js"></script>
 <script language="javascript" type="text/javascript" src="/resource?name=/html/scripts/flot/jquery.canvaswrapper.js"></script>
 <script language="javascript" type="text/javascript" src="/resource?name=/html/scripts/flot/jquery.colorhelpers.js"></script>

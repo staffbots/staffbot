@@ -1,25 +1,26 @@
 package ru.staffbot.utils.levers;
 
 import ru.staffbot.utils.values.DoubleValue;
+import ru.staffbot.utils.values.ValueMode;
 
 public class DoubleLever extends DoubleValue implements Lever {
 
-    public DoubleLever(String name, String note, Boolean dbStorage, Double... values) {
-        super(name, note, dbStorage, values);
+    public DoubleLever(String name, String note, ValueMode valueMode, Double... values) {
+        super(name, note, valueMode, values);
     }
 
     public DoubleLever(String name, String note, Double... values) {
         super(name, note, values);
     }
 
-    public DoubleLever(String name, String note, Boolean dbStorage, LeverMode mode, Double... values) {
-        super(name, note, dbStorage, values);
-        this.mode = mode;
+    public DoubleLever(String name, String note, ValueMode valueMode, LeverMode leverMode, Double... values) {
+        super(name, note, valueMode, values);
+        this.leverMode = leverMode;
     }
 
-    public DoubleLever(String name, String note, LeverMode mode, Double... values) {
+    public DoubleLever(String name, String note, LeverMode leverMode, Double... values) {
         super(name, note, values);
-        this.mode = mode;
+        this.leverMode = leverMode;
     }
 
 }

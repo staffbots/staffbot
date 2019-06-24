@@ -1,21 +1,22 @@
 package ru.staffbot.utils.levers;
 
 import ru.staffbot.utils.values.BooleanValue;
+import ru.staffbot.utils.values.ValueMode;
 
 public class BooleanLever extends BooleanValue implements Lever {
 
-    public BooleanLever(String name, String note, boolean dbStorage, LeverMode mode, boolean value) {
-        super(name, note, dbStorage, value);
-        this.mode = mode;
+    public BooleanLever(String name, String note, ValueMode valueMode, LeverMode leverMode, boolean value) {
+        super(name, note, valueMode, value);
+        this.leverMode = leverMode;
     }
 
-    public BooleanLever(String name, String note, boolean dbStorage, boolean value) {
-        super(name, note, dbStorage, value);
+    public BooleanLever(String name, String note, ValueMode valueMode, boolean value) {
+        super(name, note, valueMode, value);
     }
 
-    public BooleanLever(String name, String note, LeverMode mode, boolean value) {
+    public BooleanLever(String name, String note, LeverMode leverMode, boolean value) {
         super(name, note, value);
-        this.mode = mode;
+        this.leverMode = leverMode;
     }
 
     public BooleanLever(String name, String note, boolean value) {

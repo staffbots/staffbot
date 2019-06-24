@@ -65,7 +65,7 @@ public class Devices{
         for (Device device : devices) {
             list.add(device);
             for (Value value : device.getValues())
-                if (value.dbStorage)
+                if (value.isStorable())
                     value.createTable();
         }
         Journal.add("Устройства успешно проинициализированы");

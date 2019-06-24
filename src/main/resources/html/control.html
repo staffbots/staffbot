@@ -27,11 +27,11 @@
                             </button>
                         </td>
                         <td>
-                            <input type="hidden" name="control_start_time" value="${control_start_time}"></input>
+                            <input type="hidden" name="start_time" value="${start_time}"></input>
                         </td>
                         <td valign="bottom" align="right" width="100%">
                             <b>
-                                <output name="control_process_time" title="Время после запуска"></output>
+                                <output name="process_time" title="Время после запуска"></output>
                             </b>
                         </td>
                     </tr>
@@ -39,7 +39,7 @@
                     <tr>
                         <td colspan="5" style="text-align: right">
                             <small>
-                                <div id="control_tasklist" title="Текущие задания">
+                                <div id="task_list" title="Текущие задания">
                                     <!-- Обновляется по udate_control_tasklist() -->
                                 </div>
                             </small>
@@ -97,7 +97,7 @@
     </table>
 </form>
 </p>
-<script type="text/javascript"> show_control_time(); </script>
-<script type="text/javascript"> update_control_tasklist(); </script>
+<script type="text/javascript"> update_process_time(); </script>
+<script type="text/javascript"> update_task_list(); </script>
 
 

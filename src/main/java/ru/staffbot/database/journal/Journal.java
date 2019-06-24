@@ -5,6 +5,7 @@ import ru.staffbot.utils.Converter;
 import ru.staffbot.database.Database;
 import ru.staffbot.utils.DateFormat;
 import ru.staffbot.utils.values.LongValue;
+import ru.staffbot.utils.values.ValueMode;
 
 import java.sql.*;
 import java.util.*;
@@ -53,7 +54,7 @@ public class Journal extends DBTable {
 
     public Period period = new Period(DATE_FORMAT);
 
-    private LongValue noteCount = new LongValue("","",false,
+    private LongValue noteCount = new LongValue("","", ValueMode.TEMPORARY,
             1, DEFAULT_NOTE_COUNT, MAX_NOTE_COUNT);
 
     public void setCount(long newCount){

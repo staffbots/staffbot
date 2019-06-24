@@ -161,8 +161,8 @@ abstract public class Value extends DBTable {
                     statement.executeUpdate();
                     String stringValue = (valueType != ValueType.BOOLEAN) ? getValueAsString() : Long.toString(newValue);
                     Journal.add(getNote() + " - установлено заначение: " + stringValue);
-                } catch (Exception e) {
-                    Journal.add("Ошибка записи в таблицу " + getTableName() + e.getMessage(), NoteType.ERROR);
+                } catch (Exception exception) {
+                    Journal.add("Ошибка записи в таблицу " + getTableName() + exception.getMessage(), NoteType.ERROR);
                 }
             }
         value = newValue;
@@ -181,7 +181,8 @@ abstract public class Value extends DBTable {
                     statement.setLong(2, newValue);
                     statement.executeUpdate();
                     String stringValue = (valueType != ValueType.BOOLEAN) ? getValueAsString() : Long.toString(newValue);
-                    Journal.add(getNote() + " - установлено заначение: " + stringValue);
+                    Journal.add(getNote() + " - установлено заначение: " + stringValue
+                    + " на дату " + Converter.dateToString(moment, Journal.DATE_FORMAT));
                 } catch (Exception e) {
                     Journal.add("Ошибка записи в таблицу " + getTableName() + e.getMessage(), NoteType.ERROR);
                 }
@@ -247,20 +248,14 @@ abstract public class Value extends DBTable {
     public ArrayList<DBValue> getDataSet(Period period){
         ArrayList<DBValue> dbValues = new ArrayList<>();
         try {
-            String condition = null;
-            if (period.fromDate != null) {
-                condition = (period.fromDate == null) ? "" : " (? <= moment)";
-            }
-            if (period.toDate != null) {
-                condition =
-                    (period.toDate == null) ? "" :
-                            ((condition == null) ? "" : "AND") + " (moment <= ?)";
-            }
-            condition = ((condition == null) ? "" : "WHERE " + condition);
+            String condition = (period.fromDate == null) ? null : " (? <= moment) ";
+            if (period.toDate != null)
+                condition = ((condition == null) ? "" : condition + "AND") + " (moment <= ?) ";
+            condition = ((condition == null) ? "" : " WHERE " + condition);
 
             PreparedStatement statement = Database.getConnection().prepareStatement(
                     "SELECT moment, value FROM " + getTableName()
-                            + " "+ condition + " ORDER BY moment ASC");
+                            + condition + " ORDER BY moment ASC");
 
             if (period.fromDate != null) {
                 // Формат даты для журнала (DateFormat.TIMEDATE) не учитывает секунды,
@@ -345,10 +340,18 @@ abstract public class Value extends DBTable {
         return (leverMode == LeverMode.CHANGEABLE);
     }
 
+    public LeverMode getLeverMode() {
+        return leverMode;
+    }
+
     protected ValueMode valueMode = ValueMode.STORABLE;
 
     public boolean isStorable(){
         return (valueMode == ValueMode.STORABLE);
+    }
+
+    public ValueMode getValueMode() {
+        return valueMode;
     }
 
 }

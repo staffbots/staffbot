@@ -9,6 +9,7 @@ import ru.staffbot.utils.devices.Device;
 import ru.staffbot.utils.devices.DevicePin;
 import ru.staffbot.utils.devices.Devices;
 import ru.staffbot.utils.values.DoubleValue;
+import ru.staffbot.utils.values.ValueMode;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -25,20 +26,20 @@ public class SensorDHT22Device extends Device {
     private DoubleValue humidity;
 
     public SensorDHT22Device(String name, String note, Pin pin) {
-        init(name, note, true, pin);
+        init(name, note, ValueMode.STORABLE, pin);
     }
 
-    public SensorDHT22Device(String name, String note, Boolean dbStorage, Pin pin) {
-        init(name, note, dbStorage, pin);
+    public SensorDHT22Device(String name, String note, ValueMode valueMode, Pin pin) {
+        init(name, note, valueMode, pin);
     }
 
-    private void init(String name, String note, Boolean dbStorage, Pin pin) {
+    private void init(String name, String note, ValueMode valueMode, Pin pin) {
 
         this.model = "Датчик DHT22"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
         this.note = note; // Описание устройства (например, "Сонар для измерения уровня воды")
         this.name = name; // Уникальное имя устройства, используется для именования таблиц в БД (например, "WaterSonar")
-        this.temperature = new DoubleValue(name + "_temperature", "Температура, C", dbStorage);
-        this.humidity = new DoubleValue(name + "_humidity", "Влажность, %", dbStorage);
+        this.temperature = new DoubleValue(name + "_temperature", "Температура, C", valueMode);
+        this.humidity = new DoubleValue(name + "_humidity", "Влажность, %", valueMode);
 
         values.add(temperature);
         values.add(humidity);

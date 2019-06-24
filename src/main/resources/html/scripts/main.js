@@ -16,13 +16,36 @@ function date_onClick(checkname, fieldname){
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
-// Control
+// Status
 //////////////////////////////////////////////////////////////////////////////////////
 
+// Обновление списка текущих заданий по таймеру
+function update_process_status(){
+
+    $.get(
+        '/status?get=processstatus',
+        function(data) {
+            $('#process_status').html(data);
+        }
+    );
+    setTimeout(update_process_status, 1000);
+}
+
+// Обновление списка текущих заданий по таймеру
+function update_task_list(){
+    $.get(
+        '/status?get=tasklist',
+        function(data) {
+            $('#task_list').html(data);
+        }
+    );
+    setTimeout(update_task_list, 1000);
+}
+
 // Показ продолжительности исполенения процесса
-function show_control_time(){
-    if (!element('control_stop').disabled) {
-        var starttime = document.getElementsByName('control_start_time')[0].value;
+function update_process_time(){
+    var starttime = element('start_time').value;
+    if (starttime > 0) {
         var currenttime = new Date().getTime();
         var dt = Math.round((currenttime - starttime) / 1000);
         var sec = dt%60;                        sec = (sec > 9) ? sec : '0' + sec;
@@ -30,26 +53,12 @@ function show_control_time(){
         var hou = Math.trunc(dt/(60*60))%60;    hou = (hou > 9) ? hou : '0' + hou;
         var day = Math.trunc(dt/(60*60*24))%24;
         var str = '-';
-        element('control_process_time').innerHTML =
+        element('process_time').innerHTML =
         ((day > 0) ? (day + ' ' + str + ' ') : '') + hou + ':'+ min + ':'+ sec;
-        setTimeout(show_control_time, 500);
     }
+    setTimeout(update_process_time, 500);
 }
 
-// Обновление списка текущих заданий по таймеру
-function update_control_tasklist(){
-    $.get(
-        '/control?get=tasklist',
-        function(data) {
-            $('#control_tasklist').html(data);
-        }
-    );
-    setTimeout(update_control_tasklist, 1000);
-}
-
-//////////////////////////////////////////////////////////////////////////////////////
-// Status
-//////////////////////////////////////////////////////////////////////////////////////
 
 // Обновление значения
 function update_status_value(name){
@@ -61,8 +70,8 @@ function update_status_value(name){
         }
     );
     setTimeout(update_status_value, 1000, name);
-
 }
+
 
 
 //////////////////////////////////////////////////////////////////////////////////////

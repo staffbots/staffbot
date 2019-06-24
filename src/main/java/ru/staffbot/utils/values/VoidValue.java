@@ -9,7 +9,7 @@ package ru.staffbot.utils.values;
 public class VoidValue extends Value{
 
     public VoidValue(String note) {
-        super("", note, false, ValueType.VOID, 0);
+        super("", note, ValueMode.TEMPORARY, ValueType.VOID, 0);
     }
 
 }

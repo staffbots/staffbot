@@ -8,6 +8,7 @@ import ru.staffbot.utils.Converter;
 import ru.staffbot.utils.DateFormat;
 import ru.staffbot.utils.DateScale;
 import ru.staffbot.utils.botprocess.BotProcess;
+import ru.staffbot.utils.botprocess.BotProcessStatus;
 import ru.staffbot.utils.botprocess.BotTask;
 import ru.staffbot.utils.devices.Device;
 import ru.staffbot.utils.devices.Devices;
@@ -74,7 +75,7 @@ public class Tester extends Staffbot {
     }
 
     private static RelayDevice ledRelay = new RelayDevice("ledRelay",
-            "Светодиод", false, RaspiPin.GPIO_01);
+            "Светодиод", RaspiPin.GPIO_01, false);
     private static SensorDHT22Device sensor = new SensorDHT22Device("sensor",
             "Датчик температуры и влажности", RaspiPin.GPIO_25);
     private static SonarHCSR04Device sonar = new SonarHCSR04Device("sonar",
@@ -147,28 +148,19 @@ public class Tester extends Staffbot {
     private static BotTask testTask = new BotTask(
             testTaskNote,
             () -> { // Расчёт задержки перед следующим запуском задания
-                //long delay = Math.round(ledOffLever.getValue() * DateScale.SECOND.getMilliseconds());
                 long delay = 0;
                 return delay;
             },
-            () -> { // Задание
-                try {
-                    // "От заката до рассвета"
-                    //long delay = Math.round(ledOnLever.getValue() * DateScale.SECOND.getMilliseconds());
-                    long timePeriod = DateScale.WEEK.getMilliseconds();
-                    Period period = new Period(DateFormat.DATE, new Date(System.currentTimeMillis() - timePeriod), new Date());
-                    for (Device device : Devices.list)
-                        for (Value value : device.getValues())
-                            value.setRandom(period);
-                    for (Lever lever : Levers.list)
-                        lever.toValue().setRandom(period);
-
-                    long delay = 2000000;
-                    Thread.sleep(delay);
-                } catch (InterruptedException exception) {
-                    Journal.add(ledTaskNote + ": Задание прервано", NoteType.WRINING);
-                }
-                Journal.add(ledTaskNote + ": выключение");
+            () -> { // Задание без повторений
+                long timePeriod = DateScale.WEEK.getMilliseconds();
+                Period period = new Period(DateFormat.DATE, new Date(System.currentTimeMillis() - timePeriod), new Date());
+                for (Device device : Devices.list)
+                    for (Value value : device.getValues())
+                        value.setRandom(period);
+                for (Lever lever : Levers.list)
+                    lever.toValue().setRandom(period);
+                BotProcess.setStatus(BotProcessStatus.STOP);
+                Journal.add(ledTaskNote + ": Задание выполнено");
             });
 
 }

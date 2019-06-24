@@ -75,7 +75,7 @@ public abstract class Staffbot{
             MainServlet.site_bg_color = property.getProperty("web.site_bg_color", MainServlet.site_bg_color);
             MainServlet.main_bg_color = property.getProperty("web.main_bg_color", MainServlet.main_bg_color);
             MainServlet.page_bg_color = property.getProperty("web.page_bg_color", MainServlet.page_bg_color);
-
+            
             Journal.add("Конфигурация загружена");
 
         }catch (Exception exception){
