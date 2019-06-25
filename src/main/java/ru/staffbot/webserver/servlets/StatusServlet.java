@@ -4,15 +4,12 @@ import ru.staffbot.database.DBValue;
 import ru.staffbot.database.Database;
 import ru.staffbot.database.journal.Journal;
 import ru.staffbot.database.journal.Period;
-import ru.staffbot.utils.Converter;
-import ru.staffbot.utils.DateFormat;
 import ru.staffbot.utils.botprocess.BotProcess;
 import ru.staffbot.utils.botprocess.BotTask;
 import ru.staffbot.utils.devices.Device;
 import ru.staffbot.utils.devices.Devices;
 import ru.staffbot.utils.levers.Lever;
 import ru.staffbot.utils.levers.Levers;
-import ru.staffbot.utils.values.BooleanValue;
 import ru.staffbot.utils.values.Value;
 import ru.staffbot.utils.values.ValueType;
 import ru.staffbot.webserver.AccountService;
@@ -43,6 +40,7 @@ public class StatusServlet extends MainServlet {
         for (Lever lever : Levers.list)
             if (lever.toValue().isPlotPossible())
                 checkboxes.add(lever.toValue().getName() + "_checkbox");
+
     }
 
     public void doGetValue(Value value, HttpServletResponse response) throws ServletException, IOException {
@@ -218,19 +216,21 @@ public class StatusServlet extends MainServlet {
         return context;
     }
 
+
     private String getDataSets(Period period){
         String context = "";
+        int numberOfValue = 0;
         for (Device device : Devices.list)
             for (Value value : device.getValues())
                 if (value.isPlotPossible())
-                    context +=(context.equals("") ? "" : ",") + "\n" + getDataSet(value, period);
+                    context +=(context.equals("") ? "" : ",") + "\n" + getDataSet(value, period, numberOfValue++);
         for (Lever lever : Levers.list)
             if (lever.toValue().isPlotPossible())
-                context +=(context.equals("") ? "" : ",") + "\n" + getDataSet((Value)lever, period);
+                context +=(context.equals("") ? "" : ",") + "\n" + getDataSet((Value)lever, period, numberOfValue++);
         return context;
     }
 
-    private String getDataSet(Value value, Period period) {
+    private String getDataSet(Value value, Period period, int numberOfValue) {
         String[] booleans = {"false", "true"};
         int index = (value.getValueType() == ValueType.BOOLEAN) ? 1 : 0;
 
@@ -239,6 +239,7 @@ public class StatusServlet extends MainServlet {
         context += "lines:{show:" + booleans[index] + "},\n";
         context += "splines: {show: " + booleans[1 - index] + "},\n";
         context += "points: {show: " + booleans[1 - index] + "},\n";
+        context += "color: 'hsl(" + hue[numberOfValue] + ",80%,50%)',\n";
         context += "data:[";
         ArrayList<DBValue> dbValues = value.getDataSet(period);
         boolean first = true;
@@ -266,4 +267,40 @@ public class StatusServlet extends MainServlet {
         return context;
     }
 
+    // Количество значенийй, по которым возможно построить график
+    private int plotValueCount = getPlotValueCount();
+
+    // Расчёт количества значенийй, по которым возможно построить график
+    private int getPlotValueCount(){
+        int count = 0;
+        for (Device device : Devices.list)
+            for (Value value : device.getValues())
+                if (value.isPlotPossible())
+                    count++;
+        for (Lever lever : Levers.list)
+            if (lever.toValue().isPlotPossible())
+                count++;
+        return count;
+    }
+
+    // Насыщенности
+    private double[] hue = getRandomHue(plotValueCount);
+
+
+    // Возращает масиив размером length с перемешанными в нём случайными значениями (насыщенности) от 0 до 360
+    private double[] getRandomHue(int length) {
+        ArrayList<Integer> random = new ArrayList<>();
+        ArrayList<Integer> resource = new ArrayList<>();
+        for (int i = 0; i < length; i++)
+            resource.add(i);
+        for (int i = 0; i < length; i++){
+            int k = (int) Math.floor(Math.random() * (length - i));
+            random.add(resource.get(k));
+            resource.remove(k);
+        }
+        double[] result = new double[length];
+        for (int i = 0; i < length; i++)
+            result[i] = 360 * random.get(i) / plotValueCount;
+        return result;
+    }
 }
