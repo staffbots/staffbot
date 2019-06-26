@@ -1,4 +1,4 @@
-package ru.staffbot.tools.devices.hardware;
+package ru.staffbot.tools.devices.drivers;
 
 import ru.staffbot.tools.devices.Device;
 

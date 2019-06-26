@@ -16,7 +16,6 @@ import java.util.Properties;
 
 /**
  * <b>Обслуживающий робот</b><br>
- * Родительский класс для всех приложений (решений) Staffbot
  **/
 
 public abstract class Staffbot{
@@ -44,9 +43,9 @@ public abstract class Staffbot{
             Properties property = new Properties();
             property.load(Staffbot.class.getResourceAsStream("/properties"));
             projectVersion = property.getProperty(projectName.toLowerCase() + ".version", "");
-            Journal.add("Свойства проекта загружены");
+            Journal.add("Свойства проекта загружены", false);
         } catch (IOException exception) {
-            Journal.add("Ошибка чтения файла свойств проекта (properties):\n"+ exception.getMessage());
+            Journal.add("Свойства проекта не загружены", NoteType.ERROR, exception, false);
         }
         // Имя исходного файла конфигурации, лежащего внутри jar-пакета
         String projectCfgFileName = "/" + projectName.toLowerCase() + ".cfg"; // внутри jar-пакета
@@ -89,10 +88,10 @@ public abstract class Staffbot{
             MainServlet.main_bg_color = property.getProperty("web.main_bg_color", MainServlet.main_bg_color);
             MainServlet.page_bg_color = property.getProperty("web.page_bg_color", MainServlet.page_bg_color);
             
-            Journal.add("Конфигурация загружена");
+            Journal.add("Конфигурация загружена", false);
 
         }catch (Exception exception){
-            Journal.add("Конфигурация не загружена", NoteType.ERROR, exception);
+            Journal.add("Конфигурация не загружена", NoteType.ERROR, exception, false);
         }
     }
 

@@ -11,36 +11,37 @@ import java.util.ArrayList;
  */
 public abstract class Device{
 
-    protected String name; // Уникальное имя устройства, используется для именования таблиц в БД (например, "WaterSonar")
-    protected String model; // Модель устройства - тип и модель датчика (например, "Сонар HC-SR04")
-    protected String note; // Описание устройства (например, "Сонар для измерения уровня воды")
+    // Уникальное имя устройства
+    protected String name;
+    public String getName(){
+        return name;
+    }
+
+    // Модель устройства
+    protected String model;
+    public String getModel(){
+        return model;
+    }
+
+    // Описание устройства
+    protected String note;
+    public String getNote(){
+        return note;
+    }
 
     /*
-        Значения устройства
+     *  Получаемые и/или передаваемые значения устройства
      */
     protected ArrayList<Value> values = new ArrayList();
 
     /**
-     * <b>Сбросить</b> значение на значение по умолчанию ({@code defaultValue})<br>
-     * Во всех классах из пакета {@link ru.staffbot.tools.levers} реализующих интеофейс {@code Lever}
-     * данный метод автоматически реализуется в родительском классе {@link Value}<br>
+     * <b>Сбросить</b> значение на значение по умолчанию<br>
      */
     protected void reset() {
         for(Value value: values)
             value.reset();
     }
 
-    public String getName(){
-        return name;
-    }
-
-    public String getNote(){
-        return note;
-    }
-
-    public String getModel(){
-        return model;
-    }
 
     public ArrayList<DevicePin> getDevicePins(){
         ArrayList<DevicePin> devicePins = new ArrayList();

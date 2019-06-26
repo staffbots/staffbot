@@ -12,10 +12,10 @@ import ru.staffbot.tools.botprocess.BotProcessStatus;
 import ru.staffbot.tools.botprocess.BotTask;
 import ru.staffbot.tools.devices.Device;
 import ru.staffbot.tools.devices.Devices;
-import ru.staffbot.tools.devices.hardware.ButtonDevice;
-import ru.staffbot.tools.devices.hardware.RelayDevice;
-import ru.staffbot.tools.devices.hardware.SensorDHT22Device;
-import ru.staffbot.tools.devices.hardware.SonarHCSR04Device;
+import ru.staffbot.tools.devices.drivers.ButtonDevice;
+import ru.staffbot.tools.devices.drivers.RelayDevice;
+import ru.staffbot.tools.devices.drivers.SensorDHT22Device;
+import ru.staffbot.tools.devices.drivers.SonarHCSR04Device;
 import ru.staffbot.tools.levers.*;
 import ru.staffbot.tools.values.Value;
 
@@ -49,7 +49,7 @@ public class Tester extends Staffbot {
      * Внимание! Порядок перечисления групп и рычагов повторяется в веб-интерфейсе
      */
     private static void leversInit() {
-        Levers.initGroup("Светодиод горит пока не превышено:", distanceLever, usedLever);
+        Levers.initGroup("", distanceLever, usedLever);
         Journal.add("Рычаги управления успешно проинициализированы");
     }
 

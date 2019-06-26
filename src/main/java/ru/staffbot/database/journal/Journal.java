@@ -17,11 +17,16 @@ import java.util.Date;
  * Экземпляр описан как статическое поле в классе Database
  */
 public class Journal extends DBTable {
+
     public static final long MAX_NOTE_COUNT = 99;
     public static final long DEFAULT_NOTE_COUNT = 20;
     public static final String DB_TABLE_NAME = "sys_journal";
     public static final String DB_TABLE_FIELDS = "moment TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3), noteValue VARCHAR(255) CHARACTER SET utf8, noteType INT DEFAULT 0";
     public static final DateFormat DATE_FORMAT = DateFormat.DATETIME;
+
+    public static void add(String note, boolean isStorable){
+        add(note, NoteType.CONFIRM, null, isStorable);
+    }
 
     public static void add(String note){
         add(note, NoteType.CONFIRM);
@@ -32,6 +37,9 @@ public class Journal extends DBTable {
     }
 
     public static void add(String noteValue, NoteType noteType, Exception exception){
+        add(noteValue, noteType, exception, true);
+    }
+    public static void add(String noteValue, NoteType noteType, Exception exception, boolean isStorable){
         Date noteDate = new Date();
         if (exception != null)
             if (NoteType.ERROR == noteType)
@@ -39,7 +47,7 @@ public class Journal extends DBTable {
                         + "<br>Стэк: "  + exception.getStackTrace();
         Note note = new Note(noteDate, noteValue, noteType);
         System.out.println(Converter.dateToString(noteDate, DATE_FORMAT) + "  |  " + note);
-        insertNote(note);
+        if (isStorable) insertNote(note);
     }
 
     private static boolean insertNote(Note note){
@@ -54,7 +62,7 @@ public class Journal extends DBTable {
             statement.close();
             return true;
         } catch (Exception exception) {
-            Journal.add("Запись в журнал не добавлена", NoteType.ERROR, exception);
+            Journal.add("В журнал не добавлена запись: " + note.getValue(), NoteType.ERROR, exception, false);
             return false;
         }
     }

@@ -1,4 +1,4 @@
-package ru.staffbot.tools.devices.hardware;
+package ru.staffbot.tools.devices.drivers;
 
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.wiringpi.Gpio;

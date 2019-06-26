@@ -1,4 +1,4 @@
-package ru.staffbot.tools.devices.hardware;
+package ru.staffbot.tools.devices.drivers;
 
 import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
@@ -28,7 +28,9 @@ public class SonarHCSR04Device extends Device {
     private final static int TIMEOUT = 2100;
 
     private GpioPinDigitalOutput gpioPinTRIG;
+
     private GpioPinDigitalInput gpioPinECHO;
+
     private DoubleValue value;
 
     public SonarHCSR04Device(String name, String note, Pin pinTRIG, Pin pinECHO) {

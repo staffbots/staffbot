@@ -55,8 +55,8 @@ public class Database {
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD));
             createDatabase(DROP);
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD), NAME);
-            settings = new Settings();
             journal = new Journal();
+            settings = new Settings();
             cleaner = new Cleaner();
             configs = new Configs();
             Journal.add("База данных " + NAME + " готова к использованию");
@@ -89,13 +89,13 @@ public class Database {
             Statement statement = connection.createStatement();
             statement.execute("DROP DATABASE " + NAME);
             statement.close();
-            Journal.add("Удалена БД " + NAME, NoteType.WRINING);
+            Journal.add("Удалена БД " + NAME, NoteType.WRINING, null, false);
             exists = false;
         } if(!exists) {
             Statement statement = connection.createStatement();
             statement.execute("CREATE DATABASE " + NAME);
             statement.close();
-            Journal.add("Создана БД " + NAME, NoteType.WRINING);
+            Journal.add("Создана БД " + NAME, NoteType.WRINING, null, false);
         }
         return true;
     }
