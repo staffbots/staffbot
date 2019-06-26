@@ -30,8 +30,8 @@ public class Grower extends Staffbot {
     public static void main(String[] args) {
         propertiesInit(); // Загружаем конфигурацию сборки
         databaseInit(); // Подключаемся к базе данных
-        devicesInit(); // Инициализируем список устройств
         leversInit(); // Инициализируем список элементов управления
+        devicesInit(); // Инициализируем список устройств
         botProcessInit(); // Инициализируем список заданий
         webserverInit(); // Запускаем веб-сервер
         windowInit(); // Открываем главное окно приложения
@@ -127,7 +127,8 @@ public class Grower extends Staffbot {
         () -> { // Расчёт задержки перед следующим запуском задания
             long sunriseTime = sunriseLever.getNearFuture().getTime();
             long sunsetTime = sunsetLever.getNearFuture().getTime();
-            // Если ближайший закат наступает раньше чем рассвет, то
+            // Если ближайший закат наступает раньше чем рассвет,
+            // значит на дворе день и свет нужно включить без промедления delay = 0
             long delay = (sunsetTime < sunriseTime) ? 0 : (sunriseTime - System.currentTimeMillis());
             return delay;
         },

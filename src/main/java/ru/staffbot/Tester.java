@@ -24,17 +24,21 @@ import java.util.TimeZone;
 
 public class Tester extends Staffbot {
 
+    // Точка входа при запуске приложения
+    // ВНИМАНИЕ! Порядок инициализаций менять не рекомендуется
     public static void main(String[] args) {
         System.out.println(TimeZone.getDefault().getRawOffset());
         propertiesInit(); // Загружаем конфигурацию сборки
         databaseInit(); // Подключаемся к базе данных
-        devicesInit(); // Инициализируем список устройств
         leversInit(); // Инициализируем список элементов управления
+        devicesInit(); // Инициализируем список устройств
         botProcessInit(); // Инициализируем список задач
         webserverInit(); // Запускаем вебсервер
         windowInit(); // Открываем окно
     }
 
+    // Определяем наименование решения по названию текущего класса
+    // solutionName определён в родительском классе Staffbot
     static {
         solutionName = new Object(){}.getClass().getEnclosingClass().getSimpleName(); //"Grower"
     }
