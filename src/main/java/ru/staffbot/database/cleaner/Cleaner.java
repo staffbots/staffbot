@@ -3,40 +3,49 @@ package ru.staffbot.database.cleaner;
 import ru.staffbot.database.DBTable;
 import ru.staffbot.database.Database;
 import ru.staffbot.database.journal.Journal;
-import ru.staffbot.database.journal.NoteType;
-import ru.staffbot.database.settings.Settings;
-import ru.staffbot.utils.Converter;
-import ru.staffbot.utils.DateFormat;
-import ru.staffbot.utils.DateScale;
-import ru.staffbot.utils.devices.Device;
-import ru.staffbot.utils.devices.Devices;
-import ru.staffbot.utils.levers.Lever;
-import ru.staffbot.utils.levers.Levers;
-import ru.staffbot.utils.values.Value;
+import ru.staffbot.tools.Converter;
+import ru.staffbot.tools.dates.DateFormat;
+import ru.staffbot.tools.dates.DateScale;
+import ru.staffbot.tools.devices.Device;
+import ru.staffbot.tools.devices.Devices;
+import ru.staffbot.tools.levers.Lever;
+import ru.staffbot.tools.levers.Levers;
+import ru.staffbot.tools.values.Value;
 
 import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+/*
+ * Чистильщик БД,
+ * выполняет чистку таблиц по указанным параметрам по требованию и по расписанию
+ * Экземпляр описан как статическое поле в классе Database
+ */
 public class Cleaner {
 
-    public long journalValue;
-    public boolean journalMeasureIsRecord;
-    public long tablesValue;
-    public boolean tablesMeasureIsRecord;
-    public boolean autoCleaning;
-    public long autoValue;
-    public DateScale autoMeasure;
-    public Date autoStart = new Date();
-
+    // Количество (записей или суток) оставляемых в журнале
+    private long journalValue;
+    // Еденица измерения количества (записей или суток) оставляемых в журнале
+    // true - если измеряется записями, в sys_setings пишется как "record"
+    // false - если измеряется сутками, в sys_setings пишется как "day"
+    private boolean journalMeasureIsRecord;
+    // Количество (записей или суток) оставляемых в таблицах значений
+    private long tablesValue;
+    // Еденица измерения количества (записей или суток) оставляемых в таблицах значений
+    // true - если измеряется записями, в sys_setings пишется как "record"
+    // false - если измеряется сутками, в sys_setings пишется как "day"
+    private boolean tablesMeasureIsRecord;
+    private boolean autoCleaning;
+    private long autoValue;
+    private DateScale autoMeasure;
+    // Формат даты автозапуска
     public static final DateFormat DATE_FORMAT = DateFormat.DATETIME;
-    //public DateFormat format = DateFormat.DATETIME;
-
-    private Timer timer;
+    // Дата автозапуска
+    private Date autoStart = new Date();
     private boolean timerIsRuning = false;
+    private Timer timer;
 
     public Cleaner() {
         update();
@@ -99,29 +108,29 @@ public class Cleaner {
     }
 
     private void loadSettings(){
-        journalValue = (new Settings("dbclean_journal_value")).loadAsLong(99);
-        journalMeasureIsRecord = (new Settings("dbclean_journal_measure")).loadAsBollean("record", true);
-        tablesValue = (new Settings("dbclean_tables_value")).loadAsLong(30);
-        tablesMeasureIsRecord = (new Settings("dbclean_tables_measure")).loadAsBollean("record", false);
-        autoCleaning = (new Settings("dbclean_auto_cleaning")).loadAsBollean("on", false);
-        autoValue = (new Settings("dbclean_auto_value")).loadAsLong(1);
+        journalValue = Database.settings.loadAsLong("dbclean_journal_value",99);
+        journalMeasureIsRecord = Database.settings.loadAsBollean("dbclean_journal_measure","record", true);
+        tablesValue = Database.settings.loadAsLong("dbclean_tables_value",30);
+        tablesMeasureIsRecord = Database.settings.loadAsBollean("dbclean_tables_measure", "record", false);
+        autoCleaning = Database.settings.loadAsBollean("dbclean_auto_cleaning", "on", false);
+        autoValue = Database.settings.loadAsLong("dbclean_auto_value",1);
         try {
-            autoMeasure = DateScale.valueOf((new Settings("dbclean_auto_measure")).load().toUpperCase());
+            autoMeasure = DateScale.valueOf(Database.settings.load("dbclean_auto_measure").toUpperCase());
         } catch (Exception exception) {
             autoMeasure = DateScale.DAY;
         }
-        autoStart = Converter.stringToDate((new Settings("dbclean_auto_start")).load(), DATE_FORMAT , autoStart);
+        autoStart = Converter.stringToDate(Database.settings.load("dbclean_auto_start"), DATE_FORMAT , autoStart);
     }
 
     private void saveSettings(){
-        (new Settings("dbclean_journal_value")).save(Long.toString(journalValue));
-        (new Settings("dbclean_journal_measure")).save(journalMeasureIsRecord ? "record" : "day");
-        (new Settings("dbclean_tables_value")).save(Long.toString(tablesValue));
-        (new Settings("dbclean_tables_measure")).save(tablesMeasureIsRecord ? "record" : "day");
-        (new Settings("dbclean_auto_cleaning")).save(autoCleaning ? "on" : "off");
-        (new Settings("dbclean_auto_value")).save(Long.toString(autoValue));
-        (new Settings("dbclean_auto_measure")).save(autoMeasure.toString().toLowerCase());
-        (new Settings("dbclean_auto_start")).save(Converter.dateToString(autoStart, DATE_FORMAT));
+        Database.settings.save("dbclean_journal_value", Long.toString(journalValue));
+        Database.settings.save("dbclean_journal_measure", journalMeasureIsRecord ? "record" : "day");
+        Database.settings.save("dbclean_tables_value", Long.toString(tablesValue));
+        Database.settings.save("dbclean_tables_measure", tablesMeasureIsRecord ? "record" : "day");
+        Database.settings.save("dbclean_auto_cleaning", autoCleaning ? "on" : "off");
+        Database.settings.save("dbclean_auto_value", Long.toString(autoValue));
+        Database.settings.save("dbclean_auto_measure", autoMeasure.toString().toLowerCase());
+        Database.settings.save("dbclean_auto_start", Converter.dateToString(autoStart, DATE_FORMAT));
     }
 
     private long cleanByCount(DBTable table, long count){

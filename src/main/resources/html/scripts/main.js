@@ -120,6 +120,8 @@ function system_radioboxClick() {
     }
     element('dbclean_auto_value').disabled = disabled;
     element('dbclean_auto_measure').disabled = disabled;
+    if (disabled)
+        element('dbclean_auto_start').value = "";
     element('dbclean_auto_start').disabled = disabled;
 }
 

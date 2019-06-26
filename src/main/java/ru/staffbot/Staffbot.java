@@ -2,8 +2,9 @@ package ru.staffbot;
 
 import ru.staffbot.database.Database;
 import ru.staffbot.database.journal.Journal;
-import ru.staffbot.utils.Converter;
-import ru.staffbot.utils.devices.Devices;
+import ru.staffbot.database.journal.NoteType;
+import ru.staffbot.tools.Converter;
+import ru.staffbot.tools.devices.Devices;
 import ru.staffbot.webserver.WebServer;
 import ru.staffbot.webserver.servlets.MainServlet;
 import ru.staffbot.webserver.servlets.ResourceServlet;
@@ -14,19 +15,31 @@ import java.util.Properties;
 
 
 /**
- ** <b>Обслуживающий робот</b><br>
+ * <b>Обслуживающий робот</b><br>
+ * Родительский класс для всех приложений (решений) Staffbot
  **/
 
 public abstract class Staffbot{
 
+    // Название решения,
+    // Совпадает с названием дочернего класса, в нём же и определяется
+    // Используется в имени БД, наименовании файлов .jar и .cfg, а так же в заголовках веб-интерфейса и главного окна
     public static String solutionName;
 
+    // Название версия проекта,
+    // Определяется параметром <projectName>.version в файле ресурсов properties
+    // Используется в наименовании файлов .jar и .cfg и в заголовке главного окна
     public static String projectVersion;
 
+    // Название проекта,
+    // Совпадает с названием этого класса (т.е. Staffbot), в нём же и определяется (см. ниже)
+    // Используется в имени БД и в заголовках веб-интерфейса и главного окна
     public static String projectName = new Object(){}.getClass().getEnclosingClass().getSimpleName(); //"Staffbot"
 
+    // Инициализация параметров
+    // Вызывается при запуске приложения в определённом порядке с прочими инициализациями
     public static void propertiesInit(){
-        // Считываем версию
+        // Считываем версию проекта
         try {
             Properties property = new Properties();
             property.load(Staffbot.class.getResourceAsStream("/properties"));
@@ -79,18 +92,24 @@ public abstract class Staffbot{
             Journal.add("Конфигурация загружена");
 
         }catch (Exception exception){
-            Journal.add("Ошибка чтения файла конфигурации:\n"+ exception.getMessage());
+            Journal.add("Конфигурация не загружена", NoteType.ERROR, exception);
         }
     }
 
+    // Инициализация БД
+    // Вызывается при запуске приложения в определённом порядке с прочими инициализациями
     public static void databaseInit(){
         Database.init();
     }
 
+    // Инициализация веб-сервера
+    // Вызывается при запуске приложения в определённом порядке с прочими инициализациями
     public static void webserverInit(){
         WebServer.init();
     }
 
+    // Инициализация главного окна приложения
+    // Вызывается при запуске приложения в определённом порядке с прочими инициализациями
     public static void windowInit(){
         MainWindow.init(projectName + ":" + solutionName + "-" + projectVersion);
     }

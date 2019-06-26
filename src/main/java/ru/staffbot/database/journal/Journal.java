@@ -1,11 +1,12 @@
 package ru.staffbot.database.journal;
 
 import ru.staffbot.database.DBTable;
-import ru.staffbot.utils.Converter;
+import ru.staffbot.tools.Converter;
 import ru.staffbot.database.Database;
-import ru.staffbot.utils.DateFormat;
-import ru.staffbot.utils.values.LongValue;
-import ru.staffbot.utils.values.ValueMode;
+import ru.staffbot.tools.dates.DateFormat;
+import ru.staffbot.tools.dates.Period;
+import ru.staffbot.tools.values.LongValue;
+import ru.staffbot.tools.values.ValueMode;
 
 import java.sql.*;
 import java.util.*;
@@ -13,13 +14,13 @@ import java.util.Date;
 
 /**
  * <b>Системный журнал</b><br>
- *
+ * Экземпляр описан как статическое поле в классе Database
  */
 public class Journal extends DBTable {
     public static final long MAX_NOTE_COUNT = 99;
     public static final long DEFAULT_NOTE_COUNT = 20;
     public static final String DB_TABLE_NAME = "sys_journal";
-    public static final String DB_TABLE_FIELDS = "moment TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3), note VARCHAR(255) CHARACTER SET utf8, noteType INT DEFAULT 0";
+    public static final String DB_TABLE_FIELDS = "moment TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3), noteValue VARCHAR(255) CHARACTER SET utf8, noteType INT DEFAULT 0";
     public static final DateFormat DATE_FORMAT = DateFormat.DATETIME;
 
     public static void add(String note){
@@ -27,23 +28,33 @@ public class Journal extends DBTable {
     }
 
     public static void add(String note, NoteType noteType){
-        Date datetime = new Date();
-        System.out.println(Converter.dateToString(datetime, DATE_FORMAT) + "  -  " + noteType + ":  " + note);
-        insertNote(note, noteType);
+        add(note, NoteType.CONFIRM, null);
     }
 
-    public static boolean insertNote(String note, NoteType noteType){
+    public static void add(String noteValue, NoteType noteType, Exception exception){
+        Date noteDate = new Date();
+        if (exception != null)
+            if (NoteType.ERROR == noteType)
+                noteValue += "<br>Сообщение: " + exception.getMessage()
+                        + "<br>Стэк: "  + exception.getStackTrace();
+        Note note = new Note(noteDate, noteValue, noteType);
+        System.out.println(Converter.dateToString(noteDate, DATE_FORMAT) + "  |  " + note);
+        insertNote(note);
+    }
+
+    private static boolean insertNote(Note note){
         if(!Database.connected())return false;
         try {
-            PreparedStatement ps = Database.getConnection().prepareStatement(
-                    "INSERT INTO " + DB_TABLE_NAME + " (note, noteType) VALUES (?, ?)" );
-            ps.setString(1, note);
-            ps.setInt(2, noteType.getValue());
-            ps.executeUpdate();
-            ps.close();
+            PreparedStatement statement = Database.getConnection().prepareStatement(
+                    "INSERT INTO " + DB_TABLE_NAME + " (moment, noteValue, noteType) VALUES (?, ?, ?)" );
+            statement.setTimestamp(1, new Timestamp(note.getDate().getTime()));
+            statement.setString(2, note.getValue());
+            statement.setInt(3, note.getType().getValue());
+            statement.executeUpdate();
+            statement.close();
             return true;
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
+        } catch (Exception exception) {
+            Journal.add("Запись в журнал не добавлена", NoteType.ERROR, exception);
             return false;
         }
     }
@@ -115,9 +126,9 @@ public class Journal extends DBTable {
             String fromCondition = (period.fromDate == null) ? "" : " AND (? <= moment)";
             String toCondition = (period.toDate == null) ? "" : " AND (moment <= ?)";
             PreparedStatement statement = Database.getConnection().prepareStatement(
-                    "SELECT * FROM (SELECT moment, note, noteType FROM " + getTableName()
+                    "SELECT * FROM (SELECT moment, noteValue, noteType FROM " + getTableName()
                             + " WHERE " + condition + fromCondition + toCondition
-                            + " AND (LOWER(note) LIKE '%" + searchString.toLowerCase()
+                            + " AND (LOWER(noteValue) LIKE '%" + searchString.toLowerCase()
                             + "%') ORDER BY moment DESC LIMIT "  + getCount()
                             + ") sub ORDER BY moment ASC");
             if (period.fromDate != null) {
@@ -140,7 +151,7 @@ public class Journal extends DBTable {
             }
 
         } catch (SQLException exception) {
-            Journal.add("Journal: " + exception.getMessage(), NoteType.ERROR);
+            Journal.add("Журнал не сформирован", NoteType.ERROR, exception);
         }
 
         return journal;

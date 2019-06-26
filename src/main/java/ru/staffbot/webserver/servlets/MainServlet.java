@@ -15,7 +15,7 @@ import java.util.Map;
  */
 public abstract class MainServlet extends BaseServlet {
 
-    public static String site_bg_color = "f7f7f7";//"ffdeef";
+    public static String site_bg_color = "fdfdfd";
 
     public static String main_bg_color = "dddddd";
 
@@ -34,10 +34,13 @@ public abstract class MainServlet extends BaseServlet {
         for (PageType pageType: PageType.values()){
             if ((accessLevel <= pageType.getAccessLevel())&&(!pageType.getDatabaseDepend()||Database.connected())) {
                 menuVariables.put("bg_color", (pageType == this.pageType) ? page_bg_color : main_bg_color);
-                menuVariables.put("main_menuName", pageType.getCaption());
+                String caption = pageType.getCaption();
+                if (pageType == this.pageType) caption = "<b>" + caption + "</b>";
+                menuVariables.put("main_menuName", caption);
                 menuVariables.put("main_menuTitle", pageType.getDescription());
                 menuVariables.put("main_menuRef", (pageType == this.pageType) ? "" : "href=\"" + pageType.getName() + "\"");
-                menu += PageGenerator.getPage("menu.html", menuVariables);
+
+                menu += PageGenerator.getPage("items/menu_item.html", menuVariables);
             }
         }
         return menu;

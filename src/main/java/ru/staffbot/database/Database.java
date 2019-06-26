@@ -1,8 +1,10 @@
 package ru.staffbot.database;
 
 import ru.staffbot.database.cleaner.Cleaner;
+import ru.staffbot.database.configs.Configs;
 import ru.staffbot.database.journal.Journal;
 import ru.staffbot.database.journal.NoteType;
+import ru.staffbot.database.settings.Settings;
 import ru.staffbot.database.users.User;
 
 import java.sql.*;
@@ -28,6 +30,10 @@ public class Database {
 
     public static Journal journal;
 
+    public static Settings settings;
+
+    public static Configs configs;
+
     private static Connection connection = null;
 
     private static Exception exception;
@@ -49,8 +55,10 @@ public class Database {
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD));
             createDatabase(DROP);
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD), NAME);
+            settings = new Settings();
             journal = new Journal();
             cleaner = new Cleaner();
+            configs = new Configs();
             Journal.add("База данных " + NAME + " готова к использованию");
         } catch (Exception exception) {
             connection = null;

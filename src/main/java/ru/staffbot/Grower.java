@@ -1,38 +1,44 @@
 package ru.staffbot;
 
-import com.pi4j.io.gpio.RaspiPin;
-import ru.staffbot.database.journal.NoteType;
-import ru.staffbot.database.journal.Period;
-import ru.staffbot.utils.Converter;
-import ru.staffbot.utils.DateFormat;
-import ru.staffbot.utils.DateScale;
-import ru.staffbot.utils.botprocess.BotProcess;
-import ru.staffbot.utils.botprocess.BotProcessStatus;
-import ru.staffbot.utils.botprocess.BotTask;
-import ru.staffbot.utils.devices.Device;
-import ru.staffbot.utils.devices.hardware.SensorDHT22Device;
-import ru.staffbot.utils.devices.hardware.SonarHCSR04Device;
-import ru.staffbot.utils.levers.*;
 import ru.staffbot.database.journal.Journal;
-import ru.staffbot.utils.devices.Devices;
-import ru.staffbot.utils.devices.hardware.RelayDevice;
-import ru.staffbot.utils.values.DateValue;
-import ru.staffbot.utils.values.Value;
-
+import ru.staffbot.database.journal.NoteType;
+import ru.staffbot.tools.Converter;
+import ru.staffbot.tools.dates.Period;
+import ru.staffbot.tools.dates.DateFormat;
+import ru.staffbot.tools.dates.DateScale;
+import ru.staffbot.tools.values.DateValue;
+import ru.staffbot.tools.values.Value;
+import ru.staffbot.tools.levers.*;
+import ru.staffbot.tools.devices.Device;
+import ru.staffbot.tools.devices.Devices;
+import ru.staffbot.tools.devices.hardware.SensorDHT22Device;
+import ru.staffbot.tools.devices.hardware.SonarHCSR04Device;
+import ru.staffbot.tools.devices.hardware.RelayDevice;
+import ru.staffbot.tools.botprocess.BotTask;
+import ru.staffbot.tools.botprocess.BotProcess;
+import ru.staffbot.tools.botprocess.BotProcessStatus;
+import com.pi4j.io.gpio.RaspiPin;
 import java.util.Date;
 
+/*
+ *
+ */
 public class Grower extends Staffbot {
 
+    // Точка входа при запуске приложения
+    // ВНИМАНИЕ! Порядок инициализаций менять не рекомендуется
     public static void main(String[] args) {
         propertiesInit(); // Загружаем конфигурацию сборки
         databaseInit(); // Подключаемся к базе данных
         devicesInit(); // Инициализируем список устройств
         leversInit(); // Инициализируем список элементов управления
-        botProcessInit(); // Инициализируем список задач
-        webserverInit(); // Запускаем вебсервер
-        windowInit(); // Открываем окно
+        botProcessInit(); // Инициализируем список заданий
+        webserverInit(); // Запускаем веб-сервер
+        windowInit(); // Открываем главное окно приложения
     }
 
+    // Определяем наименование решения по названию текущего класса
+    // solutionName определён в родительском классе Staffbot
     static {
         solutionName = new Object(){}.getClass().getEnclosingClass().getSimpleName(); //"Grower"
     }
@@ -44,7 +50,7 @@ public class Grower extends Staffbot {
     /**
      * <b>Инициализация рычагов управления</b><br>
      * Заполняется список рычагов управления {@code WebServer.levers}<br>
-     * Внимание! Порядок перечисления групп и рычагов повторяется в веб-интерфейсе
+     * ВНИМАНИЕ! Порядок перечисления групп и рычагов повторяется в веб-интерфейсе
      */
     private static void leversInit() {
         Levers.initGroup("Освещение и вентиляция", sunriseLever, sunsetLever, funUsedLever, funDelayLever);
@@ -84,10 +90,10 @@ public class Grower extends Staffbot {
 
     /**
      * <b>Инициализация устройств</b><br>
-     * Заполняется список устройств {@code WebServer.devices}<br>
+     * Заполняется список устройств<br>
      */
     private static void devicesInit() {
-        Devices.init(  sensor, sonar, sunRelay, funRelay);
+        Devices.init(sensor, sonar, sunRelay, funRelay);
     }
 
     private static SensorDHT22Device sensor = new SensorDHT22Device("sensor",
@@ -105,7 +111,7 @@ public class Grower extends Staffbot {
 
     /**
      * <b>Инициализация заданий</b><br>
-     * Заполняется список задач {@code tasks}<br>
+     * Заполняется список заданий <br>
      */
     private static void botProcessInit() {
 

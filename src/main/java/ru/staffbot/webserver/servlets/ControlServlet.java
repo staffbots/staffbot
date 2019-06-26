@@ -1,13 +1,11 @@
 package ru.staffbot.webserver.servlets;
 
 import ru.staffbot.database.Database;
-import ru.staffbot.database.configs.Configs;
-import ru.staffbot.utils.botprocess.BotProcess;
-import ru.staffbot.utils.botprocess.BotProcessStatus;
-import ru.staffbot.utils.botprocess.BotTask;
-import ru.staffbot.utils.levers.Lever;
-import ru.staffbot.utils.levers.Levers;
-import ru.staffbot.utils.values.ValueType;
+import ru.staffbot.tools.botprocess.BotProcess;
+import ru.staffbot.tools.botprocess.BotProcessStatus;
+import ru.staffbot.tools.levers.Lever;
+import ru.staffbot.tools.levers.Levers;
+import ru.staffbot.tools.values.ValueType;
 import ru.staffbot.webserver.AccountService;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -61,10 +59,10 @@ public class ControlServlet extends MainServlet {
             if (configName != null)
                 if (!configName.equals(""))
                     try {
-                        Configs config = new Configs(PageGenerator.fromCode(configName));
-                        if (request.getParameter("control_save") != null) config.save();
-                        if (request.getParameter("control_load") != null) config.load();
-                        if (request.getParameter("control_delete") != null) config.delete();
+                        configName = PageGenerator.fromCode(configName);
+                        if (request.getParameter("control_save") != null) Database.configs.save(configName);
+                        if (request.getParameter("control_load") != null) Database.configs.load(configName);
+                        if (request.getParameter("control_delete") != null) Database.configs.delete(configName);
                     } catch (Exception e) {} finally {
                         BotProcess.reScheduleAll();
                     }
@@ -103,7 +101,7 @@ public class ControlServlet extends MainServlet {
     public String getConfigList() {
         String context = "";
         try {
-            for (String configName : Configs.getList()) {
+            for (String configName : Database.configs.getList()) {
                 context += "<option value=\"" + configName + "\">";
             }
         } catch (Exception exception) {

@@ -4,33 +4,29 @@ import ru.staffbot.database.DBTable;
 import ru.staffbot.database.Database;
 import ru.staffbot.database.journal.Journal;
 import ru.staffbot.database.journal.NoteType;
-import ru.staffbot.utils.Converter;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
+/*
+ * Настройки,
+ * предоставляет возможность сохранять и загружать в виде строки именованные настройки
+ * Экземпляр описан как статическое поле в классе Database
+ */
 public class Settings extends DBTable {
 
     public static final String DB_TABLE_NAME = "sys_settings";
     public static final String DB_TABLE_FIELDS = "settingname VARCHAR(50), settingvalue VARCHAR(100)";
 
-    private String name;
-
-    public String getName(){
-        return name;
-    }
-
-
-    public Settings(String name){
+    public Settings(){
         super(DB_TABLE_NAME, DB_TABLE_FIELDS);
-        this.name = name;
     }
 
-    public void save(String value){
+    public void save(String name, String value){
         if(!Database.connected()) return;
         if (value == null) value = "";
         try {
-            String currentValue = load();
+            String currentValue = load(name);
             if (value.equals(currentValue)) return;
             PreparedStatement statement = getStatement(
                 (currentValue == null) ?
@@ -45,7 +41,7 @@ public class Settings extends DBTable {
         }
     }
 
-    public String load(){
+    public String load(String name){
         if(!Database.connected()) return null;
         String settingValue = null;
         try {
@@ -66,14 +62,14 @@ public class Settings extends DBTable {
         return settingValue;
     }
 
-    public boolean loadAsBollean(String trueValue, boolean defaultValue){
-        String stringValue = load();
+    public boolean loadAsBollean(String name, String trueValue, boolean defaultValue){
+        String stringValue = load(name);
         if(stringValue == null) return defaultValue;
         return stringValue.equalsIgnoreCase(trueValue);
     }
 
-    public long loadAsLong(long defaultValue){
-        String stringValue = load();
+    public long loadAsLong(String name, long defaultValue){
+        String stringValue = load(name);
         if(stringValue == null) return defaultValue;
         try {
             return Long.valueOf(stringValue);
@@ -82,7 +78,7 @@ public class Settings extends DBTable {
         }
     }
 
-    public int delete(){
+    public int delete(String name){
         if(!Database.connected()) return 0 ;
         try {
             PreparedStatement statement = getStatement(

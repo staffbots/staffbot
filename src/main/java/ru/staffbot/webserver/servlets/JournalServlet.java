@@ -4,9 +4,8 @@ import ru.staffbot.database.Database;
 import ru.staffbot.database.journal.Journal;
 import ru.staffbot.database.journal.Note;
 import ru.staffbot.database.journal.NoteType;
-import ru.staffbot.utils.Converter;
-import ru.staffbot.utils.DateFormat;
-import ru.staffbot.utils.DateScale;
+import ru.staffbot.tools.Converter;
+import ru.staffbot.tools.dates.DateFormat;
 import ru.staffbot.webserver.AccountService;
 
 import javax.servlet.ServletException;

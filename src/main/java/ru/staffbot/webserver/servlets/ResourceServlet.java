@@ -1,6 +1,6 @@
 package ru.staffbot.webserver.servlets;
 
-import ru.staffbot.utils.Converter;
+import ru.staffbot.tools.Converter;
 import ru.staffbot.webserver.AccountService;
 
 import javax.servlet.ServletException;

@@ -5,6 +5,11 @@ import ru.staffbot.database.journal.NoteType;
 
 import java.sql.*;
 
+/*
+ * Таблица БД,
+ * Предоставляет общий программный интерфейс для работы с таблицей БД,
+ * является родителем для классов Value, Journal, Settings, Configs
+ */
 public abstract class DBTable {
 
     private String tableName;

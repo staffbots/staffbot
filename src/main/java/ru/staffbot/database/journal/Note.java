@@ -16,7 +16,7 @@ public class Note {
 
     @Override
     public String toString() {
-        return type.getDescription() + ". " + value;
+        return type.getDescription() + ": " + value;
     }
 
     public Date getDate() {

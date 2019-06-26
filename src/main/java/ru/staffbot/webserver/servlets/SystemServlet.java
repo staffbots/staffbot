@@ -4,9 +4,7 @@ import ru.staffbot.database.Database;
 import ru.staffbot.database.cleaner.Cleaner;
 import ru.staffbot.database.journal.Journal;
 import ru.staffbot.database.journal.NoteType;
-import ru.staffbot.database.settings.Settings;
 import ru.staffbot.webserver.AccountService;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -42,7 +40,7 @@ public class SystemServlet extends MainServlet {
 
         for (String variable : dbcleanVariables)
             if (!variable.contains("_measure") && !variable.contains("_cleaning"))
-                pageVariables.put(variable, "" + (new Settings(variable)).load());
+                pageVariables.put(variable, "" + Database.settings.load(variable));
 
         for (String variable : dbcleanVariables)
             if (variable.contains("_measure")){
@@ -50,14 +48,14 @@ public class SystemServlet extends MainServlet {
                         Arrays.asList("minute", "hour", "day") : Arrays.asList("record", "day");
                 for (String value : values)
                     pageVariables.put(variable + "_" + value,
-                            value.equalsIgnoreCase((new Settings(variable)).load()) ? "selected" : "");
+                            value.equalsIgnoreCase(Database.settings.load(variable)) ? "selected" : "");
             }
         //dbclean_journal_value
         String variable = "dbclean_auto_cleaning";
         List<String> values = Arrays.asList("on", "off");
         for (String value : values)
             pageVariables.put(variable + "_" + value,
-                    (value.equalsIgnoreCase((new Settings(variable)).load()) ? "checked" : ""));
+                    (value.equalsIgnoreCase(Database.settings.load(variable)) ? "checked" : ""));
 
 
         pageVariables.put("dateformat", Cleaner.DATE_FORMAT.getFormat());
@@ -73,13 +71,13 @@ public class SystemServlet extends MainServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (request.getParameter("dbclean_apply") != null){
             for (String variable : dbcleanVariables)
-                (new Settings(variable)).save(request.getParameter(variable));
+                Database.settings.save(variable, request.getParameter(variable));
             Database.cleaner.update();
         }
         if (request.getParameter("dbclean_now") != null){
             for (String variable : dbcleanVariables)
                 if (!variable.contains("_auto_"))
-                    (new Settings(variable)).save(request.getParameter(variable));
+                    Database.settings.save(variable, request.getParameter(variable));
             Database.cleaner.clean();
         }
         boolean exiting = false;
@@ -110,4 +108,4 @@ public class SystemServlet extends MainServlet {
         return true;
     }
 
-    }
+}

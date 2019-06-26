@@ -3,15 +3,15 @@ package ru.staffbot.webserver.servlets;
 import ru.staffbot.database.DBValue;
 import ru.staffbot.database.Database;
 import ru.staffbot.database.journal.Journal;
-import ru.staffbot.database.journal.Period;
-import ru.staffbot.utils.botprocess.BotProcess;
-import ru.staffbot.utils.botprocess.BotTask;
-import ru.staffbot.utils.devices.Device;
-import ru.staffbot.utils.devices.Devices;
-import ru.staffbot.utils.levers.Lever;
-import ru.staffbot.utils.levers.Levers;
-import ru.staffbot.utils.values.Value;
-import ru.staffbot.utils.values.ValueType;
+import ru.staffbot.tools.dates.Period;
+import ru.staffbot.tools.botprocess.BotProcess;
+import ru.staffbot.tools.botprocess.BotTask;
+import ru.staffbot.tools.devices.Device;
+import ru.staffbot.tools.devices.Devices;
+import ru.staffbot.tools.levers.Lever;
+import ru.staffbot.tools.levers.Levers;
+import ru.staffbot.tools.values.Value;
+import ru.staffbot.tools.values.ValueType;
 import ru.staffbot.webserver.AccountService;
 
 import javax.servlet.ServletException;
@@ -19,7 +19,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**

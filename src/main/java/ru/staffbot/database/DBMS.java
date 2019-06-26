@@ -7,6 +7,10 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.util.TimeZone;
 
+/*
+ * Перечисление СУБД,
+ * пока только mySQL, а больше и не надо
+ */
 public enum DBMS {
 
     MySQL("com.mysql.cj.jdbc.Driver");
