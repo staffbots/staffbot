@@ -27,11 +27,12 @@
 классов Value, Lever и Device (и их наследников):
 
 String name
+String caption        ButtonLever only
 String note
 ValueMode valueMode
 LeverMode leverMode   Lever only
 Pin pin               Device only
-Runnable action       ButtonDevice only
+Runnable action       ButtonDevice & ButtonLever only
 ValueType valueType
 DateFormat format     For DateType only
 value or values

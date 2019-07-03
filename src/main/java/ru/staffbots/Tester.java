@@ -53,12 +53,18 @@ public class Tester extends Pattern {
      * Внимание! Порядок перечисления групп и рычагов повторяется в веб-интерфейсе
      */
     private static void leversInit() {
-        Levers.initGroup("", delayLever);
+        Levers.initGroup("", delayLever, buttonLever);
         Journal.add("Рычаги управления успешно проинициализированы");
     }
 
     private static LongLever delayLever = new LongLever("delayLever",
             "Частота опроса, сек", 20, 2, 60*60);
+
+    private static ButtonLever buttonLever = new ButtonLever("buttonLever",
+        "Выполнить","Калибровка датчика", () -> {
+        // Обработка нажатия кнопки
+        Journal.add("Нажата кнопка калибровки датчика");
+    });
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  Devices - Устройства
@@ -81,7 +87,6 @@ public class Tester extends Pattern {
     private static ButtonDevice button = new ButtonDevice("button",
             "Кнопка", ValueMode.TEMPORARY, RaspiPin.GPIO_06, () -> {
         // Обработка нажатия кнопки
-        //System.out.println(" Обработка нажатия кнопки");
         double distance = -1;
         try {
 //            distance = sonar.getDistance();
@@ -105,7 +110,7 @@ public class Tester extends Pattern {
      * Заполняется список задач {@code tasks}<br>
      */
     private static void botProcessInit() {
-        BotProcess.init(task);
+   //     BotProcess.init(task);
 //        BotProcess.init(testTask);
     }
 
@@ -120,6 +125,7 @@ public class Tester extends Pattern {
             return delay;
         },
         () -> { // Задание
+            if (!Devices.USED) return;
             try {
                 for (Device device: Devices.list) {
                     device.dataRead();

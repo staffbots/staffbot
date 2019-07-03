@@ -3,8 +3,10 @@ package ru.staffbots.webserver.servlets;
 import ru.staffbots.database.Database;
 import ru.staffbots.tools.botprocess.BotProcess;
 import ru.staffbots.tools.botprocess.BotProcessStatus;
+import ru.staffbots.tools.levers.ButtonLever;
 import ru.staffbots.tools.levers.Lever;
 import ru.staffbots.tools.levers.Levers;
+import ru.staffbots.tools.values.Value;
 import ru.staffbots.tools.values.ValueType;
 import ru.staffbots.webserver.AccountService;
 import javax.servlet.ServletException;
@@ -48,6 +50,21 @@ public class ControlServlet extends MainServlet {
 
     // Вызывается при отправке страницы на сервер
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String setName = request.getParameter("set");
+        if (setName != null) {
+            for (Lever lever: Levers.list){
+                Value value = lever.toValue();
+                if (("control_" + value.getName()).equalsIgnoreCase(setName))
+                    if (value.getValueType() == ValueType.VOID)
+                    try {
+                        ((ButtonLever)lever).onClick();
+                    } catch (Exception exception) {
+                        // Игнорируем
+                    }
+            }
+            return;
+        }
+
         if (request.getParameter("control_apply") == null) {
             // Обработка управляющих кнопок (пуск, пауза, старт)
             for (BotProcessStatus status : BotProcessStatus.values())

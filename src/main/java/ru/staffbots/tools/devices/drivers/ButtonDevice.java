@@ -12,7 +12,6 @@ import ru.staffbots.tools.values.ValueMode;
 public class ButtonDevice extends Device {
 
     private GpioPinDigitalInput gpioPin;
-    //private GpioPinDigitalInput myButton = gpio.provisionDigitalInputPin(RaspiPin.GPIO_02, PinPullResistance.PULL_DOWN);
 
     private BooleanValue value;
 
