@@ -9,15 +9,19 @@ import ru.staffbots.tools.values.Value;
  */
 public interface Lever{
 
+    default String getType(){
+        // Имя дочернего класса по идее: className = <Type>Lever
+        String className = this.getClass().getSimpleName().toLowerCase();
+        // Возвращаем, только <Type>
+        return className.substring(0, className.length() - 5);
+    }
     /**
      * <b>Получить html</b>-код визуального компонента
      * @return html-код визуального компонента
      */
     default String getTemplateFile(){
-        // Имя дочернего класса по идее: className = <Type>Lever
-        String className = this.getClass().getSimpleName().toLowerCase();
-        // Из <Type>Lever получаем имя ресурса: levers/<Type>.html
-        return "levers/" + className.substring(0, className.length() - 5) + ".html";
+        // Из <Type> получаем имя ресурса: levers/<Type>.html
+        return "levers/" + getType() + ".html";
     };
 
     Value toValue();

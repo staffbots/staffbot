@@ -194,6 +194,7 @@ public class StatusServlet extends MainServlet {
         pageVariables.put("page_bg_color", page_bg_color);
 
         for (Lever lever : Levers.list){
+            if (lever.getType().equals("button")) continue;
             Value value = lever.toValue();
 
             pageVariables.put("check_display", (value.isPlotPossible() ? "inline" : "none"));

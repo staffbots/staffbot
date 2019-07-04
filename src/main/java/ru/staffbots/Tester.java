@@ -58,10 +58,10 @@ public class Tester extends Pattern {
     }
 
     private static LongLever delayLever = new LongLever("delayLever",
-            "Частота опроса, сек", 20, 2, 60*60);
+            "Частота опроса, сек", ValueMode.STORABLE, 20, 2, 60*60);
 
     private static ButtonLever buttonLever = new ButtonLever("buttonLever",
-        "Выполнить","Калибровка датчика", () -> {
+        "Выполнить","Калибровка датчика, основанная на триангуляции континума", () -> {
         // Обработка нажатия кнопки
         Journal.add("Нажата кнопка калибровки датчика");
     });
