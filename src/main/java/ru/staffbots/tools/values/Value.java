@@ -73,6 +73,7 @@ abstract public class Value extends DBTable {
         this.valueMode = valueMode;
         this.valueType = valueType;
     }
+
     /**
      * @param name название
      * @param note описание
@@ -86,109 +87,6 @@ abstract public class Value extends DBTable {
     public Value(String name, String note, ValueType valueType, long value) {
         super("val_" + name.toLowerCase(), DB_TABLE_FIELDS);
         init(name, note, valueMode, valueType, value);
-    }
-
-    /**
-     * <b>Получить значение</b> на указанную дату<br>
-     * При этом, если ({@code dbStorage = true}), то значение на дату по честному ищется в БД,
-     * в противном случае, значение просто берётся из {@code value}.<br>
-     * @param date дата
-     * @return значение из на указанную дату
-     */
-    private Long tryGet(Date date) throws Exception{
-        if(!isStorable()) return value;
-        if(!Database.connected()) throw new Exception("Нет подключения к базе данных");
-        PreparedStatement ps = Database.getConnection().prepareStatement(
-            "SELECT value FROM " + getTableName() + " WHERE (moment <= ?) ORDER BY moment DESC LIMIT 1");
-        ps.setTimestamp(1, new Timestamp(date.getTime()));
-        if (ps.execute()) {
-            ResultSet rs = ps.getResultSet();
-            if (rs.next())
-                return rs.getBigDecimal(1).longValue();
-            else
-                throw new Exception("Таблица значений пуста, впрочем как и все феномены этой жизни...");
-        } else
-            throw new Exception("Значение не найдено в базе данных");
-    }
-
-    public long get(Date date) {
-        try {
-            return tryGet(date);
-        } catch (Exception exception){
-            return value;
-        }
-    }
-
-    /**
-     * <b>Получить значение</b><br>
-     * При этом, если ({@code dbStorage = true}), то значение берётся из БД,
-     * в противном случае - из {@code value}.<br>
-     * @return значение
-     */
-    public long get() {
-        return get(new Date());
-    }
-
-    /**
-     * <b>Установить</b> значение<br>
-     * @param newValue - устанавлевоемое значение
-     * @return установленное значение
-     */
-    synchronized public long set(long newValue) {
-        boolean allow;
-        try {
-            allow = (newValue != tryGet(new Date()));
-        } catch (Exception exception) {
-            allow = true;
-        }
-        if (isStorable() && allow)
-            try {
-                if (!Database.connected()) throw new Exception("Нет подключения к базе данных");
-                PreparedStatement statement = Database.getConnection().prepareStatement(
-                        "INSERT INTO " + getTableName() +
-                                " (value) VALUES (?)");
-                statement.setLong(1, newValue);
-                statement.executeUpdate();
-                String stringValue = (valueType != ValueType.BOOLEAN) ? getValueAsString() : Long.toString(newValue);
-                Journal.add(getNote() + " - установлено заначение: " + stringValue);
-            } catch (Exception exception) {
-                Journal.add("Ошибка записи в таблицу " + getTableName() + exception.getMessage(), NoteType.ERROR);
-            }
-        value = newValue;
-        return value;
-    }
-
-    public long set(Date moment, long newValue) {
-        boolean allow;
-        try {
-            allow = (newValue != tryGet(moment));
-        } catch (Exception exception) {
-            allow = true;
-        }
-        if (isStorable() && allow)
-            try {
-                if (!Database.connected()) throw new Exception("Нет подключения к базе данных");
-                PreparedStatement statement = Database.getConnection().prepareStatement(
-                        "INSERT INTO " + getTableName() +
-                                " (moment, value) VALUES (?, ?)");
-                statement.setTimestamp(1, new Timestamp(moment.getTime()));
-                statement.setLong(2, newValue);
-                statement.executeUpdate();
-                String stringValue = (valueType != ValueType.BOOLEAN) ? getValueAsString() : Long.toString(newValue);
-                Journal.add(getNote() + " - установлено заначение: " + stringValue
-                        + " на дату " + DateValue.toString(moment, Journal.DATE_FORMAT));
-            } catch (Exception e) {
-                Journal.add("Ошибка записи в таблицу " + getTableName() + e.getMessage(), NoteType.ERROR);
-            }
-        value = newValue;
-        return value;
-    }
-
-    /**
-     * <b>Сбросить</b> значение на заачение по умолчанию ({@code defaultValue})
-     */
-    public void reset() {
-        value = 0;
     }
 
     /**
@@ -207,35 +105,10 @@ abstract public class Value extends DBTable {
         return note;
     }
 
-
-
-
-    public static int stringValueSize = 1;
-    /**
-     */
     public int getStringValueSize(){
-        return (stringValueSize < 0) ? getValueAsString().length() : stringValueSize;
+        String valueString = toString();
+        return (valueString == null) ? 0 : valueString.length();
     };
-
-    /**
-     * <b>Получить значение для отображения</b><br>
-     * @return Значение для отображения
-     */
-    public String getValueAsString(){
-        return Long.toString(get());
-    }
-
-    public String getValueAsString(long value){
-        return Long.toString(value);
-    }
-
-    // Устанавливает значение из строки value
-    // Переопределён для каждого (дочернего) типа заначений
-    public abstract void setValueFromString(String value);
-
-    public abstract long toLong();
-
-    public abstract void setValueFromLong(long value);
 
     public DBTable getTable(){
         return this;
@@ -275,7 +148,7 @@ abstract public class Value extends DBTable {
                             dbValues.add(new DBValue(
                                     new Date(resultSet.getTimestamp(1).getTime()),
                                     previousValue));
-                    previousValue = getValueAsString(resultSet.getBigDecimal(2).longValue());
+                    previousValue = toString(resultSet.getBigDecimal(2).longValue());
                     dbValues.add(new DBValue(
                             new Date(resultSet.getTimestamp(1).getTime()),
                             previousValue));
@@ -299,11 +172,6 @@ abstract public class Value extends DBTable {
             (valueType == ValueType.DOUBLE));
     }
 
-    public Value toValue(){
-        return this;
-    }
-
-
     public void setRandom(Period period){
         double average = Math.random() * 30;
         double dispersion = Math.random() * 10;
@@ -320,7 +188,7 @@ abstract public class Value extends DBTable {
             moment += (Math.random() + 0.5) * timePeriod / count;
             long newValue = 0;
             if (valueType == ValueType.DOUBLE)
-                newValue = new DoubleValue("", "", average + (Math.random() - 0.5) * dispersion).get();
+                newValue = new DoubleValue("", "", 3, average + (Math.random() - 0.5) * dispersion).get();
             if (valueType == ValueType.BOOLEAN)
                 newValue = Math.round(Math.random());
             if (valueType == ValueType.LONG)
@@ -332,6 +200,7 @@ abstract public class Value extends DBTable {
 
     protected LeverMode leverMode = LeverMode.CHANGEABLE;
 
+    // Является ли это параметром, который изменяется на закладке "Управление"
     public boolean isChangeable(){
         return (leverMode == LeverMode.CHANGEABLE);
     }
@@ -342,12 +211,136 @@ abstract public class Value extends DBTable {
 
     protected ValueMode valueMode = ValueMode.STORABLE;
 
+    // Сохраняется ли история изменения в БД
     public boolean isStorable(){
         return (valueMode == ValueMode.STORABLE);
     }
 
     public ValueMode getValueMode() {
         return valueMode;
+    }
+
+    /*******************************************************
+     *****         Работа со значением                 *****
+     *******************************************************/
+
+    /**
+     * <b>Установить</b> значение<br>
+     * @param newValue - устанавлевоемое значение
+     * @return установленное значение
+     */
+    synchronized public long set(long newValue) {
+        boolean allow;
+        try {
+            allow = (newValue != tryGet(new Date()));
+        } catch (Exception exception) {
+            allow = true;
+        }
+        if (isStorable() && allow)
+            try {
+                if (!Database.connected()) throw new Exception("Нет подключения к базе данных");
+                PreparedStatement statement = Database.getConnection().prepareStatement(
+                        "INSERT INTO " + getTableName() +
+                                " (value) VALUES (?)");
+                statement.setLong(1, newValue);
+                statement.executeUpdate();
+                String stringValue = (valueType != ValueType.BOOLEAN) ? toString() : Long.toString(newValue);
+                Journal.add(getNote() + " - установлено заначение: " + stringValue);
+            } catch (Exception exception) {
+                Journal.add("Ошибка записи в таблицу " + getTableName() + exception.getMessage(), NoteType.ERROR);
+            }
+        value = newValue;
+        return value;
+    }
+
+    public long set(Date moment, long newValue) {
+        boolean allow;
+        try {
+            allow = (newValue != tryGet(moment));
+        } catch (Exception exception) {
+            allow = true;
+        }
+        if (isStorable() && allow)
+            try {
+                if (!Database.connected()) throw new Exception("Нет подключения к базе данных");
+                PreparedStatement statement = Database.getConnection().prepareStatement(
+                        "INSERT INTO " + getTableName() +
+                                " (moment, value) VALUES (?, ?)");
+                statement.setTimestamp(1, new Timestamp(moment.getTime()));
+                statement.setLong(2, newValue);
+                statement.executeUpdate();
+                String stringValue = (valueType != ValueType.BOOLEAN) ? toString() : Long.toString(newValue);
+                Journal.add(getNote() + " - установлено заначение: " + stringValue
+                        + " на дату " + DateValue.toString(moment, Journal.DATE_FORMAT));
+            } catch (Exception e) {
+                Journal.add("Ошибка записи в таблицу " + getTableName() + e.getMessage(), NoteType.ERROR);
+            }
+        value = newValue;
+        return value;
+    }
+
+    /**
+     * <b>Получить значение</b><br>
+     * @return значение
+     */
+    public long get() {
+        return get(new Date());
+    }
+
+    public long get(Date date) {
+        try {
+            return tryGet(date);
+        } catch (Exception exception){
+            return value;
+        }
+    }
+
+    /**
+     * <b>Получить значение</b> на указанную дату<br>
+     */
+    private long tryGet(Date date) throws Exception{
+        if(!isStorable()) return value;
+        if(!Database.connected()) throw new Exception("Нет подключения к базе данных");
+        PreparedStatement ps = Database.getConnection().prepareStatement(
+                "SELECT value FROM " + getTableName() + " WHERE (moment <= ?) ORDER BY moment DESC LIMIT 1");
+        ps.setTimestamp(1, new Timestamp(date.getTime()));
+        if (ps.execute()) {
+            ResultSet rs = ps.getResultSet();
+            if (rs.next())
+                return rs.getBigDecimal(1).longValue();
+            else
+                throw new Exception("Таблица значений пуста, впрочем как и все феномены этой жизни...");
+        } else
+            throw new Exception("Значение не найдено в базе данных");
+    }
+
+    /**
+     * <b>Сбросить</b> значение на заачение по умолчанию ({@code defaultValue})
+     */
+    abstract public void reset();
+
+    /*******************************************************
+     *****         Преобразование типов                *****
+     *******************************************************/
+
+    /**
+     * <b>Получить значение для отображения</b><br>
+     */
+    @Override
+    public abstract String toString();
+
+    public abstract String toString(long value);
+
+    public abstract long toLong();
+
+    // Устанавливает значение из строки value
+    // Переопределён для каждого (дочернего) типа заначений
+    public abstract void setFromString(String value);
+
+    public abstract void setFromLong(long value);
+
+    public Value toValue(){
+        return this;
     }
 
 }

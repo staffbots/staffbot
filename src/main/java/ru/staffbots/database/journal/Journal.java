@@ -84,7 +84,7 @@ public class Journal extends DBTable {
         try {
             noteCount.setValue(Long.parseLong(newCount));
         } catch (NumberFormatException e) {
-            noteCount.setDefaultValue();
+            noteCount.reset();
         }
     }
 

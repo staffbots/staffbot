@@ -52,6 +52,7 @@ public class ControlServlet extends MainServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String setName = request.getParameter("set");
         if (setName != null) {
+            // Обработка нажатия кнопки ButtonLever
             for (Lever lever: Levers.list){
                 Value value = lever.toValue();
                 if (("control_" + value.getName()).equalsIgnoreCase(setName))
@@ -88,7 +89,8 @@ public class ControlServlet extends MainServlet {
                 if (lever.toValue().getValueType() == ValueType.VOID) continue;
                 String leverName = "control_" + lever.toValue().getName().toLowerCase();
                 String leverValue = request.getParameter(leverName);
-                lever.toValue().setValueFromString(leverValue);
+                if (leverValue != null)
+                    lever.toValue().setFromString(leverValue);
             }
             BotProcess.reScheduleAll();
         }
@@ -101,15 +103,16 @@ public class ControlServlet extends MainServlet {
         String context = "";
         Map<String, Object> pageVariables = new HashMap();
         pageVariables.put("page_bg_color", page_bg_color);
+        int maxSize = Levers.getMaxStringValueSize();
         for (Lever lever : Levers.list){
             if (!lever.toValue().isChangeable()) continue;
             pageVariables.put("name", "control_" + lever.toValue().getName().toLowerCase());
-            String value = lever.toValue().getValueAsString();
+            String value = lever.toValue().toString();
             if (lever.toValue().getValueType() == ValueType.BOOLEAN)
                 value = (lever.toValue().get() == 0) ? "" : "checked";
             pageVariables.put("value", value);
             pageVariables.put("note", lever.toValue().getNote());
-            pageVariables.put("size", lever.toValue().getStringValueSize());
+            pageVariables.put("size", maxSize);
             context += PageGenerator.getPage(lever.getTemplateFile(),pageVariables);
         }
         return context;

@@ -12,9 +12,26 @@ public class VoidValue extends Value{
         super("", note, ValueMode.TEMPORARY, ValueType.VOID, 0);
     }
 
+    /*******************************************************
+     *****         Работа со значением                 *****
+     *******************************************************/
+
     @Override
-    public void setValueFromString(String value) {
-        set(LongValue.fromString(value, 0));
+    public void reset() {
+    }
+
+    /*******************************************************
+     *****         Преобразование типов                *****
+     *******************************************************/
+
+    @Override
+    public String toString() {
+        return null;
+    }
+
+    @Override
+    public String toString(long value) {
+        return null;
     }
 
     @Override
@@ -23,7 +40,11 @@ public class VoidValue extends Value{
     }
 
     @Override
-    public void setValueFromLong(long value) {
+    public void setFromString(String value) {
+    }
+
+    @Override
+    public void setFromLong(long value) {
     }
 
 }

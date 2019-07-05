@@ -71,9 +71,8 @@ public abstract class Device{
         return ((index > -1)&&(index < values.size())) ? values.get(index).set(value) : 0;
     }
 
-    public String getValueAsString(){
-        return "";
-    }
+    @Override
+    abstract public String toString();
 
     // Чтение данных,
     // Переопределяется для датчиков, считывающих данные

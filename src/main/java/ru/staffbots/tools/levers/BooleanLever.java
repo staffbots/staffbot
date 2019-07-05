@@ -24,7 +24,7 @@ public class BooleanLever extends BooleanValue implements Lever {
     }
 
     @Override
-    public void setValueFromString(String value){
+    public void setFromString(String value){
         String stringValue = "on".equalsIgnoreCase(value) ? trueValue : falseValue;
         setValue(trueValue.equalsIgnoreCase(stringValue));
     }

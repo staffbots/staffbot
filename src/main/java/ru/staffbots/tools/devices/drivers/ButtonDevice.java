@@ -59,8 +59,8 @@ public class ButtonDevice extends Device {
      * @return Значение для отображения
      */
     @Override
-    public String getValueAsString(){
-        return value.getValueAsString();
+    public String toString(){
+        return value.toString();
     }
 
 }

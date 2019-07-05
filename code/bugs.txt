@@ -2,8 +2,10 @@
 
 ======= STAFFBOT ========
 - РЕФАКТОРИНГ always actual
+- Добавить accuracy в конструкторы Double<Value, Lever и Device>
 
 ======= CONTROL ==========
+
 
 ======= STATUS ==========
 
@@ -14,7 +16,6 @@
 ======= DATABASE ========
 
 ======= UTILS ===========
-- Добавить Value.stringValueSize в staffbot.cfg (чтоли) - привести в порядок
 
 ======= RASPBERRYY PI ===
 - Написать классы <xxx>Device (!!!)
@@ -22,7 +23,6 @@
 - Создать информационные странички по каждому из устройств (на сайте staffbot.ru)
 
 ====================================================
-
 Порядок аргументов для конструкторов
 классов Value, Lever и Device (и их наследников):
 String name
@@ -33,6 +33,7 @@ LeverMode leverMode   Lever only
 Pin pin               Device only
 Runnable action       ButtonDevice & ButtonLever only
 ValueType valueType
-DateFormat format     For DateType only
+DateFormat format     DateType & DateLever only
+int accuracy          DoubleValue & DoubleLever only
 value or values
 ====================================================

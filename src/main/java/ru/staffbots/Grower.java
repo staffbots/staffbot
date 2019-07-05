@@ -68,13 +68,13 @@ public class Grower extends Pattern {
             "Инертность вентилятора, мин", 0, 20, 2 * 60);
 
     private static DoubleLever phLever = new DoubleLever("phLever",
-            "Водородный показатель (кислотность), pH", 0.0, 5.6, 10.0);
+            "Водородный показатель (кислотность), pH", 1, 0.0, 5.6, 10.0);
     private static DoubleLever ecLever = new DoubleLever("ecLever",
-            "Удельная электролитическая проводимость, EC", 0.0, 8.1, 10.0);
+            "Удельная электролитическая проводимость, EC", 1, 0.0, 8.1, 10.0);
     private static BooleanLever soluteLever = new BooleanLever("soluteLever",
             "Подготовка раствора", false);
     private static DoubleLever volumeLever = new DoubleLever("volumeLever",
-            "Объём раствора, л", LeverMode.OBSERVABLE);
+            "Объём раствора, л", LeverMode.OBSERVABLE, 2);
 
     private static LongLever dayRateLever = new LongLever("dayRateLever",
             "Дневная периодичность, мин", 0, 60, 24 * 60);
@@ -197,8 +197,8 @@ public class Grower extends Pattern {
                 Journal.add(irrigationTaskNote + ": Проверка уровня воды");
                 //double level = sonar.getDistance();
                 double volume = 3d / 5d;
-                volumeLever.setValueFromString(String.format("%.3f", volume));
-                volumeLever.setValueFromString(sunRelay.get() ? "День" : "Ночь" );
+                volumeLever.setFromString(String.format("%.3f", volume));
+                volumeLever.setFromString(sunRelay.get() ? "День" : "Ночь" );
                 //Вырввнивание уровня
                 Thread.sleep(1000);
                 Journal.add(irrigationTaskNote + ": Проверка раствора на Ph и EC");

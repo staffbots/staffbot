@@ -21,6 +21,8 @@ public class SensorDHT22Device extends Device {
 
     // Минимальная задержка между измерениями, миллисекуд
     private final static long MIN_DELAY = 2000;
+    // Точность - количество знаков после запятой
+    private final static int ACCURACY = 2;
     private DoubleValue temperature;
     private DoubleValue humidity;
 
@@ -37,8 +39,9 @@ public class SensorDHT22Device extends Device {
         this.model = "Датчик DHT22"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
         this.note = note; // Описание устройства (например, "Сонар для измерения уровня воды")
         this.name = name; // Уникальное имя устройства, используется для именования таблиц в БД (например, "WaterSonar")
-        this.temperature = new DoubleValue(name + "_temperature", "Температура, C", valueMode);
-        this.humidity = new DoubleValue(name + "_humidity", "Влажность, %", valueMode);
+
+        this.temperature = new DoubleValue(name + "_temperature", "Температура, C", valueMode, ACCURACY);
+        this.humidity = new DoubleValue(name + "_humidity", "Влажность, %", valueMode, ACCURACY);
 
         values.add(temperature);
         values.add(humidity);
@@ -80,7 +83,7 @@ public class SensorDHT22Device extends Device {
      * @return Значение для отображения
      */
     @Override
-    public String getValueAsString(){
+    public String toString(){
         return temperature.getNote() + " = " + temperature.getValue() + "\n" +
                 humidity.getNote() + " = " + humidity.getValue() ;
     }

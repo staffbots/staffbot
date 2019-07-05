@@ -61,57 +61,56 @@ public class DoubleValue extends Value{
         }
     }
 
-    public DoubleValue(String name, String note,  ValueMode valueMode, Double... values) {
+    public DoubleValue(String name, String note,  ValueMode valueMode, int accuracy, Double... values) {
         super(name, note, valueMode, ValueType.DOUBLE, 0);
         initValues(values);
+        this.accuracy = accuracy;
     }
 
-    public DoubleValue(String name, String note, Double... values) {
+    public DoubleValue(String name, String note, int accuracy, Double... values) {
         super(name, note, ValueType.DOUBLE, 0);
         initValues(values);
+        this.accuracy = accuracy;
+    }
+
+    /*******************************************************
+     *****         Работа со значением                 *****
+     *******************************************************/
+
+    public void setValue(Double value){
+        super.set(toLong(value));
     }
 
     public Double getValue(){
         return getValue(new Date());
     }
 
-    public static Double getValue(long value){
-        return fromLong(value);
-    }
-
     public Double getValue(Date date){
         return fromLong(super.get(date));
     }
 
-    public void setValue(Double value){
-        super.set(toLong(value));
-    }
-
-    /**
-     * <b>Точность округления</b><br>
-     * количество знаков после запятой
-     */
-    public int accuracy = 3;
-
-    public double round(double value){
-        double powerOfTen = Math.round(Math.exp(accuracy * Math.log(10)));
-        return Math.round(value * powerOfTen) / powerOfTen;
-    }
-
-    /**
-     * <b>Получить значение для отображения</b><br>
-     * @return Значение для отображения
-     */
     @Override
-    public String getValueAsString(){
-        return Double.toString(round(getValue()));
+    public void reset() {
+        setValue(defaultValue);
     }
 
-    @Override
-    public String getValueAsString(long value){
-        return Double.toString(round(getValue(value)));
+    /*******************************************************
+     *****         Преобразование типов                *****
+     *******************************************************/
+
+    public static String toString(double value, int accuracy){
+        return Double.toString(round(value, accuracy));
     }
 
+    public static long toLong(double value) {
+        return LongValue.fromBytes(toBytes(value));
+    }
+
+    public static byte[] toBytes(double value) {
+        byte[] bytes = new byte[8];
+        ByteBuffer.wrap(bytes).putDouble(value);
+        return bytes;
+    }
 
     public static double fromString(String value) throws Exception{
         return Double.parseDouble(value);
@@ -125,9 +124,43 @@ public class DoubleValue extends Value{
         }
     }
 
+    public static double fromLong(long value) {
+        return fromBytes(LongValue.toBytes(value));
+    }
+
+    public static double fromBytes(byte[] bytes) {
+        return ByteBuffer.wrap(bytes).getDouble();
+    }
+
+    public static double round(double value, int accuracy){
+        double powerOfTen = Math.round(Math.exp(accuracy * Math.log(10)));
+        return Math.round(value * powerOfTen) / powerOfTen;
+    }
+
+    /**
+     * <b>Точность округления</b><br>
+     * количество знаков после запятой
+     */
+    public int accuracy;
+
+    @Override
+    public String toString(){
+        return toString(getValue(), accuracy);
+    }
+
+    @Override
+    public String toString(long value){
+        return toString(fromLong(value), accuracy);
+    }
+
+    @Override
+    public long toLong(){
+        return toLong(getValue());
+    }
+
     // Устанавливает значение из строки value
     @Override
-    public void setValueFromString(String value){
+    public void setFromString(String value){
         try {
                setValue(fromString(value));
         } catch (Exception exception) {
@@ -136,41 +169,8 @@ public class DoubleValue extends Value{
         }
     }
 
-    private static byte[] doubleToBytes(double value) {
-        byte[] bytes = new byte[8];
-        ByteBuffer.wrap(bytes).putDouble(value);
-        return bytes;
-    }
-
-    private static long bytesToLong(byte[] bytes) {
-        return ByteBuffer.wrap(bytes).getLong();
-    }
-
-    public static long toLong(double value) {
-        return bytesToLong(doubleToBytes(value));
-    }
-
     @Override
-    public long toLong(){
-        return toLong(getValue());
-    }
-
-    private static byte[] longToBytes(long value) {
-        byte[] bytes = new byte[8];
-        ByteBuffer.wrap(bytes).putLong(value);
-        return bytes;
-    }
-
-    private static double bytesToDouble(byte[] bytes) {
-        return ByteBuffer.wrap(bytes).getDouble();
-    }
-
-    public static double fromLong(long value) {
-        return bytesToDouble(longToBytes(value));
-    }
-
-    @Override
-    public void setValueFromLong(long value) {
+    public void setFromLong(long value) {
         setValue(fromLong(value));
     }
 

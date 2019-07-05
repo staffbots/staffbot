@@ -31,8 +31,18 @@ public class Levers{
     }
 
     public static void reset(){
-//        for (Lever lever: Levers.list)
-//            lever.reset();
+        for (Lever lever: Levers.list)
+            lever.toValue().reset();
+    }
+
+    public static int getMaxStringValueSize(){
+        int maxSize = 0;
+        for (Lever lever: Levers.list) {
+            if (!lever.toValue().getValueType().isSizeble()) continue;
+            int size = lever.toValue().getStringValueSize();
+            if (size > maxSize) maxSize = size;
+        }
+        return maxSize;
     }
 
 }

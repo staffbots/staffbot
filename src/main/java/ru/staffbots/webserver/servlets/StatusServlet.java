@@ -43,8 +43,8 @@ public class StatusServlet extends MainServlet {
     }
 
     public void doGetValue(Value value, HttpServletResponse response) throws ServletException, IOException {
-        String str = value.getValueAsString();
-        response.getWriter().println(value.getValueAsString());
+        String str = value.toString();
+        response.getWriter().println(value.toString());
         response.setContentType("text/html; charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
     }

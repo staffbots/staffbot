@@ -10,10 +10,10 @@ import java.util.Date;
  */
 public class BooleanValue extends Value {
 
-//    public String trueValue = "true";
-//    public String falseValue = "false";
+    public boolean defaultValue = false;
 
     public String trueValue = "<input type=\"checkbox\" checked disabled>";
+
     public String falseValue = "<input type=\"checkbox\" disabled>";
 
 
@@ -24,6 +24,10 @@ public class BooleanValue extends Value {
     public BooleanValue(String name, String note, boolean value) {
         super(name, note, ValueType.BOOLEAN, toLong(value));
     }
+
+    /*******************************************************
+     *****         Работа со значением                 *****
+     *******************************************************/
 
     public Boolean setValue(Boolean value){
         return fromLong(set(toLong(value)));
@@ -37,18 +41,37 @@ public class BooleanValue extends Value {
         return fromLong(get(date));
     }
 
+    @Override
+    public void reset() {
+        setValue(defaultValue);
+    }
+
+    /*******************************************************
+     *****         Преобразование типов                *****
+     *******************************************************/
+
+    public static long toLong(boolean value) {
+        return (value ? 1 : 0);
+    }
+
+    public static boolean fromLong(long value) {
+        return (value > 0.5);
+    }
+
     /**
      * <b>Получить значение для отображения</b><br>
      * @return Значение для отображения
      */
     @Override
-    public String getValueAsString(){
-        return get() == 1 ? trueValue : falseValue;
+    // для интерфейса
+    public String toString(){
+        return fromLong(get()) ? trueValue : falseValue;
     }
 
     @Override
-    public void setValueFromString(String value){
-        setValue(trueValue.equalsIgnoreCase(value));
+    // для графиков
+    public String toString(long value){
+        return Long.toString(toLong(fromLong(value)));
     }
 
     @Override
@@ -56,17 +79,15 @@ public class BooleanValue extends Value {
         return toLong(getValue());
     }
 
-    public static long toLong(boolean value) {
-        return (value ? 1 : 0);
+    @Override
+    public void setFromString(String value){
+        setValue(trueValue.equalsIgnoreCase(value));
     }
 
     @Override
-    public void setValueFromLong(long value) {
+    public void setFromLong(long value) {
         setValue(fromLong(value));
     }
 
-    public static boolean fromLong(long value) {
-        return (value > 0.5);
-    }
 
 }

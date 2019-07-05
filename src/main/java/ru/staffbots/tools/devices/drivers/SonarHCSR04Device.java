@@ -29,6 +29,10 @@ public class SonarHCSR04Device extends Device {
 
     private final static int TIMEOUT = 2100;
 
+    // Точность - количество знаков после запятой
+    private final static int ACCURACY = 2;
+
+
     private GpioPinDigitalOutput gpioPinTRIG;
 
     private GpioPinDigitalInput gpioPinECHO;
@@ -48,7 +52,7 @@ public class SonarHCSR04Device extends Device {
         this.model = "Сонар HC-SR04"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
         this.note = note; // Описание устройства (например, "Сонар для измерения уровня воды")
         this.name = name; // Уникальное имя устройства, используется для именования таблиц в БД (например, "WaterSonar")
-        this.value = new DoubleValue(name, "Дистанция, см", valueMode);
+        this.value = new DoubleValue(name, "Дистанция, см", valueMode, ACCURACY);
 
         values.add(this.value);
         Devices.putToPins(pinTRIG, new DevicePin(name, "TRIG"));
@@ -126,8 +130,8 @@ public class SonarHCSR04Device extends Device {
      * @return Значение для отображения
      */
     @Override
-    public String getValueAsString() {
-        return this.value.getValueAsString();
+    public String toString() {
+        return this.value.toString();
         //return this.value.getValue() ? "Включен" : "Выключен";
     }
 

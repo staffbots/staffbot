@@ -1,7 +1,6 @@
 package ru.staffbots.tools.levers;
 
 import ru.staffbots.tools.values.ValueMode;
-import ru.staffbots.tools.values.ValueType;
 import ru.staffbots.tools.values.VoidValue;
 
 public class ButtonLever extends VoidValue implements Lever {
@@ -19,7 +18,7 @@ public class ButtonLever extends VoidValue implements Lever {
     }
 
     @Override
-    public String getValueAsString(){
+    public String toString(){
         return caption;
     }
 

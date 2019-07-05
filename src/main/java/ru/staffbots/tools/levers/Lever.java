@@ -23,6 +23,7 @@ public interface Lever{
         // Возвращаем, только <Type>
         return className.substring(0, className.length() - 5);
     }
+
     /**
      * <b>Получить html</b>-код визуального компонента
      * @return html-код визуального компонента

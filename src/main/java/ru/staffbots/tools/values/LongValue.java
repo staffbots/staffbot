@@ -3,12 +3,10 @@ package ru.staffbots.tools.values;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 
+import java.nio.ByteBuffer;
 import java.util.Date;
 
 /**
- * <b>Контейнер {@code Long}-значения</b> расширяет {@link Value},
- * предоставляя методы работы со значениями типа {@code Long},
- * в которых, однако, всё сводится к {@code Double}-значению, с помощью {@link Converter}
  */
 public class LongValue extends Value {
 
@@ -68,14 +66,14 @@ public class LongValue extends Value {
         initValues(values);
     }
 
+    /*******************************************************
+     *****         Работа со значением                 *****
+     *******************************************************/
+
     public void setValue(long value){
         if (value < minValue) value = minValue;
         if (value > maxValue) value = maxValue;
         set(value);
-    }
-
-    public void setDefaultValue(){
-        set(defaultValue);
     }
 
     public long getValue(){
@@ -86,12 +84,19 @@ public class LongValue extends Value {
         return get(date);
     }
 
-    /**
-     * <b>Получить значение для отображения</b><br>
-     * @return Значение для отображения
-     */
-    public String getValueAsString(){
-        return Long.toString(getValue());
+    @Override
+    public void reset() {
+        setValue(defaultValue);
+    }
+
+    /*******************************************************
+     *****         Преобразование типов                *****
+     *******************************************************/
+
+    public static byte[] toBytes(long value) {
+        byte[] bytes = new byte[8];
+        ByteBuffer.wrap(bytes).putLong(value);
+        return bytes;
     }
 
     public static long fromString(String value) throws Exception{
@@ -106,9 +111,32 @@ public class LongValue extends Value {
         }
     }
 
+    public static long fromBytes(byte[] bytes) {
+        return ByteBuffer.wrap(bytes).getLong();
+    }
+
+    /**
+     * <b>Получить значение для отображения</b><br>
+     * @return Значение для отображения
+     */
+    @Override
+    public String toString(){
+        return toString(get());
+    }
+
+    @Override
+    public String toString(long value){
+        return Long.toString(value);
+    }
+
+    @Override
+    public long toLong() {
+        return getValue();
+    }
+
     // Устанавливает значение из строки value
     @Override
-    public void setValueFromString(String value){
+    public void setFromString(String value){
         try {
             set(LongValue.fromString(value));
         } catch (Exception exception) {
@@ -118,12 +146,7 @@ public class LongValue extends Value {
     }
 
     @Override
-    public long toLong() {
-        return getValue();
-    }
-
-    @Override
-    public void setValueFromLong(long value) {
+    public void setFromLong(long value) {
         setValue(value);
     }
 
