@@ -2,8 +2,8 @@ package ru.staffbots.tools.botprocess;
 
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
-import ru.staffbots.tools.Converter;
 import ru.staffbots.tools.dates.DateFormat;
+import ru.staffbots.tools.values.DateValue;
 
 import java.util.Date;
 
@@ -73,7 +73,7 @@ public class BotTask extends Thread implements DelayFunction {
             if (!silenceMode) {
                 status = BotTaskStatus.WAITING;
                 statusString = "Запуск ожидается "
-                        + Converter.dateToString(new Date(System.currentTimeMillis() + delay), DateFormat.DATETIME);
+                        + DateValue.toString(new Date(System.currentTimeMillis() + delay), DateFormat.DATETIME);
                 Journal.add(note + ": " + statusString);
             }
             // Ожидаем запуск

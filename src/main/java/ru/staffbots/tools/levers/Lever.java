@@ -9,6 +9,14 @@ import ru.staffbots.tools.values.Value;
  */
 public interface Lever{
 
+    default boolean isButton() {
+        return (getType().equalsIgnoreCase("button"));
+    }
+
+    default boolean isGroup() {
+        return (getType().equalsIgnoreCase("group"));
+    }
+
     default String getType(){
         // Имя дочернего класса по идее: className = <Type>Lever
         String className = this.getClass().getSimpleName().toLowerCase();

@@ -1,10 +1,10 @@
 package ru.staffbots.database.journal;
 
 import ru.staffbots.database.DBTable;
-import ru.staffbots.tools.Converter;
 import ru.staffbots.database.Database;
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.dates.Period;
+import ru.staffbots.tools.values.DateValue;
 import ru.staffbots.tools.values.LongValue;
 import ru.staffbots.tools.values.ValueMode;
 
@@ -46,7 +46,7 @@ public class Journal extends DBTable {
                 noteValue += "<br>Сообщение: " + exception.getMessage()
                         + "<br>Стэк: "  + exception.getStackTrace();
         Note note = new Note(noteDate, noteValue, noteType);
-        System.out.println(Converter.dateToString(noteDate, DATE_FORMAT) + "  |  " + note);
+        System.out.println(DateValue.toString(noteDate, DATE_FORMAT) + "  |  " + note);
         if (isStorable) insertNote(note);
     }
 

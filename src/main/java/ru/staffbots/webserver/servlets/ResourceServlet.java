@@ -1,6 +1,6 @@
 package ru.staffbots.webserver.servlets;
 
-import ru.staffbots.tools.Converter;
+import ru.staffbots.tools.Resources;
 import ru.staffbots.webserver.AccountService;
 
 import javax.servlet.ServletException;
@@ -22,11 +22,7 @@ public class ResourceServlet extends BaseServlet {
         try {
             String resourceName = request.getParameter("name");
             if (resourceName == null) return;
-            response.getOutputStream().write(
-                Converter.inputStreamToBytes(
-                    ResourceServlet.class.getResourceAsStream(resourceName)
-                )
-            );
+            response.getOutputStream().write(Resources.getAsBytes(resourceName));
         } catch (Exception exception) {
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         }

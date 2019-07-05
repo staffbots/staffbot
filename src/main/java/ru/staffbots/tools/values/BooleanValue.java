@@ -1,6 +1,5 @@
 package ru.staffbots.tools.values;
 
-import ru.staffbots.tools.Converter;
 
 import java.util.Date;
 
@@ -19,15 +18,15 @@ public class BooleanValue extends Value {
 
 
     public BooleanValue(String name, String note, ValueMode valueMode, boolean value) {
-        super(name, note, valueMode, ValueType.BOOLEAN, Converter.booleanToLong(value));
+        super(name, note, valueMode, ValueType.BOOLEAN, toLong(value));
     }
 
     public BooleanValue(String name, String note, boolean value) {
-        super(name, note, ValueType.BOOLEAN, Converter.booleanToLong(value));
+        super(name, note, ValueType.BOOLEAN, toLong(value));
     }
 
     public Boolean setValue(Boolean value){
-        return Converter.longToBoolean(set(Converter.booleanToLong(value)));
+        return fromLong(set(toLong(value)));
     }
 
     public boolean getValue(){
@@ -35,7 +34,7 @@ public class BooleanValue extends Value {
     }
 
     public Boolean getValue(Date date){
-        return Converter.longToBoolean(get(date));
+        return fromLong(get(date));
     }
 
     /**
@@ -52,5 +51,22 @@ public class BooleanValue extends Value {
         setValue(trueValue.equalsIgnoreCase(value));
     }
 
+    @Override
+    public long toLong() {
+        return toLong(getValue());
+    }
+
+    public static long toLong(boolean value) {
+        return (value ? 1 : 0);
+    }
+
+    @Override
+    public void setValueFromLong(long value) {
+        setValue(fromLong(value));
+    }
+
+    public static boolean fromLong(long value) {
+        return (value > 0.5);
+    }
 
 }

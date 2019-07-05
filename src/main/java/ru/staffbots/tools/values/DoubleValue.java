@@ -1,7 +1,9 @@
 package ru.staffbots.tools.values;
 
-import ru.staffbots.tools.Converter;
+import ru.staffbots.database.journal.Journal;
+import ru.staffbots.database.journal.NoteType;
 
+import java.nio.ByteBuffer;
 import java.util.Date;
 
 
@@ -34,7 +36,7 @@ public class DoubleValue extends Value{
      * @param maxValue максимальное значение
      */
     private void setRange(double minValue, double defaultValue, double maxValue){
-        this.value = Converter.doubleToLong(defaultValue);
+        this.value = toLong(defaultValue);
         this.defaultValue = defaultValue;
         this.minValue = minValue;
         this.maxValue = maxValue;
@@ -74,15 +76,15 @@ public class DoubleValue extends Value{
     }
 
     public static Double getValue(long value){
-        return Converter.longToDouble(value);
+        return fromLong(value);
     }
 
     public Double getValue(Date date){
-        return Converter.longToDouble(super.get(date));
+        return fromLong(super.get(date));
     }
 
     public void setValue(Double value){
-        super.set(Converter.doubleToLong(value));
+        super.set(toLong(value));
     }
 
     /**
@@ -110,10 +112,66 @@ public class DoubleValue extends Value{
         return Double.toString(round(getValue(value)));
     }
 
+
+    public static double fromString(String value) throws Exception{
+        return Double.parseDouble(value);
+    }
+
+    public static double fromString(String value, double defaultValue){
+        try {
+            return fromString(value);
+        } catch (Exception exception) {
+            return defaultValue;
+        }
+    }
+
+    // Устанавливает значение из строки value
     @Override
     public void setValueFromString(String value){
-        if(value != null)
-            setValue(Double.parseDouble(value));
+        try {
+               setValue(fromString(value));
+        } catch (Exception exception) {
+            Journal.add("Неудачная попытка присвоить " + name + " значение " + value,
+                    NoteType.ERROR, exception);
+        }
+    }
+
+    private static byte[] doubleToBytes(double value) {
+        byte[] bytes = new byte[8];
+        ByteBuffer.wrap(bytes).putDouble(value);
+        return bytes;
+    }
+
+    private static long bytesToLong(byte[] bytes) {
+        return ByteBuffer.wrap(bytes).getLong();
+    }
+
+    public static long toLong(double value) {
+        return bytesToLong(doubleToBytes(value));
+    }
+
+    @Override
+    public long toLong(){
+        return toLong(getValue());
+    }
+
+    private static byte[] longToBytes(long value) {
+        byte[] bytes = new byte[8];
+        ByteBuffer.wrap(bytes).putLong(value);
+        return bytes;
+    }
+
+    private static double bytesToDouble(byte[] bytes) {
+        return ByteBuffer.wrap(bytes).getDouble();
+    }
+
+    public static double fromLong(long value) {
+        return bytesToDouble(longToBytes(value));
+    }
+
+    @Override
+    public void setValueFromLong(long value) {
+        setValue(fromLong(value));
     }
 
 }

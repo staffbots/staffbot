@@ -1,6 +1,7 @@
 package ru.staffbots.tools.values;
 
-import ru.staffbots.tools.Converter;
+import ru.staffbots.database.journal.Journal;
+import ru.staffbots.database.journal.NoteType;
 
 import java.util.Date;
 
@@ -91,6 +92,39 @@ public class LongValue extends Value {
      */
     public String getValueAsString(){
         return Long.toString(getValue());
+    }
+
+    public static long fromString(String value) throws Exception{
+        return Long.parseLong(value);
+    }
+
+    public static long fromString(String value, long defaultValue){
+        try {
+            return fromString(value);
+        } catch (Exception exception) {
+            return defaultValue;
+        }
+    }
+
+    // Устанавливает значение из строки value
+    @Override
+    public void setValueFromString(String value){
+        try {
+            set(LongValue.fromString(value));
+        } catch (Exception exception) {
+            Journal.add("Неудачная попытка присвоить " + name + " значение " + value,
+                    NoteType.ERROR, exception);
+        }
+    }
+
+    @Override
+    public long toLong() {
+        return getValue();
+    }
+
+    @Override
+    public void setValueFromLong(long value) {
+        setValue(value);
     }
 
 }

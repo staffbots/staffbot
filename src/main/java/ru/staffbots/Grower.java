@@ -2,7 +2,6 @@ package ru.staffbots;
 
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
-import ru.staffbots.tools.Converter;
 import ru.staffbots.tools.dates.Period;
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.dates.DateScale;
@@ -137,7 +136,7 @@ public class Grower extends Pattern {
                 // "От заката до рассвета"
                 long sunsetTime = sunsetLever.getNearFuture().getTime();
                 Journal.add(lightTaskNote + ": включение до " +
-                        Converter.dateToString(new Date(sunsetTime), DateFormat.DATETIME));
+                        DateValue.toString(new Date(sunsetTime), DateFormat.DATETIME));
                 // Включаем
                 sunRelay.set(true);
                 Thread.sleep(sunsetTime - System.currentTimeMillis());
@@ -170,7 +169,7 @@ public class Grower extends Pattern {
                 Date funsetDate = new Date(sunsetLever.getValue().getTime() + funDelayLever.getValue() * DateScale.MINUTE.getMilliseconds());
                 long funsetTime = DateValue.getNearFuture(funsetDate).getTime();
                 Journal.add(ventingTaskNote + ": включение до " +
-                        Converter.dateToString(new Date(funsetTime), DateFormat.DATETIME));
+                        DateValue.toString(new Date(funsetTime), DateFormat.DATETIME));
                 //Включаем
                 funRelay.set(true);
                 Thread.sleep(funsetTime - System.currentTimeMillis());

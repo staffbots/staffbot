@@ -12,4 +12,18 @@ public class VoidValue extends Value{
         super("", note, ValueMode.TEMPORARY, ValueType.VOID, 0);
     }
 
+    @Override
+    public void setValueFromString(String value) {
+        set(LongValue.fromString(value, 0));
+    }
+
+    @Override
+    public long toLong() {
+        return 0;
+    }
+
+    @Override
+    public void setValueFromLong(long value) {
+    }
+
 }

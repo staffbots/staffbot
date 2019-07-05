@@ -1,5 +1,7 @@
 package ru.staffbots.tools.levers;
 
+import ru.staffbots.tools.values.Value;
+
 import java.util.ArrayList;
 
 /**
@@ -20,9 +22,11 @@ public class Levers{
     public static void init(Lever... levers) {
         for (Lever lever:levers) {
             list.add(lever);
-            if (lever.toValue().isStorable())
-                lever.toValue().createTable();
-            lever.toValue().set(lever.toValue().get());
+            Value value = lever.toValue();
+            if (value.isStorable()) {
+                value.createTable();
+                value.set(value.get());
+            }
         }
     }
 

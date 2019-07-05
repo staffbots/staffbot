@@ -1,6 +1,6 @@
 package ru.staffbots.tools.dates;
 
-import ru.staffbots.tools.Converter;
+import ru.staffbots.tools.values.DateValue;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -14,11 +14,11 @@ public class Period {
     public Date toDate;
 
     public String getFromDateAsString(){
-        return Converter.dateToString(fromDate, dateFormat);
+        return DateValue.toString(fromDate, dateFormat);
     }
 
     public String getToDateAsString(){
-        return Converter.dateToString(toDate, dateFormat);
+        return DateValue.toString(toDate, dateFormat);
     }
 
     public Period(DateFormat dateFormat){
@@ -43,8 +43,8 @@ public class Period {
 
 
     public void set(String fromDate, String toDate){
-        set(Converter.stringToDate(fromDate, dateFormat, null),
-            Converter.stringToDate(toDate, dateFormat, null));
+        set(DateValue.fromString(fromDate, dateFormat, null),
+            DateValue.fromString(toDate, dateFormat, null));
     }
 
     public void set(Date fromDate, Date toDate){

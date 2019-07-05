@@ -3,13 +3,13 @@ package ru.staffbots.database.cleaner;
 import ru.staffbots.database.DBTable;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
-import ru.staffbots.tools.Converter;
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.dates.DateScale;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.levers.Lever;
 import ru.staffbots.tools.levers.Levers;
+import ru.staffbots.tools.values.DateValue;
 import ru.staffbots.tools.values.Value;
 
 import java.sql.PreparedStatement;
@@ -79,7 +79,7 @@ public class Cleaner {
             timerIsRuning = true;
             Journal.add("Настроена автоматическая очистка базы данных с периодом "
                 + autoValue + " ("+ autoMeasure.getDescription() + "), первый запуск: "
-                + Converter.dateToString(delay, DATE_FORMAT));
+                + DateValue.toString(delay, DATE_FORMAT));
         } else {
             timerIsRuning = false;
             Journal.add("Автоматическая очистка базы данных отменена");
@@ -119,7 +119,7 @@ public class Cleaner {
         } catch (Exception exception) {
             autoMeasure = DateScale.DAY;
         }
-        autoStart = Converter.stringToDate(Database.settings.load("dbclean_auto_start"), DATE_FORMAT , autoStart);
+        autoStart = DateValue.fromString(Database.settings.load("dbclean_auto_start"), DATE_FORMAT, autoStart);
     }
 
     private void saveSettings(){
@@ -130,7 +130,7 @@ public class Cleaner {
         Database.settings.save("dbclean_auto_cleaning", autoCleaning ? "on" : "off");
         Database.settings.save("dbclean_auto_value", Long.toString(autoValue));
         Database.settings.save("dbclean_auto_measure", autoMeasure.toString().toLowerCase());
-        Database.settings.save("dbclean_auto_start", Converter.dateToString(autoStart, DATE_FORMAT));
+        Database.settings.save("dbclean_auto_start", DateValue.toString(autoStart, DATE_FORMAT));
     }
 
     private long cleanByCount(DBTable table, long count){

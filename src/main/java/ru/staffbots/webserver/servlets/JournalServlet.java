@@ -4,8 +4,8 @@ import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.Note;
 import ru.staffbots.database.journal.NoteType;
-import ru.staffbots.tools.Converter;
 import ru.staffbots.tools.dates.DateFormat;
+import ru.staffbots.tools.values.DateValue;
 import ru.staffbots.webserver.AccountService;
 
 import javax.servlet.ServletException;
@@ -111,8 +111,8 @@ public class JournalServlet extends MainServlet {
             pageVariables.put("note_value", "<b>Сообщение</b>");
             htmlCode = PageGenerator.getPage("items/journal_note.html",pageVariables);
             for (Note note : journalList) {
-                pageVariables.put("note_title", Converter.dateToString(note.getDate(), DateFormat.FULLTIMEDATE));
-                pageVariables.put("note_date", Converter.dateToString(note.getDate(), DateFormat.CUTSHORTDATETIME));
+                pageVariables.put("note_title", DateValue.toString(note.getDate(), DateFormat.FULLTIMEDATE));
+                pageVariables.put("note_date", DateValue.toString(note.getDate(), DateFormat.CUTSHORTDATETIME));
                 pageVariables.put("note_value", note.getMessage());
                 htmlCode += PageGenerator.getPage("items/journal_note.html",pageVariables);
             }

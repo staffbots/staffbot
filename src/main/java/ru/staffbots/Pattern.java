@@ -3,11 +3,10 @@ package ru.staffbots;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
-import ru.staffbots.tools.Converter;
+import ru.staffbots.tools.Resources;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.webserver.WebServer;
 import ru.staffbots.webserver.servlets.MainServlet;
-import ru.staffbots.webserver.servlets.ResourceServlet;
 import ru.staffbots.windows.MainWindow;
 
 import java.io.*;
@@ -62,10 +61,7 @@ public abstract class Pattern{
             if (!cfgFile.exists()) {
                 // то копируем его из ресурсов, заархивированных внутри jar-файла
                 FileOutputStream outputStream = new FileOutputStream(cfgFile.getPath());
-                outputStream.write(
-                        Converter.inputStreamToBytes(
-                                ResourceServlet.class.getResourceAsStream(
-                                        projectCfgFileName)));
+                outputStream.write(Resources.getAsBytes(projectCfgFileName));
             }
             // Читаем свойства из (внешнего) файла конфигурации
             FileInputStream inputStream = new FileInputStream(cfgFile);

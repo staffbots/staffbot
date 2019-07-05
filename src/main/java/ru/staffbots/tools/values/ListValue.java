@@ -1,14 +1,9 @@
 package ru.staffbots.tools.values;
 
-import ru.staffbots.tools.Converter;
-
 import java.util.ArrayList;
 import java.util.Date;
 
 /**
- * <b>Контейнер {@code Long}-значения</b> расширяет {@link Value},
- * предоставляя методы работы со значениями типа {@code Long},
- * в которых, однако, всё сводится к {@code Double}-значению, с помощью {@link Converter}
  */
 public class ListValue extends Value {
 
@@ -75,6 +70,21 @@ public class ListValue extends Value {
                     + (i == value ? " selected" : " ") + ">"
                     + list.get(i) + "</option>";
         return result;
+    }
+
+    @Override
+    public void setValueFromString(String value) {
+        set(LongValue.fromString(value, 0));
+    }
+
+    @Override
+    public long toLong() {
+        return getValue();
+    }
+
+    @Override
+    public void setValueFromLong(long value) {
+        setValue(value);
     }
 
 

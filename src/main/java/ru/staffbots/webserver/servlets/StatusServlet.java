@@ -43,6 +43,7 @@ public class StatusServlet extends MainServlet {
     }
 
     public void doGetValue(Value value, HttpServletResponse response) throws ServletException, IOException {
+        String str = value.getValueAsString();
         response.getWriter().println(value.getValueAsString());
         response.setContentType("text/html; charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
@@ -68,17 +69,17 @@ public class StatusServlet extends MainServlet {
                 response.setStatus(HttpServletResponse.SC_OK);
                 return;
             }
+            for (Lever lever : Levers.list)
+                if (getName.equals(lever.toValue().getName())) {
+                    doGetValue(lever.toValue(), response);
+                    return;
+                }
             for (Device device : Devices.list)
                 for (Value value : device.getValues())
                     if (getName.equals(value.getName())) {
                         doGetValue(value, response);
                         return;
                     }
-            for (Lever lever : Levers.list)
-                if (getName.equals(lever.toValue().getName())) {
-                    doGetValue(lever.toValue(), response);
-                    return;
-                }
             return;
         }
 
@@ -194,7 +195,7 @@ public class StatusServlet extends MainServlet {
         pageVariables.put("page_bg_color", page_bg_color);
 
         for (Lever lever : Levers.list){
-            if (lever.getType().equals("button")) continue;
+            if (lever.isButton()) continue;
             Value value = lever.toValue();
 
             pageVariables.put("check_display", (value.isPlotPossible() ? "inline" : "none"));
@@ -206,8 +207,10 @@ public class StatusServlet extends MainServlet {
             }
             pageVariables.put("check_value", Boolean.parseBoolean(checkValue) ? "checked" : "");
             pageVariables.put("check_name", checkName);
-            pageVariables.put("value_name", (value.isStorable() ? value.getName() : ""));
-            if (value.getValueType() == ValueType.VOID)
+
+            //pageVariables.put("value_name", (value.isStorable() ? value.getName() : ""));
+            pageVariables.put("value_name", value.getName());
+            if (lever.isGroup())
                 pageVariables.put("value_note", "<b>" + value.getNote() + "</b>");
             else
                 pageVariables.put("value_note", value.getNote());
@@ -215,7 +218,6 @@ public class StatusServlet extends MainServlet {
         }
         return context;
     }
-
 
     private String getDataSets(Period period){
         String context = "";
@@ -285,7 +287,6 @@ public class StatusServlet extends MainServlet {
 
     // Насыщенности
     private double[] hue = getRandomHue(plotValueCount);
-
 
     // Возращает масиив размером length с перемешанными в нём случайными значениями (насыщенности) от 0 до 360
     private double[] getRandomHue(int length) {

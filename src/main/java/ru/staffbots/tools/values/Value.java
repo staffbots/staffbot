@@ -5,7 +5,6 @@ import ru.staffbots.database.DBValue;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.dates.Period;
-import ru.staffbots.tools.Converter;
 import ru.staffbots.tools.levers.LeverMode;
 import ru.staffbots.webserver.WebServer;
 import ru.staffbots.database.Database;
@@ -25,8 +24,7 @@ import java.util.Date;
  *  - {@code DateValue} для значений типа {@code Date}<br>
  *  - {@code LongValue} для значений типа {@code Long}<br>
  *  - {@code EmptyValue} для внутренних нужд, а именно - для группировки рычагов управлкния в {@link WebServer}.<br>
- * Однако, вне зависимости от типа предоставляемого значения, все перечисленные дочерние классы для хранения используют тип Double,
- * используя функции преобразования типов из {@link Converter}.<br>
+ * Однако, вне зависимости от типа предоставляемого значения, все перечисленные дочерние классы для хранения используют тип Long
  * Благодоря этому, Value и все его дочерние классы имееют унифицированный интерфейс
  * и единый тип значений - {@code Double}, что значительно облегчает работу с БД.
  */
@@ -53,17 +51,6 @@ abstract public class Value extends DBTable {
     protected String note;
 
     /**
-     * <b>Хранение в БД</b>:<br>
-     *  - если да ({@code dbStorage = true}), значение хранится в БД, в value дублируется;<br>
-     *  - если нет ({@code dbStorage = false}), значение хранится в value, БД не задействовано.<br>
-     * нициализируется в конструкторе.
-     */
-    //public boolean dbStorage = true;
-
-    //public boolean getDbStorage() {
-//        return dbStorage;
-  //  }
-    /**
      * <b>Значение</b>, используется при {@code dbStorage = false},<br>
      * в противном случае сюда дублируется значение из БД.
      */
@@ -81,11 +68,10 @@ abstract public class Value extends DBTable {
 
     private void init(String name, String note, ValueMode valueMode, ValueType valueType, long value){
         this.value = value;
-        this.name = name;
-        this.note = note;
+        this.name = (name == null ? "" : name);
+        this.note = (note == null ? "" : note);
         this.valueMode = valueMode;
         this.valueType = valueType;
-        if(isStorable()) this.value = get();
     }
     /**
      * @param name название
@@ -109,28 +95,28 @@ abstract public class Value extends DBTable {
      * @param date дата
      * @return значение из на указанную дату
      */
-    public long get(Date date) {
-        long dbValue;
-        try {
-            if(!isStorable()) return value;
-            if(!Database.connected()) throw new Exception("Нет подключения к базе данных");
-            PreparedStatement ps = Database.getConnection().prepareStatement(
-                    "SELECT value FROM " + getTableName() + " WHERE (moment <= ?) ORDER BY moment DESC LIMIT 1");
-            ps.setTimestamp(1, new Timestamp(date.getTime()));
-            if (ps.execute()) {
-                ResultSet rs = ps.getResultSet();
-                //return (rs.next() ? rs.getDouble(0) : Double.NaN);
-                if (rs.next())
-                    return rs.getBigDecimal(1).longValue();
-                else
-                    throw new Exception("Таблица значений пуста, впрочем как и все феномены этой жизни...");
-            } else
-                throw new Exception("Значение не найдено в базе данных");
+    private Long tryGet(Date date) throws Exception{
+        if(!isStorable()) return value;
+        if(!Database.connected()) throw new Exception("Нет подключения к базе данных");
+        PreparedStatement ps = Database.getConnection().prepareStatement(
+            "SELECT value FROM " + getTableName() + " WHERE (moment <= ?) ORDER BY moment DESC LIMIT 1");
+        ps.setTimestamp(1, new Timestamp(date.getTime()));
+        if (ps.execute()) {
+            ResultSet rs = ps.getResultSet();
+            if (rs.next())
+                return rs.getBigDecimal(1).longValue();
+            else
+                throw new Exception("Таблица значений пуста, впрочем как и все феномены этой жизни...");
+        } else
+            throw new Exception("Значение не найдено в базе данных");
+    }
 
-        } catch (Exception e){
-            dbValue = value;
+    public long get(Date date) {
+        try {
+            return tryGet(date);
+        } catch (Exception exception){
+            return value;
         }
-        return dbValue;
     }
 
     /**
@@ -149,42 +135,50 @@ abstract public class Value extends DBTable {
      * @return установленное значение
      */
     synchronized public long set(long newValue) {
-        if (isStorable())
-            if (newValue != get()) {
-                try {
-                    if(!Database.connected()) throw new Exception("Нет подключения к базе данных");
-                    PreparedStatement statement = Database.getConnection().prepareStatement(
-                            "INSERT INTO " + getTableName() +
-                                    " (value) VALUES (?)");
-                    statement.setLong(1, newValue);
-                    statement.executeUpdate();
-                    String stringValue = (valueType != ValueType.BOOLEAN) ? getValueAsString() : Long.toString(newValue);
-                    Journal.add(getNote() + " - установлено заначение: " + stringValue);
-                } catch (Exception exception) {
-                    Journal.add("Ошибка записи в таблицу " + getTableName() + exception.getMessage(), NoteType.ERROR);
-                }
+        boolean allow;
+        try {
+            allow = (newValue != tryGet(new Date()));
+        } catch (Exception exception) {
+            allow = true;
+        }
+        if (isStorable() && allow)
+            try {
+                if (!Database.connected()) throw new Exception("Нет подключения к базе данных");
+                PreparedStatement statement = Database.getConnection().prepareStatement(
+                        "INSERT INTO " + getTableName() +
+                                " (value) VALUES (?)");
+                statement.setLong(1, newValue);
+                statement.executeUpdate();
+                String stringValue = (valueType != ValueType.BOOLEAN) ? getValueAsString() : Long.toString(newValue);
+                Journal.add(getNote() + " - установлено заначение: " + stringValue);
+            } catch (Exception exception) {
+                Journal.add("Ошибка записи в таблицу " + getTableName() + exception.getMessage(), NoteType.ERROR);
             }
         value = newValue;
         return value;
     }
 
     public long set(Date moment, long newValue) {
-        if (isStorable())
-            if (newValue != get()) {
-                try {
-                    if(!Database.connected()) throw new Exception("Нет подключения к базе данных");
-                    PreparedStatement statement = Database.getConnection().prepareStatement(
-                            "INSERT INTO " + getTableName() +
-                                    " (moment, value) VALUES (?, ?)");
-                    statement.setTimestamp(1, new Timestamp(moment.getTime()));
-                    statement.setLong(2, newValue);
-                    statement.executeUpdate();
-                    String stringValue = (valueType != ValueType.BOOLEAN) ? getValueAsString() : Long.toString(newValue);
-                    Journal.add(getNote() + " - установлено заначение: " + stringValue
-                    + " на дату " + Converter.dateToString(moment, Journal.DATE_FORMAT));
-                } catch (Exception e) {
-                    Journal.add("Ошибка записи в таблицу " + getTableName() + e.getMessage(), NoteType.ERROR);
-                }
+        boolean allow;
+        try {
+            allow = (newValue != tryGet(moment));
+        } catch (Exception exception) {
+            allow = true;
+        }
+        if (isStorable() && allow)
+            try {
+                if (!Database.connected()) throw new Exception("Нет подключения к базе данных");
+                PreparedStatement statement = Database.getConnection().prepareStatement(
+                        "INSERT INTO " + getTableName() +
+                                " (moment, value) VALUES (?, ?)");
+                statement.setTimestamp(1, new Timestamp(moment.getTime()));
+                statement.setLong(2, newValue);
+                statement.executeUpdate();
+                String stringValue = (valueType != ValueType.BOOLEAN) ? getValueAsString() : Long.toString(newValue);
+                Journal.add(getNote() + " - установлено заначение: " + stringValue
+                        + " на дату " + DateValue.toString(moment, Journal.DATE_FORMAT));
+            } catch (Exception e) {
+                Journal.add("Ошибка записи в таблицу " + getTableName() + e.getMessage(), NoteType.ERROR);
             }
         value = newValue;
         return value;
@@ -235,10 +229,13 @@ abstract public class Value extends DBTable {
         return Long.toString(value);
     }
 
-    public void setValueFromString(String value){
-        if(value != null)
-            set(Long.parseLong(value));
-    }
+    // Устанавливает значение из строки value
+    // Переопределён для каждого (дочернего) типа заначений
+    public abstract void setValueFromString(String value);
+
+    public abstract long toLong();
+
+    public abstract void setValueFromLong(long value);
 
     public DBTable getTable(){
         return this;

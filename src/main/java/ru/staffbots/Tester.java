@@ -53,12 +53,12 @@ public class Tester extends Pattern {
      * Внимание! Порядок перечисления групп и рычагов повторяется в веб-интерфейсе
      */
     private static void leversInit() {
-        Levers.initGroup("", delayLever, buttonLever);
+        Levers.initGroup(null, delayLever, buttonLever);
         Journal.add("Рычаги управления успешно проинициализированы");
     }
 
     private static LongLever delayLever = new LongLever("delayLever",
-            "Частота опроса, сек", ValueMode.STORABLE, 20, 2, 60*60);
+            "Частота опроса, сек", ValueMode.TEMPORARY, 20, 2, 60*60);
 
     private static ButtonLever buttonLever = new ButtonLever("buttonLever",
         "Выполнить","Калибровка датчика, основанная на триангуляции континума", () -> {
