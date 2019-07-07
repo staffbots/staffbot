@@ -68,7 +68,7 @@ public class Grower extends Pattern {
             "Инертность вентилятора, мин", 0, 20, 2 * 60);
 
     private static DoubleLever phLever = new DoubleLever("phLever",
-            "Водородный показатель (кислотность), pH", 1, 0.0, 5.6, 10.0);
+            "Водородный показатель (кислотность), pH", 5, 0.0, 5.6, 10.0);
     private static DoubleLever ecLever = new DoubleLever("ecLever",
             "Удельная электролитическая проводимость, EC", 1, 0.0, 8.1, 10.0);
     private static BooleanLever soluteLever = new BooleanLever("soluteLever",

@@ -51,20 +51,10 @@ public abstract class Pattern{
         // Имя внешнего файла конфигурации, лежащего рядом с jar-пакетом
         String solutionCfgFileName = "/" + projectName + "." + solutionName + "-" + projectVersion + ".cfg";
         try {
-            // Полный путь до jar-пакета
-            String jarFileName = Pattern.class.getProtectionDomain().getCodeSource().getLocation().getPath();
-            // Полный путь до каталога jar-пакета
-            String jarDirName = (new File(jarFileName)).getParent();
-            // Полный путь до внешнего файла конфигурации
-            File cfgFile = new File(jarDirName + solutionCfgFileName);
-            // Если таковой файл конфигурации ещё не существует,
-            if (!cfgFile.exists()) {
-                // то копируем его из ресурсов, заархивированных внутри jar-файла
-                FileOutputStream outputStream = new FileOutputStream(cfgFile.getPath());
-                outputStream.write(Resources.getAsBytes(projectCfgFileName));
-            }
-            // Читаем свойства из (внешнего) файла конфигурации
-            FileInputStream inputStream = new FileInputStream(cfgFile);
+            // Извлекаем из jar-пакета файл конфигурации
+            Resources.ExtractFromJar(projectCfgFileName, solutionCfgFileName);
+            // Читаем свойства из извлечённого файла
+            FileInputStream inputStream = new FileInputStream(Resources.getJarDirName() + solutionCfgFileName);
             Properties property = new Properties();
             property.load(inputStream);
             inputStream.close();
@@ -77,9 +67,13 @@ public abstract class Pattern{
             Database.DROP = Boolean.parseBoolean(property.getProperty("db.drop", Database.DROP.toString()));
             MainWindow.USED = Boolean.parseBoolean(property.getProperty("gui.used", MainWindow.USED.toString()));
             Devices.USED = Devices.isRaspbian() && Boolean.parseBoolean(property.getProperty("pi.used", Devices.USED.toString()));
-            WebServer.PORT = Integer.parseInt(property.getProperty("web.port", WebServer.PORT.toString()));
             WebServer.ADMIN = property.getProperty("web.admin", WebServer.ADMIN);
             WebServer.PASSWORD = property.getProperty("web.password", WebServer.PASSWORD);
+            WebServer.http_port = Integer.parseInt(property.getProperty("web.http_port", WebServer.http_port.toString()));
+            WebServer.https_port = Integer.parseInt(property.getProperty("web.https_port", WebServer.https_port.toString()));
+            WebServer.key_store = property.getProperty("web.key_store", WebServer.key_store);
+            WebServer.key_store_password = property.getProperty("web.key_store_password", WebServer.key_store_password);
+            WebServer.key_manager_password = property.getProperty("web.key_manager_password", WebServer.key_manager_password);
             MainServlet.site_bg_color = property.getProperty("web.site_bg_color", MainServlet.site_bg_color);
             MainServlet.main_bg_color = property.getProperty("web.main_bg_color", MainServlet.main_bg_color);
             MainServlet.page_bg_color = property.getProperty("web.page_bg_color", MainServlet.page_bg_color);

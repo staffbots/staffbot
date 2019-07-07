@@ -168,7 +168,6 @@
 			}
 		});
 
-
 		$("<div id='tooltip'></div>").css({
 			position: "absolute",
 			display: "none",
@@ -180,12 +179,12 @@
 
 		$("#placeholder").bind("plothover", function (event, pos, item) {
 
-    		$("#status_data_time").text(moment(new Date(pos.x.toFixed(2) * 1000)).format('DD.MM.YYYY HH:mm:ss'));
-			$("#status_data_value").text(pos.y.toFixed(2));
+    		$("#status_data_time").text(moment(new Date(pos.x.toFixed(0) * 1000)).format('DD.MM.YYYY HH:mm:ss'));
+			$("#status_data_value").text(pos.y.toFixed(3));
 
 			if (item) {
-				var x = item.datapoint[0].toFixed(2),
-					y = item.datapoint[1].toFixed(2),
+				var x = item.datapoint[0].toFixed(0),
+					y = item.datapoint[1].toFixed(item.series.accuracy),
                     d = moment(new Date(x * 1000)).format('DD.MM.YYYY HH:mm:ss');
 				$("#tooltip").html(item.series.label + ": <b>" + y + "</b><br>" + d)
 					.css({top: item.pageY+5, left: item.pageX+5})

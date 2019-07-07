@@ -1,7 +1,7 @@
 package ru.staffbots.database;
 
 import ru.staffbots.database.cleaner.Cleaner;
-import ru.staffbots.database.configs.Configs;
+import ru.staffbots.tools.levers.Configs;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.database.settings.Settings;

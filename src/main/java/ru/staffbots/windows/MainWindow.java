@@ -76,7 +76,7 @@ public class MainWindow extends JFrame {
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    java.awt.Desktop.getDesktop().browse(new URI("http://localhost:" + WebServer.PORT));
+                    java.awt.Desktop.getDesktop().browse(WebServer.getURL().toURI());
                 } catch (Exception exception) {
                     Journal.add("Неудачная попытка открыть браузер", NoteType.ERROR, exception);
                 }

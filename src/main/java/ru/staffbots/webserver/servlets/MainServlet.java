@@ -49,6 +49,7 @@ public abstract class MainServlet extends BaseServlet {
 
     public void doGet(HttpServletRequest request, HttpServletResponse response, String content) throws ServletException, IOException {
         if (accountService.isAccessDenied(request.getSession())){
+            System.out.println("111111111111111111");
             response.sendRedirect("/entry");
             return;
         }
@@ -63,6 +64,7 @@ public abstract class MainServlet extends BaseServlet {
                     response.sendRedirect("/status");
                     break;
                 default:
+                    System.out.println("2222222222222222222");
                     response.sendRedirect("/entry");
                     break;
             }

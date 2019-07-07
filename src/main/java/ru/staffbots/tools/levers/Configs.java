@@ -1,4 +1,4 @@
-package ru.staffbots.database.configs;
+package ru.staffbots.tools.levers;
 
 import ru.staffbots.database.DBTable;
 import ru.staffbots.database.journal.Journal;

@@ -10,6 +10,7 @@ import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.levers.Lever;
 import ru.staffbots.tools.levers.Levers;
+import ru.staffbots.tools.values.DoubleValue;
 import ru.staffbots.tools.values.Value;
 import ru.staffbots.tools.values.ValueType;
 import ru.staffbots.webserver.AccountService;
@@ -235,6 +236,7 @@ public class StatusServlet extends MainServlet {
     private String getDataSet(Value value, Period period, int numberOfValue) {
         String[] booleans = {"false", "true"};
         int index = (value.getValueType() == ValueType.BOOLEAN) ? 1 : 0;
+        int accuracy = (value.getValueType() == ValueType.DOUBLE) ? ((DoubleValue) value).accuracy : 0;
 
         String context = "'" + value.getName() + "':{";
         context += "label:'" + value.getNote() + "',\n";
@@ -242,6 +244,7 @@ public class StatusServlet extends MainServlet {
         context += "splines: {show: " + booleans[1 - index] + "},\n";
         context += "points: {show: " + booleans[1 - index] + "},\n";
         context += "color: 'hsl(" + hue[numberOfValue] + ",80%,50%)',\n";
+        context += "accuracy: " + accuracy + ",\n";
         context += "data:[";
         ArrayList<DBValue> dbValues = value.getDataSet(period);
         boolean first = true;
