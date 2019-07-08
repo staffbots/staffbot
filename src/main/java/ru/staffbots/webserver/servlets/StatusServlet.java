@@ -124,6 +124,7 @@ public class StatusServlet extends MainServlet {
                 period.initToDate();
         }
 
+        pageVariables.put("tasks_display", BotProcess.list.size() > 0 ? "table-row" : "none");
         pageVariables.put("start_time", Long.toString(BotProcess.getStartTime()));
         pageVariables.put("dateformat", Journal.DATE_FORMAT.getFormat());
         pageVariables.put("status_fromdate", period.getFromDateAsString());
