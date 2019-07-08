@@ -6,15 +6,22 @@ import java.util.Date;
 /**
  * <b>Контейнер {@code Boolean}-значения</b> расширяет {@link Value},
  * предоставляя методы работы со значениями типа {@code Boolean},
- * в которых, однако, всё сводится к {@code Double}-значению, с помощью {@link Converter}
  */
 public class BooleanValue extends Value {
 
     public boolean defaultValue = false;
 
-    public String trueValue = "<input type=\"checkbox\" checked disabled>";
+    // Строка для получения true-значения из html-формата
+    public String trueValueFromString = "on";
 
-    public String falseValue = "<input type=\"checkbox\" disabled>";
+    // Строка для получения false-значения из html-формата
+    public String falseValueFromString = "off";
+
+    // Строка для представления true-значения в html-формате
+    public String trueValueToString = "<input type='checkbox' checked disabled>";
+
+    // Строка для представления false-значения в html-формате
+    public String falseValueToString = "<input type='checkbox' disabled>";
 
 
     public BooleanValue(String name, String note, ValueMode valueMode, boolean value) {
@@ -29,7 +36,7 @@ public class BooleanValue extends Value {
      *****         Работа со значением                 *****
      *******************************************************/
 
-    public Boolean setValue(Boolean value){
+    public boolean setValue(Boolean value){
         return fromLong(set(toLong(value)));
     }
 
@@ -37,7 +44,7 @@ public class BooleanValue extends Value {
         return getValue(new Date());
     }
 
-    public Boolean getValue(Date date){
+    public boolean getValue(Date date){
         return fromLong(get(date));
     }
 
@@ -65,7 +72,7 @@ public class BooleanValue extends Value {
     @Override
     // для интерфейса
     public String toString(){
-        return fromLong(get()) ? trueValue : falseValue;
+        return fromLong(get()) ? trueValueToString : falseValueToString;
     }
 
     @Override
@@ -81,7 +88,8 @@ public class BooleanValue extends Value {
 
     @Override
     public void setFromString(String value){
-        setValue(trueValue.equalsIgnoreCase(value));
+        if (value == null) value = falseValueFromString;
+        setValue(trueValueFromString.equalsIgnoreCase(value));
     }
 
     @Override

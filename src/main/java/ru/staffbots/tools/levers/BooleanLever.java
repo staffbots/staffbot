@@ -23,10 +23,4 @@ public class BooleanLever extends BooleanValue implements Lever {
         super(name, note, value);
     }
 
-    @Override
-    public void setFromString(String value){
-        String stringValue = "on".equalsIgnoreCase(value) ? trueValue : falseValue;
-        setValue(trueValue.equalsIgnoreCase(stringValue));
-    }
-
 }

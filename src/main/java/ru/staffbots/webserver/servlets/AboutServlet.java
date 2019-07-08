@@ -28,6 +28,7 @@ public class AboutServlet extends MainServlet {
 
     // Вызывается при запросе странице с сервера
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (accountService.isAccessDenied(request, response)) return;
         Map<String, Object> pageVariables = new HashMap();
         pageVariables.put("about_osname",System.getProperty("os.name"));
         pageVariables.put("about_osversion",System.getProperty("os.version"));

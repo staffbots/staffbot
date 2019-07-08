@@ -1,6 +1,8 @@
 package ru.staffbots.webserver.servlets;
 
+import com.sun.javafx.logging.JFRPulseEvent;
 import ru.staffbots.database.Database;
+import ru.staffbots.database.journal.Journal;
 import ru.staffbots.tools.botprocess.BotProcess;
 import ru.staffbots.tools.botprocess.BotProcessStatus;
 import ru.staffbots.tools.levers.ButtonLever;
@@ -28,6 +30,7 @@ public class ControlServlet extends MainServlet {
     // Вызывается при запросе страницы с сервера
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (accountService.isAccessDenied(request, response)) return;
         Map<String, Object> pageVariables = new HashMap();
         for (BotProcessStatus status : BotProcessStatus.values()) {
             String statusName = "control_" + status.name().toLowerCase();
@@ -50,8 +53,10 @@ public class ControlServlet extends MainServlet {
 
     // Вызывается при отправке страницы на сервер
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+
         String setName = request.getParameter("set");
         if (setName != null) {
+            if (accountService.isAccessDenied(request)) return;
             // Обработка нажатия кнопки ButtonLever
             for (Lever lever: Levers.list){
                 Value value = lever.toValue();
@@ -59,12 +64,15 @@ public class ControlServlet extends MainServlet {
                     if (value.getValueType() == ValueType.VOID)
                     try {
                         ((ButtonLever)lever).onClick();
+                        break;
                     } catch (Exception exception) {
                         // Игнорируем
                     }
             }
             return;
         }
+
+        if (accountService.isAccessDenied(request, response)) return;
 
         if (request.getParameter("control_apply") == null) {
             // Обработка управляющих кнопок (пуск, пауза, старт)
@@ -77,7 +85,7 @@ public class ControlServlet extends MainServlet {
             if (configName != null)
                 if (!configName.equals(""))
                     try {
-                        configName = PageGenerator.fromCode(configName);
+                        //configName = PageGenerator.fromCode(configName);
                         if (request.getParameter("control_save") != null) Database.configs.save(configName);
                         if (request.getParameter("control_load") != null) Database.configs.load(configName);
                         if (request.getParameter("control_delete") != null) Database.configs.delete(configName);
@@ -86,11 +94,17 @@ public class ControlServlet extends MainServlet {
                     }
         } else {
             for (Lever lever : Levers.list) {
-                if (lever.toValue().getValueType() == ValueType.VOID) continue;
-                String leverName = "control_" + lever.toValue().getName().toLowerCase();
+                Value value = lever.toValue();
+                if (value.getValueType() == ValueType.VOID) continue;
+                String leverName = "control_" + value.getName().toLowerCase();
                 String leverValue = request.getParameter(leverName);
+                if (value.getValueType() == ValueType.BOOLEAN){
+                    if (leverValue == null) leverValue = "off";
+                    Journal.add(leverName + " = " + leverValue);
+                }
+
                 if (leverValue != null)
-                    lever.toValue().setFromString(leverValue);
+                    value.setFromString(leverValue);
             }
             BotProcess.reScheduleAll();
         }

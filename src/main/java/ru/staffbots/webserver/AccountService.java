@@ -3,7 +3,10 @@ package ru.staffbots.webserver;
 import ru.staffbots.database.users.Users;
 import ru.staffbots.database.users.UserRole;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -61,7 +64,13 @@ public class AccountService {
         session.setAttribute(attribute, value);
     }
 
-    public Boolean isAccessDenied(HttpSession session){
-        return (getUserLogin(session) == null);
+    public Boolean isAccessDenied(HttpServletRequest request)throws IOException {
+        return isAccessDenied(request, null);
+    }
+
+    public Boolean isAccessDenied(HttpServletRequest request, HttpServletResponse response)throws IOException {
+        boolean accessDenied = (getUserLogin(request.getSession()) == null);
+        if ((accessDenied)&&(response != null)) response.sendRedirect("/entry");
+        return accessDenied;
     }
 }

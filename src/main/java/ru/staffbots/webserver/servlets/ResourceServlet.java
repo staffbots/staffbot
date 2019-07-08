@@ -7,20 +7,31 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import static java.util.Arrays.asList;
+import java.util.List;
 
 // Обработка запроса ресурса
 // вида: <server>:<port>/resource?name=<resourceName>
-// например: localhost:8055/resource?name=/html/scripts/jquery.js
+// например: localhost/resource?name=/html/scripts/main.js
+// или https://localhost:8055/resource?name=/img/logo.png
 public class ResourceServlet extends BaseServlet {
+
+    // Список ресурсов, для получения которых не требуется авторизация
+    public static final List<String> FREE_RESOURCES = asList(
+        "/img/logo.png"
+    );
 
     public ResourceServlet(AccountService accountService) {
         super(accountService);
     }
 
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) {
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException{
+        String resourceName = request.getParameter("name");
+        if (!FREE_RESOURCES.contains(resourceName))
+            if (accountService.isAccessDenied(request)) return;
         try {
-            String resourceName = request.getParameter("name");
             if (resourceName == null) return;
             response.getOutputStream().write(Resources.getAsBytes(resourceName));
         } catch (Exception exception) {
@@ -29,8 +40,8 @@ public class ResourceServlet extends BaseServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
         doGet(request, response);
     }
 }

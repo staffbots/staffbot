@@ -27,7 +27,6 @@ public class Tester extends Pattern {
     // Точка входа при запуске приложения
     // ВНИМАНИЕ! Порядок инициализаций менять не рекомендуется
     public static void main(String[] args) {
-        System.out.println(TimeZone.getDefault().getRawOffset());
         propertiesInit(); // Загружаем конфигурацию сборки
         databaseInit(); // Подключаемся к базе данных
         leversInit(); // Инициализируем список элементов управления
@@ -52,15 +51,15 @@ public class Tester extends Pattern {
      * Заполняется список рычагов управления {@code WebServer.levers}<br>
      * Внимание! Порядок перечисления групп и рычагов повторяется в веб-интерфейсе
      */
-    private static void leversInit() {
+    static void leversInit() {
         Levers.initGroup(null, delayLever, buttonLever);
         Journal.add("Рычаги управления успешно проинициализированы");
     }
 
-    private static LongLever delayLever = new LongLever("delayLever",
+    static LongLever delayLever = new LongLever("delayLever",
             "Частота опроса, сек", ValueMode.TEMPORARY, 20, 2, 60*60);
 
-    private static ButtonLever buttonLever = new ButtonLever("buttonLever",
+    static ButtonLever buttonLever = new ButtonLever("buttonLever",
         "Выполнить","Калибровка датчика, основанная на триангуляции континума", () -> {
         // Обработка нажатия кнопки
         Journal.add("Нажата кнопка калибровки датчика");
@@ -74,17 +73,17 @@ public class Tester extends Pattern {
      * <b>Инициализация устройств</b><br>
      * Заполняется список устройств {@code WebServer.devices}<br>
      */
-    private static void devicesInit() {
+    static void devicesInit() {
         Devices.init(  ledRelay, sensor, sonar, button);
     }
 
-    private static RelayDevice ledRelay = new RelayDevice("ledRelay",
+    static RelayDevice ledRelay = new RelayDevice("ledRelay",
             "Светодиод", RaspiPin.GPIO_01, false);
-    private static SensorDHT22Device sensor = new SensorDHT22Device("sensor",
+    static SensorDHT22Device sensor = new SensorDHT22Device("sensor",
             "Датчик температуры и влажности", RaspiPin.GPIO_25);
-    private static SonarHCSR04Device sonar = new SonarHCSR04Device("sonar",
+    static SonarHCSR04Device sonar = new SonarHCSR04Device("sonar",
         "Сонар", RaspiPin.GPIO_04, RaspiPin.GPIO_05);
-    private static ButtonDevice button = new ButtonDevice("button",
+    static ButtonDevice button = new ButtonDevice("button",
             "Кнопка", ValueMode.TEMPORARY, RaspiPin.GPIO_06, () -> {
         // Обработка нажатия кнопки
         double distance = -1;
@@ -109,7 +108,7 @@ public class Tester extends Pattern {
      * <b>Инициализация заданий</b><br>
      * Заполняется список задач {@code tasks}<br>
      */
-    private static void botProcessInit() {
+    static void botProcessInit() {
    //     BotProcess.init(task);
 //        BotProcess.init(testTask);
     }
@@ -117,8 +116,8 @@ public class Tester extends Pattern {
     /*****************************************************
      * Мигание светодиода                                *
      *****************************************************/
-    private static String taskNote = "Тестирование датчиков";
-    private static BotTask task = new BotTask(
+    static String taskNote = "Тестирование датчиков";
+    static BotTask task = new BotTask(
             taskNote, true,
         () -> { // Расчёт задержки перед следующим запуском задания
             long delay = delayLever.getValue()*1000;
@@ -139,8 +138,8 @@ public class Tester extends Pattern {
     /*****************************************************
      * Заполнение БД тестовыми случайными значениями                              *
      *****************************************************/
-    private static String testTaskNote = "Заполнение БД";
-    private static BotTask testTask = new BotTask(
+    static String testTaskNote = "Заполнение БД";
+    static BotTask testTask = new BotTask(
         testTaskNote,
         () -> { // Расчёт задержки перед следующим запуском задания
             long delay = 0;

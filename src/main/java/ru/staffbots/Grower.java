@@ -27,7 +27,7 @@ public class Grower extends Pattern {
     // Точка входа при запуске приложения
     // ВНИМАНИЕ! Порядок инициализаций менять не рекомендуется
     public static void main(String[] args) {
-        propertiesInit(); // Загружаем конфигурацию сборки
+        propertiesInit(); // Загружаем свойства из cfg-файла
         databaseInit(); // Подключаемся к базе данных
         leversInit(); // Инициализируем список элементов управления
         devicesInit(); // Инициализируем список устройств
@@ -37,9 +37,9 @@ public class Grower extends Pattern {
     }
 
     // Определяем наименование решения по названию текущего класса
-    // solutionName определён в родительском классе Staffbot
+    // solutionName определён в родительском классе Pattern
     static {
-        solutionName = new Object(){}.getClass().getEnclosingClass().getSimpleName(); //"Grower"
+        solutionName = new Object(){}.getClass().getEnclosingClass().getSimpleName();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -51,36 +51,36 @@ public class Grower extends Pattern {
      * Заполняется список рычагов управления {@code WebServer.levers}<br>
      * ВНИМАНИЕ! Порядок перечисления групп и рычагов повторяется в веб-интерфейсе
      */
-    private static void leversInit() {
+    static void leversInit() {
         Levers.initGroup("Освещение и вентиляция", sunriseLever, sunsetLever, funUsedLever, funDelayLever);
         Levers.initGroup("Подготовка раствора", phLever, ecLever, soluteLever, volumeLever);
         Levers.initGroup("Орошение", dayRateLever, nightRateLever, durationLever);
         Journal.add("Рычаги управления успешно проинициализированы");
     }
 
-    private static DateLever sunriseLever = new DateLever("sunriseLever",
+    static DateLever sunriseLever = new DateLever("sunriseLever",
             "Время включения света", DateFormat.SHORTTIME, "8:30");
-    private static DateLever sunsetLever = new DateLever("sunsetLever",
+    static DateLever sunsetLever = new DateLever("sunsetLever",
             "Время выключения света", DateFormat.SHORTTIME, "16:45");
-    private static BooleanLever funUsedLever = new BooleanLever("funUsedLever",
+    static BooleanLever funUsedLever = new BooleanLever("funUsedLever",
             "Включить вентиляцию", true);
-    private static LongLever funDelayLever = new LongLever("funDelayLever",
+    static LongLever funDelayLever = new LongLever("funDelayLever",
             "Инертность вентилятора, мин", 0, 20, 2 * 60);
 
-    private static DoubleLever phLever = new DoubleLever("phLever",
+    static DoubleLever phLever = new DoubleLever("phLever",
             "Водородный показатель (кислотность), pH", 5, 0.0, 5.6, 10.0);
-    private static DoubleLever ecLever = new DoubleLever("ecLever",
+    static DoubleLever ecLever = new DoubleLever("ecLever",
             "Удельная электролитическая проводимость, EC", 1, 0.0, 8.1, 10.0);
-    private static BooleanLever soluteLever = new BooleanLever("soluteLever",
+    static BooleanLever soluteLever = new BooleanLever("soluteLever",
             "Подготовка раствора", false);
-    private static DoubleLever volumeLever = new DoubleLever("volumeLever",
+    static DoubleLever volumeLever = new DoubleLever("volumeLever",
             "Объём раствора, л", LeverMode.OBSERVABLE, 2);
 
-    private static LongLever dayRateLever = new LongLever("dayRateLever",
+    static LongLever dayRateLever = new LongLever("dayRateLever",
             "Дневная периодичность, мин", 0, 60, 24 * 60);
-    private static LongLever nightRateLever = new LongLever("nightRateLever",
+    static LongLever nightRateLever = new LongLever("nightRateLever",
             "Ночная периодичность, мин", 0, 120, 24 * 60);
-    private static LongLever durationLever = new LongLever("durationLever",
+    static LongLever durationLever = new LongLever("durationLever",
             "Продолжительность, мин", 0, 15, 24 * 60);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -91,17 +91,17 @@ public class Grower extends Pattern {
      * <b>Инициализация устройств</b><br>
      * Заполняется список устройств<br>
      */
-    private static void devicesInit() {
+    static void devicesInit() {
         Devices.init(sensor, sonar, sunRelay, funRelay);
     }
 
-    private static SensorDHT22Device sensor = new SensorDHT22Device("sensor",
+    static SensorDHT22Device sensor = new SensorDHT22Device("sensor",
             "Датчик температуры и влажности",RaspiPin.GPIO_07);
-    private static SonarHCSR04Device sonar = new SonarHCSR04Device("sonar",
+    static SonarHCSR04Device sonar = new SonarHCSR04Device("sonar",
             "Сонар определения уровня воды, м", RaspiPin.GPIO_03, RaspiPin.GPIO_02);
-    private static RelayDevice sunRelay = new RelayDevice("sunRelay",
+    static RelayDevice sunRelay = new RelayDevice("sunRelay",
             "Реле питания освещения", RaspiPin.GPIO_00, false);
-    private static RelayDevice funRelay = new RelayDevice("funRelay",
+    static RelayDevice funRelay = new RelayDevice("funRelay",
             "Реле питания вентиляции", RaspiPin.GPIO_01, false);
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -112,7 +112,7 @@ public class Grower extends Pattern {
      * <b>Инициализация заданий</b><br>
      * Заполняется список заданий <br>
      */
-    private static void botProcessInit() {
+    static void botProcessInit() {
 
         BotProcess.init(testTask, lightTask, ventingTask, irrigationTask);
     }
@@ -120,8 +120,8 @@ public class Grower extends Pattern {
     /*****************************************************
      * Освещение                                         *
      *****************************************************/
-    private static String lightTaskNote = "Освещение";
-    private static BotTask lightTask = new BotTask(
+    static String lightTaskNote = "Освещение";
+    static BotTask lightTask = new BotTask(
         lightTaskNote,
         () -> { // Расчёт задержки перед следующим запуском задания
             long sunriseTime = sunriseLever.getNearFuture().getTime();
@@ -151,8 +151,8 @@ public class Grower extends Pattern {
     /*****************************************************
      * Вентиляция                                        *
      *****************************************************/
-    private static String ventingTaskNote = "Вентиляция";
-    private static BotTask ventingTask = new BotTask(
+    static String ventingTaskNote = "Вентиляция";
+    static BotTask ventingTask = new BotTask(
         ventingTaskNote,
         () -> { // Расчёт задержки перед следующим запуском
             if (!funUsedLever.getValue()) return -1;
@@ -186,8 +186,8 @@ public class Grower extends Pattern {
     /*****************************************************
      * Орошение                                          *
      *****************************************************/
-    private static String irrigationTaskNote = "Орошение";
-    private static BotTask irrigationTask = new BotTask(
+    static String irrigationTaskNote = "Орошение";
+    static BotTask irrigationTask = new BotTask(
         irrigationTaskNote,
         ()->{// Расчёт задержки перед следующим запуском
             return 900000;
@@ -219,8 +219,8 @@ public class Grower extends Pattern {
     /*****************************************************
      * Заполнение БД тестовыми случайными значениями                              *
      *****************************************************/
-    private static String testTaskNote = "Заполнение БД";
-    private static BotTask testTask = new BotTask(
+    static String testTaskNote = "Заполнение БД";
+    static BotTask testTask = new BotTask(
             testTaskNote,
             () -> { // Расчёт задержки перед следующим запуском задания
                 long delay = 0;

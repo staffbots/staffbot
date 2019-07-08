@@ -29,12 +29,12 @@ public class MainWindow extends JFrame {
      * Парамер включения/отключения главного окна приложения:
      * true - включен, установлен по умолчанию
      * false - отключен
-     * Значение можно выставить в файле staffbot.cfg параметром gui.used
+     * Значение можно выставить в cfg-файле параметром gui.used
      */
     public static Boolean USED = true;
 
     /*
-     * Единственного экзэмпляра класса
+     * Единственный экзэмпляр класса
      */
     private static MainWindow mainWindow = null;
 
@@ -54,7 +54,7 @@ public class MainWindow extends JFrame {
      * Конструктор,
      * Запуск главного окна приложения в отдельном потоке
      */
-    public MainWindow(String tilte) {
+    private MainWindow(String tilte) {
         super(tilte);
         // Закрытие окна прекращает работу всего приложения
         setDefaultCloseOperation(EXIT_ON_CLOSE);

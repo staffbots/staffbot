@@ -25,10 +25,8 @@ public class UsersServlet extends MainServlet {
 
     // Вызывается при запросе странице с сервера
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (!Database.connected()){
-            response.sendRedirect("/about");
-            return;
-        }
+        if (accountService.isAccessDenied(request, response)) return;
+
         Map<String, Object> pageVariables = new HashMap();
         HttpSession session = request.getSession();
         ArrayList<User> userList = accountService.userDAO.getUserList();
@@ -49,15 +47,17 @@ public class UsersServlet extends MainServlet {
 
     // Вызывается при отправке страницы на сервер
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+        if (accountService.isAccessDenied(request, response)) return;
+
         HttpSession session = request.getSession();
         String radiobox = request.getParameter("users_radiobox");
         boolean newlogin = radiobox.equals("new");
-        String login = PageGenerator.fromCode(request.getParameter(newlogin ? "users_new_login" : "users_select_login"));
+        String login = request.getParameter(newlogin ? "users_new_login" : "users_select_login");
         accountService.setAttribute(session, "users_login", login);
         String role = request.getParameter("users_role");
         accountService.setAttribute(session, "users_radiobox", radiobox);
         if (request.getParameter("users_apply") != null){
-            String password = PageGenerator.fromCode(request.getParameter("users_password"));
+            String password = request.getParameter("users_password");
             if (!login.equals(""))
                 accountService.userDAO.setUser(new User(login, password, UserRole.valueByName(role)));
         }

@@ -31,15 +31,18 @@ public class EntryServlet extends MainServlet {
         pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("main_pagename", Pattern.projectName + ":" + Pattern.solutionName + " - " + pageType.getDescription());
         pageVariables.put("entry_login", login);
-        response.getWriter().println(PageGenerator.getPage("entry.html", pageVariables));
+
+        String result = PageGenerator.getPage("entry.html", pageVariables);
+        response.getOutputStream().write( result.getBytes("UTF-8") );
+
         response.setContentType("text/html; charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
     }
 
     // Вызывается при отправке страницы
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-        String login = PageGenerator.fromCode(request.getParameter("entry_login"));
-        String password = PageGenerator.fromCode(request.getParameter("entry_password"));
+        String login = request.getParameter("entry_login");
+        String password = request.getParameter("entry_password");
         if (accountService.verifyUser(login, password) > -1) {
             accountService.addSession(request.getSession(), login);
             response.sendRedirect("/control");

@@ -33,34 +33,9 @@ public class PageGenerator {
             Journal.add(e.getMessage());
             //e.printStackTrace();
         }
-        return toCode(stream.toString());
+        return stream.toString();
         //return stream.toString();
     }
 
-    public static String toCode(String data) {
-        StringBuffer result = new StringBuffer("");
-        for (int i = 0; i < data.length(); i++) {
-            String c = data.substring(i, i + 1);
-            result.append(c.matches("[а-яА-ЯёЁ]") ? "&#" + (int) c.charAt(0) : c);
-        }
-        return result.toString();
-    }
-
-    public static String fromCode(String data) {
-        StringBuffer result = new StringBuffer("");
-        String regex = "&#\\d{4};";
-        Pattern pattern = Pattern.compile(regex);
-        Matcher matcher = pattern.matcher(data);
-        int index = 0;
-        while (matcher.find()) {
-            int code = Integer.parseInt(data.substring(matcher.start() + 2, matcher.end()-1));
-            if (matcher.start() != index)
-                result.append(data.substring(index,matcher.start()));
-            result.append((char)code);
-            index = matcher.end();
-        }
-        result.append(data.substring(index, data.length()));
-        return result.toString();
-    }
 
 }

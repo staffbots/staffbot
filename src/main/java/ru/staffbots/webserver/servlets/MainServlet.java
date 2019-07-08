@@ -22,7 +22,7 @@ public abstract class MainServlet extends BaseServlet {
 
     public static String page_bg_color = "bbbbbb";
 
-    protected PageType pageType = PageType.ENTRY;
+    protected PageType pageType;
 
     public MainServlet(PageType pageType, AccountService accountService){
         super(accountService);
@@ -48,11 +48,6 @@ public abstract class MainServlet extends BaseServlet {
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response, String content) throws ServletException, IOException {
-        if (accountService.isAccessDenied(request.getSession())){
-            System.out.println("111111111111111111");
-            response.sendRedirect("/entry");
-            return;
-        }
         String login = accountService.getUserLogin(request.getSession());
         int accessLevel = accountService.getUserAccessLevel(login);
         if(pageType.getAccessLevel() < accessLevel){
@@ -64,7 +59,6 @@ public abstract class MainServlet extends BaseServlet {
                     response.sendRedirect("/status");
                     break;
                 default:
-                    System.out.println("2222222222222222222");
                     response.sendRedirect("/entry");
                     break;
             }
@@ -84,10 +78,11 @@ public abstract class MainServlet extends BaseServlet {
 
         String result = PageGenerator.getPage("main.html", pageVariables);
 
-        response.getWriter().println(result);
+        //response.getWriter().println(result);
+        response.getOutputStream().write( result.getBytes("UTF-8") );
 
-        response.setContentType("text/html; charset=utf-8");
-        response.setStatus(HttpServletResponse.SC_OK);
+        response.setContentType("text/html; charset=UTF-8");
+        response.setStatus( HttpServletResponse.SC_OK );
     }
 
 

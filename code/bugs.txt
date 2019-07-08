@@ -1,16 +1,13 @@
 ﻿Command line for maven is "compile package exec:java -f grower-pom.xml"
 
 ======= STAFFBOT ========
-- РЕФАКТОРИНГ always actuality
+- РЕФАКТОРИНГ always actuality (проверить доступы в классах - public, private...)
 
 ======= CONTROL ==========
-- Не сохраняются checkBox'ы
 
 ======= STATUS ==========
 
 ======= WEBSERVER =======
-- проверка isAccessDenied на каждый запрос !!!
-- Разобраться с кодировкой
 
 ======= DATABASE ========
 

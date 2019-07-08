@@ -27,11 +27,10 @@ public class JournalServlet extends MainServlet {
     }
 
     // Вызывается при запросе странице с сервера
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (!Database.connected()){
-            response.sendRedirect("/about");
-            return;
-        }
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+        if (accountService.isAccessDenied(request, response)) return;
+
         HttpSession session = request.getSession();
         Map<String, Object> pageVariables = new HashMap();
 
@@ -82,7 +81,10 @@ public class JournalServlet extends MainServlet {
     }
 
     // Вызывается при отправке страницы на сервер
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+        if (accountService.isAccessDenied(request, response)) return;
+
         HttpSession session = request.getSession();
         for (String checkboxName : checkboxes){
             String checkboxValueStr = request.getParameter(checkboxName); // Читаем со страницы
@@ -90,7 +92,7 @@ public class JournalServlet extends MainServlet {
             accountService.setAttribute(session, checkboxName, checkboxValueStr);
         }
         accountService.setAttribute(request.getSession(), "journal_search",
-                PageGenerator.fromCode(request.getParameter("journal_search")));
+                request.getParameter("journal_search"));
         accountService.setAttribute(request.getSession(),"journal_count",
                 request.getParameter("journal_count"));
         accountService.setAttribute(request.getSession(),"journal_todate",

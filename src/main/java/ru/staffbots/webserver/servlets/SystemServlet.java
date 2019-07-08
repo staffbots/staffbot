@@ -33,10 +33,10 @@ public class SystemServlet extends MainServlet {
     // Вызывается при запросе странице с сервера
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (accountService.isAccessDenied(request, response)) return;
         Map<String, Object> pageVariables = new HashMap();
 
-        if (Database.connected())
-            Database.cleaner.refresh();
+        Database.cleaner.refresh();
 
         for (String variable : dbcleanVariables)
             if (!variable.contains("_measure") && !variable.contains("_cleaning"))
@@ -69,6 +69,8 @@ public class SystemServlet extends MainServlet {
     // Вызывается при отправке страницы на сервер
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        if (accountService.isAccessDenied(request, response)) return;
+
         if (request.getParameter("dbclean_apply") != null){
             for (String variable : dbcleanVariables)
                 Database.settings.save(variable, request.getParameter(variable));
