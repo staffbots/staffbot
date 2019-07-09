@@ -18,7 +18,7 @@ public class WebServer {
 
     public static Integer http_port = 80;
 
-    public static Integer https_port = 8055;
+    public static Integer https_port = 8080;
 
     public static String ADMIN = "admin";
 
