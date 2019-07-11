@@ -5,6 +5,7 @@ import ru.staffbots.database.journal.NoteType;
 
 import java.nio.ByteBuffer;
 import java.util.Date;
+import java.util.Locale;
 
 
 /**
@@ -37,6 +38,7 @@ public class DoubleValue extends Value{
      */
     private void setRange(double minValue, double defaultValue, double maxValue){
         this.value = toLong(defaultValue);
+
         this.defaultValue = defaultValue;
         this.minValue = minValue;
         this.maxValue = maxValue;
@@ -61,16 +63,16 @@ public class DoubleValue extends Value{
         }
     }
 
-    public DoubleValue(String name, String note,  ValueMode valueMode, int accuracy, Double... values) {
+    public DoubleValue(String name, String note,  ValueMode valueMode, int precision, Double... values) {
         super(name, note, valueMode, ValueType.DOUBLE, 0);
         initValues(values);
-        this.accuracy = accuracy;
+        this.precision = precision;
     }
 
-    public DoubleValue(String name, String note, int accuracy, Double... values) {
+    public DoubleValue(String name, String note, int precision, Double... values) {
         super(name, note, ValueType.DOUBLE, 0);
         initValues(values);
-        this.accuracy = accuracy;
+        this.precision = precision;
     }
 
     /*******************************************************
@@ -81,11 +83,11 @@ public class DoubleValue extends Value{
         super.set(toLong(value));
     }
 
-    public Double getValue(){
+    public double getValue(){
         return getValue(new Date());
     }
 
-    public Double getValue(Date date){
+    public double getValue(Date date){
         return fromLong(super.get(date));
     }
 
@@ -97,19 +99,18 @@ public class DoubleValue extends Value{
     /*******************************************************
      *****         Преобразование типов                *****
      *******************************************************/
+    /**
+     * <b>Точность округления</b><br>
+     * количество знаков после запятой
+     */
+    public int precision;
 
-    public static String toString(double value, int accuracy){
-        return Double.toString(round(value, accuracy));
+    public static String toString(double value, int precision){
+        return String.format(Locale.US, "%." + precision + "f", value);
     }
 
     public static long toLong(double value) {
-        return LongValue.fromBytes(toBytes(value));
-    }
-
-    public static byte[] toBytes(double value) {
-        byte[] bytes = new byte[8];
-        ByteBuffer.wrap(bytes).putDouble(value);
-        return bytes;
+        return Double.doubleToLongBits(value);
     }
 
     public static double fromString(String value) throws Exception{
@@ -125,32 +126,17 @@ public class DoubleValue extends Value{
     }
 
     public static double fromLong(long value) {
-        return fromBytes(LongValue.toBytes(value));
+        return Double.longBitsToDouble(value);
     }
-
-    public static double fromBytes(byte[] bytes) {
-        return ByteBuffer.wrap(bytes).getDouble();
-    }
-
-    public static double round(double value, int accuracy){
-        double powerOfTen = Math.round(Math.exp(accuracy * Math.log(10)));
-        return Math.round(value * powerOfTen) / powerOfTen;
-    }
-
-    /**
-     * <b>Точность округления</b><br>
-     * количество знаков после запятой
-     */
-    public int accuracy;
 
     @Override
     public String toString(){
-        return toString(getValue(), accuracy);
+        return toString(getValue(), precision);
     }
 
     @Override
     public String toString(long value){
-        return toString(fromLong(value), accuracy);
+        return toString(fromLong(value), precision);
     }
 
     @Override

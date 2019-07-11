@@ -232,20 +232,20 @@ public class StatusServlet extends MainServlet {
     private String getDataSets(Period period){
         String context = "";
         int numberOfValue = 0;
+        for (Lever lever : Levers.list)
+            if (lever.toValue().isPlotPossible())
+                context +=(context.equals("") ? "" : ",") + "\n" + getDataSet((Value)lever, period, numberOfValue++);
         for (Device device : Devices.list)
             for (Value value : device.getValues())
                 if (value.isPlotPossible())
                     context +=(context.equals("") ? "" : ",") + "\n" + getDataSet(value, period, numberOfValue++);
-        for (Lever lever : Levers.list)
-            if (lever.toValue().isPlotPossible())
-                context +=(context.equals("") ? "" : ",") + "\n" + getDataSet((Value)lever, period, numberOfValue++);
         return context;
     }
 
     private String getDataSet(Value value, Period period, int numberOfValue) {
         String[] booleans = {"false", "true"};
         int index = (value.getValueType() == ValueType.BOOLEAN) ? 1 : 0;
-        int accuracy = (value.getValueType() == ValueType.DOUBLE) ? ((DoubleValue) value).accuracy : 0;
+        int precision = (value.getValueType() == ValueType.DOUBLE) ? ((DoubleValue) value).precision : 0;
 
         String context = "'" + value.getName() + "':{";
         context += "label:'" + value.getNote() + "',\n";
@@ -253,7 +253,7 @@ public class StatusServlet extends MainServlet {
         context += "splines: {show: " + booleans[1 - index] + "},\n";
         context += "points: {show: " + booleans[1 - index] + "},\n";
         context += "color: 'hsl(" + hue[numberOfValue] + ",80%,50%)',\n";
-        context += "accuracy: " + accuracy + ",\n";
+        context += "precision: " + precision + ",\n";
         context += "data:[";
         ArrayList<DBValue> dbValues = value.getDataSet(period);
         boolean first = true;

@@ -184,7 +184,7 @@
 
 			if (item) {
 				var x = item.datapoint[0].toFixed(0),
-					y = item.datapoint[1].toFixed(item.series.accuracy),
+					y = item.datapoint[1].toFixed(item.series.precision),
                     d = moment(new Date(x * 1000)).format('DD.MM.YYYY HH:mm:ss');
 				$("#tooltip").html(item.series.label + ": <b>" + y + "</b><br>" + d)
 					.css({top: item.pageY+5, left: item.pageX+5})
