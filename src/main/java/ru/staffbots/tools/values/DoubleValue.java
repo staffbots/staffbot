@@ -141,7 +141,7 @@ public class DoubleValue extends Value{
 
     @Override
     public long toLong(){
-        return toLong(getValue());
+        return get();
     }
 
     // Устанавливает значение из строки value
