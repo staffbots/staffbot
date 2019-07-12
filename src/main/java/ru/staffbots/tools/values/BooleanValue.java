@@ -11,19 +11,6 @@ public class BooleanValue extends Value {
 
     public boolean defaultValue = false;
 
-    // Строка для получения true-значения из html-формата
-    public String trueValueFromString = "on";
-
-    // Строка для получения false-значения из html-формата
-    public String falseValueFromString = "off";
-
-    // Строка для представления true-значения в html-формате
-    public String trueValueToString = "<input type='checkbox' checked disabled>";
-
-    // Строка для представления false-значения в html-формате
-    public String falseValueToString = "<input type='checkbox' disabled>";
-
-
     public BooleanValue(String name, String note, ValueMode valueMode, boolean value) {
         super(name, note, valueMode, ValueType.BOOLEAN, toLong(value));
     }
@@ -56,6 +43,23 @@ public class BooleanValue extends Value {
     /*******************************************************
      *****         Преобразование типов                *****
      *******************************************************/
+    // Строка для получения true-значения из html-формата
+    public static final String trueValueString = "on";
+
+    // Строка для получения false-значения из html-формата
+    public static final String falseValueString = "off";
+
+    // Строка для получения true-значения из html-формата
+    public static final String trueHtmlString = "checked";
+
+    // Строка для получения false-значения из html-формата
+    public static final String falseHtmlString = "";
+
+    // Строка для представления true-значения в html-формате
+    public static final String trueViewString = "<input type='checkbox' checked disabled>";
+
+    // Строка для представления false-значения в html-формате
+    public static final String falseViewString = "<input type='checkbox' disabled>";
 
     public static long toLong(boolean value) {
         return (value ? 1 : 0);
@@ -72,30 +76,31 @@ public class BooleanValue extends Value {
     @Override
     // для интерфейса
     public String toString(){
-        return fromLong(get()) ? trueValueToString : falseValueToString;
+        return getValue() ? trueValueString : falseValueString;
+    }
+
+    @Override
+    // для интерфейса
+    public String toViewString(){
+        return getValue() ? trueViewString : falseViewString;
+    }
+
+    @Override
+    // для интерфейса
+    public String toHtmlString(){
+        return getValue() ? trueHtmlString  : falseHtmlString ;
     }
 
     @Override
     // для графиков
-    public String toString(long value){
+    public String toValueString(long value){
         return Long.toString(toLong(fromLong(value)));
     }
 
     @Override
-    public long toLong() {
-        return toLong(getValue());
-    }
-
-    @Override
     public void setFromString(String value){
-        if (value == null) value = falseValueFromString;
-        setValue(trueValueFromString.equalsIgnoreCase(value));
+        if (value == null) value = falseValueString;
+        setValue(trueValueString.equalsIgnoreCase(value));
     }
-
-    @Override
-    public void setFromLong(long value) {
-        setValue(fromLong(value));
-    }
-
 
 }

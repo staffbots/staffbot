@@ -93,12 +93,6 @@ public class LongValue extends Value {
      *****         Преобразование типов                *****
      *******************************************************/
 
-    public static byte[] toBytes(long value) {
-        byte[] bytes = new byte[8];
-        ByteBuffer.wrap(bytes).putLong(value);
-        return bytes;
-    }
-
     public static long fromString(String value) throws Exception{
         return Long.parseLong(value);
     }
@@ -111,27 +105,18 @@ public class LongValue extends Value {
         }
     }
 
-    public static long fromBytes(byte[] bytes) {
-        return ByteBuffer.wrap(bytes).getLong();
-    }
-
     /**
      * <b>Получить значение для отображения</b><br>
      * @return Значение для отображения
      */
     @Override
     public String toString(){
-        return toString(get());
+        return toValueString(get());
     }
 
     @Override
-    public String toString(long value){
+    public String toValueString(long value){
         return Long.toString(value);
-    }
-
-    @Override
-    public long toLong() {
-        return getValue();
     }
 
     // Устанавливает значение из строки value
@@ -140,14 +125,9 @@ public class LongValue extends Value {
         try {
             set(LongValue.fromString(value));
         } catch (Exception exception) {
-            Journal.add("Неудачная попытка присвоить " + name + " значение " + value,
+            Journal.add("Неудачная попытка присвоить " + name + " (" + note + ") значение " + value,
                     NoteType.ERROR, exception);
         }
-    }
-
-    @Override
-    public void setFromLong(long value) {
-        setValue(value);
     }
 
 }

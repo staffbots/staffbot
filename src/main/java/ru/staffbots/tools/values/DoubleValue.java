@@ -135,13 +135,8 @@ public class DoubleValue extends Value{
     }
 
     @Override
-    public String toString(long value){
+    public String toValueString(long value){
         return toString(fromLong(value), precision);
-    }
-
-    @Override
-    public long toLong(){
-        return get();
     }
 
     // Устанавливает значение из строки value
@@ -153,11 +148,6 @@ public class DoubleValue extends Value{
             Journal.add("Неудачная попытка присвоить " + name + " значение " + value,
                     NoteType.ERROR, exception);
         }
-    }
-
-    @Override
-    public void setFromLong(long value) {
-        setValue(fromLong(value));
     }
 
 }

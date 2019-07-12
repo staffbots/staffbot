@@ -148,7 +148,7 @@ abstract public class Value extends DBTable {
                             dbValues.add(new DBValue(
                                     new Date(resultSet.getTimestamp(1).getTime()),
                                     previousValue));
-                    previousValue = toString(resultSet.getBigDecimal(2).longValue());
+                    previousValue = toValueString(resultSet.getBigDecimal(2).longValue());
                     dbValues.add(new DBValue(
                             new Date(resultSet.getTimestamp(1).getTime()),
                             previousValue));
@@ -229,7 +229,7 @@ abstract public class Value extends DBTable {
      * @param newValue - устанавлевоемое значение
      * @return установленное значение
      */
-    synchronized public long set(long newValue) {
+    public long set(long newValue) {
         boolean allow;
         try {
             allow = (newValue != tryGet(new Date()));
@@ -244,8 +244,7 @@ abstract public class Value extends DBTable {
                                 " (value) VALUES (?)");
                 statement.setLong(1, newValue);
                 statement.executeUpdate();
-                String stringValue = (valueType != ValueType.BOOLEAN) ? toString() : Long.toString(newValue);
-                Journal.add(getNote() + " - установлено заначение: " + stringValue);
+                Journal.add(getNote() + " - установлено заначение: " + toString());
             } catch (Exception exception) {
                 Journal.add("Ошибка записи в таблицу " + getTableName() + exception.getMessage(), NoteType.ERROR);
             }
@@ -269,8 +268,7 @@ abstract public class Value extends DBTable {
                 statement.setTimestamp(1, new Timestamp(moment.getTime()));
                 statement.setLong(2, newValue);
                 statement.executeUpdate();
-                String stringValue = (valueType != ValueType.BOOLEAN) ? toString() : Long.toString(newValue);
-                Journal.add(getNote() + " - установлено заначение: " + stringValue
+                Journal.add(getNote() + " - установлено заначение: " + toString()
                         + " на дату " + DateValue.toString(moment, Journal.DATE_FORMAT));
             } catch (Exception e) {
                 Journal.add("Ошибка записи в таблицу " + getTableName() + e.getMessage(), NoteType.ERROR);
@@ -327,17 +325,34 @@ abstract public class Value extends DBTable {
      * <b>Получить значение для отображения</b><br>
      */
     @Override
-    public abstract String toString();
+    // Используется для вывода значения по умолчанию
+    public String toString(){
+        return toValueString();
+    }
 
-    public abstract String toString(long value);
+    // Используется для ввода значения
+    public String toHtmlString(){
+        return toString();
+    }
 
-    public abstract long toLong();
+    // Используется для вывода значения
+    public String toViewString(){
+        return toString();
+    }
+
+    // Используется для выгрузки графиков
+    public String toValueString(){
+        return toValueString(get());
+    }
+
+    // Используется для выгрузки графиков
+    public String toValueString(long value){
+        return Long.toString(value);
+    }
 
     // Устанавливает значение из строки value
     // Переопределён для каждого (дочернего) типа заначений
     public abstract void setFromString(String value);
-
-    public abstract void setFromLong(long value);
 
     public Value toValue(){
         return this;

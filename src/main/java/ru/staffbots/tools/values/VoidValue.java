@@ -30,21 +30,12 @@ public class VoidValue extends Value{
     }
 
     @Override
-    public String toString(long value) {
+    public String toValueString(long value) {
         return null;
     }
 
     @Override
-    public long toLong() {
-        return 0;
-    }
-
-    @Override
     public void setFromString(String value) {
-    }
-
-    @Override
-    public void setFromLong(long value) {
     }
 
 }

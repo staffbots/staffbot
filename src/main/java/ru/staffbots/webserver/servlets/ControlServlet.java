@@ -8,6 +8,7 @@ import ru.staffbots.tools.botprocess.BotProcessStatus;
 import ru.staffbots.tools.levers.ButtonLever;
 import ru.staffbots.tools.levers.Lever;
 import ru.staffbots.tools.levers.Levers;
+import ru.staffbots.tools.values.BooleanValue;
 import ru.staffbots.tools.values.Value;
 import ru.staffbots.tools.values.ValueType;
 import ru.staffbots.webserver.AccountService;
@@ -98,11 +99,8 @@ public class ControlServlet extends MainServlet {
                 if (value.getValueType() == ValueType.VOID) continue;
                 String leverName = "control_" + value.getName().toLowerCase();
                 String leverValue = request.getParameter(leverName);
-                if (value.getValueType() == ValueType.BOOLEAN){
-                    if (leverValue == null) leverValue = "off";
-                    Journal.add(leverName + " = " + leverValue);
-                }
-
+                if (value.getValueType() == ValueType.BOOLEAN)
+                    if (leverValue == null) leverValue = BooleanValue.falseValueString;
                 if (leverValue != null)
                     value.setFromString(leverValue);
             }
@@ -121,9 +119,9 @@ public class ControlServlet extends MainServlet {
         for (Lever lever : Levers.list){
             if (!lever.toValue().isChangeable()) continue;
             pageVariables.put("name", "control_" + lever.toValue().getName().toLowerCase());
-            String value = lever.toValue().toString();
-            if (lever.toValue().getValueType() == ValueType.BOOLEAN)
-                value = (lever.toValue().get() == 0) ? "" : "checked";
+            String value = lever.toValue().toHtmlString();
+            //if (lever.toValue().getValueType() == ValueType.BOOLEAN)
+            //    value = (lever.toValue().get() == 0) ? "" : "checked";
             pageVariables.put("value", value);
             pageVariables.put("note", lever.toValue().getNote());
             pageVariables.put("size", maxSize);

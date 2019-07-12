@@ -52,7 +52,7 @@ public class Tester extends Pattern {
      * Внимание! Порядок перечисления групп и рычагов повторяется в веб-интерфейсе
      */
     static void leversInit() {
-        Levers.initGroup(null, delayLever, buttonLever);
+        Levers.initGroup(null, delayLever, buttonLever, listLever);
         Journal.add("Рычаги управления успешно проинициализированы");
     }
 
@@ -64,6 +64,9 @@ public class Tester extends Pattern {
         // Обработка нажатия кнопки
         Journal.add("Нажата кнопка калибровки датчика");
     });
+
+    static ListLever listLever = new ListLever("listLever",
+            "Тестовый список", "строка 0","строка 1","строка 2","строка 3");
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  Devices - Устройства

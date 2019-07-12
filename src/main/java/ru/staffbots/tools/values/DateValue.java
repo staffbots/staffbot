@@ -119,17 +119,12 @@ public class DateValue extends Value{
      */
     @Override
     public String toString(){
-        return toString(get());
+        return toValueString(get());
     }
 
     @Override
-    public String toString(long value){
+    public String toValueString(long value){
         return toString(fromLong(value), format);
-    }
-
-    @Override
-    public long toLong() {
-        return toLong(getValue());
     }
 
     // Устанавливает значение из строки value
@@ -142,11 +137,5 @@ public class DateValue extends Value{
                     NoteType.ERROR, exception);
         }
     }
-
-    @Override
-    public void setFromLong(long value) {
-        setValue(fromLong(value));
-    }
-
 
 }

@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Created by Sysadmin on 25.05.2017.
+ *
  */
 public class StatusServlet extends MainServlet {
 
@@ -44,8 +44,7 @@ public class StatusServlet extends MainServlet {
     }
 
     public void doGetValue(Value value, HttpServletResponse response) throws ServletException, IOException {
-        //response.getWriter().println(value.toString());
-        response.getOutputStream().write( value.toString().getBytes("UTF-8") );
+        response.getOutputStream().write( value.toViewString().getBytes("UTF-8") );
         response.setContentType("text/html; charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
     }
