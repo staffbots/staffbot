@@ -14,7 +14,7 @@ import java.util.*;
 /**
  *
  */
-public class SystemServlet extends MainServlet {
+public class SystemServlet extends BaseServlet {
 
     public SystemServlet(AccountService accountService) {
             super(PageType.SYSTEM, accountService);
@@ -33,8 +33,9 @@ public class SystemServlet extends MainServlet {
     // Вызывается при запросе странице с сервера
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (accountService.isAccessDenied(request, response)) return;
+        if (isAccessDenied(request, response)) return;
         Map<String, Object> pageVariables = new HashMap();
+
 
         Database.cleaner.refresh();
 
@@ -61,7 +62,6 @@ public class SystemServlet extends MainServlet {
         pageVariables.put("dateformat", Cleaner.DATE_FORMAT.getFormat());
         pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("page_bg_color", page_bg_color);
-        pageVariables.put("system_display", Database.connected() ? "inline-table" : "none");
         String content = PageGenerator.getPage(pageType.getName() + ".html", pageVariables);
         super.doGet(request, response, content);
     }
@@ -69,7 +69,7 @@ public class SystemServlet extends MainServlet {
     // Вызывается при отправке страницы на сервер
     @Override
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (accountService.isAccessDenied(request, response)) return;
+        if (isAccessDenied(request, response)) return;
 
         if (request.getParameter("dbclean_apply") != null){
             for (String variable : dbcleanVariables)

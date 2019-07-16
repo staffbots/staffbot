@@ -15,14 +15,13 @@ public class AccountService {
     // Карта сессий sessionId -> login
     private Map<String, String> sessions = new HashMap<>();
 
-    public Users userDAO = new Users();
-
+    public Users users = new Users();
 
     public int verifyUser(String login, String password){
-        if (userDAO.isAdmin(login))
+        if (users.isAdmin(login))
             if (WebServer.PASSWORD.equals(password))
                 return UserRole.ADMIN.getAccessLevel();
-        return userDAO.verify(login, password);
+        return users.verify(login, password);
     }
 
     public void addSession(HttpSession session, String login){
@@ -45,15 +44,18 @@ public class AccountService {
         return sessions.containsKey(sessionId) ? sessions.get(sessionId) : null;
     }
 
-    public UserRole getUserRole(String login){
-        if (userDAO.isAdmin(login))
-            return UserRole.ADMIN;
-        return userDAO.getRole(login);
+    public int getUserAccessLevel(String login){
+        UserRole role = users.getRole(login);
+        return (role == null) ? -1 : role.getAccessLevel();
     }
 
-    public int getUserAccessLevel(String login){
-        return getUserRole(login).getAccessLevel();
+    public int getUserAccessLevel(HttpServletRequest request){
+        if (request == null ) return -1;
+        String login = getUserLogin(request.getSession());
+        if (login == null ) return -1;
+        return getUserAccessLevel(login);
     }
+
 
     public String getAttribute(HttpSession session, String attribute){
         Object value = session.getAttribute(attribute);
@@ -64,13 +66,4 @@ public class AccountService {
         session.setAttribute(attribute, value);
     }
 
-    public Boolean isAccessDenied(HttpServletRequest request)throws IOException {
-        return isAccessDenied(request, null);
-    }
-
-    public Boolean isAccessDenied(HttpServletRequest request, HttpServletResponse response)throws IOException {
-        boolean accessDenied = (getUserLogin(request.getSession()) == null);
-        if ((accessDenied)&&(response != null)) response.sendRedirect("/entry");
-        return accessDenied;
-    }
 }

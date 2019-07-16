@@ -20,7 +20,7 @@ import java.util.Map;
 /**
  *
  */
-public class AboutServlet extends MainServlet {
+public class AboutServlet extends BaseServlet {
 
     public AboutServlet(AccountService accountService) {
         super(PageType.ABOUT, accountService);
@@ -28,7 +28,7 @@ public class AboutServlet extends MainServlet {
 
     // Вызывается при запросе странице с сервера
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (accountService.isAccessDenied(request, response)) return;
+        if (isAccessDenied(request, response)) return;
         Map<String, Object> pageVariables = new HashMap();
         pageVariables.put("about_osname",System.getProperty("os.name"));
         pageVariables.put("about_osversion",System.getProperty("os.version"));
@@ -46,8 +46,8 @@ public class AboutServlet extends MainServlet {
                 trace += traceElement.toString() + "<br>";
         pageVariables.put("about_trace", trace);
         pageVariables.put("about_admin", WebServer.ADMIN);
-        pageVariables.put("device_display", Devices.USED ? "none" : "inline-table");
         pageVariables.put("database_display", Database.connected() ? "none" : "inline-table");
+        pageVariables.put("device_display", Devices.USED || Database.disconnected() ? "none" : "inline-table");
         pageVariables.put("about_devicelist", getDeviceList());
         pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("page_bg_color", page_bg_color);

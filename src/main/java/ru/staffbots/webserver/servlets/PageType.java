@@ -1,16 +1,18 @@
 package ru.staffbots.webserver.servlets;
 
+import ru.staffbots.database.Database;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public enum PageType {
     ENTRY   (0, "Выход",        -1, "Авторизация",            false),
-    CONTROL (1, "Управление",   1,  "Управление параметрами", false),
-    STATUS  (2, "Состояние",    2,  "Состояние системы",      false),
-    JOURNAL (3, "Журнал",       2,  "Журнал событий",         true ),
-    USERS   (4, "Пользователи", 0,  "Список пользователей",   true ),
-    SYSTEM  (5, "Система",      0,  "Системные настройки",    false),
-    ABOUT   (6, "Сведения",     2,  "Сведения о системе",     false);
+    CONTROL (1, "Управление",   1,  "Управление параметрами", true ),
+    STATUS  (2, "Состояние",    0,  "Состояние системы",      true ),
+    JOURNAL (3, "Журнал",       0,  "Журнал событий",         true ),
+    USERS   (4, "Пользователи", 2,  "Список пользователей",   true ),
+    SYSTEM  (5, "Система",      2,  "Системные настройки",    true ),
+    ABOUT   (6, "Сведения",     0,  "Сведения о системе",     false);
 
     private int value;
     private String caption;
@@ -60,5 +62,6 @@ public enum PageType {
     public int getAccessLevel(){
         return accessLevel;
     }
+
 
 }

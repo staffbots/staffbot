@@ -99,7 +99,8 @@ public class BotProcess {
     }
 
     public static long getStartTime(){
-        String startTimeString = Database.settings.load("control_start_time");
+        String startTimeString = (Database.settings == null) ? null :
+                Database.settings.load("control_start_time");
         if (startTimeString == null) return startTime;
         try {
             startTime = Long.parseLong(startTimeString);

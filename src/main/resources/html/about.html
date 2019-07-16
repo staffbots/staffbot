@@ -73,32 +73,6 @@
 </p>
 
 
-<p>
-<table style="display:${device_display}; background: #${page_bg_color}; text-align:left;" cellpadding="3" >
-    <tr>
-        <td>
-            <p style="font-weight: bold;">Работа с устройствами отключена</p>
-        </td>
-    </tr>
-    <tr>
-        <td >
-            <table style="background:#${site_bg_color}" cellpadding="10">
-                <tr>
-                    <td>
-                        Это обусловлено одной из причин:
-                        <li>параметр <em>pi.used</em> в файле конфигурации равен <em>false</em>;</li>
-                        <li>сработала автоматическая блокировка, так как операционная система отлична от Raspbian</li>
-                        <small>
-                            <p>В таком режиме работы программный комплекс не имеет доступа к реальным устройствам.</p>
-                            <p>Файл конфигурации <em>staffbot.cfg</em> рассположен в одной директории с запускаемым jar-файлом</p>
-                        </small>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
-
 </p>
 <p>
 <table style="display:${database_display}; background: #${page_bg_color}; text-align:left;" cellpadding="3">
@@ -137,3 +111,29 @@
 
 </table>
 </p>
+
+<p>
+    <table style="display:${device_display}; background: #${page_bg_color}; text-align:left;" cellpadding="3" >
+        <tr>
+            <td>
+<p style="font-weight: bold;">Работа с устройствами отключена</p>
+</td>
+</tr>
+<tr>
+    <td >
+        <table style="background:#${site_bg_color}" cellpadding="10">
+            <tr>
+                <td>
+                    Это обусловлено одной из причин:
+                    <li>параметр <em>pi.used</em> в файле конфигурации равен <em>false</em>;</li>
+                    <li>сработала автоматическая блокировка, так как операционная система отлична от Raspbian</li>
+                    <small>
+                        <p>В таком режиме работы программный комплекс не имеет доступа к реальным устройствам.</p>
+                        <p>Файл конфигурации <em>staffbot.cfg</em> рассположен в одной директории с запускаемым jar-файлом</p>
+                    </small>
+                </td>
+            </tr>
+        </table>
+    </td>
+</tr>
+</table>

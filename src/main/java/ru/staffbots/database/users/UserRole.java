@@ -5,9 +5,9 @@ import java.util.Map;
 
 public enum UserRole {
 
-    ADMIN(0, "Администратор"),
+    INSPECTOR(0, "Инспектор"),
     MANAGER(1, "Управляющий"),
-    INSPECTOR(2, "Инспектор");
+    ADMIN(2, "Администратор");
 
     private String description;
     private int accessLevel;
@@ -38,7 +38,6 @@ public enum UserRole {
     }
 
     public static UserRole valueByName(String name) {
-
         return nameMap.containsKey(name) ? (UserRole) nameMap.get(name) : defaultRole;
     }
 

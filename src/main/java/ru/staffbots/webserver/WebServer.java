@@ -30,7 +30,6 @@ public class WebServer {
 
     public static String key_manager_password = "staffbots";
 
-
     /**
      *
      */

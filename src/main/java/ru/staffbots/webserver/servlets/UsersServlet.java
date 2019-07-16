@@ -17,7 +17,7 @@ import java.util.Map;
 /**
  *
  */
-public class UsersServlet extends MainServlet {
+public class UsersServlet extends BaseServlet {
 
     public UsersServlet(AccountService accountService) {
         super(PageType.USERS, accountService);
@@ -25,14 +25,14 @@ public class UsersServlet extends MainServlet {
 
     // Вызывается при запросе странице с сервера
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (accountService.isAccessDenied(request, response)) return;
+        if (isAccessDenied(request, response)) return;
 
         Map<String, Object> pageVariables = new HashMap();
         HttpSession session = request.getSession();
-        ArrayList<User> userList = accountService.userDAO.getUserList();
+        ArrayList<User> userList = accountService.users.getUserList();
 
         String login = accountService.getAttribute(session, "users_login");
-        User user = accountService.userDAO.getUser(login);
+        User user = accountService.users.getUser(login);
         UserRole role = (user == null) ? UserRole.INSPECTOR : user.role;
 
         pageVariables.put("users_role", UserRole.INSPECTOR.getName());
@@ -47,7 +47,7 @@ public class UsersServlet extends MainServlet {
 
     // Вызывается при отправке страницы на сервер
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-        if (accountService.isAccessDenied(request, response)) return;
+        if (isAccessDenied(request, response)) return;
 
         HttpSession session = request.getSession();
         String radiobox = request.getParameter("users_radiobox");
@@ -59,10 +59,10 @@ public class UsersServlet extends MainServlet {
         if (request.getParameter("users_apply") != null){
             String password = request.getParameter("users_password");
             if (!login.equals(""))
-                accountService.userDAO.setUser(new User(login, password, UserRole.valueByName(role)));
+                accountService.users.setUser(new User(login, password, UserRole.valueByName(role)));
         }
         if (request.getParameter("users_delete") != null){
-            accountService.userDAO.delete(login);
+            accountService.users.delete(login);
         }
         doGet(request, response);
     }

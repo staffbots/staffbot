@@ -11,10 +11,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Главный поток
+ *
  */
-//entry
-public class EntryServlet extends MainServlet {
+public class EntryServlet extends BaseServlet {
 
     public EntryServlet(AccountService accountService) {
         super(PageType.ENTRY, accountService);

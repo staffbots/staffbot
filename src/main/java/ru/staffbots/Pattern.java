@@ -6,7 +6,7 @@ import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.Resources;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.webserver.WebServer;
-import ru.staffbots.webserver.servlets.MainServlet;
+import ru.staffbots.webserver.servlets.BaseServlet;
 import ru.staffbots.windows.MainWindow;
 
 import java.io.*;
@@ -74,9 +74,9 @@ public abstract class Pattern{
             WebServer.key_store = property.getProperty("web.key_store", WebServer.key_store);
             WebServer.key_store_password = property.getProperty("web.key_store_password", WebServer.key_store_password);
             WebServer.key_manager_password = property.getProperty("web.key_manager_password", WebServer.key_manager_password);
-            MainServlet.site_bg_color = property.getProperty("web.site_bg_color", MainServlet.site_bg_color);
-            MainServlet.main_bg_color = property.getProperty("web.main_bg_color", MainServlet.main_bg_color);
-            MainServlet.page_bg_color = property.getProperty("web.page_bg_color", MainServlet.page_bg_color);
+            BaseServlet.site_bg_color = property.getProperty("web.site_bg_color", BaseServlet.site_bg_color);
+            BaseServlet.main_bg_color = property.getProperty("web.main_bg_color", BaseServlet.main_bg_color);
+            BaseServlet.page_bg_color = property.getProperty("web.page_bg_color", BaseServlet.page_bg_color);
 
             Journal.add("Конфигурация загружена", false);
 

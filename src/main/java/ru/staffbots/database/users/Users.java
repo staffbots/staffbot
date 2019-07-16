@@ -66,8 +66,10 @@ public class Users extends DBTable {
     }
 
     public UserRole getRole(String login){
+        if (isAdmin(login))
+            return UserRole.ADMIN;
         User user = getUser(login);
-        return user.role;
+        return (user == null) ? null : user.role;
     }
 
     public User getUser(String login){

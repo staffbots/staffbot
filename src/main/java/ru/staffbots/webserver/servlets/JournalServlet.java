@@ -15,7 +15,7 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
 
-public class JournalServlet extends MainServlet {
+public class JournalServlet extends BaseServlet {
 
     private ArrayList<String> checkboxes;
 
@@ -29,7 +29,7 @@ public class JournalServlet extends MainServlet {
     // Вызывается при запросе странице с сервера
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
-        if (accountService.isAccessDenied(request, response)) return;
+        if (isAccessDenied(request, response)) return;
 
         HttpSession session = request.getSession();
         Map<String, Object> pageVariables = new HashMap();
@@ -83,7 +83,7 @@ public class JournalServlet extends MainServlet {
     // Вызывается при отправке страницы на сервер
     public void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
-        if (accountService.isAccessDenied(request, response)) return;
+        if (isAccessDenied(request, response)) return;
 
         HttpSession session = request.getSession();
         for (String checkboxName : checkboxes){

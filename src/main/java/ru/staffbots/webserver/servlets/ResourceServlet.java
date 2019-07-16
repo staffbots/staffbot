@@ -22,7 +22,7 @@ public class ResourceServlet extends BaseServlet {
     );
 
     public ResourceServlet(AccountService accountService) {
-        super(accountService);
+        super(null, accountService);
     }
 
     @Override
@@ -30,7 +30,7 @@ public class ResourceServlet extends BaseServlet {
         throws ServletException, IOException{
         String resourceName = request.getParameter("name");
         if (!FREE_RESOURCES.contains(resourceName))
-            if (accountService.isAccessDenied(request)) return;
+            if (accountService.getUserAccessLevel(request) < 0) return;
         try {
             if (resourceName == null) return;
             response.getOutputStream().write(Resources.getAsBytes(resourceName));

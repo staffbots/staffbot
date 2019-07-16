@@ -25,7 +25,7 @@ import java.util.*;
 /**
  *
  */
-public class StatusServlet extends MainServlet {
+public class StatusServlet extends BaseServlet {
 
     private ArrayList<String> checkboxes =  new ArrayList<>();
 
@@ -52,23 +52,20 @@ public class StatusServlet extends MainServlet {
     // Вызывается при запросе странице с сервера
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+
         Map<String, Object> pageVariables = new HashMap();
         HttpSession session = request.getSession();
 
         String getName = request.getParameter("get");
         if (getName != null) {
-            if (accountService.isAccessDenied(request)) return;
+            if (isAccessDenied(request)) return;
             if (getName.equals("tasklist")) {
-
-                //response.getWriter().println(getTaskList());
                 response.getOutputStream().write( getTaskList().getBytes("UTF-8") );
                 response.setContentType("text/html; charset=utf-8");
                 response.setStatus(HttpServletResponse.SC_OK);
                 return;
             }
             if (getName.equals("processstatus")) {
-                //response.getWriter().println(
-                        //PageGenerator.toCode(BotProcess.getStatus().getDescription()));
                 response.getOutputStream().write( BotProcess.getStatus().getDescription().getBytes("UTF-8") );
                 response.setContentType("text/html; charset=utf-8");
                 response.setStatus(HttpServletResponse.SC_OK);
@@ -88,7 +85,7 @@ public class StatusServlet extends MainServlet {
             return;
         }
 
-        if (accountService.isAccessDenied(request, response)) return;
+        if (isAccessDenied(request, response)) return;
 
         Period period = new Period(Journal.DATE_FORMAT);
 
@@ -130,7 +127,6 @@ public class StatusServlet extends MainServlet {
         pageVariables.put("status_todate", period.getToDateAsString());
         pageVariables.put("status_devicelist", getDeviceList(session));
         pageVariables.put("status_leverlist", getLeverList(session));
-        pageVariables.put("status_display", Database.connected() ? "inline-table" : "none");
         pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("datasets", getDataSets(period));
@@ -140,7 +136,7 @@ public class StatusServlet extends MainServlet {
 
     // Вызывается при отправке страницы на сервер
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-        if (accountService.isAccessDenied(request, response)) return;
+        if (isAccessDenied(request, response)) return;
         HttpSession session = request.getSession();
         if (request.getParameter("status_apply") != null) {
             accountService.setAttribute(session,"status_todate", request.getParameter("status_todate"));

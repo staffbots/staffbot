@@ -1,8 +1,6 @@
 package ru.staffbots.webserver.servlets;
 
-import com.sun.javafx.logging.JFRPulseEvent;
 import ru.staffbots.database.Database;
-import ru.staffbots.database.journal.Journal;
 import ru.staffbots.tools.botprocess.BotProcess;
 import ru.staffbots.tools.botprocess.BotProcessStatus;
 import ru.staffbots.tools.levers.ButtonLever;
@@ -22,7 +20,7 @@ import java.util.Map;
 /**
  *
  */
-public class ControlServlet extends MainServlet {
+public class ControlServlet extends BaseServlet {
 
     public ControlServlet(AccountService accountService) {
         super(PageType.CONTROL, accountService);
@@ -31,7 +29,7 @@ public class ControlServlet extends MainServlet {
     // Вызывается при запросе страницы с сервера
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        if (accountService.isAccessDenied(request, response)) return;
+        if (isAccessDenied(request, response)) return;
         Map<String, Object> pageVariables = new HashMap();
         for (BotProcessStatus status : BotProcessStatus.values()) {
             String statusName = "control_" + status.name().toLowerCase();
@@ -42,7 +40,6 @@ public class ControlServlet extends MainServlet {
         }
 
         pageVariables.put("start_time", Long.toString(BotProcess.getStartTime()));
-        pageVariables.put("control_display", Database.connected() ? "inline-table" : "none");
         pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("control_leverlist", getLeverList());
         pageVariables.put("control_configlist", getConfigList());
@@ -57,7 +54,7 @@ public class ControlServlet extends MainServlet {
 
         String setName = request.getParameter("set");
         if (setName != null) {
-            if (accountService.isAccessDenied(request)) return;
+            if (isAccessDenied(request)) return;
             // Обработка нажатия кнопки ButtonLever
             for (Lever lever: Levers.list){
                 Value value = lever.toValue();
@@ -73,7 +70,7 @@ public class ControlServlet extends MainServlet {
             return;
         }
 
-        if (accountService.isAccessDenied(request, response)) return;
+        if (isAccessDenied(request, response)) return;
 
         if (request.getParameter("control_apply") == null) {
             // Обработка управляющих кнопок (пуск, пауза, старт)
