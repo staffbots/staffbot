@@ -29,12 +29,11 @@ public class PageGenerator {
             Charset charset = StandardCharsets.UTF_8;
             Template template = new Template(filename,new InputStreamReader(inputStream, charset),conf, codePage);
             template.process(data, stream);
+            //data.clear();
         } catch (Exception e) {
             Journal.add(e.getMessage());
-            //e.printStackTrace();
         }
         return stream.toString();
-        //return stream.toString();
     }
 
 

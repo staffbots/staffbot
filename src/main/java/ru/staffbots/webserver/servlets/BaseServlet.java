@@ -2,7 +2,6 @@ package ru.staffbots.webserver.servlets;
 
 import ru.staffbots.Pattern;
 import ru.staffbots.database.Database;
-import ru.staffbots.database.users.UserRole;
 import ru.staffbots.webserver.AccountService;
 
 import javax.servlet.ServletException;
@@ -24,6 +23,7 @@ public abstract class BaseServlet extends HttpServlet {
     protected AccountService accountService;
 
     protected PageType pageType;
+
 
     public BaseServlet(PageType pageType, AccountService accountService){
         this.accountService = accountService;
@@ -57,7 +57,7 @@ public abstract class BaseServlet extends HttpServlet {
         return accessDenied;
     }
 
-    public boolean pageEnabled(PageType pageType) {
+    public static boolean pageEnabled(PageType pageType) {
         return (!pageType.getDatabaseDepend() || Database.connected());
     }
 
@@ -99,6 +99,7 @@ public abstract class BaseServlet extends HttpServlet {
         pageVariables.put("main_bg_color", main_bg_color);
 
         String result = PageGenerator.getPage("main.html", pageVariables);
+
 
         response.getOutputStream().write( result.getBytes("UTF-8") );
 

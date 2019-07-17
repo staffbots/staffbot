@@ -111,14 +111,12 @@ public class ControlServlet extends BaseServlet {
     public String getLeverList() {
         String context = "";
         Map<String, Object> pageVariables = new HashMap();
-        pageVariables.put("page_bg_color", page_bg_color);
         int maxSize = Levers.getMaxStringValueSize();
         for (Lever lever : Levers.list){
             if (!lever.toValue().isChangeable()) continue;
+            pageVariables.put("page_bg_color", page_bg_color);
             pageVariables.put("name", "control_" + lever.toValue().getName().toLowerCase());
             String value = lever.toValue().toHtmlString();
-            //if (lever.toValue().getValueType() == ValueType.BOOLEAN)
-            //    value = (lever.toValue().get() == 0) ? "" : "checked";
             pageVariables.put("value", value);
             pageVariables.put("note", lever.toValue().getNote());
             pageVariables.put("size", maxSize);
