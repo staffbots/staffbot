@@ -16,32 +16,38 @@ import java.util.Properties;
 /**
  * <b>Прототип обслуживающего робота</b><br>
  **/
-public abstract class Pattern{
+public abstract class Pattern {
 
     // Название решения,
     // Совпадает с названием дочернего класса, в нём же и определяется
     // Используется в имени БД, наименовании файлов .jar и .cfg, а так же в заголовках веб-интерфейса и главного окна
     public static String solutionName;
 
+    // Название проекта,
+    // Определяется параметром name в файле ресурсов properties
+    // Используется в имени БД и в заголовках веб-интерфейса и главного окна
+    public static String projectName = "Staffbots";
+
     // Название версия проекта,
-    // Определяется параметром <projectName>.version в файле ресурсов properties
+    // Определяется параметром version в файле ресурсов properties
     // Используется в наименовании файлов .jar и .cfg и в заголовке главного окна
     public static String projectVersion;
 
-    // Название проекта,
-    // Совпадает с названием этого класса (т.е. Staffbot), в нём же и определяется (см. ниже)
-    // Используется в имени БД и в заголовках веб-интерфейса и главного окна
-//    public static String projectName = new Object(){}.getClass().getEnclosingClass().getSimpleName(); //"Staffbot"
-    public static String projectName = "Staffbots";
+    // Адрес веб-сайта проекта в www
+    // Определяется параметром website в файле ресурсов properties
+    // Используется при формировании ссылки на описании устройств
+    public static String website = "staffbots.ru";
 
     // Инициализация параметров
     // Вызывается при запуске приложения в определённом порядке с прочими инициализациями
     public static void propertiesInit(){
-        // Считываем версию проекта
+        // Читаем свойства проекта
         try {
             Properties property = new Properties();
             property.load(Pattern.class.getResourceAsStream("/properties"));
-            projectVersion = property.getProperty(projectName.toLowerCase() + ".version", "");
+            projectName = property.getProperty("name", "");
+            projectVersion = property.getProperty("version", "");
+            website = property.getProperty("website", "");
             Journal.add("Свойства проекта загружены", false);
         } catch (IOException exception) {
             Journal.add("Свойства проекта не загружены", NoteType.ERROR, exception, false);

@@ -1,8 +1,10 @@
 package ru.staffbots.tools.devices;
 
 import com.pi4j.io.gpio.Pin;
+import ru.staffbots.Pattern;
 import ru.staffbots.tools.values.Value;
 
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -79,5 +81,17 @@ public abstract class Device{
     public boolean dataRead(){
         return true;
     }
+
+    //
+    public URL getURL(){
+        try {
+            //return new URL("http://" + Pattern.website);
+            return new URL("http://" + Pattern.website + "/devices/" + getModelName());
+        } catch (Exception exception) {
+            return null;
+        }
+    }
+
+    abstract public String getModelName();
 
 }

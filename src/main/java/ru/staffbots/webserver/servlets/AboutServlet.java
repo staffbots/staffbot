@@ -30,6 +30,7 @@ public class AboutServlet extends BaseServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (isAccessDenied(request, response)) return;
         Map<String, Object> pageVariables = new HashMap();
+        pageVariables.put("website", Pattern.website);
         pageVariables.put("about_osname",System.getProperty("os.name"));
         pageVariables.put("about_osversion",System.getProperty("os.version"));
         pageVariables.put("about_osarch",System.getProperty("os.arch"));
@@ -66,6 +67,8 @@ public class AboutServlet extends BaseServlet {
         pageVariables.put("page_bg_color", page_bg_color);
         for (Device device : Devices.list){
             // String deviceName = device.getName();
+
+            pageVariables.put("device_url", device.getURL());
             pageVariables.put("device_model", device.getModel());
             pageVariables.put("device_note", device.getNote());
             pageVariables.put("pin_note", "");

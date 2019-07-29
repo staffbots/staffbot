@@ -156,6 +156,7 @@ public class StatusServlet extends BaseServlet {
         pageVariables.put("page_bg_color", page_bg_color);
 
         for (Device device : Devices.list){
+            pageVariables.put("device_url", device.getURL());
             pageVariables.put("device_model", device.getModel());
             pageVariables.put("device_note", device.getNote());
             pageVariables.put("check_name", device.getName() + "_check");

@@ -17,6 +17,9 @@ import ru.staffbots.tools.botprocess.BotTask;
 import ru.staffbots.tools.botprocess.BotProcess;
 import ru.staffbots.tools.botprocess.BotProcessStatus;
 import com.pi4j.io.gpio.RaspiPin;
+
+import java.io.IOException;
+import java.net.URISyntaxException;
 import java.util.Date;
 
 /*
@@ -34,6 +37,14 @@ public class Grower extends Pattern {
         botProcessInit(); // Инициализируем список заданий
         webserverInit(); // Запускаем веб-сервер
         windowInit(); // Открываем главное окно приложения
+//        System.out.println(GasSensorFC22.);
+//        try {
+//            java.awt.Desktop.getDesktop().browse(sensor.getURL().toURI());
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        } catch (URISyntaxException e) {
+//            e.printStackTrace();
+//        }
     }
 
     // Определяем наименование решения по названию текущего класса

@@ -68,4 +68,10 @@ public class RelayDevice extends Device {
         return value.toString();
     }
 
+    @Override
+    public String getModelName() {
+        String className = (new Object(){}.getClass().getEnclosingClass().getSimpleName());
+        return className.substring(0, className.length() - 6);
+    }
+
 }

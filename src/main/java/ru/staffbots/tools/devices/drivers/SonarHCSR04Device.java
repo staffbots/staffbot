@@ -135,4 +135,11 @@ public class SonarHCSR04Device extends Device {
         //return this.value.getValue() ? "Включен" : "Выключен";
     }
 
+    @Override
+    public String getModelName() {
+        String className = (new Object(){}.getClass().getEnclosingClass().getSimpleName());
+        return className.substring(0, className.length() - 6);
+    }
+
+
 }

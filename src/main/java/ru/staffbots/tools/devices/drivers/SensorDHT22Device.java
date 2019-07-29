@@ -255,4 +255,12 @@ public class SensorDHT22Device extends Device {
     private class ParityChheckException extends Exception {
         private static final long serialVersionUID = 1L;
     }
+
+    @Override
+    public String getModelName() {
+        String className = (new Object(){}.getClass().getEnclosingClass().getSimpleName());
+        return className.substring(0, className.length() - 6);
+    }
+
+
 }

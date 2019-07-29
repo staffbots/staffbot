@@ -1,2 +1,4 @@
 # Свойства проекта
-staffbots.version = 0.79
+name = Staffbots
+version = 0.80
+website = staffbots.ru
