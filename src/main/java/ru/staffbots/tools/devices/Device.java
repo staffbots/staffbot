@@ -86,7 +86,7 @@ public abstract class Device{
     public URL getURL(){
         try {
             //return new URL("http://" + Pattern.website);
-            return new URL("http://" + Pattern.website + "/devices/" + getModelName());
+            return new URL(Pattern.projectWebsite + "/technology/devices/" + getModelName());
         } catch (Exception exception) {
             return null;
         }

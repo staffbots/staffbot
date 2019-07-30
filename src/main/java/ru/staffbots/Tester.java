@@ -11,10 +11,7 @@ import ru.staffbots.tools.botprocess.BotProcessStatus;
 import ru.staffbots.tools.botprocess.BotTask;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
-import ru.staffbots.tools.devices.drivers.ButtonDevice;
-import ru.staffbots.tools.devices.drivers.RelayDevice;
-import ru.staffbots.tools.devices.drivers.SensorDHT22Device;
-import ru.staffbots.tools.devices.drivers.SonarHCSR04Device;
+import ru.staffbots.tools.devices.drivers.*;
 import ru.staffbots.tools.levers.*;
 import ru.staffbots.tools.values.Value;
 import ru.staffbots.tools.values.ValueMode;
@@ -77,17 +74,17 @@ public class Tester extends Pattern {
      * Заполняется список устройств {@code WebServer.devices}<br>
      */
     static void devicesInit() {
-        Devices.init(  ledRelay, sensor, sonar, button);
+        Devices.init(  ledDevice, sensor, sonar, button);
     }
 
-    static RelayDevice ledRelay = new RelayDevice("ledRelay",
-            "Светодиод", RaspiPin.GPIO_01, false);
+    static LedDevice ledDevice = new LedDevice("led",
+            "Индикатор конца света", RaspiPin.GPIO_01, false);
     static SensorDHT22Device sensor = new SensorDHT22Device("sensor",
             "Датчик температуры и влажности", RaspiPin.GPIO_25);
     static SonarHCSR04Device sonar = new SonarHCSR04Device("sonar",
-        "Сонар", RaspiPin.GPIO_04, RaspiPin.GPIO_05);
+        "Расстояние до врага", RaspiPin.GPIO_04, RaspiPin.GPIO_05);
     static ButtonDevice button = new ButtonDevice("button",
-            "Кнопка", ValueMode.TEMPORARY, RaspiPin.GPIO_06, () -> {
+            "Ракетно ядерный залп", ValueMode.TEMPORARY, RaspiPin.GPIO_06, () -> {
         // Обработка нажатия кнопки
         double distance = -1;
         try {

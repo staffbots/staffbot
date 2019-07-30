@@ -28,7 +28,7 @@ public class EntryServlet extends BaseServlet {
         Map<String, Object> pageVariables = new HashMap();
         pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("page_bg_color", page_bg_color);
-        pageVariables.put("website", Pattern.website);
+        pageVariables.put("website", Pattern.projectWebsite);
         pageVariables.put("main_pagename", Pattern.projectName + ":" + Pattern.solutionName + " - " + pageType.getDescription());
         pageVariables.put("entry_login", login);
 

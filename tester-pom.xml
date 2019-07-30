@@ -7,7 +7,7 @@
     <artifactId>Staffbots.Tester</artifactId>
     <version>${staffbots.version}</version>
     <packaging>jar</packaging>
-    <url>http://staffbots.ru</url>
+    <url>${staffbots.website}</url>
     <!--==============-->
     <properties>
         <mainClass.name>ru.staffbots.Tester</mainClass.name>

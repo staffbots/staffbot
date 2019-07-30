@@ -21,7 +21,7 @@ public abstract class Pattern {
     // Название решения,
     // Совпадает с названием дочернего класса, в нём же и определяется
     // Используется в имени БД, наименовании файлов .jar и .cfg, а так же в заголовках веб-интерфейса и главного окна
-    public static String solutionName;
+    public static String solutionName = "Solution";
 
     // Название проекта,
     // Определяется параметром name в файле ресурсов properties
@@ -31,12 +31,12 @@ public abstract class Pattern {
     // Название версия проекта,
     // Определяется параметром version в файле ресурсов properties
     // Используется в наименовании файлов .jar и .cfg и в заголовке главного окна
-    public static String projectVersion;
+    public static String projectVersion = "0.00";
 
     // Адрес веб-сайта проекта в www
     // Определяется параметром website в файле ресурсов properties
     // Используется при формировании ссылки на описании устройств
-    public static String website = "staffbots.ru";
+    public static String projectWebsite = "http://www.staffbots.ru";
 
     // Инициализация параметров
     // Вызывается при запуске приложения в определённом порядке с прочими инициализациями
@@ -45,9 +45,8 @@ public abstract class Pattern {
         try {
             Properties property = new Properties();
             property.load(Pattern.class.getResourceAsStream("/properties"));
-            projectName = property.getProperty("name", "");
-            projectVersion = property.getProperty("version", "");
-            website = property.getProperty("website", "");
+            projectVersion = property.getProperty("staffbots.version", "");
+            projectWebsite = property.getProperty("staffbots.website", "");
             Journal.add("Свойства проекта загружены", false);
         } catch (IOException exception) {
             Journal.add("Свойства проекта не загружены", NoteType.ERROR, exception, false);

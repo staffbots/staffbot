@@ -4,7 +4,7 @@
   <groupId>ru.staffbots</groupId>
   <artifactId>Staffbots.Grower</artifactId>
   <version>${staffbots.version}</version>
-  <url>http://staffbots.ru</url>
+  <url>${staffbots.website}</url>
   <build>
     <plugins>
       <plugin>

@@ -71,7 +71,7 @@ public class ListValue extends LongValue {
      */
     @Override
     // для закладки "Управление"
-    public String toString(){
+    public String toHtmlString(){
         String result = "";
         for (int i = 0; i < list.size(); i++)
             result += "<option value=\"" + i + "\""
@@ -83,7 +83,7 @@ public class ListValue extends LongValue {
 
     @Override
     // для закладки "Статус"
-    public  String toViewString(){
+    public  String toString(){
         return list.get((int)get());
     }
 

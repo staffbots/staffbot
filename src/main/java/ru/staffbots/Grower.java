@@ -37,14 +37,6 @@ public class Grower extends Pattern {
         botProcessInit(); // Инициализируем список заданий
         webserverInit(); // Запускаем веб-сервер
         windowInit(); // Открываем главное окно приложения
-//        System.out.println(GasSensorFC22.);
-//        try {
-//            java.awt.Desktop.getDesktop().browse(sensor.getURL().toURI());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (URISyntaxException e) {
-//            e.printStackTrace();
-//        }
     }
 
     // Определяем наименование решения по названию текущего класса

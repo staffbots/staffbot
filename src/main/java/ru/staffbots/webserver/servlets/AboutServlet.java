@@ -30,7 +30,7 @@ public class AboutServlet extends BaseServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (isAccessDenied(request, response)) return;
         Map<String, Object> pageVariables = new HashMap();
-        pageVariables.put("website", Pattern.website);
+        pageVariables.put("website", Pattern.projectWebsite);
         pageVariables.put("about_osname",System.getProperty("os.name"));
         pageVariables.put("about_osversion",System.getProperty("os.version"));
         pageVariables.put("about_osarch",System.getProperty("os.arch"));

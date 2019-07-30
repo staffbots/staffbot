@@ -244,7 +244,9 @@ abstract public class Value extends DBTable {
                                 " (value) VALUES (?)");
                 statement.setLong(1, newValue);
                 statement.executeUpdate();
-                Journal.add(getNote() + " - установлено заначение: " + toString());
+                Journal.add(getNote() + " - установлено заначение: " +
+                        toString());
+                //toViewString());
             } catch (Exception exception) {
                 Journal.add("Ошибка записи в таблицу " + getTableName() + exception.getMessage(), NoteType.ERROR);
             }
@@ -268,7 +270,9 @@ abstract public class Value extends DBTable {
                 statement.setTimestamp(1, new Timestamp(moment.getTime()));
                 statement.setLong(2, newValue);
                 statement.executeUpdate();
-                Journal.add(getNote() + " - установлено заначение: " + toString()
+                Journal.add(getNote() + " - установлено заначение: " +
+                        toString()
+                        //toViewString()
                         + " на дату " + DateValue.toString(moment, Journal.DATE_FORMAT));
             } catch (Exception e) {
                 Journal.add("Ошибка записи в таблицу " + getTableName() + e.getMessage(), NoteType.ERROR);
