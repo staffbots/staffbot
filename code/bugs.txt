@@ -23,15 +23,15 @@ test
 ====================================================
 Порядок аргументов для конструкторов
 классов Value, Lever и Device (и их наследников):
-String name
-String caption        ButtonLever only
-String note
-ValueMode valueMode
-LeverMode leverMode   Lever only
-Pin pin               Device only
-Runnable action       ButtonDevice & ButtonLever only
-ValueType valueType
-DateFormat format     DateType & DateLever only
-int accuracy          DoubleValue & DoubleLever only
-value or values
+ String name
+ String caption        ButtonLever only
+ String note
+ ValueMode valueMode
+ LeverMode leverMode   Lever only
+ Pin pin               Device only
+ Runnable action       ButtonDevice & ButtonLever only
+ ValueType valueType
+ DateFormat format     DateType & DateLever only
+ int accuracy          DoubleValue & DoubleLever only
+ value or values
 ====================================================

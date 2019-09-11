@@ -86,7 +86,7 @@ public class Cleaner {
         }
     }
 
-    synchronized public void clean(){
+    public void clean(){
         refresh();
         long count = 0;
         count += (journalMeasureIsRecord) ?

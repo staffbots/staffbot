@@ -16,9 +16,9 @@ import java.net.*;
 
 public class WebServer {
 
-    public static Integer http_port = 80;
+    public static Integer HTTP_PORT = 80;
 
-    public static Integer https_port = 8080;
+    public static Integer HTTPS_PORT = 8080;
 
     public static String ADMIN = "admin";
 
@@ -33,23 +33,33 @@ public class WebServer {
     /**
      *
      */
-    private static Server server;
+    private static Server server = null;
 
     /**
      * <b>Запуск</b> веб-сервера<br>
      * @return удачность
      */
     public static void init() {
-
+        // Если сервер уже запущен, то останавливаем его
+        if (server != null) {
+            try {
+                server.stop();
+                server.join();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        // Если порт занят, то сервер запустить не получится
         if(hostIsBusy()){
             Journal.add("Неудачная попытка запустить веб-сервер. Порт уже занят", NoteType.ERROR);
             System.exit(0);
         }
+
         server = new Server();
 
         // HTTP connector
         ServerConnector connector = new ServerConnector(server);
-        connector.setPort(http_port);
+        connector.setPort(HTTP_PORT);
 
         String keyStorePath = Resources.ExtractFromJar("/" + key_store);
 
@@ -68,7 +78,7 @@ public class WebServer {
         ServerConnector sslConnector = new ServerConnector(server,
                 new SslConnectionFactory(sslContextFactory, "http/1.1"),
                 new HttpConnectionFactory(https));
-        sslConnector.setPort(https_port);
+        sslConnector.setPort(HTTPS_PORT);
 
         // HTTPS connectors
 //        server.setConnectors(new Connector[]{connector});
@@ -114,7 +124,7 @@ public class WebServer {
 
     public static URL getURL(){
         try {
-            return new URL("http://localhost:" + http_port);
+            return new URL("http://localhost:" + HTTP_PORT);
         } catch (MalformedURLException exception) {
             return null;
         }

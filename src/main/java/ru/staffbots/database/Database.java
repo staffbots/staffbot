@@ -9,7 +9,6 @@ import ru.staffbots.database.users.User;
 
 import java.sql.*;
 
-
 public class Database {
 
     public static final DBMS DBMSystem = DBMS.MySQL;

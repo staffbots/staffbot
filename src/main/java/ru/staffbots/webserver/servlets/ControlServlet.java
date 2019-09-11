@@ -52,7 +52,10 @@ public class ControlServlet extends BaseServlet {
     // Вызывается при отправке страницы на сервер
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+
         String setName = request.getParameter("set");
+        // Проверяем, не запрос ли это на обработку нажатия кнопки
+        // вызовом control_button_onclick() из main.js
         if (setName != null) {
             if (isAccessDenied(request)) return;
             // Обработка нажатия кнопки ButtonLever
@@ -106,7 +109,6 @@ public class ControlServlet extends BaseServlet {
 
         doGet(request, response);
     }
-
 
     public String getLeverList() {
         String context = "";

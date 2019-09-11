@@ -3,14 +3,14 @@
 <head>
     <meta content="text/html; charset=utf-8" http-equiv="content-type">
     <title>${main_pagename}</title>
-    <link rel="icon" href="/resource?name=/img/icon.ico" type="image/x-icon">
-    <script type="text/javascript" src="/resource?name=/html/scripts/jquery/jquery.js"></script>
-    <script type="text/javascript" src="/resource?name=/html/scripts/main.js"></script>
+    <link rel="icon" href="resource?name=/img/icon.ico" type="image/x-icon">
+    <script src="resource?name=/html/scripts/jquery/jquery.js"></script>
+    <script src="resource?name=/html/scripts/main.js"></script>
 </head>
 <body bgcolor="#${site_bg_color}">
 <p>
-    <!-------------------------------------------------------------------------------------------------------------------->
-    <!-- Главное меню -->
+<!-------------------------------------------------------------------------------------------------------------------->
+<!-- Главное меню -->
 <table style="width: 100%; background: #${main_bg_color};" border="0" >
     <tr>
         <td>
@@ -20,7 +20,6 @@
                     <!-- Менюшки генерируются в MainServlet -->
                     ${main_menu}
                 </tr>
-                <!--<tr style="background: #${page_bg_color};" colspan="5"><td cellpadding="3"></td></tr>-->
                 </tbody>
             </table>
         </td>
@@ -54,7 +53,6 @@ ${main_content}
         </table>
     </small>
 </p>
+<script src="/resource?name=/html/scripts/main.js"></script>
 </body>
-<script type="text/javascript" src="/resource?name=/html/scripts/main.js"></script>
-
 </html>

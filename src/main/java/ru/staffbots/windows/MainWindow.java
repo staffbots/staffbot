@@ -30,6 +30,7 @@ public class MainWindow extends JFrame {
      * true - включен, установлен по умолчанию
      * false - отключен
      * Значение можно выставить в cfg-файле параметром gui.used
+     * Загрузка из файла осуществляется в методе propertiesInit() класса Pattern
      */
     public static Boolean USED = true;
 
@@ -40,6 +41,7 @@ public class MainWindow extends JFrame {
 
     /*
      * Инициация единственного экзэмпляра класса
+     * Вызывается из метода windowInit() класса Pattern
      */
     public static void init(String windowTilte) {
         if (mainWindow != null)
@@ -47,6 +49,8 @@ public class MainWindow extends JFrame {
         if (USED) {
             mainWindow = new MainWindow(windowTilte);
             Journal.add("Главное окно приложения открыто");
+        } else {
+            Journal.add("Приложение работает без запуска главного окна");
         }
     }
 

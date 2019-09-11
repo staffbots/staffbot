@@ -1,11 +1,10 @@
 package ru.staffbots.webserver.servlets;
 
-import ru.staffbots.database.Database;
-
 import java.util.HashMap;
 import java.util.Map;
 
 public enum PageType {
+
     ENTRY   (0, "Выход",        -1, "Авторизация",            false),
     CONTROL (1, "Управление",   1,  "Управление параметрами", true ),
     STATUS  (2, "Состояние",    0,  "Состояние системы",      true ),
@@ -62,6 +61,5 @@ public enum PageType {
     public int getAccessLevel(){
         return accessLevel;
     }
-
 
 }

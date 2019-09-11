@@ -24,7 +24,6 @@ public enum DBMS {
 
     public String getDriver(){
         return driver;
-
     }
 
 
@@ -42,7 +41,8 @@ public enum DBMS {
                 //Невозможно сразу установить смещение от UTC
                 connection = DriverManager.getConnection(url, user.login, user.password);
                 if (database == null)
-                    connection.createStatement().execute("SET GLOBAL time_zone='+" + (int) (TimeZone.getDefault().getRawOffset() / 36E5) + ":00'");
+                    connection.createStatement().execute(
+                        "SET GLOBAL time_zone='+" + (int) (TimeZone.getDefault().getRawOffset() / 36E5) + ":00'");
                 break;
             default:
                 throw new Exception("Для драйвера СУБД " + this + " не описано подключение");

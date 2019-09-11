@@ -11,8 +11,8 @@ import java.util.ArrayList;
 
 public class Users extends DBTable {
 
-    public static final String DB_TABLE_NAME = "sys_users";
-    public static final String DB_TABLE_FIELDS = "login VARCHAR(16), password VARCHAR(16), role INT";
+    private static final String DB_TABLE_NAME = "sys_users";
+    private static final String DB_TABLE_FIELDS = "login VARCHAR(16), password VARCHAR(16), role INT";
 
     public Users(){
         super(DB_TABLE_NAME, DB_TABLE_FIELDS);
@@ -84,6 +84,9 @@ public class Users extends DBTable {
 
     private ArrayList<User> getUserList(String login){
         ArrayList<User> userList = new ArrayList<>();
+        if (login != null)
+            if (login.trim().equals(""))
+                login = null;
         if (!Database.connected()) return userList;
         try {
             PreparedStatement statement = Database.getConnection().prepareStatement(

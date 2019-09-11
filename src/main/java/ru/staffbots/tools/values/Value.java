@@ -23,14 +23,14 @@ import java.util.Date;
  *  - {@code DoubleValue} для значений типа {@code Double}<br>
  *  - {@code DateValue} для значений типа {@code Date}<br>
  *  - {@code LongValue} для значений типа {@code Long}<br>
- *  - {@code EmptyValue} для внутренних нужд, а именно - для группировки рычагов управлкния в {@link WebServer}.<br>
+ *  - {@code VoidValue} для внутренних нужд, а именно - для группировки рычагов управлкния в {@link WebServer}.<br>
  * Однако, вне зависимости от типа предоставляемого значения, все перечисленные дочерние классы для хранения используют тип Long
  * Благодоря этому, Value и все его дочерние классы имееют унифицированный интерфейс
- * и единый тип значений - {@code Double}, что значительно облегчает работу с БД.
+ * и единый тип значений - {@code long}, что значительно облегчает работу с БД.
  */
 abstract public class Value extends DBTable {
 
-    public static final String DB_TABLE_FIELDS = "moment TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3), value BIGINT";
+    private static final String DB_TABLE_FIELDS = "moment TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3), value BIGINT";
 
     protected ValueType valueType;
 

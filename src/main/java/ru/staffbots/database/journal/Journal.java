@@ -18,10 +18,25 @@ import java.util.Date;
  */
 public class Journal extends DBTable {
 
-    public static final long MAX_NOTE_COUNT = 99;
-    public static final long DEFAULT_NOTE_COUNT = 20;
-    public static final String DB_TABLE_NAME = "sys_journal";
-    public static final String DB_TABLE_FIELDS = "moment TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3), noteValue VARCHAR(255) CHARACTER SET utf8, noteType INT DEFAULT 0";
+    private static final String DB_TABLE_NAME = "sys_journal";
+    private static final String DB_TABLE_FIELDS = "moment TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3), noteValue VARCHAR(255) CHARACTER SET utf8, noteType INT DEFAULT 0";
+
+    public Journal(){
+        super(DB_TABLE_NAME, DB_TABLE_FIELDS);
+    }
+
+    public Journal(String fromDate, String toDate){
+        super(DB_TABLE_NAME, DB_TABLE_FIELDS);
+        period.set(fromDate, toDate);
+    }
+
+    public Journal(Date fromDate, Date toDate){
+        super(DB_TABLE_NAME, DB_TABLE_FIELDS);
+        period.set(fromDate, toDate);
+    }
+
+    private static final long MAX_NOTE_COUNT = 99;
+    private static final long DEFAULT_NOTE_COUNT = 20;
     public static final DateFormat DATE_FORMAT = DateFormat.DATETIME;
 
     public static void add(String note, boolean isStorable){
@@ -39,6 +54,7 @@ public class Journal extends DBTable {
     public static void add(String noteValue, NoteType noteType, Exception exception){
         add(noteValue, noteType, exception, true);
     }
+
     public static void add(String noteValue, NoteType noteType, Exception exception, boolean isStorable){
         Date noteDate = new Date();
         if (exception != null)
@@ -90,20 +106,6 @@ public class Journal extends DBTable {
 
     public long getCount(){
         return noteCount.getValue();
-    }
-
-    public Journal(){
-        super(DB_TABLE_NAME, DB_TABLE_FIELDS);
-    }
-
-    public Journal(String fromDate, String toDate){
-        super(DB_TABLE_NAME, DB_TABLE_FIELDS);
-        period.set(fromDate, toDate);
-    }
-
-    public Journal(Date fromDate, Date toDate){
-        super(DB_TABLE_NAME, DB_TABLE_FIELDS);
-        period.set(fromDate, toDate);
     }
 
     public ArrayList<Note> getJournal(Date fromDate, Date toDate, Map<Integer, Boolean> checkboxes, String searchString){

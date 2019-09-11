@@ -2,8 +2,6 @@ package ru.staffbots.tools.levers;
 
 import ru.staffbots.database.DBTable;
 import ru.staffbots.database.journal.Journal;
-import ru.staffbots.tools.levers.Lever;
-import ru.staffbots.tools.levers.Levers;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -24,7 +22,6 @@ public class Configs extends DBTable {
     public Configs(){
         super(DB_TABLE_NAME, DB_TABLE_FIELDS);
     }
-
 
     public void save(String name) throws Exception {
         Map<String, String> config = new HashMap<>();
@@ -68,8 +65,7 @@ public class Configs extends DBTable {
     public void delete(String name) throws Exception {
         statement = getStatement("DELETE FROM " + getTableName() + " WHERE (configname = ?)");
         statement.setString(1, name);
-        statement.executeUpdate();
-        statement.close();
+        deleteFromTable(statement);
         Journal.add("Удалена конфигурация параметров управления с именем: " + name);
     }
 
@@ -84,4 +80,5 @@ public class Configs extends DBTable {
         }
         return result;
     }
+
 }

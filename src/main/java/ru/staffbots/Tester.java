@@ -49,7 +49,7 @@ public class Tester extends Pattern {
      * Внимание! Порядок перечисления групп и рычагов повторяется в веб-интерфейсе
      */
     static void leversInit() {
-        Levers.initGroup(null, delayLever, buttonLever, listLever);
+        Levers.initGroup(null, delayLever, buttonLever, listLever, dateLever);
         Journal.add("Рычаги управления успешно проинициализированы");
     }
 
@@ -57,13 +57,16 @@ public class Tester extends Pattern {
             "Частота опроса, сек", ValueMode.TEMPORARY, 20, 2, 60*60);
 
     static ButtonLever buttonLever = new ButtonLever("buttonLever",
-        "Выполнить","Калибровка датчика, основанная на триангуляции континума", () -> {
+        "Выполнить","Калибровка датчика, методом триангуляции континума", () -> {
         // Обработка нажатия кнопки
         Journal.add("Нажата кнопка калибровки датчика");
     });
 
     static ListLever listLever = new ListLever("listLever",
             "Тестовый список", "строка 0","строка 1","строка 2","строка 3");
+
+    static DateLever dateLever = new DateLever("dateLever",
+            "тестовая дата", ValueMode.STORABLE, LeverMode.CHANGEABLE, DateFormat.SHORTTIME, "12:22");
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  Devices - Устройства

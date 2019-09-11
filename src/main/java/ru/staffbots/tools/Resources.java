@@ -1,9 +1,8 @@
 package ru.staffbots.tools;
 
-import ru.staffbots.Pattern;
-
 import java.io.*;
 
+// Контейнер методов для работы с ресурсами из jar-файла
 public class Resources {
 
     public static String getJarDirName(){
@@ -34,7 +33,7 @@ public class Resources {
     }
 
     // Извлекает ресурс resourceName из jar-пакета в тот же каталог, где находится сам пакет
-    // Взвращает полный путь до файла targetName, или null если что-то пошло не так
+    // Взвращает полный путь до извлечённого файла, или null если что-то пошло не так
     public static String ExtractFromJar(String resourceName){
         return ExtractFromJar(resourceName, resourceName);
     }
@@ -56,4 +55,5 @@ public class Resources {
             return null;
         }
     }
+
 }
