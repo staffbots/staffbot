@@ -18,7 +18,7 @@ public class ResourceServlet extends BaseServlet {
 
     // Список ресурсов, для получения которых не требуется авторизация
     public static final List<String> FREE_RESOURCES = asList(
-        "/img/logo.png"
+        "/img/logo.png", "/img/icon.ico"
     );
 
     public ResourceServlet(AccountService accountService) {

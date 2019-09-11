@@ -5,6 +5,7 @@ import java.io.*;
 // Контейнер методов для работы с ресурсами из jar-файла
 public class Resources {
 
+
     public static String getJarDirName(){
         // Полный путь до jar-пакета
         String jarFileName = Resources.class.getProtectionDomain().getCodeSource().getLocation().getPath();
