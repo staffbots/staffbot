@@ -1,57 +1,70 @@
 <!DOCTYPE html>
 <html>
 
-<head>
-    <meta charset="UTF-8" content="text/html; charset=utf-8" http-equiv="content-type">
-    <title>${main_pagename}</title>
-    <link rel="icon" href="resource?name=/img/icon.ico" type="image/x-icon">
-</head>
+    <head>
 
-<body bgcolor="#${site_bg_color}">
-<form action="/entry" method="post">
+        <meta charset="UTF-8" />
+        <title>${main_pagename}</title>
+        <link href="resource?css=/css/main.css" rel="stylesheet" type="text/css" />
+        <link href="resource?img=/img/icon.ico" rel="icon" type="image/x-icon" />
 
-    <table style="margin: auto; background: #${page_bg_color}" cellpadding="3" >
-        <tbody>
-        <tr>
-            <td style="text-align: center;"  colspan="5" rowspan="1">
-                <a href="${website}" title="${website}" target="_blank">
-                    <img src="resource?name=/img/logo.png">
-                </a>
-            </td>
-        </tr>
-        <tr>
-            <td>
-                <table style="text-align: left; background: #${site_bg_color}" cellpadding="3" cellspacing="0">
-                    <tr>
+    </head>
 
-                        <td style="text-align: right;">Логин:&nbsp;</td>
+    <body>
 
-                        <td style="width: 100%"><input name="entry_login" value="${entry_login}"></td>
+        <form action="/entry" method="post">
 
-                    </tr>
+            <table style="margin: auto; background: #${page_bg_color}" cellpadding="3" >
 
-                    <tr>
+                <tr>
 
-                        <td>Пароль:&nbsp;</td>
+                    <td style="text-align: center;"  colspan="5" rowspan="1">
 
-                        <td style="width: 100%"><input name="entry_password" type="password"></td>
+                        <a href="${website}" title="${website}" target="_blank">
+                            <img src="resource?img=/img/logo.png">
+                        </a>
 
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td style="text-align: right;"><input value="Войти" type="submit"></td>
-                    </tr>
+                    </td>
 
-                    </tbody>
+                </tr>
 
-                </table>
-            </td>
-        </tr>
+                <tr>
 
+                    <td>
 
-        </tbody>
-    </table>
+                        <table style="text-align: left; background: #${site_bg_color}" cellpadding="3" cellspacing="0">
 
-</form>
-</body>
+                            <tr>
+
+                                <td style="text-align: right;">Логин:&nbsp;</td>
+
+                                <td style="width: 100%"><input name="entry_login" value="${entry_login}"/></td>
+
+                            </tr>
+
+                            <tr>
+
+                                <td>Пароль:&nbsp;</td>
+
+                                <td style="width: 100%"><input name="entry_password" type="password"/></td>
+
+                            </tr>
+
+                            <tr>
+                                <td></td>
+                                <td style="text-align: right;"><input value="Войти" type="submit"></td>
+                            </tr>
+
+                        </table>
+
+                    </td>
+
+                </tr>
+
+            </table>
+
+        </form>
+
+    </body>
+
 </html>

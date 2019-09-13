@@ -130,7 +130,7 @@ public class StatusServlet extends BaseServlet {
         pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("datasets", getDataSets(period));
-        String content = PageGenerator.getPage(pageType.getName()+".html", pageVariables);
+        String content = PageGenerator.getPage("/html/" + pageType.getName()+".html", pageVariables);
         super.doGet(request, response, content);
     }
 
@@ -167,7 +167,7 @@ public class StatusServlet extends BaseServlet {
             ArrayList<Value> values = device.getValues();
             int i = 0;
             if (device.getValues().size() == 0)
-                context += PageGenerator.getPage("items/device_value.html",pageVariables);
+                context += PageGenerator.getPage("/html/items/device_value.html",pageVariables);
             else
             for (Value value : values){
                 if (i>0){
@@ -187,7 +187,7 @@ public class StatusServlet extends BaseServlet {
                 pageVariables.put("check_name", checkName);
                 pageVariables.put("value_name", (value.isStorable() ? value.getName() : ""));
                 pageVariables.put("value_note", value.getNote().equals(device.getNote()) ? "" : value.getNote());
-                context += PageGenerator.getPage("items/device_value.html",pageVariables);
+                context += PageGenerator.getPage("/html/items/device_value.html",pageVariables);
                 i++;
             }
 
@@ -220,7 +220,7 @@ public class StatusServlet extends BaseServlet {
                 pageVariables.put("value_note", "<b>" + value.getNote() + "</b>");
             else
                 pageVariables.put("value_note", value.getNote());
-            context += PageGenerator.getPage("items/lever_value.html",pageVariables);
+            context += PageGenerator.getPage("/html/items/lever_value.html",pageVariables);
         }
         return context;
     }
@@ -272,7 +272,7 @@ public class StatusServlet extends BaseServlet {
             if (status == null) continue;
             pageVariables.put("note", task.note);
             pageVariables.put("status", status);
-            context += PageGenerator.getPage("items/control_task.html",pageVariables);
+            context += PageGenerator.getPage("/html/items/control_task.html",pageVariables);
         }
         return context;
     }

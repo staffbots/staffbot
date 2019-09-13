@@ -44,7 +44,7 @@ public class ControlServlet extends BaseServlet {
         pageVariables.put("control_leverlist", getLeverList());
         pageVariables.put("control_configlist", getConfigList());
         pageVariables.put("tasks_display", BotProcess.list.size() > 0 ? "inline-table" : "none");
-        String content = PageGenerator.getPage(pageType.getName() + ".html", pageVariables);
+        String content = PageGenerator.getPage("/html/" + pageType.getName() + ".html", pageVariables);
 
         super.doGet(request, response, content);
     }
@@ -122,7 +122,7 @@ public class ControlServlet extends BaseServlet {
             pageVariables.put("value", value);
             pageVariables.put("note", lever.toValue().getNote());
             pageVariables.put("size", maxSize);
-            context += PageGenerator.getPage(lever.getTemplateFile(),pageVariables);
+            context += PageGenerator.getPage("/html/" + lever.getTemplateFile(),pageVariables);
         }
         return context;
     }

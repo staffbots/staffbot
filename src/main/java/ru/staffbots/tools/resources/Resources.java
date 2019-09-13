@@ -1,4 +1,4 @@
-package ru.staffbots.tools;
+package ru.staffbots.tools.resources;
 
 import java.io.*;
 

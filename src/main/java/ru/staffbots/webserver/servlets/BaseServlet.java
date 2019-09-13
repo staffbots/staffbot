@@ -80,7 +80,7 @@ public abstract class BaseServlet extends HttpServlet {
                 menuVariables.put("main_menuTitle", pageType.getDescription());
                 menuVariables.put("main_menuRef", (pageType == this.pageType) ? "" : "href=\"" + pageType.getName() + "\"");
 
-                menu += PageGenerator.getPage("items/menu_item.html", menuVariables);
+                menu += PageGenerator.getPage("/html/items/menu_item.html", menuVariables);
             }
         }
         return menu;
@@ -98,7 +98,7 @@ public abstract class BaseServlet extends HttpServlet {
         pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("main_bg_color", main_bg_color);
 
-        String result = PageGenerator.getPage("main.html", pageVariables);
+        String result = PageGenerator.getPage("/html/main.html", pageVariables);
 
 
         response.getOutputStream().write( result.getBytes("UTF-8") );

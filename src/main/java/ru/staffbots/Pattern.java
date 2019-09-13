@@ -3,7 +3,7 @@ package ru.staffbots;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
-import ru.staffbots.tools.Resources;
+import ru.staffbots.tools.resources.Resources;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.webserver.WebServer;
 import ru.staffbots.webserver.servlets.BaseServlet;

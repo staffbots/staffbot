@@ -52,7 +52,7 @@ public class AboutServlet extends BaseServlet {
         pageVariables.put("about_devicelist", getDeviceList());
         pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("page_bg_color", page_bg_color);
-        String content = PageGenerator.getPage(pageType.getName()+".html", pageVariables);
+        String content = PageGenerator.getPage("/html/" + pageType.getName()+".html", pageVariables);
         super.doGet(request, response, content);
     }
 
@@ -77,7 +77,7 @@ public class AboutServlet extends BaseServlet {
             ArrayList<Pin> pins = device.getPins();
             int i = 0;
             if (pins.size() == 0)
-                context += PageGenerator.getPage("items/device_pin.html",pageVariables);
+                context += PageGenerator.getPage("/html/items/device_pin.html",pageVariables);
             else
                 for (Pin pin : pins){
                     if (i>0){
@@ -87,7 +87,7 @@ public class AboutServlet extends BaseServlet {
                     }
                     pageVariables.put("pin_note", Devices.pins.get(pin).pinNote);
                     pageVariables.put("pin_name", pin.getName());
-                    context += PageGenerator.getPage("items/device_pin.html",pageVariables);
+                    context += PageGenerator.getPage("/html/items/device_pin.html",pageVariables);
                     i++;
                 }
 

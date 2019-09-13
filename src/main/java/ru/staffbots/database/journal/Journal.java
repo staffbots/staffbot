@@ -48,7 +48,7 @@ public class Journal extends DBTable {
     }
 
     public static void add(String note, NoteType noteType){
-        add(note, NoteType.CONFIRM, null);
+        add(note, noteType, null);
     }
 
     public static void add(String noteValue, NoteType noteType, Exception exception){

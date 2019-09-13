@@ -32,7 +32,7 @@ public class EntryServlet extends BaseServlet {
         pageVariables.put("main_pagename", Pattern.projectName + ":" + Pattern.solutionName + " - " + pageType.getDescription());
         pageVariables.put("entry_login", login);
 
-        String result = PageGenerator.getPage("entry.html", pageVariables);
+        String result = PageGenerator.getPage("/html/entry.html", pageVariables);
         response.getOutputStream().write( result.getBytes("UTF-8") );
 
         response.setContentType("text/html; charset=utf-8");

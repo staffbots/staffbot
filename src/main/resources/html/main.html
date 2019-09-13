@@ -1,58 +1,65 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <meta content="text/html; charset=utf-8" http-equiv="content-type">
-    <title>${main_pagename}</title>
-    <link rel="icon" href="resource?name=/img/icon.ico" type="image/x-icon">
-    <script src="resource?name=/html/scripts/jquery/jquery.js"></script>
-    <script src="resource?name=/html/scripts/main.js"></script>
-</head>
-<body bgcolor="#${site_bg_color}">
-<p>
-<!-------------------------------------------------------------------------------------------------------------------->
-<!-- Главное меню -->
-<table style="width: 100%; background: #${main_bg_color};" border="0" >
-    <tr>
-        <td>
-            <table style="text-align: left; " class="menu" border="0" cellspacing="3" cellpadding="12">
-                <tbody>
-                <tr>
-                    <!-- Менюшки генерируются в MainServlet -->
-                    ${main_menu}
-                </tr>
-                </tbody>
-            </table>
-        </td>
-    </tr>
-</table>
-</p>
-<!-------------------------------------------------------------------------------------------------------------------->
-<!-- Содержимое генерируется в BaseServlet по html-шаблону -->
-<p>
-${main_content}
-</p>
 
-<p>
-    <small>
-        <table style=" width: 100%; background: #${main_bg_color};">
+    <head>
+
+        <meta charset="UTF-8" />
+        <title>${main_pagename}</title>
+        <link href="resource?css=/css/main.css" rel="stylesheet" type="text/css" />
+        <link href="resource?img=/img/icon.ico" rel="icon" type="image/x-icon" />
+        <script src="resource?js=/js/jquery/jquery.js"></script>
+        <script src="resource?js=/js/main.js"></script>
+
+    </head>
+
+    <body>
+
+        <!-- Главное меню -->
+        <p>
+        <table style="width: 100%; background: #${main_bg_color};" border="0" >
             <tr>
                 <td>
-                    <table style="text-align: left; background: #${main_bg_color};" nowrap="nowrap" valign="middle"
-                           border="0" cellpadding="0" cellspacing="10">
+                    <table style="text-align: left; " class="menu" cellspacing="3" cellpadding="12">
+                        <tbody>
                         <tr>
-                            <td>Логин: ${main_login}</td>
-                            <td>|</td>
-                            <td>Роль: ${main_role}</td>
-                            <td>|</td>
-                            <td><a href="entry">Выйти</a></td>
-                            <td></td>
+                            <!-- Менюшки генерируются в MainServlet -->
+                            ${main_menu}
                         </tr>
+                        </tbody>
                     </table>
                 </td>
             </tr>
         </table>
-    </small>
-</p>
-<script src="/resource?name=/html/scripts/main.js"></script>
-</body>
+        </p>
+        <!-- Содержимое генерируется в BaseServlet по html-шаблону -->
+        <p>
+        ${main_content}
+        </p>
+
+        <p>
+            <small>
+                <table style=" width: 100%; background: #${main_bg_color};">
+                    <tr>
+                        <td>
+                            <table style="text-align: left; background: #${main_bg_color};" nowrap="nowrap" valign="middle"
+                                   border="0" cellpadding="0" cellspacing="10">
+                                <tr>
+                                    <td>Логин: ${main_login}</td>
+                                    <td>|</td>
+                                    <td>Роль: ${main_role}</td>
+                                    <td>|</td>
+                                    <td><a href="entry">Выйти</a></td>
+                                    <td></td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </small>
+        </p>
+
+        <script src="/resource?js=/js/main.js"></script>
+
+    </body>
+
 </html>

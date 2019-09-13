@@ -62,7 +62,7 @@ public class SystemServlet extends BaseServlet {
         pageVariables.put("dateformat", Cleaner.DATE_FORMAT.getFormat());
         pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("page_bg_color", page_bg_color);
-        String content = PageGenerator.getPage(pageType.getName() + ".html", pageVariables);
+        String content = PageGenerator.getPage("/html/" + pageType.getName() + ".html", pageVariables);
         super.doGet(request, response, content);
     }
 
