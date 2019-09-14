@@ -15,14 +15,14 @@ import java.util.List;
 import java.util.Map;
 
 // Обработка запроса ресурса
-// вида: <server>:<port>/resource?name=<resourceName>
-// например: localhost/resource?name=/js/main.js
-// или https://localhost:8055/resource?name=/img/logo.png
+// вида: <server>:<port>/resource?<resourceName>
+// например: localhost/resource?js/jquery/flot/jquery.flot.js
+// или https://localhost:8055/resource?img/logo.png
 public class ResourceServlet extends BaseServlet {
 
     // Список ресурсов, для получения которых не требуется авторизация
     public static final List<String> FREE_RESOURCES = asList(
-            "/css/main.css", "/img/logo.png", "/img/icon.ico"
+            "css/main.css", "img/logo.png", "img/icon.ico"
     );
 
     public ResourceServlet(AccountService accountService) {
@@ -33,16 +33,9 @@ public class ResourceServlet extends BaseServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException{
 
-        String resourceName = null;
-        ResourceType resourceType = null;
+        String resourceName = request.getQueryString();
 
-        for (ResourceType type : ResourceType.values()) {
-            resourceName = request.getParameter(type.toString());
-            if (resourceName != null) {
-                resourceType = type;
-                break;
-            }
-        }
+        System.out.println(resourceName);
 
         if (resourceName == null)
             return;
@@ -51,13 +44,13 @@ public class ResourceServlet extends BaseServlet {
             if (accountService.getUserAccessLevel(request) < 0) return;
 
         try {
-            switch (resourceType){
+            switch (ResourceType.getByName(resourceName)){
                 case CSS:
                     Map<String, Object> pageVariables = new HashMap();
-                    pageVariables.put("page_bg_color", page_bg_color);
                     pageVariables.put("site_bg_color", site_bg_color);
+                    pageVariables.put("page_bg_color", page_bg_color);
                     pageVariables.put("main_bg_color", main_bg_color);
-                    String result = PageGenerator.getPage(resourceName, pageVariables);
+                    String result = FillTemplate(resourceName, pageVariables);
                     response.getOutputStream().write(result.getBytes("UTF-8") );
                     break;
                 default:

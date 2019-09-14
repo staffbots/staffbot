@@ -7,6 +7,7 @@ import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.values.DateValue;
 import ru.staffbots.webserver.AccountService;
+import ru.staffbots.webserver.PageType;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -75,7 +76,7 @@ public class JournalServlet extends BaseServlet {
         pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("journal_page", getJournalPage(typesForShow, searchString));
-        String content = PageGenerator.getPage("/html/" + pageType.getName() + ".html", pageVariables);
+        String content = FillTemplate("html/" + pageType.getName() + ".html", pageVariables);
         super.doGet(request, response, content);
         //request.setAttribute("fromdate", Converter.dateToString(fromDate, DateFormat.TIMEDATE));
     }
@@ -111,17 +112,17 @@ public class JournalServlet extends BaseServlet {
             pageVariables.put("note_title", "");
             pageVariables.put("note_date", "<b>Дата</b>");
             pageVariables.put("note_value", "<b>Сообщение</b>");
-            htmlCode = PageGenerator.getPage("/html/items/journal_note.html",pageVariables);
+            htmlCode = FillTemplate("html/items/journal_note.html",pageVariables);
             for (Note note : journalList) {
                 pageVariables.put("note_title", DateValue.toString(note.getDate(), DateFormat.FULLTIMEDATE));
                 pageVariables.put("note_date", DateValue.toString(note.getDate(), DateFormat.CUTSHORTDATETIME));
                 pageVariables.put("note_value", note.getMessage());
-                htmlCode += PageGenerator.getPage("/html/items/journal_note.html",pageVariables);
+                htmlCode += FillTemplate("html/items/journal_note.html",pageVariables);
             }
             pageVariables.put("note_title", "");
             pageVariables.put("note_date", "<em>Выбрано записей:</em>");
             pageVariables.put("note_value", "<em>" + journalList.size() + "</em>");
-            htmlCode += PageGenerator.getPage("/html/items/journal_note.html",pageVariables);
+            htmlCode += FillTemplate("html/items/journal_note.html",pageVariables);
         }
         return htmlCode;
     }

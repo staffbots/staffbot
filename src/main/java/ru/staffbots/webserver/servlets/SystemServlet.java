@@ -5,6 +5,8 @@ import ru.staffbots.database.cleaner.Cleaner;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.webserver.AccountService;
+import ru.staffbots.webserver.PageType;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -62,7 +64,7 @@ public class SystemServlet extends BaseServlet {
         pageVariables.put("dateformat", Cleaner.DATE_FORMAT.getFormat());
         pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("page_bg_color", page_bg_color);
-        String content = PageGenerator.getPage("/html/" + pageType.getName() + ".html", pageVariables);
+        String content = FillTemplate("html/" + pageType.getName() + ".html", pageVariables);
         super.doGet(request, response, content);
     }
 

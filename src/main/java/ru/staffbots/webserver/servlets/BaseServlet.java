@@ -1,14 +1,21 @@
 package ru.staffbots.webserver.servlets;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
 import ru.staffbots.Pattern;
 import ru.staffbots.database.Database;
+import ru.staffbots.database.journal.Journal;
+import ru.staffbots.tools.resources.Resources;
 import ru.staffbots.webserver.AccountService;
+import ru.staffbots.webserver.PageType;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.io.*;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,6 +26,7 @@ public abstract class BaseServlet extends HttpServlet {
     public static String main_bg_color = "dddddd";
 
     public static String page_bg_color = "bbbbbb";
+
 
     protected AccountService accountService;
 
@@ -67,6 +75,7 @@ public abstract class BaseServlet extends HttpServlet {
 
     protected String getMenu(int userAccessLevel) {
         String menu = "";
+        //Map<String, Object> menuVariables = new HashMap();
         Map<String, Object> menuVariables = new HashMap();
         for (PageType pageType: PageType.values()){
             if (pageEnabled(pageType)) {
@@ -80,7 +89,7 @@ public abstract class BaseServlet extends HttpServlet {
                 menuVariables.put("main_menuTitle", pageType.getDescription());
                 menuVariables.put("main_menuRef", (pageType == this.pageType) ? "" : "href=\"" + pageType.getName() + "\"");
 
-                menu += PageGenerator.getPage("/html/items/menu_item.html", menuVariables);
+                menu += FillTemplate("html/items/menu_item.html", menuVariables);
             }
         }
         return menu;
@@ -98,7 +107,7 @@ public abstract class BaseServlet extends HttpServlet {
         pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("main_bg_color", main_bg_color);
 
-        String result = PageGenerator.getPage("/html/main.html", pageVariables);
+        String result = FillTemplate("html/main.html", pageVariables);
 
 
         response.getOutputStream().write( result.getBytes("UTF-8") );
@@ -106,4 +115,24 @@ public abstract class BaseServlet extends HttpServlet {
         response.setContentType("text/html; charset=UTF-8");
         response.setStatus( HttpServletResponse.SC_OK );
     }
+
+    /**
+     * Заполняет html-шаблон данными
+     */
+    public String FillTemplate(String filename, Map<String, Object> data) {
+        Writer stream = new StringWriter();
+        try {
+            Configuration conf = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
+            String codePage = "UTF-8";
+            conf.setDefaultEncoding(codePage);
+            InputStream inputStream = Resources.getAsStream(filename);
+            Charset charset = StandardCharsets.UTF_8;
+            Template template = new Template(filename, new InputStreamReader(inputStream, charset), conf, codePage);
+            template.process(data, stream);
+        } catch (Exception e) {
+            Journal.add(e.getMessage());
+        }
+        return stream.toString();
+    }
+
 }

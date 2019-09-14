@@ -61,7 +61,7 @@ public class WebServer {
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(HTTP_PORT);
 
-        String keyStorePath = Resources.ExtractFromJar("/" + key_store);
+        String keyStorePath = Resources.ExtractFromJar(key_store);
 
         // HTTPS configuration
         HttpConfiguration https = new HttpConfiguration();
@@ -123,8 +123,14 @@ public class WebServer {
     }
 
     public static URL getURL(){
+        return getURL(false);
+    }
+
+    public static URL getURL(boolean SSL){
         try {
-            return new URL("http://localhost:" + HTTP_PORT);
+            return SSL ?
+                new URL("https://localhost:" + HTTPS_PORT) :
+                new URL("http://localhost:" + HTTP_PORT);
         } catch (MalformedURLException exception) {
             return null;
         }

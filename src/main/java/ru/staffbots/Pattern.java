@@ -7,6 +7,7 @@ import ru.staffbots.tools.resources.Resources;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.webserver.WebServer;
 import ru.staffbots.webserver.servlets.BaseServlet;
+import ru.staffbots.webserver.servlets.ResourceServlet;
 import ru.staffbots.windows.MainWindow;
 
 import java.io.*;
@@ -43,7 +44,7 @@ public abstract class Pattern {
         // Читаем свойства проекта
         try {
             Properties property = new Properties();
-            property.load(Pattern.class.getResourceAsStream("/properties"));
+            property.load(Resources.getAsStream("properties"));
             projectVersion = property.getProperty("staffbots.version", "");
             projectWebsite = property.getProperty("staffbots.website", "");
             Journal.add("Свойства проекта загружены", false);
@@ -51,9 +52,9 @@ public abstract class Pattern {
             Journal.add("Свойства проекта не загружены", NoteType.ERROR, exception, false);
         }
         // Имя исходного файла конфигурации, лежащего внутри jar-пакета
-        String projectCfgFileName = "/pattern.cfg"; // внутри jar-пакета
+        String projectCfgFileName = "pattern.cfg"; // внутри jar-пакета
         // Имя внешнего файла конфигурации, лежащего рядом с jar-пакетом
-        String solutionCfgFileName = "/" + projectName + "." + solutionName + "-" + projectVersion + ".cfg";
+        String solutionCfgFileName = projectName + "." + solutionName + "-" + projectVersion + ".cfg";
         try {
             // Извлекаем из jar-пакета файл конфигурации
             Resources.ExtractFromJar(projectCfgFileName, solutionCfgFileName);

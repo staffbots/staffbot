@@ -5,16 +5,15 @@ import java.io.*;
 // Контейнер методов для работы с ресурсами из jar-файла
 public class Resources {
 
-
     public static String getJarDirName(){
         // Полный путь до jar-пакета
         String jarFileName = Resources.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         // Полный путь до каталога jar-пакета
-        return (new File(jarFileName)).getParent();
+        return (new File(jarFileName)).getParent() + "/";
     }
 
     public static InputStream getAsStream(String resourceName){
-        return Resources.class.getResourceAsStream(resourceName);
+        return Resources.class.getResourceAsStream("/" + resourceName);
     }
 
     public static byte[] getAsBytes(String resourceName){

@@ -9,13 +9,13 @@ import java.awt.event.ActionListener;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.ImageIcon;
 
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.webserver.WebServer;
 
-import java.net.URI;
 
 /*
  * Главное оконо приложения,
@@ -73,6 +73,10 @@ public class MainWindow extends JFrame {
         // Панель содержимого
         Container container = getContentPane();
         container.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 25));
+
+        JCheckBox сheckBox = new JCheckBox("SSL");
+        сheckBox.setToolTipText("Использовать SSL-протокол");
+
         // Создание кнопки
         JButton button = new JButton("Управление");
         button.setToolTipText("Перейти к управлению через веб-интерфейс");
@@ -80,13 +84,14 @@ public class MainWindow extends JFrame {
         button.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    java.awt.Desktop.getDesktop().browse(WebServer.getURL().toURI());
+                    java.awt.Desktop.getDesktop().browse(WebServer.getURL(сheckBox.isSelected()).toURI());
                 } catch (Exception exception) {
                     Journal.add("Неудачная попытка открыть браузер", NoteType.ERROR, exception);
                 }
             }
         });
         container.add(button);
+        container.add(сheckBox);
         // Размеры и положение окна
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = 350;

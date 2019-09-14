@@ -10,6 +10,8 @@ import ru.staffbots.tools.values.BooleanValue;
 import ru.staffbots.tools.values.Value;
 import ru.staffbots.tools.values.ValueType;
 import ru.staffbots.webserver.AccountService;
+import ru.staffbots.webserver.PageType;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -44,7 +46,7 @@ public class ControlServlet extends BaseServlet {
         pageVariables.put("control_leverlist", getLeverList());
         pageVariables.put("control_configlist", getConfigList());
         pageVariables.put("tasks_display", BotProcess.list.size() > 0 ? "inline-table" : "none");
-        String content = PageGenerator.getPage("/html/" + pageType.getName() + ".html", pageVariables);
+        String content = FillTemplate("html/" + pageType.getName() + ".html", pageVariables);
 
         super.doGet(request, response, content);
     }
@@ -122,7 +124,7 @@ public class ControlServlet extends BaseServlet {
             pageVariables.put("value", value);
             pageVariables.put("note", lever.toValue().getNote());
             pageVariables.put("size", maxSize);
-            context += PageGenerator.getPage("/html/" + lever.getTemplateFile(),pageVariables);
+            context += FillTemplate("html/" + lever.getTemplateFile(),pageVariables);
         }
         return context;
     }

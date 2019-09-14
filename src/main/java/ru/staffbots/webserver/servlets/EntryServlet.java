@@ -2,6 +2,7 @@ package ru.staffbots.webserver.servlets;
 
 import ru.staffbots.Pattern;
 import ru.staffbots.webserver.AccountService;
+import ru.staffbots.webserver.PageType;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -32,7 +33,7 @@ public class EntryServlet extends BaseServlet {
         pageVariables.put("main_pagename", Pattern.projectName + ":" + Pattern.solutionName + " - " + pageType.getDescription());
         pageVariables.put("entry_login", login);
 
-        String result = PageGenerator.getPage("/html/entry.html", pageVariables);
+        String result = FillTemplate("html/entry.html", pageVariables);
         response.getOutputStream().write( result.getBytes("UTF-8") );
 
         response.setContentType("text/html; charset=utf-8");

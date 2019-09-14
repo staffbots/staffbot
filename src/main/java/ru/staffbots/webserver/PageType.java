@@ -1,4 +1,4 @@
-package ru.staffbots.webserver.servlets;
+package ru.staffbots.webserver;
 
 import java.util.HashMap;
 import java.util.Map;

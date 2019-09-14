@@ -1,12 +1,12 @@
 package ru.staffbots.webserver.servlets;
 
 import com.pi4j.io.gpio.Pin;
-import ru.staffbots.Grower;
 import ru.staffbots.Pattern;
 import ru.staffbots.database.Database;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.webserver.AccountService;
+import ru.staffbots.webserver.PageType;
 import ru.staffbots.webserver.WebServer;
 
 import javax.servlet.ServletException;
@@ -52,7 +52,7 @@ public class AboutServlet extends BaseServlet {
         pageVariables.put("about_devicelist", getDeviceList());
         pageVariables.put("site_bg_color", site_bg_color);
         pageVariables.put("page_bg_color", page_bg_color);
-        String content = PageGenerator.getPage("/html/" + pageType.getName()+".html", pageVariables);
+        String content = FillTemplate("html/" + pageType.getName()+".html", pageVariables);
         super.doGet(request, response, content);
     }
 
@@ -77,7 +77,7 @@ public class AboutServlet extends BaseServlet {
             ArrayList<Pin> pins = device.getPins();
             int i = 0;
             if (pins.size() == 0)
-                context += PageGenerator.getPage("/html/items/device_pin.html",pageVariables);
+                context += FillTemplate("html/items/device_pin.html",pageVariables);
             else
                 for (Pin pin : pins){
                     if (i>0){
@@ -87,7 +87,7 @@ public class AboutServlet extends BaseServlet {
                     }
                     pageVariables.put("pin_note", Devices.pins.get(pin).pinNote);
                     pageVariables.put("pin_name", pin.getName());
-                    context += PageGenerator.getPage("/html/items/device_pin.html",pageVariables);
+                    context += FillTemplate("html/items/device_pin.html",pageVariables);
                     i++;
                 }
 
