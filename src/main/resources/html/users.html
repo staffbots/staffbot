@@ -1,6 +1,5 @@
-<p>
 <form name="users_form" action="/users" method="post">
-    <table style="text-align:right; background: #${page_bg_color}" cellpadding="3">
+    <table class="table parent">
         <tr>
             <td>
                 <input name="users_radiobox" type="radio" value="new" onclick="users_radioboxClick();">
@@ -15,48 +14,61 @@
                 <td>
                     <input name="users_radiobox" type="radio" value="old" checked onclick="users_radioboxClick();">
                 </td>
+
                 <td>
-                        <select name="users_select_login" style="text-align:right; width: 100%;" title="Существующий пользователь" onchange="this.form.submit();">
+                        <select name="users_select_login" title="Существующий пользователь" onchange="this.form.submit();">
                             ${users_login_list}
                         </select>
                 </td>
-                <td align="center" nowrap="nowrap" valign="middle">
+
+                <td>
+
                     <button name="users_delete" value="users_delete" title="Удалить из БД конфигурацию с указанным именем">
                         Удалить
                     </button>
-                </td>
-        </tr>
-        <tr>
-            <td colspan="3" rowspan="1">
 
-                <table style="width: 100%; background: #${site_bg_color}" border="0" cellpadding="5" cellspacing="0">
-                    <tbody>
-                    <tr>
-                        <td>Роль:</td>
-                        <td>
-                            <select name="users_role" style="text-align:right; width: 100%;"  title="Роль пользователя">
-                                ${users_role_list}
-                            </select>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td>Пароль:</td>
-                        <td style="width: 100px;"><input name="users_password" type="password" autocomplete="off"></td>
-                    </tr>
-                    <tr>
-                        <td></td>
-                        <td>
-                            <button name="users_apply" title="Применить введённые параметры" value="users_apply">
-                                Применить
-                            </button>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>
+                </td>
+
+        </tr>
+
+        <tr>
+            <td colspan="3">
+
+                <table class="table child">
+                        <tbody>
+                        <tr>
+                            <td>Роль:</td>
+                            <td>
+                                <select name="users_role" title="Роль пользователя">
+                                    ${users_role_list}
+                                </select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Пароль:</td>
+                            <td style="width: 100px;"><input name="users_password" type="password" autocomplete="off"></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td align="right">
+                                <button name="users_apply" title="Применить введённые параметры" value="users_apply">
+                                    Применить
+                                </button>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
 
             </td>
+
         </tr>
+
     </table>
+
 </form>
-</p>
-<script type="text/javascript"> users_radioboxClick(); </script>
+
+<script type="text/javascript">
+
+    users_radioboxClick();
+
+</script>

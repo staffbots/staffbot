@@ -73,8 +73,6 @@ public class JournalServlet extends BaseServlet {
         pageVariables.put("journal_todate", Database.journal.period.getToDateAsString());
         pageVariables.put("journal_datesize", Database.journal.DATE_FORMAT.get().length());
         pageVariables.put("journal_count", Database.journal.getCount());
-        pageVariables.put("site_bg_color", site_bg_color);
-        pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("journal_page", getJournalPage(typesForShow, searchString));
         String content = FillTemplate("html/" + pageType.getName() + ".html", pageVariables);
         super.doGet(request, response, content);

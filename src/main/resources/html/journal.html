@@ -1,8 +1,6 @@
 <!-- Журнал -->
-<p>
 <form action="/journal" method="post">
-    <table style="text-align:left; background: #${page_bg_color}" cellpadding="3">
-        <tbody>
+    <table class="table parent">
         <tr>
             <td style="font-weight: bold" colspan="3">Период:</td>
             <td>
@@ -55,20 +53,14 @@
         </tr>
         <tr>
             <td colspan="7">
-
-                <table style="width: 100%; background: #${site_bg_color}" cellpadding="3" cellspacing="0">
-                    <tbody>
+                <table class="table child">
                         ${journal_page}
-                    </tbody>
                 </table>
-
             </td>
         </tr>
-        </tbody>
     </table>
 
 </form>
-</p>
 <script type="text/javascript">
     date_onClick('journal_fromdate_on', 'journal_fromdate');
     date_onClick('journal_todate_on', 'journal_todate');

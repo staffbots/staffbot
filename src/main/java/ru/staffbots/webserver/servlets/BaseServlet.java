@@ -95,7 +95,8 @@ public abstract class BaseServlet extends HttpServlet {
         return menu;
     }
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response, String content) throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response, String content)
+        throws ServletException, IOException {
         String login = accountService.getUserLogin(request.getSession());
         Map<String, Object> pageVariables = new HashMap();
         pageVariables.put("main_pagename", Pattern.projectName + ":" + Pattern.solutionName + " - " + pageType.getDescription());
@@ -103,12 +104,8 @@ public abstract class BaseServlet extends HttpServlet {
         pageVariables.put("main_content", content);
         pageVariables.put("main_login", login);
         pageVariables.put("main_role", accountService.users.getRole(login).getDescription());
-        pageVariables.put("page_bg_color", page_bg_color);
-        pageVariables.put("site_bg_color", site_bg_color);
-        pageVariables.put("main_bg_color", main_bg_color);
 
         String result = FillTemplate("html/main.html", pageVariables);
-
 
         response.getOutputStream().write( result.getBytes("UTF-8") );
 

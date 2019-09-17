@@ -1,13 +1,58 @@
 body {
   background-color: #${site_bg_color};
-  margin: 10px; /* Отступы вокруг */
+  text-align:left;
+}
+
+.table{
+    border: 0px;
+    border-radius: 5px;
+    border-spacing: 0px;
 }
 
 .table.parent {
-    background-color: #${page_bg_color}; /* Цвет фона */
-    border: 0px; /* Параметры рамки */
-    padding: 5px; /* Поля вокруг текста */
-    border-spacing: 0px;
+    background-color: #${page_bg_color};
+    border-spacing: 5px;
+    margin: 5px;
+}
+
+.table.parent.entry {
     margin: auto;
-    /*cellpadding: 0px;*/
+}
+
+.table.parent.database {
+    display: ${database_display};
+}
+
+
+.table.child {
+    background-color: #${site_bg_color};
+    border-spacing: 5px;
+    padding: 0px;
+    width: 100%;
+}
+
+.table.menu {
+     background-color: #${main_bg_color};
+     border-spacing: 5px;
+     padding: 0px;
+     width: 100%;
+     margin: 5px;
+}
+
+.table.menu td {
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.table.status {
+     background-color: #${main_bg_color};
+     padding: 0px;
+     width: 100%;
+     white-space: nowrap;
+     border-spacing: 20px;
+     margin: 5px;
+}
+
+select {
+    width: 100%;
 }

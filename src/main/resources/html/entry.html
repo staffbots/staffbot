@@ -14,11 +14,11 @@
 
         <form action="/entry" method="post">
 
-            <table class="table parent">
+            <table class="table parent entry">
 
                 <tr>
 
-                    <td align="center" colspan="5">
+                    <td align="center">
 
                         <a href="${website}" title="${website}" target="_blank">
 
@@ -34,27 +34,27 @@
 
                     <td>
 
-                        <table style="text-align: left; background: #${site_bg_color}" cellpadding="3" cellspacing="0">
+                        <table class="table child">
 
                             <tr>
 
-                                <td style="text-align: right;">Логин:&nbsp;</td>
-
-                                <td style="width: 100%"><input name="entry_login" value="${entry_login}"/></td>
+                                <td>Логин:</td>
+                                <td><input name="entry_login" value="${entry_login}"/></td>
 
                             </tr>
 
                             <tr>
 
-                                <td>Пароль:&nbsp;</td>
-
-                                <td style="width: 100%"><input name="entry_password" type="password"/></td>
+                                <td>Пароль:</td>
+                                <td><input name="entry_password" type="password"/></td>
 
                             </tr>
 
                             <tr>
-                                <td> </td>
-                                <td style="text-align: right;"><input value="Войти" type="submit"></td>
+
+                                <td></td>
+                                <td align="right"><input value="Войти" type="submit"></td>
+
                             </tr>
 
                         </table>

@@ -47,7 +47,7 @@ public class AboutServlet extends BaseServlet {
                 trace += traceElement.toString() + "<br>";
         pageVariables.put("about_trace", trace);
         pageVariables.put("about_admin", WebServer.ADMIN);
-        pageVariables.put("database_display", Database.connected() ? "none" : "inline-table");
+
         pageVariables.put("device_display", Devices.USED || Database.disconnected() ? "none" : "inline-table");
         pageVariables.put("about_devicelist", getDeviceList());
         pageVariables.put("site_bg_color", site_bg_color);
@@ -57,7 +57,8 @@ public class AboutServlet extends BaseServlet {
     }
 
     // Вызывается при отправке страницы на сервер
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
         doGet(request, response);
     }
 

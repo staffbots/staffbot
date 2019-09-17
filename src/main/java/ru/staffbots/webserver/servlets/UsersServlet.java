@@ -39,8 +39,6 @@ public class UsersServlet extends BaseServlet {
         pageVariables.put("users_empty_enabled", (userList.size() == 0) ? "disabled" : "");
         pageVariables.put("users_login_list", getLoginList(userList, login));
         pageVariables.put("users_role_list", getRoleList(role.getAccessLevel()));
-        pageVariables.put("site_bg_color", site_bg_color);
-        pageVariables.put("page_bg_color", page_bg_color);
         String content = FillTemplate("html/" + pageType.getName()+".html", pageVariables);
         super.doGet(request, response, content);
     }
