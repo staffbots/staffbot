@@ -15,29 +15,29 @@
     <body>
 
         <!-- Главное меню -->
-        <table class="table menu">
-            <big>
-                <tr>
-                    ${main_menu}
-                    <td style=" width: 100%;"></td>
-                </tr>
-            </big>
-        </table>
+        <big>
+            <table class="table menu">
+                    <tr>
+                        ${main_menu}
+                        <td></td>
+                    </tr>
+            </table>
+        </big>
 
         <!-- Содержимое генерируется в BaseServlet по html-шаблону -->
         ${main_content}
 
         <!-- Статус строка -->
-        <table class="table status">
-            <small>
-                <tr>
-                    <td>Логин: <em>${main_login}</em></td>
-                    <td>Роль:  <em>${main_role} </em></td>
-                    <td><a href="entry">Выйти</a></td>
-                    <td style=" width: 100%;"></td>
-                </tr>
-            </small>
-        </table>
+        <small>
+            <table class="table menu">
+                    <tr>
+                        <td>Логин: <em>${main_login}</em></td>
+                        <td>Роль:  <em>${main_role} </em></td>
+                        <td><a href="entry">Выйти</a></td>
+                        <td></td>
+                    </tr>
+            </table>
+        </small>
 
         <script src="/resource?js/main.js"></script>
 

@@ -1,16 +1,24 @@
+:root {
+    --border-radius: 5px;
+    --site_bg_color: #${site_bg_color};
+    --main_bg_color: #${main_bg_color};
+    --page_bg_color: #${page_bg_color};
+    --database_display: ${database_display};
+}
+
 body {
-  background-color: #${site_bg_color};
+  background-color: var(--site_bg_color);
   text-align:left;
 }
 
-.table{
+.table {
     border: 0px;
-    border-radius: 5px;
+    border-radius: var(--border-radius);
     border-spacing: 0px;
 }
 
 .table.parent {
-    background-color: #${page_bg_color};
+    background-color: var(--page_bg_color);
     border-spacing: 5px;
     margin: 5px;
 }
@@ -20,37 +28,37 @@ body {
 }
 
 .table.parent.database {
-    display: ${database_display};
+    display: var(--database_display);
 }
 
 
 .table.child {
-    background-color: #${site_bg_color};
+    background-color: var(--site_bg_color);
     border-spacing: 5px;
     padding: 0px;
     width: 100%;
 }
 
 .table.menu {
-     background-color: #${main_bg_color};
-     border-spacing: 5px;
-     padding: 0px;
+     background-color: var(--main_bg_color);
+     border-spacing: 0px;
+     padding: 10px;
      width: 100%;
-     margin: 5px;
+     margin: 0px;
 }
 
 .table.menu td {
+    border-radius: var(--border-radius);
     padding: 10px;
-    border-radius: 5px;
+}
+.table.menu tr {
+    padding: 0px;
+    width: 0;
+    white-space: nowrap;
 }
 
-.table.status {
-     background-color: #${main_bg_color};
-     padding: 0px;
-     width: 100%;
-     white-space: nowrap;
-     border-spacing: 20px;
-     margin: 5px;
+.table.menu tr :last-child {
+  width: 100%;
 }
 
 select {
