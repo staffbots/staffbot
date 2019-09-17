@@ -18,11 +18,13 @@ public class WebServer {
 
     public static Integer HTTP_PORT = 80;
 
-    public static Integer HTTPS_PORT = 8080;
+    public static Integer HTTPS_PORT = 443;
 
     public static String ADMIN = "admin";
 
     public static String PASSWORD = "admin";
+
+    public static Boolean HTTP_USED = false;
 
     public static String key_store = "keystore";
 
@@ -34,6 +36,39 @@ public class WebServer {
      *
      */
     private static Server server = null;
+
+    private static ServerConnector getHttpConnector(){
+        // HTTP connector
+        ServerConnector connector = new ServerConnector(server);
+        connector.setPort(HTTP_PORT);
+        return connector;
+    }
+
+    private static ServerConnector getHttpsConnector(){
+        String keyStorePath = Resources.ExtractFromJar(key_store);
+
+        // HTTPS configuration
+        HttpConfiguration https = new HttpConfiguration();
+        https.addCustomizer(new SecureRequestCustomizer());            // Configuring SSL
+        SslContextFactory sslContextFactory = new SslContextFactory();
+        //SslContextFactory sslContextFactory = new JettySslContextFactory(configuration.getSslProviders());
+
+        // Defining keystore path and passwords
+        sslContextFactory.setKeyStorePath(keyStorePath);
+        sslContextFactory.setKeyStorePassword(key_store_password);
+        sslContextFactory.setKeyManagerPassword(key_manager_password);
+
+        // Configuring the connector
+        ServerConnector connector = new ServerConnector(server,
+                new SslConnectionFactory(sslContextFactory, "http/1.1"),
+                new HttpConnectionFactory(https));
+        connector.setPort(HTTPS_PORT);
+
+        // HTTPS connectors
+//        server.setConnectors(new Connector[]{connector});
+//        server.setConnectors(new Connector[]{sslConnector});
+        return connector;
+    }
 
     /**
      * <b>Запуск</b> веб-сервера<br>
@@ -56,34 +91,9 @@ public class WebServer {
         }
 
         server = new Server();
-
-        // HTTP connector
-        ServerConnector connector = new ServerConnector(server);
-        connector.setPort(HTTP_PORT);
-
-        String keyStorePath = Resources.ExtractFromJar(key_store);
-
-        // HTTPS configuration
-        HttpConfiguration https = new HttpConfiguration();
-        https.addCustomizer(new SecureRequestCustomizer());            // Configuring SSL
-        SslContextFactory sslContextFactory = new SslContextFactory();
-        //SslContextFactory sslContextFactory = new JettySslContextFactory(configuration.getSslProviders());
-
-        // Defining keystore path and passwords
-        sslContextFactory.setKeyStorePath(keyStorePath);
-        sslContextFactory.setKeyStorePassword(key_store_password);
-        sslContextFactory.setKeyManagerPassword(key_manager_password);
-
-        // Configuring the connector
-        ServerConnector sslConnector = new ServerConnector(server,
-                new SslConnectionFactory(sslContextFactory, "http/1.1"),
-                new HttpConnectionFactory(https));
-        sslConnector.setPort(HTTPS_PORT);
-
-        // HTTPS connectors
-//        server.setConnectors(new Connector[]{connector});
-//        server.setConnectors(new Connector[]{sslConnector});
-        server.setConnectors(new Connector[]{connector, sslConnector});
+        server.setConnectors(new Connector[]{getHttpsConnector()});
+        if (HTTP_USED)
+            server.addConnector(getHttpConnector());
 
         AccountService accountService = new AccountService();
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);

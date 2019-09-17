@@ -7,7 +7,6 @@ import ru.staffbots.tools.resources.Resources;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.webserver.WebServer;
 import ru.staffbots.webserver.servlets.BaseServlet;
-import ru.staffbots.webserver.servlets.ResourceServlet;
 import ru.staffbots.windows.MainWindow;
 
 import java.io.*;
@@ -79,6 +78,7 @@ public abstract class Pattern {
             WebServer.ADMIN = property.getProperty("web.admin", WebServer.ADMIN);
             WebServer.PASSWORD = property.getProperty("web.password", WebServer.PASSWORD);
             WebServer.HTTP_PORT = Integer.parseInt(property.getProperty("web.http_port", WebServer.HTTP_PORT.toString()));
+            WebServer.HTTP_USED = Boolean.parseBoolean(property.getProperty("web.http_used", WebServer.HTTP_USED.toString()));
             WebServer.HTTPS_PORT = Integer.parseInt(property.getProperty("web.https_port", WebServer.HTTPS_PORT.toString()));
             WebServer.key_store = property.getProperty("web.key_store", WebServer.key_store);
             WebServer.key_store_password = property.getProperty("web.key_store_password", WebServer.key_store_password);

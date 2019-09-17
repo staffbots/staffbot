@@ -20,9 +20,10 @@ import java.util.Map;
 // или https://localhost:8055/resource?img/logo.png
 public class ResourceServlet extends BaseServlet {
 
-    // Список ресурсов, для получения которых не требуется авторизация
-    public static final List<String> FREE_RESOURCES = asList(
-            "css/main.css", "img/logo.png", "img/icon.ico"
+    // Список защищенных ресурсов, для получения которых требуется авторизация
+    public static final List<String> PRIVATE_RESOURCES = asList(
+            "keystore"
+            //"css/main.css", "img/logo.png", "img/icon.ico"
     );
 
     public ResourceServlet(AccountService accountService) {
@@ -33,14 +34,12 @@ public class ResourceServlet extends BaseServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException{
 
-        String resourceName = request.getQueryString();
-
-        System.out.println(resourceName);
+        String resourceName = request.getQueryString().toLowerCase();
 
         if (resourceName == null)
             return;
 
-        if (!FREE_RESOURCES.contains(resourceName))
+        if (PRIVATE_RESOURCES.contains(resourceName))
             if (accountService.getUserAccessLevel(request) < 0) return;
 
         try {

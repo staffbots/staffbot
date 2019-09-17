@@ -76,6 +76,7 @@ public class MainWindow extends JFrame {
 
         JCheckBox сheckBox = new JCheckBox("SSL");
         сheckBox.setToolTipText("Использовать SSL-протокол");
+        сheckBox.setSelected(true);
 
         // Создание кнопки
         JButton button = new JButton("Управление");
@@ -91,7 +92,8 @@ public class MainWindow extends JFrame {
             }
         });
         container.add(button);
-        container.add(сheckBox);
+        if (WebServer.HTTP_USED)
+            container.add(сheckBox);
         // Размеры и положение окна
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = 350;

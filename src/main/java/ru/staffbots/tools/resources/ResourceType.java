@@ -26,7 +26,7 @@ public enum ResourceType {
         if (index < 1)
             return UNKNOWN;
         for (ResourceType type : values())
-            if (type.toString().equalsIgnoreCase(resourceName.substring(0,index - 1)))
+            if (type.toString().equalsIgnoreCase(resourceName.substring(0,index)))
                 return type;
         return UNKNOWN;
     }

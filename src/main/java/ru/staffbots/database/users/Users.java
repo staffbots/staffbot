@@ -37,7 +37,7 @@ public class Users extends DBTable {
     public boolean setUser(User user){
         try {
             if (isAdmin(user.login)) {
-                Journal.add("Добавить пользоателя " + user.login + " нельзя, т.к. БОГ един и имя его занято!");
+                Journal.add("Добавить пользователя с именем " + user.login.toLowerCase() + " нельзя!", NoteType.WRINING);
                 return false;
             }
             boolean newLogin = (getUserList(user.login).size() == 0);
@@ -84,10 +84,10 @@ public class Users extends DBTable {
 
     private ArrayList<User> getUserList(String login){
         ArrayList<User> userList = new ArrayList<>();
+        if (!Database.connected()) return userList;
         if (login != null)
             if (login.trim().equals(""))
-                login = null;
-        if (!Database.connected()) return userList;
+                return userList;
         try {
             PreparedStatement statement = Database.getConnection().prepareStatement(
                     "SELECT login, password, role FROM "  + getTableName()

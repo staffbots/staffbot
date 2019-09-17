@@ -1,3 +1,13 @@
 body {
-  background-color: ${site_bg_color};
+  background-color: #${site_bg_color};
+  margin: 10px; /* Отступы вокруг */
+}
+
+.table.parent {
+    background-color: #${page_bg_color}; /* Цвет фона */
+    border: 0px; /* Параметры рамки */
+    padding: 5px; /* Поля вокруг текста */
+    border-spacing: 0px;
+    margin: auto;
+    /*cellpadding: 0px;*/
 }

@@ -17,10 +17,6 @@ import ru.staffbots.tools.botprocess.BotTask;
 import ru.staffbots.tools.botprocess.BotProcess;
 import ru.staffbots.tools.botprocess.BotProcessStatus;
 import com.pi4j.io.gpio.RaspiPin;
-import ru.staffbots.webserver.WebServer;
-
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.util.Date;
 
 /*

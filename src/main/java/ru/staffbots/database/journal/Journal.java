@@ -69,6 +69,7 @@ public class Journal extends DBTable {
     private static boolean insertNote(Note note){
         if(!Database.connected())return false;
         try {
+
             PreparedStatement statement = Database.getConnection().prepareStatement(
                     "INSERT INTO " + DB_TABLE_NAME + " (moment, noteValue, noteType) VALUES (?, ?, ?)" );
             statement.setTimestamp(1, new Timestamp(note.getDate().getTime()));
