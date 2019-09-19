@@ -47,11 +47,7 @@ public class AboutServlet extends BaseServlet {
                 trace += traceElement.toString() + "<br>";
         pageVariables.put("about_trace", trace);
         pageVariables.put("about_admin", WebServer.ADMIN);
-
-        pageVariables.put("device_display", Devices.USED || Database.disconnected() ? "none" : "inline-table");
         pageVariables.put("about_devicelist", getDeviceList());
-        pageVariables.put("site_bg_color", site_bg_color);
-        pageVariables.put("page_bg_color", page_bg_color);
         String content = FillTemplate("html/" + pageType.getName()+".html", pageVariables);
         super.doGet(request, response, content);
     }

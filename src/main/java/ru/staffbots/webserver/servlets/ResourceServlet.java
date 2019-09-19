@@ -1,6 +1,7 @@
 package ru.staffbots.webserver.servlets;
 
 import ru.staffbots.database.Database;
+import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.resources.ResourceType;
 import ru.staffbots.tools.resources.Resources;
 import ru.staffbots.webserver.AccountService;
@@ -51,6 +52,7 @@ public class ResourceServlet extends BaseServlet {
                     pageVariables.put("page_bg_color", page_bg_color);
                     pageVariables.put("main_bg_color", main_bg_color);
                     pageVariables.put("database_display", Database.connected() ? "none" : "inline-table");
+                    pageVariables.put("device_display", Devices.USED || Database.disconnected() ? "none" : "inline-table");
                     String result = FillTemplate(resourceName, pageVariables);
                     response.getOutputStream().write(result.getBytes("UTF-8") );
                     break;

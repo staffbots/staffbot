@@ -3,11 +3,9 @@
     <p>
     <table style="text-align: right;" cellpadding="3" >
 
-        <tr style="background: #${page_bg_color};" >
+        <tr class="table tr title">
             <td colspan="4" align="left">
-                <b>
                     Очистка базы данных
-                </b>
             </td>
         </tr>
         <tr>
@@ -38,7 +36,7 @@
                 </select>
             </td>
         </tr>
-        <tr style="background: #${page_bg_color}">
+        <tr class="table tr title">
             <td colspan="4">
                 <button name="dbclean_now" value="dbclean_now">
                     Очистить сейчас
@@ -79,7 +77,7 @@
                 <input name="dbclean_auto_start" value="${dbclean_auto_start}" size="17"  placeholder="${dateformat}">
             </td>
         </tr>
-        <tr style="background: #${page_bg_color}">
+        <tr class="table tr title">
             <td colspan="4">
                 <button name="dbclean_apply" title="Применить введённые параметры" value="dbclean_apply">
                     Применить

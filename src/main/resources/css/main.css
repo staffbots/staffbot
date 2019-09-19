@@ -1,45 +1,59 @@
-:root {
-    --border-radius: 5px;
+:root { /* Глобальный контекст */
+    --border-radius: 4px;
     --site_bg_color: #${site_bg_color};
     --main_bg_color: #${main_bg_color};
     --page_bg_color: #${page_bg_color};
     --database_display: ${database_display};
+    --device_display: ${device_display};
 }
 
-body {
+body { /* Содержание страницы */
   background-color: var(--site_bg_color);
   text-align:left;
+  /*
+  font-family: Gill Sans, sans-serif;
+  font-family: Marker Felt, fantasy;
+  */
+  font-family: Arial, sans-serif;
 }
 
-.table {
+input, textarea, select {
+    font-family:inherit;
+}
+
+
+.table { /* Все таблицы */
     border: 0px;
     border-radius: var(--border-radius);
     border-spacing: 0px;
 }
 
-.table.parent {
+.table.parent { /* Таблицы с рамкой */
     background-color: var(--page_bg_color);
     border-spacing: 5px;
     margin: 5px;
 }
 
-.table.parent.entry {
+.table.parent.entry { /* Таблица для авторизации */
     margin: auto;
 }
 
-.table.parent.database {
+.table.parent.database { /* Таблица с описанием ощибки БД */
     display: var(--database_display);
 }
 
+.table.parent.device { /* Таблица с описанием ощибки контролера */
+    display: var(--device_display);
+}
 
-.table.child {
+.table.child { /* Таблицы в рамке */
     background-color: var(--site_bg_color);
     border-spacing: 5px;
     padding: 0px;
     width: 100%;
 }
 
-.table.menu {
+.table.menu { /* Главное меню и строка состояния */
      background-color: var(--main_bg_color);
      border-spacing: 0px;
      padding: 10px;
@@ -47,20 +61,30 @@ body {
      margin: 0px;
 }
 
-.table.menu td {
-    border-radius: var(--border-radius);
-    padding: 10px;
-}
-.table.menu tr {
+.table.menu tr { /* Строка меню */
     padding: 0px;
     width: 0;
     white-space: nowrap;
 }
 
-.table.menu tr :last-child {
+.table.menu tr :last-child { /* Последний элемент строки меню */
   width: 100%;
 }
 
-select {
+.table.menu td { /* Элемент меню */
+    border-radius: var(--border-radius);
+    padding: 10px;
+}
+
+.table.tr.title { /* Строка таблицы с заголовком */
+    border-radius: var(--border-radius);
+    font-weight: bold;
+    background-color: var(--page_bg_color);
+}
+
+select { /* Элементы с выпадаюшим списком */
     width: 100%;
 }
+
+
+

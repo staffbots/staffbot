@@ -1,76 +1,79 @@
-<!-- Параметры -->
-<table style="text-align:left;" border="0" cellpadding="3">
-    <tbody>
+
+<table>
     <tr>
-        <td colspan="2" align="center">
-            <a href="${website}" title="${website}" target="_blank">
-                <img src="/resource?img/logo.png">
-            </a>
+        <td>
+            <!-- Сведения -->
+            <table style="width:100%" cellpadding="3" border="0" cellspacing="0">
+                <tr class="table tr title">
+                    <td align="center" colspan="2">
+                        <a href="${website}" title="${website}" target="_blank">
+                            <img src="/resource?img/logo.png">
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td>Операционная система</td>
+                    <td><em>${about_osname}</em></td>
+                </tr>
+                <tr>
+                    <td>Версия ОС</td>
+                    <td><em>${about_osversion}</em></td>
+                </tr>
+                <tr>
+                    <td>Архитектура</td>
+                    <td><em>${about_osarch}</em></td>
+                </tr>
+                <tr class="table tr title"><td colspan="2"></td></tr>
+                <tr>
+                    <td>Версия java</td>
+                    <td><em>${about_javaversion}</em></td>
+                </tr>
+                <tr class="table tr title"><td colspan="2"></td></tr>
+                <tr>
+                    <td>Сервер баз данных</td>
+                    <td title="Относительное имя"><em>${about_dbserver}</em></td>
+                </tr>
+                <tr>
+                    <td title="Система Управления Базами Данных">СУБД</td>
+                    <td><em>${about_dbmsystem}</em></td>
+                </tr>
+                <tr>
+                    <td>База данных</td>
+                    <td><em>${about_dbname}</em></td>
+                </tr>
+                <tr class="table tr title"><td colspan="2"></td></tr>
+                <tr>
+                    <td>Проект</td>
+                    <td><b><em>${about_project}</em></b></td>
+                </tr>
+                <tr>
+                    <td>Решение</td>
+                    <td><em>${about_solution}</em></td>
+                </tr>
+                <tr>
+                    <td>Сайт проекта</td>
+                    <td><em><a href="${website}" title="Сайт проекта" target="_blank">${website}</a></em></td>
+                </tr>
+                <tr><td colspan="2"></td></tr>
+            </table>
         </td>
     </tr>
-    <tr style="background: #${page_bg_color};"><td colspan="2"></td></tr>
     <tr>
-        <td>Операционная система</td>
-        <td><em>${about_osname}</em></td>
-    </tr>
-    <tr>
-        <td>Версия ОС</td>
-        <td><em>${about_osversion}</em></td>
-    </tr>
-    <tr>
-        <td>Архитектура</td>
-        <td><em>${about_osarch}</em></td>
-    </tr>
-    <tr style="background: #${page_bg_color};"><td colspan="2"></td></tr>
-    <tr>
-        <td>Версия java</td>
-        <td><em>${about_javaversion}</em></td>
-    </tr>
-    <tr style="background: #${page_bg_color};"><td colspan="2"></td></tr>
-    <tr>
-        <td>Сервер баз данных</td>
-        <td title="Относительное имя"><em>${about_dbserver}</em></td>
-    </tr>
-    <tr>
-        <td title="Система Управления Базами Данных">СУБД</td>
-        <td><em>${about_dbmsystem}</em></td>
-    </tr>
-    <tr>
-        <td>База данных</td>
-        <td><em>${about_dbname}</em></td>
-    </tr>
-    <tr style="background: #${page_bg_color};"><td colspan="2"></td></tr>
-    <tr>
-        <td>Проект</td>
-        <td><b><em>${about_project}</em></b></td>
-    </tr>
-    <tr>
-        <td>Решение</td>
-        <td><em>${about_solution}</em></td>
-    </tr>
-    <tr>
-        <td>Сайт проекта</td>
-        <td><em><a href="${website}" title="Сайт проекта" target="_blank">${website}</a></em></td>
-    </tr>
-    <tr><td colspan="2"></td></tr>
-    <tr>
-        <td colspan="2">
-            <table style="text-align: left" cellpadding="5" border="0" cellspacing="0">
-                <tbody>
-
-                <tr style="font-weight: bold; background: #${page_bg_color}">
+        <td>
+            <!-- Устройства -->
+            <table cellpadding="5" border="0" cellspacing="0">
+                <tr class="table tr title">
                     <td>Устройство</td>
                     <td>Описание</td>
                     <td colspan="2">Пины</td>
                 </tr>
                 ${about_devicelist}
-                </tbody>
             </table>
         </td>
     </tr>
-    </tbody>
 </table>
 
+<!-- Описание ощибки контролера -->
 <table class="table parent database">
     <tr>
         <td style="font-weight: bold;">
@@ -79,7 +82,6 @@
     </tr>
     <tr>
         <td >
-            <!--table style="text-align: left; background: #${site_bg_color};" cellpadding="3" cellspacing="0"-->
             <table class="table child">
                 <tr>
                     <td>
@@ -108,7 +110,8 @@
 
 </table>
 
-<table class="table parent">
+<!-- Описание ощибки контролера -->
+<table class="table parent device">
 
     <tr>
         <td>
@@ -118,7 +121,6 @@
 
     <tr>
         <td >
-            <!--table style="background:#${site_bg_color}" cellpadding="10"-->
             <table class="table child">
                 <tr>
                     <td>
