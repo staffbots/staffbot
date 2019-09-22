@@ -34,10 +34,10 @@ public class SystemServlet extends BaseServlet {
 
     // Вызывается при запросе странице с сервера
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
         if (isAccessDenied(request, response)) return;
         Map<String, Object> pageVariables = new HashMap();
-
 
         Database.cleaner.refresh();
 
@@ -60,17 +60,15 @@ public class SystemServlet extends BaseServlet {
             pageVariables.put(variable + "_" + value,
                     (value.equalsIgnoreCase(Database.settings.load(variable)) ? "checked" : ""));
 
-
         pageVariables.put("dateformat", Cleaner.DATE_FORMAT.getFormat());
-        pageVariables.put("site_bg_color", site_bg_color);
-        pageVariables.put("page_bg_color", page_bg_color);
         String content = FillTemplate("html/" + pageType.getName() + ".html", pageVariables);
         super.doGet(request, response, content);
     }
 
     // Вызывается при отправке страницы на сервер
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
         if (isAccessDenied(request, response)) return;
 
         if (request.getParameter("dbclean_apply") != null){
@@ -97,7 +95,7 @@ public class SystemServlet extends BaseServlet {
         doGet(request, response);
     }
 
-    public static boolean shutdown(boolean reboot, String message) throws RuntimeException {
+    private static boolean shutdown(boolean reboot, String message) throws RuntimeException {
         String operatingSystem = System.getProperty("os.name").toLowerCase();
         String shutdownCommand = (operatingSystem.contains("windows")) ?
             "shutdown -" + (reboot ? "r" : "s") + " -t 0" :

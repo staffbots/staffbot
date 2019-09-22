@@ -67,7 +67,7 @@ public class Journal extends DBTable {
     }
 
     private static boolean insertNote(Note note){
-        if(!Database.connected())return false;
+        if(Database.disconnected())return false;
         try {
 
             PreparedStatement statement = Database.getConnection().prepareStatement(

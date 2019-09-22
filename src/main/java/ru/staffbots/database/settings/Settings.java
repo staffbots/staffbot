@@ -23,7 +23,7 @@ public class Settings extends DBTable {
     }
 
     public void save(String name, String value){
-        if(!Database.connected()) return;
+        if(Database.disconnected()) return;
         if (value == null) value = "";
         try {
             String currentValue = load(name);
@@ -42,7 +42,7 @@ public class Settings extends DBTable {
     }
 
     public String load(String name){
-        if(!Database.connected()) return null;
+        if(Database.disconnected()) return null;
         String settingValue = null;
         try {
             PreparedStatement statement = getStatement(
@@ -79,7 +79,7 @@ public class Settings extends DBTable {
     }
 
     public int delete(String name){
-        if(!Database.connected()) return 0 ;
+        if(Database.disconnected()) return 0 ;
         try {
             PreparedStatement statement = getStatement(
                     "DELETE FROM " + getTableName() + " WHERE  LOWER(settingname) LIKE LOWER(?)");

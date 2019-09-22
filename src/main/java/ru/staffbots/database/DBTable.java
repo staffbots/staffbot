@@ -32,7 +32,7 @@ public abstract class DBTable {
     }
 
     public boolean tableExists(){
-        if(!Database.connected())return false;
+        if(Database.disconnected())return false;
         try {
             DatabaseMetaData metaData = Database.getConnection().getMetaData();
             ResultSet tables = metaData.getTables(Database.NAME, null, tableName, null);
@@ -48,7 +48,7 @@ public abstract class DBTable {
     }
 
     public boolean createTable(boolean drop){
-        if (!Database.connected()) return false;
+        if (Database.disconnected()) return false;
         if (drop) dropTable();
         if (!tableExists())
             try {
@@ -64,7 +64,7 @@ public abstract class DBTable {
     }
 
     public boolean eraseTable(){
-        if(!Database.connected())return false;
+        if(Database.disconnected())return false;
         try {
             if (tableExists()) {
                 getStatement("DELETE FROM " + tableName).execute();
@@ -78,7 +78,7 @@ public abstract class DBTable {
     }
 
     public boolean dropTable(){
-        if(!Database.connected())return false;
+        if(Database.disconnected())return false;
         try {
             if (tableExists()){
                 getStatement("DROP TABLE " + tableName).execute();
@@ -94,13 +94,13 @@ public abstract class DBTable {
     protected PreparedStatement statement;
 
     public PreparedStatement getStatement(String query) throws Exception {
-        if (!Database.connected())
+        if (Database.disconnected())
             throw Database.getException();
         return Database.getConnection().prepareStatement(query);
     }
 
     public ResultSet getSelectResult(String fields, String condition){
-        if (!Database.connected()) return null;
+        if (Database.disconnected()) return null;
         if (!tableExists()) return null;
         try {
             PreparedStatement statement = getStatement(
@@ -120,7 +120,7 @@ public abstract class DBTable {
     }
 
     public long deleteFromTable(PreparedStatement statement){
-        if (!Database.connected()) return 0;
+        if (Database.disconnected()) return 0;
         if (!tableExists()) return 0;
         try {
             long count = statement.executeUpdate();
@@ -134,7 +134,7 @@ public abstract class DBTable {
     }
 
     public long deleteFromTable(String query){
-        if (!Database.connected()) return 0;
+        if (Database.disconnected()) return 0;
         if (!tableExists()) return 0;
         try {
             return deleteFromTable(getStatement(query));

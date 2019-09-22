@@ -238,7 +238,7 @@ abstract public class Value extends DBTable {
         }
         if (isStorable() && allow)
             try {
-                if (!Database.connected()) throw new Exception("Нет подключения к базе данных");
+                if (Database.disconnected()) throw new Exception("Нет подключения к базе данных");
                 PreparedStatement statement = Database.getConnection().prepareStatement(
                         "INSERT INTO " + getTableName() +
                                 " (value) VALUES (?)");
@@ -263,7 +263,7 @@ abstract public class Value extends DBTable {
         }
         if (isStorable() && allow)
             try {
-                if (!Database.connected()) throw new Exception("Нет подключения к базе данных");
+                if (Database.disconnected()) throw new Exception("Нет подключения к базе данных");
                 PreparedStatement statement = Database.getConnection().prepareStatement(
                         "INSERT INTO " + getTableName() +
                                 " (moment, value) VALUES (?, ?)");
@@ -302,7 +302,7 @@ abstract public class Value extends DBTable {
      */
     private long tryGet(Date date) throws Exception{
         if(!isStorable()) return value;
-        if(!Database.connected()) throw new Exception("Нет подключения к базе данных");
+        if(Database.disconnected()) throw new Exception("Нет подключения к базе данных");
         PreparedStatement ps = Database.getConnection().prepareStatement(
                 "SELECT value FROM " + getTableName() + " WHERE (moment <= ?) ORDER BY moment DESC LIMIT 1");
         ps.setTimestamp(1, new Timestamp(date.getTime()));

@@ -52,7 +52,8 @@ public class Cleaner {
     }
 
     public void refresh(){
-        if(!Database.connected())return ;
+        if(Database.disconnected())
+            return;
         loadSettings();
         saveSettings();
     }
@@ -142,7 +143,7 @@ public class Cleaner {
     }
 
     private long cleanByDate(DBTable table, long days){
-        if (!Database.connected()) return 0;
+        if (Database.disconnected()) return 0;
         try {
             PreparedStatement statement = Database.getConnection().prepareStatement(
                     "DELETE FROM " + table.getTableName() + " WHERE moment < ?");

@@ -84,7 +84,7 @@ public class Users extends DBTable {
 
     private ArrayList<User> getUserList(String login){
         ArrayList<User> userList = new ArrayList<>();
-        if (!Database.connected()) return userList;
+        if (Database.disconnected()) return userList;
         if (login != null)
             if (login.trim().equals(""))
                 return userList;

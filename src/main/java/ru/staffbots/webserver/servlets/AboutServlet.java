@@ -27,7 +27,9 @@ public class AboutServlet extends BaseServlet {
     }
 
     // Вызывается при запросе странице с сервера
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
         if (isAccessDenied(request, response)) return;
         Map<String, Object> pageVariables = new HashMap();
         pageVariables.put("website", Pattern.projectWebsite);
@@ -42,7 +44,7 @@ public class AboutServlet extends BaseServlet {
         pageVariables.put("about_solution", Pattern.solutionName + "-" + Pattern.projectVersion);
         pageVariables.put("about_message", Database.connected() ? "" : Database.getException().getMessage());
         String trace = "";
-        if (!Database.connected())
+        if (Database.disconnected())
             for (StackTraceElement traceElement: Database.getException().getStackTrace())
                 trace += traceElement.toString() + "<br>";
         pageVariables.put("about_trace", trace);
@@ -58,13 +60,12 @@ public class AboutServlet extends BaseServlet {
         doGet(request, response);
     }
 
-    public String getDeviceList() {
+    private String getDeviceList() {
         String context = "";
         Map<String, Object> pageVariables = new HashMap();
         pageVariables.put("page_bg_color", page_bg_color);
+        String templateFileName = "html/items/device_pin.html";
         for (Device device : Devices.list){
-            // String deviceName = device.getName();
-
             pageVariables.put("device_url", device.getURL());
             pageVariables.put("device_model", device.getModel());
             pageVariables.put("device_note", device.getNote());
@@ -74,7 +75,7 @@ public class AboutServlet extends BaseServlet {
             ArrayList<Pin> pins = device.getPins();
             int i = 0;
             if (pins.size() == 0)
-                context += FillTemplate("html/items/device_pin.html",pageVariables);
+                context += FillTemplate(templateFileName, pageVariables);
             else
                 for (Pin pin : pins){
                     if (i>0){
@@ -84,7 +85,7 @@ public class AboutServlet extends BaseServlet {
                     }
                     pageVariables.put("pin_note", Devices.pins.get(pin).pinNote);
                     pageVariables.put("pin_name", pin.getName());
-                    context += FillTemplate("html/items/device_pin.html",pageVariables);
+                    context += FillTemplate(templateFileName, pageVariables);
                     i++;
                 }
 

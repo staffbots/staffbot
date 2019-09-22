@@ -50,8 +50,8 @@ public class StatusServlet extends BaseServlet {
     }
 
     // Вызывается при запросе странице с сервера
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
 
         Map<String, Object> pageVariables = new HashMap();
         HttpSession session = request.getSession();
@@ -150,7 +150,7 @@ public class StatusServlet extends BaseServlet {
         doGet(request, response);
     }
 
-    public String getDeviceList(HttpSession session) {
+    private String getDeviceList(HttpSession session) {
         String context = "";
         Map<String, Object> pageVariables = new HashMap();
         pageVariables.put("page_bg_color", page_bg_color);
@@ -195,7 +195,7 @@ public class StatusServlet extends BaseServlet {
         return context;
     }
 
-    public String getLeverList(HttpSession session) {
+    private String getLeverList(HttpSession session) {
         String context = "";
         Map<String, Object> pageVariables = new HashMap();
         pageVariables.put("page_bg_color", page_bg_color);
@@ -263,7 +263,7 @@ public class StatusServlet extends BaseServlet {
         return context + "}";
     }
 
-    public String getTaskList() {
+    private String getTaskList() {
         String context = "";
         Map<String, Object> pageVariables = new HashMap();
         for (int index = 0; index < BotProcess.list.size(); index++){

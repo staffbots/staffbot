@@ -69,4 +69,5 @@ public class ResourceServlet extends BaseServlet {
         throws ServletException, IOException {
         doGet(request, response);
     }
+
 }

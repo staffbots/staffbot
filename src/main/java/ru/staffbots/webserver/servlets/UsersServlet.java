@@ -24,7 +24,9 @@ public class UsersServlet extends BaseServlet {
     }
 
     // Вызывается при запросе странице с сервера
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException {
+
         if (isAccessDenied(request, response)) return;
 
         Map<String, Object> pageVariables = new HashMap();
@@ -44,7 +46,9 @@ public class UsersServlet extends BaseServlet {
     }
 
     // Вызывается при отправке страницы на сервер
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+    public void doPost(HttpServletRequest request, HttpServletResponse response)
+        throws ServletException, IOException{
+
         if (isAccessDenied(request, response)) return;
 
         HttpSession session = request.getSession();
@@ -65,7 +69,7 @@ public class UsersServlet extends BaseServlet {
         doGet(request, response);
     }
 
-    public String getLoginList(ArrayList<User> userList, String selectedLogin) {
+    private String getLoginList(ArrayList<User> userList, String selectedLogin) {
         String context = "";// "<option>" + "</option>";
         for (User user : userList){
             context += "<option " +
@@ -75,7 +79,7 @@ public class UsersServlet extends BaseServlet {
         return context;
     }
 
-    public String getRoleList(int accessLevel) {
+    private String getRoleList(int accessLevel) {
         String context = "";
         for (UserRole userRole : UserRole.values()) {
             context += "<option value=" + userRole + " " +

@@ -54,7 +54,6 @@ public class ControlServlet extends BaseServlet {
     // Вызывается при отправке страницы на сервер
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
-
         String setName = request.getParameter("set");
         // Проверяем, не запрос ли это на обработку нажатия кнопки
         // вызовом control_button_onclick() из main.js
@@ -112,13 +111,12 @@ public class ControlServlet extends BaseServlet {
         doGet(request, response);
     }
 
-    public String getLeverList() {
+    private String getLeverList() {
         String context = "";
         Map<String, Object> pageVariables = new HashMap();
         int maxSize = Levers.getMaxStringValueSize();
         for (Lever lever : Levers.list){
             if (!lever.toValue().isChangeable()) continue;
-            pageVariables.put("page_bg_color", page_bg_color);
             pageVariables.put("name", "control_" + lever.toValue().getName().toLowerCase());
             String value = lever.toValue().toHtmlString();
             pageVariables.put("value", value);
@@ -129,7 +127,7 @@ public class ControlServlet extends BaseServlet {
         return context;
     }
 
-    public String getConfigList() {
+    private String getConfigList() {
         String context = "";
         try {
             for (String configName : Database.configs.getList()) {
@@ -140,6 +138,5 @@ public class ControlServlet extends BaseServlet {
         }
         return context;
     }
-
 
 }

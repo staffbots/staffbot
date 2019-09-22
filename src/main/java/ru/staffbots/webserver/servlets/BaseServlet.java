@@ -27,11 +27,9 @@ public abstract class BaseServlet extends HttpServlet {
 
     public static String page_bg_color = "bbbbbb";
 
-
     protected AccountService accountService;
 
     protected PageType pageType;
-
 
     public BaseServlet(PageType pageType, AccountService accountService){
         this.accountService = accountService;
@@ -73,9 +71,8 @@ public abstract class BaseServlet extends HttpServlet {
         return pageEnabled(pageType);
     }
 
-    protected String getMenu(int userAccessLevel) {
+    private String getMenu(int userAccessLevel) {
         String menu = "";
-        //Map<String, Object> menuVariables = new HashMap();
         Map<String, Object> menuVariables = new HashMap();
         for (PageType pageType: PageType.values()){
             if (pageEnabled(pageType)) {
@@ -116,15 +113,15 @@ public abstract class BaseServlet extends HttpServlet {
     /**
      * Заполняет html-шаблон данными
      */
-    public String FillTemplate(String filename, Map<String, Object> data) {
+    protected String FillTemplate(String fileName, Map<String, Object> data) {
         Writer stream = new StringWriter();
         try {
             Configuration conf = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
             String codePage = "UTF-8";
             conf.setDefaultEncoding(codePage);
-            InputStream inputStream = Resources.getAsStream(filename);
+            InputStream inputStream = Resources.getAsStream(fileName);
             Charset charset = StandardCharsets.UTF_8;
-            Template template = new Template(filename, new InputStreamReader(inputStream, charset), conf, codePage);
+            Template template = new Template(fileName, new InputStreamReader(inputStream, charset), conf, codePage);
             template.process(data, stream);
         } catch (Exception e) {
             Journal.add(e.getMessage());

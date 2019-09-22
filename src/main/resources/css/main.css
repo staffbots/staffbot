@@ -1,8 +1,9 @@
 :root { /* Глобальный контекст */
-    --border-radius: 4px;
+    --border-radius: 1px;
     --site_bg_color: #${site_bg_color};
     --main_bg_color: #${main_bg_color};
     --page_bg_color: #${page_bg_color};
+    --text_color: #222222;
     --database_display: ${database_display};
     --device_display: ${device_display};
 }
@@ -86,5 +87,15 @@ select { /* Элементы с выпадаюшим списком */
     width: 100%;
 }
 
+button { /* Кнопки */
+    border-radius: var(--border-radius);
+    background-color: var(--main_bg_color);
+    border: 1px solid var(--text_color);
+    padding: 3px 15px 3px 15px;
+}
 
+button:hover, button:focus {
+    /*font-weight: bolder;*/
+    background-color: var(--page_bg_color);
+}
 

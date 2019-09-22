@@ -110,18 +110,20 @@ public class JournalServlet extends BaseServlet {
             pageVariables.put("note_title", "");
             pageVariables.put("note_date", "<b>Дата</b>");
             pageVariables.put("note_value", "<b>Сообщение</b>");
-            htmlCode = FillTemplate("html/items/journal_note.html",pageVariables);
+            String templateFileName = "html/items/journal_note.html";
+            htmlCode = FillTemplate(templateFileName,pageVariables);
             for (Note note : journalList) {
                 pageVariables.put("note_title", DateValue.toString(note.getDate(), DateFormat.FULLTIMEDATE));
                 pageVariables.put("note_date", DateValue.toString(note.getDate(), DateFormat.CUTSHORTDATETIME));
                 pageVariables.put("note_value", note.getMessage());
-                htmlCode += FillTemplate("html/items/journal_note.html",pageVariables);
+                htmlCode += FillTemplate(templateFileName,pageVariables);
             }
             pageVariables.put("note_title", "");
             pageVariables.put("note_date", "<em>Выбрано записей:</em>");
             pageVariables.put("note_value", "<em>" + journalList.size() + "</em>");
-            htmlCode += FillTemplate("html/items/journal_note.html",pageVariables);
+            htmlCode += FillTemplate(templateFileName,pageVariables);
         }
         return htmlCode;
     }
+
 }
