@@ -1,6 +1,5 @@
 package ru.staffbots.webserver;
 
-
 import org.eclipse.jetty.server.*;
 import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;

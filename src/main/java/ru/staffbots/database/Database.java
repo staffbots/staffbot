@@ -52,7 +52,7 @@ public class Database {
     public static boolean disconnected(){
         return (connection == null);
     }
-
+ 
     public static boolean init(){
         try {
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD));

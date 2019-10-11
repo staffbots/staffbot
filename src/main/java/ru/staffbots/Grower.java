@@ -13,9 +13,9 @@ import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.devices.drivers.SensorDHT22Device;
 import ru.staffbots.tools.devices.drivers.SonarHCSR04Device;
 import ru.staffbots.tools.devices.drivers.RelayDevice;
-import ru.staffbots.tools.botprocess.BotTask;
-import ru.staffbots.tools.botprocess.BotProcess;
-import ru.staffbots.tools.botprocess.BotProcessStatus;
+import ru.staffbots.tools.tasks.Task;
+import ru.staffbots.tools.tasks.Tasks;
+import ru.staffbots.tools.tasks.TasksStatus;
 import com.pi4j.io.gpio.RaspiPin;
 import java.util.Date;
 
@@ -27,19 +27,15 @@ public class Grower extends Pattern {
     // Точка входа при запуске приложения
     // ВНИМАНИЕ! Порядок инициализаций менять не рекомендуется
     public static void main(String[] args) {
+        // Определяем наименование решения по названию текущего класса
+        solutionName = new Object(){}.getClass().getEnclosingClass().getSimpleName();
         propertiesInit(); // Загружаем свойства из cfg-файла
         databaseInit(); // Подключаемся к базе данных
         leversInit(); // Инициализируем список элементов управления
         devicesInit(); // Инициализируем список устройств
-        botProcessInit(); // Инициализируем список заданий
+        bottasksInit(); // Инициализируем список заданий
         webserverInit(); // Запускаем веб-сервер
         windowInit(); // Открываем главное окно приложения
-    }
-
-    // Определяем наименование решения по названию текущего класса
-    // solutionName определён в родительском классе Pattern
-    static {
-        solutionName = new Object(){}.getClass().getEnclosingClass().getSimpleName();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -112,16 +108,15 @@ public class Grower extends Pattern {
      * <b>Инициализация заданий</b><br>
      * Заполняется список заданий <br>
      */
-    static void botProcessInit() {
-
-        BotProcess.init(testTask, lightTask, ventingTask, irrigationTask);
+    static void bottasksInit() {
+        Tasks.init(testTask, lightTask, ventingTask, irrigationTask);
     }
 
     /*****************************************************
      * Освещение                                         *
      *****************************************************/
     static String lightTaskNote = "Освещение";
-    static BotTask lightTask = new BotTask(
+    static Task lightTask = new Task(
         lightTaskNote,
         () -> { // Расчёт задержки перед следующим запуском задания
             long sunriseTime = sunriseLever.getNearFuture().getTime();
@@ -152,7 +147,7 @@ public class Grower extends Pattern {
      * Вентиляция                                        *
      *****************************************************/
     static String ventingTaskNote = "Вентиляция";
-    static BotTask ventingTask = new BotTask(
+    static Task ventingTask = new Task(
         ventingTaskNote,
         () -> { // Расчёт задержки перед следующим запуском
             if (!funUsedLever.getValue()) return -1;
@@ -187,7 +182,7 @@ public class Grower extends Pattern {
      * Орошение                                          *
      *****************************************************/
     static String irrigationTaskNote = "Орошение";
-    static BotTask irrigationTask = new BotTask(
+    static Task irrigationTask = new Task(
         irrigationTaskNote,
         ()->{// Расчёт задержки перед следующим запуском
             return 900000;
@@ -217,10 +212,10 @@ public class Grower extends Pattern {
         });
 
     /*****************************************************
-     * Заполнение БД тестовыми случайными значениями                              *
+     * Заполнение БД тестовыми случайными значениями     *                            *
      *****************************************************/
     static String testTaskNote = "Заполнение БД";
-    static BotTask testTask = new BotTask(
+    static Task testTask = new Task(
             testTaskNote,
             () -> { // Расчёт задержки перед следующим запуском задания
                 long delay = 0;
@@ -234,8 +229,8 @@ public class Grower extends Pattern {
                         value.setRandom(period);
                 for (Lever lever : Levers.list)
                     lever.toValue().setRandom(period);
-                BotProcess.setStatus(BotProcessStatus.STOP);
+                Tasks.setStatus(TasksStatus.STOP);
                 Journal.add(testTaskNote + ": Задание выполнено");
-            }
-    );
+            });
+
 }

@@ -5,12 +5,12 @@ import java.util.Map;
 
 public enum DateScale {
 
-    MILLISECOND(1, "Миллисекунда"),
-    SECOND(1000, "Секунда"),
-    MINUTE(1000 * 60, "Минута"),
-    HOUR(1000 * 60 * 60, "Час"),
-    DAY(1000 * 60 * 60 * 24, "Сутки"),
-    WEEK(1000 * 60 * 60 * 24 * 7, "Неделя");
+    MILLISECOND(1,                       "Миллисекунда"),
+    SECOND     (1000,                    "Секунда"     ),
+    MINUTE     (1000 * 60,               "Минута"      ),
+    HOUR       (1000 * 60 * 60,          "Час"         ),
+    DAY        (1000 * 60 * 60 * 24,     "Сутки"       ),
+    WEEK       (1000 * 60 * 60 * 24 * 7, "Неделя"      );
 
     private String description;
     private long milliseconds;

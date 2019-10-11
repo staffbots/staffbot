@@ -27,7 +27,7 @@ public class Devices{
      * <b>Список устройств</b>,
      * используется для групповой обработки в StatusServlet
      */
-    public static ArrayList<Device> list = new ArrayList<Device>(0);
+    public static ArrayList<Device> list = new ArrayList();
 
     /**
      * Массив пинов с привязкой к пину на этом устройстве
@@ -68,6 +68,7 @@ public class Devices{
     public static void init(Device... devices) {
         list.clear();
         for (Device device : devices) {
+            if (list.contains(device)) continue;
             list.add(device);
             for (Value value : device.getValues())
                 if (value.isStorable())

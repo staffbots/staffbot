@@ -175,27 +175,31 @@ abstract public class Value extends DBTable {
     public void setRandom(Period period){
         double average = Math.random() * 30;
         double dispersion = Math.random() * 10;
-        setRandom(period, average, dispersion);
+        long count = 35;
+        setRandom(period, count, average, dispersion);
     }
 
-    public void setRandom(Period period, double average, double dispersion){
+    public void setRandom(Period period, long count, double average, double dispersion){
         if (!isPlotPossible()) return;
         eraseTable();
         long timePeriod = period.toDate.getTime() - period.fromDate.getTime();
-        long count = 80;
         long moment = period.fromDate.getTime();
+        double randomValue;
+        int i = 0;
         while (moment < period.toDate.getTime()) {
             moment += (Math.random() + 0.5) * timePeriod / count;
+            randomValue = average + (Math.random() - 0.5) * dispersion;
             long newValue = 0;
             if (valueType == ValueType.DOUBLE)
-                newValue = new DoubleValue("", "", 3, average + (Math.random() - 0.5) * dispersion).get();
+                newValue = Double.doubleToLongBits(randomValue);
             if (valueType == ValueType.BOOLEAN)
                 newValue = Math.round(Math.random());
             if (valueType == ValueType.LONG)
-                newValue = Math.round(average + (Math.random() - 0.5) * dispersion);
+                newValue = Math.round(randomValue);
             set(new Date(moment), newValue);
+            i++;
         }
-
+        Journal.add(name + ". Всего добавлено: " + i, NoteType.ERROR);
     }
 
     protected LeverMode leverMode = LeverMode.CHANGEABLE;

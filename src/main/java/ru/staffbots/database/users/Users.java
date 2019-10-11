@@ -12,6 +12,7 @@ import java.util.ArrayList;
 public class Users extends DBTable {
 
     private static final String DB_TABLE_NAME = "sys_users";
+
     private static final String DB_TABLE_FIELDS = "login VARCHAR(16), password VARCHAR(16), role INT";
 
     public Users(){

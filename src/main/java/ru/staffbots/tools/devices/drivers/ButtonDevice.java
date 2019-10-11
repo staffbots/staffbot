@@ -3,14 +3,11 @@ package ru.staffbots.tools.devices.drivers;
 import com.pi4j.io.gpio.*;
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
-import ru.staffbots.Pattern;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.DevicePin;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.values.BooleanValue;
 import ru.staffbots.tools.values.ValueMode;
-
-import java.net.URL;
 
 public class ButtonDevice extends Device {
 
@@ -67,7 +64,8 @@ public class ButtonDevice extends Device {
     }
 
     @Override
-    public String getModelName() {
+    public String getModel(boolean byClassName) {
+        if(!byClassName) return model;
         String className = (new Object(){}.getClass().getEnclosingClass().getSimpleName());
         return className.substring(0, className.length() - 6);
     }

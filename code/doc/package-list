@@ -1,0 +1,17 @@
+ru.staffbots
+ru.staffbots.database
+ru.staffbots.database.cleaner
+ru.staffbots.database.configs
+ru.staffbots.database.journal
+ru.staffbots.database.settings
+ru.staffbots.database.users
+ru.staffbots.tools.dates
+ru.staffbots.tools.devices
+ru.staffbots.tools.devices.drivers
+ru.staffbots.tools.levers
+ru.staffbots.tools.resources
+ru.staffbots.tools.tasks
+ru.staffbots.tools.values
+ru.staffbots.webserver
+ru.staffbots.webserver.servlets
+ru.staffbots.windows

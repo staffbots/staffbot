@@ -136,7 +136,8 @@ public class SonarHCSR04Device extends Device {
     }
 
     @Override
-    public String getModelName() {
+    public String getModel(boolean byClassName) {
+        if(!byClassName) return model;
         String className = (new Object(){}.getClass().getEnclosingClass().getSimpleName());
         return className.substring(0, className.length() - 6);
     }

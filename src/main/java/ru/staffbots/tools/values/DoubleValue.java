@@ -63,7 +63,7 @@ public class DoubleValue extends Value{
         }
     }
 
-    public DoubleValue(String name, String note,  ValueMode valueMode, int precision, Double... values) {
+    public DoubleValue(String name, String note, ValueMode valueMode, int precision, Double... values) {
         super(name, note, valueMode, ValueType.DOUBLE, 0);
         initValues(values);
         this.precision = precision;

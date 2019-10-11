@@ -5,26 +5,27 @@ import java.util.Map;
 
 public enum PageType {
 
-    ENTRY   (0, "Выход",        -1, "Авторизация",            false),
-    CONTROL (1, "Управление",   1,  "Управление параметрами", true ),
-    STATUS  (2, "Состояние",    0,  "Состояние системы",      true ),
-    JOURNAL (3, "Журнал",       0,  "Журнал событий",         true ),
-    USERS   (4, "Пользователи", 2,  "Список пользователей",   true ),
-    SYSTEM  (5, "Система",      2,  "Системные настройки",    true ),
-    ABOUT   (6, "Сведения",     0,  "Сведения о системе",     false);
+    ENTRY   (0, "Выход"       , -1, "Авторизация"           , false),
+    CONTROL (1, "Управление"  , 1 , "Управление параметрами", true ),
+    STATUS  (2, "Состояние"   , 0 , "Состояние системы"     , true ),
+    JOURNAL (3, "Журнал"      , 0 , "Журнал событий"        , true ),
+    USERS   (4, "Пользователи", 2 , "Список пользователей"  , true ),
+    SYSTEM  (5, "Система"     , 2 , "Системные настройки"   , true ),
+    ABOUT   (6, "Сведения"    , 0 , "Сведения о системе"    , false);
 
     private int value;
     private String caption;
-    private String description;
     private int accessLevel;
+    private String description;
     private boolean databaseDepend;
+
     private static Map map = new HashMap<>();
 
     PageType(int value, String caption, int accessLevel, String description, boolean databaseDepend) {
         this.value = value;
-        this.description = description;
-        this.accessLevel = accessLevel;
         this.caption = caption;
+        this.accessLevel = accessLevel;
+        this.description = description;
         this.databaseDepend = databaseDepend;
     }
 

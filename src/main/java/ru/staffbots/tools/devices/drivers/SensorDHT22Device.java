@@ -43,8 +43,8 @@ public class SensorDHT22Device extends Device {
         this.temperature = new DoubleValue(name + "_temperature", "Температура, C", valueMode, ACCURACY);
         this.humidity = new DoubleValue(name + "_humidity", "Влажность, %", valueMode, ACCURACY);
 
-        values.add(temperature);
-        values.add(humidity);
+        values.add(this.temperature);
+        values.add(this.humidity);
 
 
         Devices.putToPins(pin, new DevicePin(name,"DATA"));
@@ -257,7 +257,8 @@ public class SensorDHT22Device extends Device {
     }
 
     @Override
-    public String getModelName() {
+    public String getModel(boolean byClassName) {
+        if(!byClassName) return model;
         String className = (new Object(){}.getClass().getEnclosingClass().getSimpleName());
         return className.substring(0, className.length() - 6);
     }

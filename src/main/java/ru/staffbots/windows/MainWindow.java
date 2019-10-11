@@ -18,7 +18,7 @@ import ru.staffbots.webserver.WebServer;
 
 
 /*
- * Главное оконо приложения,
+ * Главное окно приложения,
  * Содержит только кнопку "Управление" для перехода к веб-интерфейсу,
  * Закрытие запущенного окна прекращает работу всего приложения
  * Необязателен для запуска: можно отключить параметром gui.used в файле staffbot.cfg
@@ -82,7 +82,7 @@ public class MainWindow extends JFrame {
         JButton button = new JButton("Управление");
         button.setToolTipText("Перейти к управлению через веб-интерфейс");
         // Обработка нажатия кнопки
-        button.addActionListener(new ActionListener() {
+        button.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
                     java.awt.Desktop.getDesktop().browse(WebServer.getURL(сheckBox.isSelected()).toURI());

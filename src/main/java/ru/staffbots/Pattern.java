@@ -13,18 +13,93 @@ import java.io.*;
 import java.util.Properties;
 
 /**
- * <b>Прототип обслуживающего робота</b><br>
- **/
+ * <b>Прототип обслуживающего робота</b>
+ * - абстрактный класс, на базе которого реализуются классы для конкретных решений.
+ * Каждое такое решение (класс-наследник <b>{@code Pattern}</b>) представляет из себя <b>обслуживающего робота</b>
+ * по автоматизации определённого процесса с определёнными переферийными устройствами и рычагами управления.
+ * Упомянутая определённость (рычагов управления, переферийных устройств и методов их взаимодействия)
+ * полностью описывается в одном единственном вышеупомянутом классе <b>обслуживающего робота</b>.
+ * Таких наследников может быть сколько угодно и каждый из них будет самостоятельной системой автоматизации.
+ * На практике же как правило решается только одна задача и для её решения достаточно одного <b>обслуживающего робота</b>.
+ *
+ * <br><br><b>Простейший пример с миганием светодиода на пине {@code GPIO_01}</b>
+ *
+ * <br></><code>
+ * <br>public class <b>{@link Staffbot}</b> extends Pattern {
+ * <blockquote>
+ *         // Точка входа приложения
+ * <br>    public static void main(String[] args) {
+ * <blockquote>// ВНИМАНИЕ! Порядок инициализаций менять не рекомендуется
+ * <br>        // Определяем наименование решения по названию текущего класса
+ * <br>        solutionName = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+ * <br>        propertiesInit(); // Загружаем свойства из cfg-файла
+ * <br>        databaseInit();   // Подключаемся к базе данных
+ * <br>        leversInit();     // Инициализируем список элементов управления
+ * <br>        devicesInit();    // Инициализируем список устройств
+ * <br>        tasksInit();      // Инициализируем список заданий
+ * <br>        webserverInit();  // Запускаем веб-сервер
+ * <br>        windowInit();     // Открываем главное окно приложения
+ * </blockquote>
+ *         }
+ * <br>
+ * <br>    /////////////////////////////////////////////////////////////
+ * <br>    // Описание рычагов управления
+ * <br>    static LongLever frequencyLever = new LongLever("frequency",
+ * <br>          "Частота мигания светодиода, Гц", ValueMode.TEMPORARY, 2, 0.5);
+ * <br>
+ * <br>    // Инициализация рычагов управления
+ * <br>    static void leversInit() {
+ * <blockquote>Levers.init(frequencyLever);
+ * <br>        Journal.add("Рычаги управления успешно проинициализированы");
+ * </blockquote>
+ *     }
+ * <br>
+ * <br>    /////////////////////////////////////////////////////////////
+ * <br>    // Описание переферийных устройств
+ * <br>    static LedDevice ledDevice = new LedDevice("led",
+ * <br>        "Светодиод", RaspiPin.GPIO_01, false);
+ * <br>
+ * <br>    // Инициализация переферийных устройств
+ * <br>    static void devicesInit() {
+ * <blockquote>
+ *              Devices.init(ledDevice);
+ * </blockquote>
+ *     }
+ * <br>
+ * <br>    /////////////////////////////////////////////////////////////
+ * <br>    // Описание заданий автоматизации
+ * <br>    static Task ledFlashingTask = new Task( "Мигание светодиода",
+ * <blockquote>() -> {// Расчёт задержки перед следующим запуском задания в миллисекундах
+ * <blockquote>   return Math.round(1000/frequencyLever.getValue());
+ * </blockquote>    },
+ * <br>        () -> {// Команды выполнения задания
+ * <blockquote>    ledDevice.set(true); // Включаем светодиод
+ * <br>            try { Thread.sleep(Math.round(1000/frequencyLever.getValue())); } // Ждём
+ * <br>            catch (Exception exception) { Journal.add("Мигание светодиода прервано", NoteType.WRINING); }
+ * <br>            ledDevice.set(false); // Выключаем светодиод
+ * </blockquote>    }
+ * </blockquote>    );
+ * <br>
+ * <br>    // Инициализация заданий автоматизации
+ * <br>    static void tasksInit() {
+ * <blockquote>
+ *              Tasks.init(ledFlashingTask);
+ * </blockquote> }
+ * </blockquote> }
+ * </code>
+ */
 public abstract class Pattern {
 
-    // Название проекта,
-    // Определяется параметром name в файле ресурсов properties
-    // Используется в имени БД и в заголовках веб-интерфейса и главного окна
+    /** Название проекта
+    * <br>Определяется параметром <b>name</b> в исходном файле ресурсов <b>properties</b> перед компиляцией проекта
+    * <br>Используется в имени БД, в заголовках веб-интерфейса и главного окна
+    */
     public final static String projectName = "Staffbots";
 
-    // Адрес веб-сайта проекта в www
-    // Определяется параметром website в файле ресурсов properties
-    // Используется при формировании ссылки на описание устройств
+    /** Адрес веб-сайта проекта в www
+    * Определяется параметром website в файле ресурсов properties
+    * Используется при формировании ссылки на описание устройств
+    */
     public static String projectWebsite = "http://www.staffbots.ru";
 
     // Название решения,
@@ -114,4 +189,3 @@ public abstract class Pattern {
     }
 
 }
-

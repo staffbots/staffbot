@@ -6,18 +6,16 @@ import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.dates.Period;
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.dates.DateScale;
-import ru.staffbots.tools.botprocess.BotProcess;
-import ru.staffbots.tools.botprocess.BotProcessStatus;
-import ru.staffbots.tools.botprocess.BotTask;
+import ru.staffbots.tools.tasks.Tasks;
+import ru.staffbots.tools.tasks.TasksStatus;
+import ru.staffbots.tools.tasks.Task;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.devices.drivers.*;
 import ru.staffbots.tools.levers.*;
 import ru.staffbots.tools.values.Value;
 import ru.staffbots.tools.values.ValueMode;
-
 import java.util.Date;
-import java.util.TimeZone;
 
 public class Tester extends Pattern {
 
@@ -28,7 +26,7 @@ public class Tester extends Pattern {
         databaseInit(); // Подключаемся к базе данных
         leversInit(); // Инициализируем список элементов управления
         devicesInit(); // Инициализируем список устройств
-        botProcessInit(); // Инициализируем список задач
+        bottasksInit(); // Инициализируем список задач
         webserverInit(); // Запускаем вебсервер
         windowInit(); // Открываем окно
     }
@@ -36,7 +34,7 @@ public class Tester extends Pattern {
     // Определяем наименование решения по названию текущего класса
     // solutionName определён в родительском классе Staffbot
     static {
-        solutionName = new Object(){}.getClass().getEnclosingClass().getSimpleName(); //"Grower"
+        solutionName = new Object(){}.getClass().getEnclosingClass().getSimpleName();
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -48,7 +46,7 @@ public class Tester extends Pattern {
      * Заполняется список рычагов управления {@code WebServer.levers}<br>
      * Внимание! Порядок перечисления групп и рычагов повторяется в веб-интерфейсе
      */
-    static void leversInit() {
+    public static void leversInit() {
         Levers.initGroup(null, delayLever, buttonLever, listLever, dateLever);
         Journal.add("Рычаги управления успешно проинициализированы");
     }
@@ -57,8 +55,17 @@ public class Tester extends Pattern {
             "Частота опроса, сек", ValueMode.TEMPORARY, 20, 2, 60*60);
 
     static ButtonLever buttonLever = new ButtonLever("buttonLever",
-        "Выполнить","Калибровка датчика, методом триангуляции континума", () -> {
+        "Выполнить","Калибровка датчика, методом триангуляции континума",
+        () -> {
         // Обработка нажатия кнопки
+            long timePeriod = DateScale.WEEK.getMilliseconds();
+            Period period = new Period(DateFormat.DATE, new Date(System.currentTimeMillis() - timePeriod), new Date());
+            for (Device device : Devices.list)
+                for (Value value : device.getValues())
+                    value.setRandom(period);
+            for (Lever lever : Levers.list)
+                lever.toValue().setRandom(period);
+            Tasks.setStatus(TasksStatus.STOP);
         Journal.add("Нажата кнопка калибровки датчика");
     });
 
@@ -87,22 +94,23 @@ public class Tester extends Pattern {
     static SonarHCSR04Device sonar = new SonarHCSR04Device("sonar",
         "Расстояние до врага", RaspiPin.GPIO_04, RaspiPin.GPIO_05);
     static ButtonDevice button = new ButtonDevice("button",
-            "Ракетно ядерный залп", ValueMode.TEMPORARY, RaspiPin.GPIO_06, () -> {
-        // Обработка нажатия кнопки
-        double distance = -1;
-        try {
-//            distance = sonar.getDistance();
-//            System.out.println("distance = " + distance + "cm");
-//            System.out.println("temperature = " + sensor.getTemperature() + "C");
-//            System.out.println("humidity = " + sensor.getHumidity() + "%");
-        } catch (Exception e) {
-//            System.out.println(e.getMessage());
-//            ledRelay.set(false);
+        "Ракетно ядерный залп", ValueMode.TEMPORARY, RaspiPin.GPIO_06,
+        () -> {
+            // Обработка нажатия кнопки
+            double distance = -1;
+            try {
+    //            distance = sonar.getDistance();
+    //            System.out.println("distance = " + distance + "cm");
+    //            System.out.println("temperature = " + sensor.getTemperature() + "C");
+    //            System.out.println("humidity = " + sensor.getHumidity() + "%");
+            } catch (Exception e) {
+    //            System.out.println(e.getMessage());
+    //            ledRelay.set(false);
+            }
+            //ledRelay.set(distanceLever.getValue() < distance);
+            //System.out.println("Lever = " + distanceLever.getValue());
         }
-        //ledRelay.set(distanceLever.getValue() < distance);
-        //System.out.println("Lever = " + distanceLever.getValue());
-
-    });
+    );
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  Tasks - Зададия
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -111,16 +119,16 @@ public class Tester extends Pattern {
      * <b>Инициализация заданий</b><br>
      * Заполняется список задач {@code tasks}<br>
      */
-    static void botProcessInit() {
-   //     BotProcess.init(task);
-//        BotProcess.init(testTask);
+    static void bottasksInit() {
+   //     Tasks.init(task);
+//        Tasks.init(testTask);
     }
 
     /*****************************************************
      * Мигание светодиода                                *
      *****************************************************/
     static String taskNote = "Тестирование датчиков";
-    static BotTask task = new BotTask(
+    static Task task = new Task(
             taskNote, true,
         () -> { // Расчёт задержки перед следующим запуском задания
             long delay = delayLever.getValue()*1000;
@@ -136,13 +144,14 @@ public class Tester extends Pattern {
             } catch (Exception exception) {
                 Journal.add(taskNote + ": Задание прервано", NoteType.WRINING);
             }
-        });
+        }
+    );
 
     /*****************************************************
      * Заполнение БД тестовыми случайными значениями                              *
      *****************************************************/
     static String testTaskNote = "Заполнение БД";
-    static BotTask testTask = new BotTask(
+    static Task testTask = new Task(
         testTaskNote,
         () -> { // Расчёт задержки перед следующим запуском задания
             long delay = 0;
@@ -156,7 +165,7 @@ public class Tester extends Pattern {
                     value.setRandom(period);
             for (Lever lever : Levers.list)
                 lever.toValue().setRandom(period);
-            BotProcess.setStatus(BotProcessStatus.STOP);
+            Tasks.setStatus(TasksStatus.STOP);
         }
     );
 

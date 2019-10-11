@@ -12,7 +12,7 @@ public class Levers{
     /**
      * <b>Список рычагов управления</b>, тех что отображаются на закладке "Управление"
      */
-    public static ArrayList<Lever> list = new ArrayList<>(0);
+    public static ArrayList<Lever> list = new ArrayList();
 
     public static void initGroup(String groupName, Lever... levers) {
         list.add(new GroupLever(groupName));
@@ -21,6 +21,7 @@ public class Levers{
 
     public static void init(Lever... levers) {
         for (Lever lever:levers) {
+            if (list.contains(lever)) continue;
             list.add(lever);
             Value value = lever.toValue();
             if (value.isStorable()) {

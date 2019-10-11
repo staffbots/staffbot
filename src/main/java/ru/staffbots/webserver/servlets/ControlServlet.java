@@ -1,8 +1,8 @@
 package ru.staffbots.webserver.servlets;
 
 import ru.staffbots.database.Database;
-import ru.staffbots.tools.botprocess.BotProcess;
-import ru.staffbots.tools.botprocess.BotProcessStatus;
+import ru.staffbots.tools.tasks.Tasks;
+import ru.staffbots.tools.tasks.TasksStatus;
 import ru.staffbots.tools.levers.ButtonLever;
 import ru.staffbots.tools.levers.Lever;
 import ru.staffbots.tools.levers.Levers;
@@ -33,19 +33,19 @@ public class ControlServlet extends BaseServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         if (isAccessDenied(request, response)) return;
         Map<String, Object> pageVariables = new HashMap();
-        for (BotProcessStatus status : BotProcessStatus.values()) {
+        for (TasksStatus status : TasksStatus.values()) {
             String statusName = "control_" + status.name().toLowerCase();
-            if (status == BotProcessStatus.PAUSE)
-                pageVariables.put(statusName, BotProcessStatus.START == BotProcess.getStatus() ? "" : "disabled");
+            if (status == TasksStatus.PAUSE)
+                pageVariables.put(statusName, TasksStatus.START == Tasks.getStatus() ? "" : "disabled");
             else
-                pageVariables.put(statusName, status == BotProcess.getStatus() ? "disabled" : "");
+                pageVariables.put(statusName, status == Tasks.getStatus() ? "disabled" : "");
         }
 
-        pageVariables.put("start_time", Long.toString(BotProcess.getStartTime()));
+        pageVariables.put("start_time", Long.toString(Tasks.getStartTime()));
         pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("control_leverlist", getLeverList());
         pageVariables.put("control_configlist", getConfigList());
-        pageVariables.put("tasks_display", BotProcess.list.size() > 0 ? "inline-table" : "none");
+        pageVariables.put("tasks_display", Tasks.list.size() > 0 ? "inline-table" : "none");
         String content = FillTemplate("html/" + pageType.getName() + ".html", pageVariables);
 
         super.doGet(request, response, content);
@@ -78,9 +78,9 @@ public class ControlServlet extends BaseServlet {
 
         if (request.getParameter("control_apply") == null) {
             // Обработка управляющих кнопок (пуск, пауза, старт)
-            for (BotProcessStatus status : BotProcessStatus.values())
+            for (TasksStatus status : TasksStatus.values())
                 if (request.getParameter("control_" + status.name().toLowerCase()) != null)
-                    BotProcess.setStatus(status);
+                    Tasks.setStatus(status);
 
             // Обработка кнопок для работы с конфигурацией (сохранить, загрузить, удалить)
             String configName = request.getParameter("control_configname");
@@ -92,7 +92,7 @@ public class ControlServlet extends BaseServlet {
                         if (request.getParameter("control_load") != null) Database.configs.load(configName);
                         if (request.getParameter("control_delete") != null) Database.configs.delete(configName);
                     } catch (Exception e) {} finally {
-                        BotProcess.reScheduleAll();
+                        Tasks.reScheduleAll();
                     }
         } else {
             for (Lever lever : Levers.list) {
@@ -105,7 +105,7 @@ public class ControlServlet extends BaseServlet {
                 if (leverValue != null)
                     value.setFromString(leverValue);
             }
-            BotProcess.reScheduleAll();
+            Tasks.reScheduleAll();
         }
 
         doGet(request, response);

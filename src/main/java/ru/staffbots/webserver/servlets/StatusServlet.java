@@ -3,8 +3,8 @@ package ru.staffbots.webserver.servlets;
 import ru.staffbots.database.DBValue;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.tools.dates.Period;
-import ru.staffbots.tools.botprocess.BotProcess;
-import ru.staffbots.tools.botprocess.BotTask;
+import ru.staffbots.tools.tasks.Tasks;
+import ru.staffbots.tools.tasks.Task;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.levers.Lever;
@@ -66,7 +66,7 @@ public class StatusServlet extends BaseServlet {
                 return;
             }
             if (getName.equals("processstatus")) {
-                response.getOutputStream().write( BotProcess.getStatus().getDescription().getBytes("UTF-8") );
+                response.getOutputStream().write( Tasks.getStatus().getDescription().getBytes("UTF-8") );
                 response.setContentType("text/html; charset=utf-8");
                 response.setStatus(HttpServletResponse.SC_OK);
                 return;
@@ -120,8 +120,8 @@ public class StatusServlet extends BaseServlet {
                 period.initToDate();
         }
 
-        pageVariables.put("tasks_display", BotProcess.list.size() > 0 ? "table-row" : "none");
-        pageVariables.put("start_time", Long.toString(BotProcess.getStartTime()));
+        pageVariables.put("tasks_display", Tasks.list.size() > 0 ? "table-row" : "none");
+        pageVariables.put("start_time", Long.toString(Tasks.getStartTime()));
         pageVariables.put("dateformat", Journal.DATE_FORMAT.getFormat());
         pageVariables.put("status_fromdate", period.getFromDateAsString());
         pageVariables.put("status_todate", period.getToDateAsString());
@@ -266,8 +266,8 @@ public class StatusServlet extends BaseServlet {
     private String getTaskList() {
         String context = "";
         Map<String, Object> pageVariables = new HashMap();
-        for (int index = 0; index < BotProcess.list.size(); index++){
-            BotTask task = BotProcess.list.get(index);
+        for (int index = 0; index < Tasks.list.size(); index++){
+            Task task = Tasks.list.get(index);
             String status = task.getStatusString();
             if (status == null) continue;
             pageVariables.put("note", task.note);

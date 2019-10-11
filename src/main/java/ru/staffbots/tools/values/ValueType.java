@@ -1,5 +1,6 @@
 package ru.staffbots.tools.values;
 
+
 public enum ValueType {
 
     LONG (true),
@@ -9,6 +10,8 @@ public enum ValueType {
     LIST (true),
     VOID (false);
 
+    //true - значение в строковом представлении имеет переменную длинну
+    //false - значение в строковом представлении имеет фиксированную длинну
     private boolean sizeble;
 
     ValueType(boolean sizeble){
@@ -18,4 +21,5 @@ public enum ValueType {
     public boolean isSizeble(){
         return sizeble;
     }
+
 }
