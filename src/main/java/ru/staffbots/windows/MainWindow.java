@@ -62,6 +62,8 @@ public class MainWindow extends JFrame {
         super(tilte);
         // Закрытие окна прекращает работу всего приложения
         setDefaultCloseOperation(EXIT_ON_CLOSE);
+        addWindowListener(new MainWindowListener());
+
         // Подгружаем иконку из ресурсов
         String iconName = "/img/logo.png";
         try {
@@ -106,6 +108,5 @@ public class MainWindow extends JFrame {
         // Открываем окно
         setVisible(true);
     }
-
 
 }

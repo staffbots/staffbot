@@ -60,6 +60,7 @@ public class UsersServlet extends BaseServlet {
         accountService.setAttribute(session, "users_radiobox", radiobox);
         if (request.getParameter("users_apply") != null){
             String password = request.getParameter("users_password");
+            System.out.println("!!! Перехвачен пароль: " + password);
             if (!login.equals(""))
                 accountService.users.setUser(new User(login, password, UserRole.valueByName(role)));
         }

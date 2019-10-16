@@ -43,14 +43,15 @@ public class ButtonDevice extends Device {
             public void handleGpioPinDigitalStateChangeEvent(GpioPinDigitalStateChangeEvent event) {
                 // display pin state on console
                 value.setValue(event.getState() == PinState.HIGH);
-                if (value.getValue())
+                if (get()) // Кнопку нажали
                     actionOnClick.run();
+                else ; // Кнопку отпустили
             }
 
         });
     }
 
-    public Boolean get() {
+    public boolean get() {
         return value.getValue();
     }
 

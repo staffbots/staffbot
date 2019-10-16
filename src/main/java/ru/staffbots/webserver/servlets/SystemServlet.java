@@ -88,7 +88,7 @@ public class SystemServlet extends BaseServlet {
         if (request.getParameter("system_reboot") != null) exiting = shutdown(true, "Перезагрузка системы " + message);
         if (request.getParameter("system_exit") != null) exiting = true;
         if (exiting) {
-            Journal.add("Закрытие программы" + message , NoteType.WRINING);
+            Journal.add("Закрытие приложения" + message , NoteType.WRINING);
             System.exit(0);
         } else
 

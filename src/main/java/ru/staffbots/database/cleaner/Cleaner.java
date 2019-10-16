@@ -3,8 +3,8 @@ package ru.staffbots.database.cleaner;
 import ru.staffbots.database.DBTable;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
+import ru.staffbots.tools.dates.DateAccuracy;
 import ru.staffbots.tools.dates.DateFormat;
-import ru.staffbots.tools.dates.DateScale;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.levers.Lever;
@@ -39,7 +39,7 @@ public class Cleaner {
     private boolean tablesMeasureIsRecord;
     private boolean autoCleaning;
     private long autoValue;
-    private DateScale autoMeasure;
+    private DateAccuracy autoMeasure;
     // Формат даты автозапуска
     public static final DateFormat DATE_FORMAT = DateFormat.DATETIME;
     // Дата автозапуска
@@ -116,9 +116,9 @@ public class Cleaner {
         autoCleaning = Database.settings.loadAsBollean("dbclean_auto_cleaning", "on", false);
         autoValue = Database.settings.loadAsLong("dbclean_auto_value",1);
         try {
-            autoMeasure = DateScale.valueOf(Database.settings.load("dbclean_auto_measure").toUpperCase());
+            autoMeasure = DateAccuracy.valueOf(Database.settings.load("dbclean_auto_measure").toUpperCase());
         } catch (Exception exception) {
-            autoMeasure = DateScale.DAY;
+            autoMeasure = DateAccuracy.DAY;
         }
         autoStart = DateValue.fromString(Database.settings.load("dbclean_auto_start"), DATE_FORMAT, autoStart);
     }
@@ -147,7 +147,7 @@ public class Cleaner {
         try {
             PreparedStatement statement = Database.getConnection().prepareStatement(
                     "DELETE FROM " + table.getTableName() + " WHERE moment < ?");
-            long lastTime = System.currentTimeMillis() - days * DateScale.DAY.getMilliseconds();
+            long lastTime = System.currentTimeMillis() - days * DateAccuracy.DAY.getMilliseconds();
             statement.setTimestamp(1, new Timestamp(lastTime));
             return table.deleteFromTable(statement);
         } catch (Exception exception) {

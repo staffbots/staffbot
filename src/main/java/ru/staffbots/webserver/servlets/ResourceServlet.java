@@ -19,13 +19,12 @@ import java.util.Map;
 // Обработка запроса ресурса
 // вида: <server>:<port>/resource?<resourceName>
 // например: localhost/resource?js/jquery/flot/jquery.flot.js
-// или https://localhost:8055/resource?img/logo.png
+// или https://localhost/resource?img/logo.png
 public class ResourceServlet extends BaseServlet {
 
     // Список защищенных ресурсов, для получения которых требуется авторизация
     public static final List<String> PRIVATE_RESOURCES = asList(
             "keystore"
-            //"css/main.css", "img/logo.png", "img/icon.ico"
     );
 
     public ResourceServlet(AccountService accountService) {

@@ -3,9 +3,9 @@ package ru.staffbots;
 import com.pi4j.io.gpio.RaspiPin;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.tools.dates.DateAccuracy;
 import ru.staffbots.tools.dates.Period;
 import ru.staffbots.tools.dates.DateFormat;
-import ru.staffbots.tools.dates.DateScale;
 import ru.staffbots.tools.tasks.Tasks;
 import ru.staffbots.tools.tasks.TasksStatus;
 import ru.staffbots.tools.tasks.Task;
@@ -58,7 +58,7 @@ public class Tester extends Pattern {
         "Выполнить","Калибровка датчика, методом триангуляции континума",
         () -> {
         // Обработка нажатия кнопки
-            long timePeriod = DateScale.WEEK.getMilliseconds();
+            long timePeriod = DateAccuracy.WEEK.getMilliseconds();
             Period period = new Period(DateFormat.DATE, new Date(System.currentTimeMillis() - timePeriod), new Date());
             for (Device device : Devices.list)
                 for (Value value : device.getValues())
@@ -95,20 +95,11 @@ public class Tester extends Pattern {
         "Расстояние до врага", RaspiPin.GPIO_04, RaspiPin.GPIO_05);
     static ButtonDevice button = new ButtonDevice("button",
         "Ракетно ядерный залп", ValueMode.TEMPORARY, RaspiPin.GPIO_06,
-        () -> {
-            // Обработка нажатия кнопки
-            double distance = -1;
-            try {
-    //            distance = sonar.getDistance();
-    //            System.out.println("distance = " + distance + "cm");
-    //            System.out.println("temperature = " + sensor.getTemperature() + "C");
-    //            System.out.println("humidity = " + sensor.getHumidity() + "%");
-            } catch (Exception e) {
-    //            System.out.println(e.getMessage());
-    //            ledRelay.set(false);
-            }
-            //ledRelay.set(distanceLever.getValue() < distance);
-            //System.out.println("Lever = " + distanceLever.getValue());
+        () -> {// Обработка нажатия кнопки
+            //sensor.dataRead();
+            Journal.add("!!! Temperature = " + sensor.getTemperature());
+            Journal.add("!!! Humidity = " + sensor.getHumidity());
+            //System.out.println("Distance = " + sonar.getDistance());
         }
     );
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -158,7 +149,7 @@ public class Tester extends Pattern {
             return delay;
         },
         () -> { // Задание без повторений
-            long timePeriod = DateScale.WEEK.getMilliseconds();
+            long timePeriod = DateAccuracy.WEEK.getMilliseconds();
             Period period = new Period(DateFormat.DATE, new Date(System.currentTimeMillis() - timePeriod), new Date());
             for (Device device : Devices.list)
                 for (Value value : device.getValues())

@@ -6,6 +6,8 @@ import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.webserver.WebServer;
 
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -13,7 +15,7 @@ public class Users extends DBTable {
 
     private static final String DB_TABLE_NAME = "sys_users";
 
-    private static final String DB_TABLE_FIELDS = "login VARCHAR(16), password VARCHAR(16), role INT";
+    private static final String DB_TABLE_FIELDS = "login VARCHAR(16), password VARCHAR(32), role INT";
 
     public Users(){
         super(DB_TABLE_NAME, DB_TABLE_FIELDS);
@@ -48,7 +50,7 @@ public class Users extends DBTable {
                     "UPDATE " + getTableName() + " SET password = ? , role = ? WHERE login = ?"
             );
             statement.setString(3, user.login);
-            statement.setString(1, user.password);
+            statement.setString(1, cryptWithMD5(user.password));
             statement.setInt(2, user.role.getAccessLevel());
             statement.executeUpdate();
             Journal.add(newLogin ?
@@ -62,8 +64,11 @@ public class Users extends DBTable {
     }
 
     public int verify(String login, String password){
+        if (isAdmin(login))
+            if (WebServer.PASSWORD.equals(password))
+                return UserRole.ADMIN.getAccessLevel();
         User user = getUser(login);
-        return (user == null) ? -1 : user.password.equals(password) ? user.role.getAccessLevel() : -1;
+        return (user == null) ? -1 : user.password.equals(cryptWithMD5(password)) ? user.role.getAccessLevel() : -1;
     }
 
     public UserRole getRole(String login){
@@ -106,6 +111,23 @@ public class Users extends DBTable {
             Journal.add(e.getMessage(), NoteType.ERROR);
         }
         return userList;
+    }
+
+    private String cryptWithMD5(String password){
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] passBytes = password.getBytes();
+            md.reset();
+            byte[] digested = md.digest(passBytes);
+            StringBuffer sb = new StringBuffer();
+            for(int i=0;i<digested.length;i++){
+                sb.append(Integer.toHexString(0xff & digested[i]));
+            }
+            return sb.toString();
+        } catch (NoSuchAlgorithmException exception) {
+            Journal.add("", NoteType.ERROR, exception);
+        }
+        return password;
     }
 
 }

@@ -2,9 +2,9 @@ package ru.staffbots;
 
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.tools.dates.DateAccuracy;
 import ru.staffbots.tools.dates.Period;
 import ru.staffbots.tools.dates.DateFormat;
-import ru.staffbots.tools.dates.DateScale;
 import ru.staffbots.tools.values.DateValue;
 import ru.staffbots.tools.values.Value;
 import ru.staffbots.tools.levers.*;
@@ -33,7 +33,7 @@ public class Grower extends Pattern {
         databaseInit(); // Подключаемся к базе данных
         leversInit(); // Инициализируем список элементов управления
         devicesInit(); // Инициализируем список устройств
-        bottasksInit(); // Инициализируем список заданий
+        tasksInit(); // Инициализируем список заданий
         webserverInit(); // Запускаем веб-сервер
         windowInit(); // Открываем главное окно приложения
     }
@@ -108,7 +108,7 @@ public class Grower extends Pattern {
      * <b>Инициализация заданий</b><br>
      * Заполняется список заданий <br>
      */
-    static void bottasksInit() {
+    static void tasksInit() {
         Tasks.init(testTask, lightTask, ventingTask, irrigationTask);
     }
 
@@ -151,9 +151,9 @@ public class Grower extends Pattern {
         ventingTaskNote,
         () -> { // Расчёт задержки перед следующим запуском
             if (!funUsedLever.getValue()) return -1;
-            Date funriseDate = new Date(sunriseLever.getValue().getTime() - funDelayLever.getValue() * DateScale.MINUTE.getMilliseconds());
+            Date funriseDate = new Date(sunriseLever.getValue().getTime() - funDelayLever.getValue() * DateAccuracy.MINUTE.getMilliseconds());
             long funriseTime = DateValue.getNearFuture(funriseDate).getTime();
-            Date funsetDate = new Date(sunsetLever.getValue().getTime() + funDelayLever.getValue() * DateScale.MINUTE.getMilliseconds());
+            Date funsetDate = new Date(sunsetLever.getValue().getTime() + funDelayLever.getValue() * DateAccuracy.MINUTE.getMilliseconds());
             long funsetTime = DateValue.getNearFuture(funsetDate).getTime();
             // Если ближайший закат наступает раньше чем рассвет, то
             long delay = (funsetTime < funriseTime) ? 0 : (funriseTime - System.currentTimeMillis());
@@ -161,7 +161,7 @@ public class Grower extends Pattern {
         },
         () -> { // Задание
             try {
-                Date funsetDate = new Date(sunsetLever.getValue().getTime() + funDelayLever.getValue() * DateScale.MINUTE.getMilliseconds());
+                Date funsetDate = new Date(sunsetLever.getValue().getTime() + funDelayLever.getValue() * DateAccuracy.MINUTE.getMilliseconds());
                 long funsetTime = DateValue.getNearFuture(funsetDate).getTime();
                 Journal.add(ventingTaskNote + ": включение до " +
                         DateValue.toString(new Date(funsetTime), DateFormat.DATETIME));
@@ -222,7 +222,7 @@ public class Grower extends Pattern {
                 return delay;
             },
             () -> { // Задание без повторений
-                long timePeriod = DateScale.WEEK.getMilliseconds();
+                long timePeriod = DateAccuracy.WEEK.getMilliseconds();
                 Period period = new Period(DateFormat.DATE, new Date(System.currentTimeMillis() - timePeriod), new Date());
                 for (Device device : Devices.list)
                     for (Value value : device.getValues())

@@ -8,28 +8,28 @@ import java.util.Map;
  */
 public enum DateFormat {
 
-    FULLDATETIME    ( 0, "dd.MM.yyyy HH:mm:ss.SSS", DateScale.MILLISECOND),
-    FULLTIMEDATE    ( 1, "HH:mm:ss.SSS dd.MM.yyyy", DateScale.MILLISECOND),
-    DATETIME        ( 2, "dd.MM.yyyy HH:mm:ss",     DateScale.SECOND     ),
-    TIMEDATE        ( 3, "HH:mm:ss dd.MM.yyyy",     DateScale.SECOND     ),
-    SHORTDATETIME   ( 4, "dd.MM.yyyy HH:mm",        DateScale.MINUTE     ),
-    SHORTTIMEDATE   ( 5, "HH:mm dd.MM.yyyy",        DateScale.MINUTE     ),
-    CUTSHORTDATETIME( 4, "dd.MM HH:mm",             DateScale.MINUTE     ),
-    DATE            ( 6, "dd.MM.yyyy",              DateScale.DAY        ),
-    TIME            ( 7, "HH:mm:ss",                DateScale.SECOND     ),
-    SHORTTIME       ( 8, "HH:mm",                   DateScale.MINUTE     ),
-    FULLTIME        ( 9, "HH:mm:ss.SSS",            DateScale.SECOND     ),
-    JSDATETIME      (10, "yyyy/MM/dd HH:mm:ss",     DateScale.SECOND     );
+    FULLDATETIME    ( 0, "dd.MM.yyyy HH:mm:ss.SSS", DateAccuracy.MILLISECOND),
+    FULLTIMEDATE    ( 1, "HH:mm:ss.SSS dd.MM.yyyy", DateAccuracy.MILLISECOND),
+    DATETIME        ( 2, "dd.MM.yyyy HH:mm:ss",     DateAccuracy.SECOND     ),
+    TIMEDATE        ( 3, "HH:mm:ss dd.MM.yyyy",     DateAccuracy.SECOND     ),
+    SHORTDATETIME   ( 4, "dd.MM.yyyy HH:mm",        DateAccuracy.MINUTE     ),
+    SHORTTIMEDATE   ( 5, "HH:mm dd.MM.yyyy",        DateAccuracy.MINUTE     ),
+    CUTSHORTDATETIME( 4, "dd.MM HH:mm",             DateAccuracy.MINUTE     ),
+    DATE            ( 6, "dd.MM.yyyy",              DateAccuracy.DAY        ),
+    TIME            ( 7, "HH:mm:ss",                DateAccuracy.SECOND     ),
+    SHORTTIME       ( 8, "HH:mm",                   DateAccuracy.MINUTE     ),
+    FULLTIME        ( 9, "HH:mm:ss.SSS",            DateAccuracy.SECOND     ),
+    JSDATETIME      (10, "yyyy/MM/dd HH:mm:ss",     DateAccuracy.SECOND     );
 
     private String format;
     private int value;
-    public DateScale accuracy; //Точность
+    public DateAccuracy dateAccuracy; //Точность
     private static Map map = new HashMap<>();
 
-    DateFormat(int value, String format, DateScale accuracy) {
+    DateFormat(int value, String format, DateAccuracy dateAccuracy) {
         this.value = value;
         this.format = format;
-        this.accuracy = accuracy;
+        this.dateAccuracy = dateAccuracy;
     }
 
     static {

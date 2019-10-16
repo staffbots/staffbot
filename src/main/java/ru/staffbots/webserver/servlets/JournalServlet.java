@@ -30,6 +30,7 @@ public class JournalServlet extends BaseServlet {
     // Вызывается при запросе странице с сервера
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
+
         if (isAccessDenied(request, response)) return;
 
         HttpSession session = request.getSession();
@@ -59,10 +60,10 @@ public class JournalServlet extends BaseServlet {
                 if (checkboxName.equalsIgnoreCase("journal_" + pageType.name()))
                     typesForShow.put(pageType.getValue(), checkboxValue);
 
-            if (checkboxName.equals("journal_fromdate_on") && checkboxValue && (Database.journal.period.fromDate == null))
+            if (checkboxName.equals("journal_fromdate_on") && checkboxValue && (Database.journal.period.getFromDate() == null))
                 Database.journal.period.initFromDate();
 
-            if (checkboxName.equals("journal_todate_on") && checkboxValue && (Database.journal.period.toDate == null))
+            if (checkboxName.equals("journal_todate_on") && checkboxValue && (Database.journal.period.getToDate() == null))
                 Database.journal.period.initToDate();
         }
 

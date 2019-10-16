@@ -113,10 +113,10 @@ public class StatusServlet extends BaseServlet {
             Boolean checkboxValue = Boolean.parseBoolean(checkboxValueStr);
             pageVariables.put(checkboxName, checkboxValue ? "checked" : "");
 
-            if (checkboxName.equals("status_fromdate_on") && checkboxValue && (period.fromDate == null))
+            if (checkboxName.equals("status_fromdate_on") && checkboxValue && (period.getFromDate() == null))
                 period.initFromDate();
 
-            if (checkboxName.equals("status_todate_on") && checkboxValue && (period.toDate == null))
+            if (checkboxName.equals("status_todate_on") && checkboxValue && (period.getToDate() == null))
                 period.initToDate();
         }
 
@@ -185,7 +185,7 @@ public class StatusServlet extends BaseServlet {
                 }
                 pageVariables.put("check_value", Boolean.parseBoolean(checkValue) ? "checked" : "");
                 pageVariables.put("check_name", checkName);
-                pageVariables.put("value_name", (value.isStorable() ? value.getName() : ""));
+                pageVariables.put("value_name", value.getName());
                 pageVariables.put("value_note", value.getNote().equals(device.getNote()) ? "" : value.getNote());
                 context += FillTemplate("html/items/device_value.html",pageVariables);
                 i++;
@@ -312,4 +312,5 @@ public class StatusServlet extends BaseServlet {
             result[i] = 360 * random.get(i) / plotValueCount;
         return result;
     }
+
 }

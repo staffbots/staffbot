@@ -15,6 +15,7 @@ import ru.staffbots.tools.values.ValueMode;
  * Простейший пример с миганием светодиода на пине {@code GPIO_01}
  */
 public class Staffbot extends Pattern {
+
     // Точка входа приложения
     public static void main(String[] args) {
         // ВНИМАНИЕ! Порядок инициализаций менять не рекомендуется
@@ -30,11 +31,12 @@ public class Staffbot extends Pattern {
     }
 
     /////////////////////////////////////////////////////////////
-    // Описание рычагов управления
-    static DoubleLever frequencyLever = new DoubleLever("frequency",
-            "Частота мигания светодиода, Гц", ValueMode.TEMPORARY, 2, 0.5);
+    // Рычаги управления
+    /////////////////////////////////////////////////////////////
 
-    // Инициализация рычагов управления
+    static DoubleLever frequencyLever = new DoubleLever("frequency",
+            "Частота мигания светодиода, Гц", ValueMode.TEMPORARY, 2, 0.25);
+
     static void leversInit() {
         Levers.init(frequencyLever);
         Levers.init(frequencyLever);
@@ -43,31 +45,34 @@ public class Staffbot extends Pattern {
     }
 
     /////////////////////////////////////////////////////////////
-    // Описание переферийных устройств
+    // Переферийные устройства
+    /////////////////////////////////////////////////////////////
+
     static LedDevice ledDevice = new LedDevice("led",
             "Светодиод", RaspiPin.GPIO_01, false);
 
-    // Инициализация переферийных устройств
     static void devicesInit() {
         Devices.init(ledDevice);
     }
 
     /////////////////////////////////////////////////////////////
-    // Описание заданий автоматизации
+    // Задания автоматизации
+    /////////////////////////////////////////////////////////////
+
     static Task ledFlashingTask = new Task( "Мигание светодиода",
             () -> {// Расчёт задержки перед следующим запуском задания в миллисекундах
-                return Math.round(1000/frequencyLever.getValue());
+                return Math.round(500/frequencyLever.getValue());
             },
             () -> {// Команды выполнения задания
                 ledDevice.set(true); // Включаем светодиод
-                try { Thread.sleep(Math.round(1000/frequencyLever.getValue())); } // Ждём
+                try { Thread.sleep(Math.round(500/frequencyLever.getValue())); } // Ждём
                 catch (Exception exception) { Journal.add("Мигание светодиода прервано", NoteType.WRINING); }
                 ledDevice.set(false); // Выключаем светодиод
             }
     );
 
-    // Инициализация заданий автоматизации
     static void tasksInit() {
         Tasks.init(ledFlashingTask);
     }
+
 }

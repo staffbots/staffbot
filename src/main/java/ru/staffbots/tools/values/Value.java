@@ -117,8 +117,8 @@ abstract public class Value extends DBTable {
     public ArrayList<DBValue> getDataSet(Period period){
         ArrayList<DBValue> dbValues = new ArrayList<>();
         try {
-            String condition = (period.fromDate == null) ? null : " (? <= moment) ";
-            if (period.toDate != null)
+            String condition = (period.getFromDate() == null) ? null : " (? <= moment) ";
+            if (period.getToDate() != null)
                 condition = ((condition == null) ? "" : condition + "AND") + " (moment <= ?) ";
             condition = ((condition == null) ? "" : " WHERE " + condition);
 
@@ -126,18 +126,13 @@ abstract public class Value extends DBTable {
                     "SELECT moment, value FROM " + getTableName()
                             + condition + " ORDER BY moment ASC");
 
-            if (period.fromDate != null) {
-                // Формат даты для журнала (DateFormat.TIMEDATE) не учитывает секунды,
-                // которые прошли с начала минуты (для начальной даты):
-                long time = period.fromDate.getTime() - period.fromDate.getTime() % period.dateFormat.accuracy.getMilliseconds();
-                statement.setTimestamp(1, new Timestamp(time));
-            }
+            if (period.getFromDate() != null)
+                statement.setTimestamp(1,
+                    new Timestamp(period.getFromDate().getTime()));
 
-            if (period.toDate != null) {
-                // и которые остались до конца минуты (для конечной даты):
-                long time = period.toDate.getTime() + (period.dateFormat.accuracy.getMilliseconds() - period.toDate.getTime() % period.dateFormat.accuracy.getMilliseconds());
-                statement.setTimestamp((period.fromDate == null) ? 1 : 2, new Timestamp(time));
-            }
+            if (period.getToDate() != null)
+                statement.setTimestamp((period.getFromDate() == null) ? 1 : 2,
+                    new Timestamp(period.getToDate().getTime()));
 
             if(statement.execute()) {
                 ResultSet resultSet = statement.getResultSet();
@@ -182,12 +177,12 @@ abstract public class Value extends DBTable {
     public void setRandom(Period period, long count, double average, double dispersion){
         if (!isPlotPossible()) return;
         eraseTable();
-        long timePeriod = period.toDate.getTime() - period.fromDate.getTime();
-        long moment = period.fromDate.getTime();
+        //long timePeriod = period.getDuration();
+        long moment = period.getFromDate().getTime();
         double randomValue;
         int i = 0;
-        while (moment < period.toDate.getTime()) {
-            moment += (Math.random() + 0.5) * timePeriod / count;
+        while (moment < period.getToDate().getTime()) {
+            moment += (Math.random() + 0.5) * period.getDuration() / count;
             randomValue = average + (Math.random() - 0.5) * dispersion;
             long newValue = 0;
             if (valueType == ValueType.DOUBLE)

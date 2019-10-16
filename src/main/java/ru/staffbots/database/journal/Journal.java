@@ -134,25 +134,23 @@ public class Journal extends DBTable {
                             condition += ")";
                     }
             condition = (condition == null) ? "(noteType = -1)" : condition + ")";
-            String fromCondition = (period.fromDate == null) ? "" : " AND (? <= moment)";
-            String toCondition = (period.toDate == null) ? "" : " AND (moment <= ?)";
+            String fromCondition = (period.getFromDate() == null) ? "" : " AND (? <= moment)";
+            String toCondition = (period.getToDate() == null) ? "" : " AND (moment <= ?)";
             PreparedStatement statement = Database.getConnection().prepareStatement(
                     "SELECT * FROM (SELECT moment, noteValue, noteType FROM " + getTableName()
                             + " WHERE " + condition + fromCondition + toCondition
                             + " AND (LOWER(noteValue) LIKE '%" + searchString.toLowerCase()
                             + "%') ORDER BY moment DESC LIMIT "  + getCount()
                             + ") sub ORDER BY moment ASC");
-            if (period.fromDate != null) {
-                // Формат даты для журнала (DateFormat.TIMEDATE) не учитывает секунды,
-                // которые прошли с начала минуты (для начальной даты):
-                long time = period.fromDate.getTime() - period.fromDate.getTime() % DATE_FORMAT.accuracy.getMilliseconds();
-                statement.setTimestamp(1, new Timestamp(time));
-            }
-            if (period.toDate != null) {
-                // и которые остались до конца минуты (для конечной даты):
-                long time = period.toDate.getTime() + (DATE_FORMAT.accuracy.getMilliseconds() - period.toDate.getTime() % DATE_FORMAT.accuracy.getMilliseconds());
-                statement.setTimestamp((period.fromDate == null) ? 1 : 2, new Timestamp(time));
-            }
+
+            if (period.getFromDate() != null)
+                statement.setTimestamp(1,
+                    new Timestamp(period.getFromDate().getTime()));
+
+            if (period.getToDate() != null)
+                statement.setTimestamp((period.getFromDate() == null) ? 1 : 2,
+                    new Timestamp(period.getToDate().getTime()));
+
             if(statement.execute()) {
                 ResultSet resultSet = statement.getResultSet();
                 while (resultSet.next()) {

@@ -9,12 +9,20 @@ public class Period {
 
     public DateFormat dateFormat;
 
-    public Date fromDate;
+    private Date fromDate;
 
-    public Date toDate;
+    public Date getFromDate(){
+        return fromDate;
+    }
 
     public String getFromDateAsString(){
         return DateValue.toString(fromDate, dateFormat);
+    }
+
+    private Date toDate;
+
+    public Date getToDate(){
+        return toDate;
     }
 
     public String getToDateAsString(){
@@ -54,37 +62,40 @@ public class Period {
             fromDate = toDate;
             toDate = date;
         }
-        this.fromDate = fromDate;
-        this.toDate  = toDate;
+        this.fromDate = getRoundDate(fromDate, dateFormat.dateAccuracy, false);
+        this.toDate  = getRoundDate(toDate, dateFormat.dateAccuracy, true);
     }
 
     public void initFromDate(){
-        Date date = (toDate == null) ? new Date() : toDate;
-        fromDate = atStartOfDay(date);
+        fromDate = getRoundDate((toDate == null) ? new Date() : toDate, DateAccuracy.DAY, false);
     }
 
     public void initToDate(){
-        Date date = (fromDate == null) ? new Date() : fromDate;
-        toDate = atEndOfDay(date);
+        toDate = getRoundDate((fromDate == null) ? new Date() : fromDate, DateAccuracy.DAY, true);
     }
 
-    public Date atEndOfDay(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, 23);
-        calendar.set(Calendar.MINUTE, 59);
-        calendar.set(Calendar.SECOND, 59);
-        calendar.set(Calendar.MILLISECOND, 999);
-        return calendar.getTime();
+    public long getDuration(){
+        return toDate.getTime() - fromDate.getTime();
     }
 
-    public Date atStartOfDay(Date date) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-        calendar.set(Calendar.HOUR_OF_DAY, 0);
-        calendar.set(Calendar.MINUTE, 0);
-        calendar.set(Calendar.SECOND, 0);
-        calendar.set(Calendar.MILLISECOND, 0);
-        return calendar.getTime();
+    static private Date getRoundDate(Date date, DateAccuracy dateAccuracy, boolean roundingUp){
+        if (date == null) return null;
+        // Из-за часовых поясов приходиться писать такой костыль:
+        if (dateAccuracy == DateAccuracy.DAY) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(date);
+            calendar.set(Calendar.HOUR_OF_DAY, 0);
+            calendar.set(Calendar.MINUTE, 0);
+            calendar.set(Calendar.SECOND, 0);
+            calendar.set(Calendar.MILLISECOND, 0);
+            long time = calendar.getTime().getTime(); // Начало суток
+            if (roundingUp) time += (dateAccuracy.getMilliseconds() - 1); // Конец суток
+            return new Date(time);
+        }
+        // Хотя, если бы getTime() не вела отсчёт с привязкой к UTC+0, то всё должно было бы работать по общей формуле:
+        long roundingDownTime = date.getTime() - date.getTime() % dateAccuracy.getMilliseconds(); // Начало периода в рамках dateAccuracy
+        return new Date(roundingDownTime + (roundingUp ? dateAccuracy.getMilliseconds() - 1 : 0 )); // Конец периода в рамках dateAccuracy
     }
+
+
 }
