@@ -7,6 +7,10 @@ import ru.staffbots.tools.values.VoidValue;
  */
 public class GroupLever extends VoidValue implements Lever {
 
+    public void setNewNote(String newNote) {
+        note = newNote;
+    }
+
     public GroupLever(String note) {
         super(note);
     }

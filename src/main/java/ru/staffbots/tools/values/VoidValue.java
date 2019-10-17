@@ -38,4 +38,5 @@ public class VoidValue extends Value{
     public void setFromString(String value) {
     }
 
+
 }
