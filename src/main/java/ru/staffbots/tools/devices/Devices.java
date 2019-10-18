@@ -35,10 +35,6 @@ public class Devices{
     public static Map<Pin, DevicePin> pins = new HashMap();
 
     public static boolean putToPins(Pin pin, DevicePin devicePin){
-        if (pins.containsKey(pin)) {
-            System.out.println("Нельзя использовать один и тот же пин (" + pin + ") несколько раз!");
-            System.exit(0);
-        }
         pins.put(pin, devicePin);
         return true;
     }

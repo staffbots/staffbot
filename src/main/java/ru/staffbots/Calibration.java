@@ -4,7 +4,8 @@ import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CFactory;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.tools.devices.Devices;
-import ru.staffbots.tools.devices.drivers.ASPHProbeDevice;
+import ru.staffbots.tools.devices.drivers.I2CProbeDevice;
+import ru.staffbots.tools.devices.drivers.UARTProbeDevice;
 import ru.staffbots.tools.levers.*;
 import ru.staffbots.tools.tasks.Tasks;
 
@@ -33,52 +34,46 @@ public class Calibration extends Pattern {
     // Переферийные устройства
     /////////////////////////////////////////////////////////////
 
-    static ASPHProbeDevice pHProbeDevice = new ASPHProbeDevice("pHProbe",
-            "pH показатель");
+    static I2CProbeDevice probeDevice = new I2CProbeDevice("ProbeDevice",
+            "Датчик", 1, 100);
+    static UARTProbeDevice uartProbeDevice = new UARTProbeDevice("ProbeDevice","Датчик");
 
     static void devicesInit() {
-        Devices.init(pHProbeDevice);
+        Devices.init(probeDevice);
     }
 
     /////////////////////////////////////////////////////////////
     // Рычаги управления
     /////////////////////////////////////////////////////////////
     static GroupLever label = new GroupLever("label");
-    static LongLever bytesLabel = new LongLever("bytesLabel","Количество байтов", 1,40,1024);
 
     static ButtonLever buttonLever = new ButtonLever("buttonLever",
             "Выполнить","Калибровка датчика, методом триангуляции континума",
             () -> {
                 // Обработка нажатия кнопки
-                String note;
+                String note = "nothing";
                 try {
-                    final byte TSL2561_REG_ID = (byte)0x8A;
-                    final byte TSL2561_REG_DATA_0 = (byte)0x8C;
-                    final byte TSL2561_REG_DATA_1 = (byte)0x8E;
-                    final byte TSL2561_REG_CONTROL = (byte)0x80;
-                    final byte TSL2561_POWER_UP = (byte)0x03;
-                    final byte TSL2561_POWER_DOWN = (byte)0x00;
+                    //uartProbeDevice.write("OK,0");
+                    uartProbeDevice.write("Status");
+                    //uartProbeDevice.write("i");
+                    //uartProbeDevice.write("R");
+                    //uartProbeDevice.write("i");
+                    //note = "\n";
+                    //note += probeDevice.readln("i", 300) + "\n";
+                    //note += probeDevice.readln("T,?", 300) + "\n";
+                    //note += probeDevice.readln("Status", 300) + "\n";
 
-                    byte[] bytes = new byte[(int)bytesLabel.getValue()];
-                    pHProbeDevice.device.write("R".getBytes(StandardCharsets.US_ASCII));
-                    Thread.sleep(1000);
-                    int response = pHProbeDevice.device.read(bytes,0,(int) bytesLabel.getValue());
-                    note = "Прочитано " +  response + " байтов: " +
-                            new String(bytes, StandardCharsets.US_ASCII);
- //                   note = "Прочитано " +  response + " байтов: " + Arrays.toString(bytes);
-                    label.setNewNote(note);
-//                    System.out.println("BUS_0 = " + I2CBus.BUS_0);
                 } catch (Exception exception) {
-                    note = "I/O error during fetch of I2C busses occurred";
+                    //note = "I/O error during fetch of I2C busses occurred";
                 }
-                label.setNewNote(note);
-                //label.setNewNote("dsfdsda");
-                //pHProbeDevice.
+                System.out.println(note);
+
+                label.setNote(note.replaceAll("\n","<br>"));
                 Journal.add(note);
             });
 
     static void leversInit() {
-        Levers.init(bytesLabel, buttonLever, label);
+        Levers.init(buttonLever, label);
         Journal.add("Рычаги управления успешно проинициализированы");
     }
 

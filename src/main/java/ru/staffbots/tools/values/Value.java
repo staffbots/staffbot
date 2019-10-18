@@ -229,12 +229,14 @@ abstract public class Value extends DBTable {
      * @return установленное значение
      */
     public long set(long newValue) {
+
         boolean allow;
         try {
             allow = (newValue != tryGet(new Date()));
         } catch (Exception exception) {
             allow = true;
         }
+        boolean valueChanged = false;
         if (isStorable() && allow)
             try {
                 if (Database.disconnected()) throw new Exception("Нет подключения к базе данных");
@@ -243,13 +245,12 @@ abstract public class Value extends DBTable {
                                 " (value) VALUES (?)");
                 statement.setLong(1, newValue);
                 statement.executeUpdate();
-                Journal.add(getNote() + " - установлено заначение: " +
-                        toString());
-                //toViewString());
+                valueChanged = true;
             } catch (Exception exception) {
                 Journal.add("Ошибка записи в таблицу " + getTableName() + exception.getMessage(), NoteType.ERROR);
             }
         value = newValue;
+        if (valueChanged) Journal.add(getNote() + " - установлено значение: " + toValueString(value));
         return value;
     }
 
@@ -260,6 +261,7 @@ abstract public class Value extends DBTable {
         } catch (Exception exception) {
             allow = true;
         }
+        boolean valueChanged = false;
         if (isStorable() && allow)
             try {
                 if (Database.disconnected()) throw new Exception("Нет подключения к базе данных");
@@ -269,14 +271,14 @@ abstract public class Value extends DBTable {
                 statement.setTimestamp(1, new Timestamp(moment.getTime()));
                 statement.setLong(2, newValue);
                 statement.executeUpdate();
-                Journal.add(getNote() + " - установлено заначение: " +
-                        toString()
-                        //toViewString()
-                        + " на дату " + DateValue.toString(moment, Journal.DATE_FORMAT));
+                valueChanged = true;
             } catch (Exception e) {
                 Journal.add("Ошибка записи в таблицу " + getTableName() + e.getMessage(), NoteType.ERROR);
             }
         value = newValue;
+        if (valueChanged)
+            Journal.add(getNote() + " - установлено значение: " + toValueString(value)
+                    + " на дату " + DateValue.toString(moment, Journal.DATE_FORMAT));
         return value;
     }
 
