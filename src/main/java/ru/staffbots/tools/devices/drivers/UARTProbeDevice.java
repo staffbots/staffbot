@@ -14,7 +14,13 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 
-public class UARTProbeDevice extends Device {
+// Класс не доделан в части декодирования строки, приходящей от устройства
+public abstract class UARTProbeDevice extends Device {
+
+    /**
+     * Время последнего измерения
+     */
+    private long lastMeasureTime = 0;
 
     public Charset charset = StandardCharsets.US_ASCII;
 
@@ -48,6 +54,7 @@ public class UARTProbeDevice extends Device {
             @Override
             public void dataReceived(SerialDataEvent event) {
                 try {
+                    //Cтрока, приходящей от устройства
                     //System.out.println(event.getHexByteString("0x", " ", ""));
                     System.out.println(event.getAsciiString());
                 } catch (Exception e) {
@@ -62,7 +69,7 @@ public class UARTProbeDevice extends Device {
                     .baud(Baud._9600)
                     .dataBits(DataBits._8)
                     .parity(Parity.NONE)
-                    .stopBits(StopBits._1)
+                    .stopBits(StopBits._2)
                     .flowControl(FlowControl.NONE);
             serial.open(config);
 

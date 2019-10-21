@@ -18,11 +18,11 @@ import java.util.Arrays;
 /**
  * https://www.atlas-scientific.com/product_pages/kits/ph-kit.html
  */
-public class I2CProbeDevice extends Device {
+public abstract class I2CBusDevice extends Device {
 
-    public Charset charset = StandardCharsets.US_ASCII;
+    protected Charset charset = StandardCharsets.US_ASCII;
 
-    public int maxSize = 40;
+    protected int maxSize = 40;
 
     private I2CDevice device;
 
@@ -36,24 +36,12 @@ public class I2CProbeDevice extends Device {
         return device.getAddress();
     }
 
-    private DoubleValue value;
 
-    public I2CProbeDevice(String name, String note, int busNumber, int address) {
-        init(name, note, ValueMode.STORABLE, busNumber, address);
-    }
+    public I2CBusDevice(String name, String note, int busNumber, int address) {
 
-    public I2CProbeDevice(String name, String note, ValueMode valueMode, int busNumber, int address) {
-        init(name, note, valueMode, busNumber, address);
-    }
-
-    private void init(String name, String note, ValueMode valueMode, int busNumber, int address) {
-
-        this.model = "Датчик"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
+        this.model = "Шина I2C"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
         this.note = note; // Описание устройства (например, "Сонар для измерения уровня воды")
         this.name = name; // Уникальное имя устройства, используется для именования таблиц в БД (например, "WaterSonar")
-        this.value = new DoubleValue(name, "Водородный показатель", valueMode, 3);
-
-        values.add(this.value);
 
         for (int pinNumber = 0; pinNumber < 2; pinNumber++)
             Devices.putToPins(getPin(busNumber, pinNumber), new DevicePin(name, getPinNote(busNumber, pinNumber)));
@@ -91,11 +79,6 @@ public class I2CProbeDevice extends Device {
         return className.substring(0, className.length() - 6);
     }
 
-    @Override
-    public String toString() {
-        return value.toString();
-    }
-
     public void write(byte[] bytes) throws IOException{
         device.write(bytes);
     }
@@ -124,20 +107,6 @@ public class I2CProbeDevice extends Device {
         write(command);
         Thread.sleep(delay);
         return readln();
-    }
-
-    public double getValue(){
-        return value.getValue();
-    }
-
-    public double getValue(boolean withUpdate) throws Exception{
-        double doubleValue;
-        if (withUpdate) {
-            doubleValue = Double.parseDouble(readln("R", 900));
-            value.setValue(doubleValue);
-        } else
-            doubleValue = value.getValue();
-        return doubleValue;
     }
 
 }

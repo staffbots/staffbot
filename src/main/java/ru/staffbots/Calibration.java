@@ -1,10 +1,9 @@
 package ru.staffbots;
 
-import com.pi4j.io.i2c.I2CBus;
-import com.pi4j.io.i2c.I2CFactory;
 import ru.staffbots.database.journal.Journal;
+import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.devices.Devices;
-import ru.staffbots.tools.devices.drivers.I2CProbeDevice;
+import ru.staffbots.tools.devices.drivers.ECProbeI2CBusDevice;
 import ru.staffbots.tools.devices.drivers.UARTProbeDevice;
 import ru.staffbots.tools.levers.*;
 import ru.staffbots.tools.tasks.Tasks;
@@ -34,9 +33,9 @@ public class Calibration extends Pattern {
     // Переферийные устройства
     /////////////////////////////////////////////////////////////
 
-    static I2CProbeDevice probeDevice = new I2CProbeDevice("ProbeDevice",
-            "Датчик", 1, 100);
-    static UARTProbeDevice uartProbeDevice = new UARTProbeDevice("ProbeDevice","Датчик");
+    static ECProbeI2CBusDevice probeDevice = new ECProbeI2CBusDevice("ProbeDevice",
+            "Датчик EC", 1, 100);
+    //static UARTProbeDevice uartProbeDevice = new UARTProbeDevice("ProbeDevice","Датчик");
 
     static void devicesInit() {
         Devices.init(probeDevice);
@@ -45,35 +44,26 @@ public class Calibration extends Pattern {
     /////////////////////////////////////////////////////////////
     // Рычаги управления
     /////////////////////////////////////////////////////////////
-    static GroupLever label = new GroupLever("label");
-
     static ButtonLever buttonLever = new ButtonLever("buttonLever",
             "Выполнить","Калибровка датчика, методом триангуляции континума",
             () -> {
                 // Обработка нажатия кнопки
-                String note = "nothing";
                 try {
-                    //uartProbeDevice.write("OK,0");
-                    uartProbeDevice.write("Status");
-                    //uartProbeDevice.write("i");
-                    //uartProbeDevice.write("R");
-                    //uartProbeDevice.write("i");
-                    //note = "\n";
-                    //note += probeDevice.readln("i", 300) + "\n";
-                    //note += probeDevice.readln("T,?", 300) + "\n";
-                    //note += probeDevice.readln("Status", 300) + "\n";
-
+                    System.out.println("EC = " + probeDevice.getConductivity());
+                    System.out.println("TDS = " + probeDevice.getTotalDissolvedSolids(false));
+                    System.out.println("SAL = " + probeDevice.getSalinity(false));
+                    System.out.println("SG = " + probeDevice.getSpecificGravity(false));
                 } catch (Exception exception) {
+                    Journal.add("", NoteType.ERROR);
                     //note = "I/O error during fetch of I2C busses occurred";
                 }
-                System.out.println(note);
-
-                label.setNote(note.replaceAll("\n","<br>"));
-                Journal.add(note);
+                //System.out.println(note);
+                //label.setNote(note.replaceAll("\n","<br>"));
+                //Journal.add(note);
             });
 
     static void leversInit() {
-        Levers.init(buttonLever, label);
+        Levers.init(buttonLever);
         Journal.add("Рычаги управления успешно проинициализированы");
     }
 
