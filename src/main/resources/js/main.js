@@ -2,6 +2,9 @@
 // Staffbots
 //////////////////////////////////////////////////////////////////////////////////////
 
+var update_delay = element('main_update_delay').value;
+alert(update_delay);
+
 //Возвращает (первый) элемент с указанным именем
 function element(name){
     return $("[name='" + name + "']")[0];
@@ -39,7 +42,7 @@ function update_process_status(){
             $('#process_status').html(data);
         }
     );
-    setTimeout(update_process_status, 1000);
+    setTimeout(update_process_status, update_delay);
 }
 
 // Обновление списка текущих заданий по таймеру
@@ -50,7 +53,7 @@ function update_task_list(){
             $('#task_list').html(data);
         }
     );
-    setTimeout(update_task_list, 1000);
+    setTimeout(update_task_list, update_delay);
 }
 
 // Показ продолжительности исполенения процесса
@@ -80,7 +83,7 @@ function update_status_value(name){
             $('#' + name + '_value').html(data);
         }
     );
-    setTimeout(update_status_value, 1000, name);
+    setTimeout(update_status_value, update_delay, name);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////

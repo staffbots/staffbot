@@ -25,34 +25,20 @@ import java.util.Date;
 public class Grower extends Pattern {
 
     // Точка входа при запуске приложения
-    // ВНИМАНИЕ! Порядок инициализаций менять не рекомендуется
     public static void main(String[] args) {
-        // Определяем наименование решения по названию текущего класса
         solutionName = new Object(){}.getClass().getEnclosingClass().getSimpleName();
-        propertiesInit(); // Загружаем свойства из cfg-файла
-        databaseInit(); // Подключаемся к базе данных
-        leversInit(); // Инициализируем список элементов управления
-        devicesInit(); // Инициализируем список устройств
-        tasksInit(); // Инициализируем список заданий
-        webserverInit(); // Запускаем веб-сервер
-        windowInit(); // Открываем главное окно приложения
+        solutionInit(()->{
+            Levers.initGroup("Освещение и вентиляция", sunriseLever, sunsetLever, funUsedLever, funDelayLever);
+            Levers.initGroup("Подготовка раствора", phLever, ecLever, soluteLever, volumeLever);
+            Levers.initGroup("Орошение", dayRateLever, nightRateLever, durationLever);
+            Devices.init(sensor, sonar, sunRelay, funRelay); // Инициализируем список устройств
+            Tasks.init(testTask, lightTask, ventingTask, irrigationTask);
+        });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  Levers - Рычаги
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * <b>Инициализация рычагов управления</b><br>
-     * Заполняется список рычагов управления {@code WebServer.levers}<br>
-     * ВНИМАНИЕ! Порядок перечисления групп и рычагов повторяется в веб-интерфейсе
-     */
-    static void leversInit() {
-        Levers.initGroup("Освещение и вентиляция", sunriseLever, sunsetLever, funUsedLever, funDelayLever);
-        Levers.initGroup("Подготовка раствора", phLever, ecLever, soluteLever, volumeLever);
-        Levers.initGroup("Орошение", dayRateLever, nightRateLever, durationLever);
-        Journal.add("Рычаги управления успешно проинициализированы");
-    }
 
     static DateLever sunriseLever = new DateLever("sunriseLever",
             "Время включения света", DateFormat.SHORTTIME, "8:30");
@@ -83,14 +69,6 @@ public class Grower extends Pattern {
     //  Devices - Устройства
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * <b>Инициализация устройств</b><br>
-     * Заполняется список устройств<br>
-     */
-    static void devicesInit() {
-        Devices.init(sensor, sonar, sunRelay, funRelay);
-    }
-
     static SensorDHT22Device sensor = new SensorDHT22Device("sensor",
             "Датчик температуры и влажности",RaspiPin.GPIO_07);
     static SonarHCSR04Device sonar = new SonarHCSR04Device("sonar",
@@ -103,14 +81,6 @@ public class Grower extends Pattern {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  Tasks - Зададия
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * <b>Инициализация заданий</b><br>
-     * Заполняется список заданий <br>
-     */
-    static void tasksInit() {
-        Tasks.init(testTask, lightTask, ventingTask, irrigationTask);
-    }
 
     /*****************************************************
      * Освещение                                         *

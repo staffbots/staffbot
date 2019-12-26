@@ -77,6 +77,7 @@ public class MainWindow extends JFrame {
         container.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 25));
 
         JCheckBox сheckBox = new JCheckBox("SSL");
+        //JCheckBox сheckBox = new JCheckBox("中国人");
         сheckBox.setToolTipText("Использовать SSL-протокол");
         сheckBox.setSelected(true);
 

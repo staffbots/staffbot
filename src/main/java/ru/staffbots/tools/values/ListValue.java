@@ -1,12 +1,10 @@
 package ru.staffbots.tools.values;
 
-import ru.staffbots.tools.levers.Lever;
-import ru.staffbots.tools.levers.Levers;
-
 import java.util.ArrayList;
 import java.util.Date;
 
 /**
+ *
  */
 public class ListValue extends LongValue {
 

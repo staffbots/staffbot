@@ -9,6 +9,7 @@ import ru.staffbots.webserver.WebServer;
 import ru.staffbots.webserver.servlets.BaseServlet;
 import ru.staffbots.windows.MainWindow;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.Properties;
 
@@ -112,9 +113,18 @@ public abstract class Pattern {
     // Используется в наименовании файлов .jar и .cfg и в заголовке главного окна
     public static String projectVersion = "0.00";
 
+    public static void solutionInit(Runnable SolutionInitAction){
+        propertiesInit(); // Загружаем свойства из cfg-файла
+        Database.init(); // Подключаемся к базе данных
+        SolutionInitAction.run(); // Инициализируем решение
+        WebServer.init(); // Запускаем веб-сервер
+        String windowTitle = projectName + ":" + solutionName + "-" + projectVersion;
+        MainWindow.init(windowTitle); // Открываем главное окно приложения
+    }
+
     // Инициализация параметров
     // Вызывается при запуске приложения в определённом порядке с прочими инициализациями
-    public static void propertiesInit(){
+    private static void propertiesInit(){
         // Читаем свойства проекта
         try {
             Properties property = new Properties();
@@ -168,24 +178,6 @@ public abstract class Pattern {
         }catch (Exception exception){
             Journal.add("Конфигурация не загружена", NoteType.ERROR, exception, false);
         }
-    }
-
-    // Инициализация БД
-    // Вызывается при запуске приложения в определённом порядке с прочими инициализациями
-    public static void databaseInit(){
-        Database.init();
-    }
-
-    // Инициализация веб-сервера
-    // Вызывается при запуске приложения в определённом порядке с прочими инициализациями
-    public static void webserverInit(){
-        WebServer.init();
-    }
-
-    // Инициализация главного окна приложения
-    // Вызывается при запуске приложения в определённом порядке с прочими инициализациями
-    public static void windowInit(){
-        MainWindow.init(projectName + ":" + solutionName + "-" + projectVersion);
     }
 
 }

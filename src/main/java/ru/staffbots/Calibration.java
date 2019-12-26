@@ -18,16 +18,12 @@ public class Calibration extends Pattern {
 
     // Точка входа приложения
     public static void main(String[] args) {
-        // ВНИМАНИЕ! Порядок инициализаций менять не рекомендуется
-        // Определяем наименование решения по названию текущего класса
         solutionName = new Object(){}.getClass().getEnclosingClass().getSimpleName();
-        propertiesInit(); // Загружаем свойства из cfg-файла
-        databaseInit(); // Подключаемся к базе данных
-        leversInit(); // Инициализируем список элементов управления
-        devicesInit(); // Инициализируем список устройств
-        tasksInit(); // Инициализируем список заданий
-        webserverInit(); // Запускаем веб-сервер
-        windowInit(); // Открываем главное окно приложения
+        solutionInit(()->{
+            Levers.init(buttonLever); // Инициализируем список элементов управления
+            Devices.init(probeDevice); // Инициализируем список устройств
+            Tasks.init(); // Инициализируем список заданий
+        });
     }
     /////////////////////////////////////////////////////////////
     // Переферийные устройства
@@ -37,9 +33,6 @@ public class Calibration extends Pattern {
             "Датчик EC", 1, 100);
     //static UARTProbeDevice uartProbeDevice = new UARTProbeDevice("ProbeDevice","Датчик");
 
-    static void devicesInit() {
-        Devices.init(probeDevice);
-    }
 
     /////////////////////////////////////////////////////////////
     // Рычаги управления
@@ -62,18 +55,10 @@ public class Calibration extends Pattern {
                 //Journal.add(note);
             });
 
-    static void leversInit() {
-        Levers.init(buttonLever);
-        Journal.add("Рычаги управления успешно проинициализированы");
-    }
-
 
     /////////////////////////////////////////////////////////////
     // Задания автоматизации
     /////////////////////////////////////////////////////////////
 
-    static void tasksInit() {
-        Tasks.init();
-    }
 
 }

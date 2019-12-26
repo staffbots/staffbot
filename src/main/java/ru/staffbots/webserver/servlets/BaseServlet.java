@@ -101,6 +101,7 @@ public abstract class BaseServlet extends HttpServlet {
         pageVariables.put("main_content", content);
         pageVariables.put("main_login", login);
         pageVariables.put("main_role", accountService.users.getRole(login).getDescription());
+        pageVariables.put("main_update_delay", "1000");
 
         String result = FillTemplate("html/main.html", pageVariables);
 

@@ -18,16 +18,12 @@ public class Staffbot extends Pattern {
 
     // Точка входа приложения
     public static void main(String[] args) {
-        // ВНИМАНИЕ! Порядок инициализаций менять не рекомендуется
-        // Определяем наименование решения по названию текущего класса
         solutionName = new Object(){}.getClass().getEnclosingClass().getSimpleName();
-        propertiesInit(); // Загружаем свойства из cfg-файла
-        databaseInit(); // Подключаемся к базе данных
-        leversInit(); // Инициализируем список элементов управления
-        devicesInit(); // Инициализируем список устройств
-        tasksInit(); // Инициализируем список заданий
-        webserverInit(); // Запускаем веб-сервер
-        windowInit(); // Открываем главное окно приложения
+        solutionInit(()->{
+            Levers.init(frequencyLever); // Инициализируем список элементов управления
+            Devices.init(ledDevice); // Инициализируем список устройств
+            Tasks.init(ledFlashingTask); // Инициализируем список заданий
+        });
     }
 
     /////////////////////////////////////////////////////////////
@@ -38,8 +34,6 @@ public class Staffbot extends Pattern {
             "Частота мигания светодиода, Гц", ValueMode.TEMPORARY, 2, 0.25);
 
     static void leversInit() {
-        Levers.init(frequencyLever);
-        Levers.init(frequencyLever);
         Levers.init(frequencyLever);
         Journal.add("Рычаги управления успешно проинициализированы");
     }
@@ -71,8 +65,5 @@ public class Staffbot extends Pattern {
             }
     );
 
-    static void tasksInit() {
-        Tasks.init(ledFlashingTask);
-    }
 
 }

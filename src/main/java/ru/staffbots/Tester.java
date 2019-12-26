@@ -20,36 +20,19 @@ import java.util.Date;
 public class Tester extends Pattern {
 
     // Точка входа при запуске приложения
-    // ВНИМАНИЕ! Порядок инициализаций менять не рекомендуется
     public static void main(String[] args) {
-        propertiesInit(); // Загружаем конфигурацию сборки
-        databaseInit(); // Подключаемся к базе данных
-        leversInit(); // Инициализируем список элементов управления
-        devicesInit(); // Инициализируем список устройств
-        bottasksInit(); // Инициализируем список задач
-        webserverInit(); // Запускаем вебсервер
-        windowInit(); // Открываем окно
-    }
-
-    // Определяем наименование решения по названию текущего класса
-    // solutionName определён в родительском классе Staffbot
-    static {
         solutionName = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        solutionInit(()->{
+            Levers.initGroup(null, delayLever, buttonLever, listLever, dateLever); // Инициализируем список элементов управления
+            Devices.init(ledDevice, sensor, sonar, button); // Инициализируем список устройств
+            // Tasks.init(task);
+            // Tasks.init(testTask);
+        });
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  Levers - Рычаги
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * <b>Инициализация рычагов управления</b><br>
-     * Заполняется список рычагов управления {@code WebServer.levers}<br>
-     * Внимание! Порядок перечисления групп и рычагов повторяется в веб-интерфейсе
-     */
-    public static void leversInit() {
-        Levers.initGroup(null, delayLever, buttonLever, listLever, dateLever);
-        Journal.add("Рычаги управления успешно проинициализированы");
-    }
 
     static LongLever delayLever = new LongLever("delayLever",
             "Частота опроса, сек", ValueMode.TEMPORARY, 20, 2, 60*60);
@@ -79,14 +62,6 @@ public class Tester extends Pattern {
     //  Devices - Устройства
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    /**
-     * <b>Инициализация устройств</b><br>
-     * Заполняется список устройств {@code WebServer.devices}<br>
-     */
-    static void devicesInit() {
-        Devices.init(  ledDevice, sensor, sonar, button);
-    }
-
     static LedDevice ledDevice = new LedDevice("led",
             "Индикатор конца света", RaspiPin.GPIO_01, false);
     static SensorDHT22Device sensor = new SensorDHT22Device("sensor",
@@ -105,15 +80,6 @@ public class Tester extends Pattern {
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  Tasks - Зададия
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    /**
-     * <b>Инициализация заданий</b><br>
-     * Заполняется список задач {@code tasks}<br>
-     */
-    static void bottasksInit() {
-   //     Tasks.init(task);
-//        Tasks.init(testTask);
-    }
 
     /*****************************************************
      * Мигание светодиода                                *
