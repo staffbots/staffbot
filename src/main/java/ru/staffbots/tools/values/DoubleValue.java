@@ -145,8 +145,7 @@ public class DoubleValue extends Value{
         try {
                setValue(fromString(value));
         } catch (Exception exception) {
-            Journal.add("Неудачная попытка присвоить " + name + " значение " + value,
-                    NoteType.ERROR, exception);
+            Journal.add(NoteType.ERROR, "SetValue", name, note, value, exception.getMessage());
         }
     }
 

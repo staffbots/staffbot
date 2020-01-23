@@ -38,7 +38,7 @@ public abstract class DBTable {
             ResultSet tables = metaData.getTables(Database.NAME, null, tableName, null);
             return (tables.next());
         } catch (SQLException exception) {
-            Journal.add("Ошибка поиска таблицы " + tableName + " - " + exception.getMessage(), NoteType.ERROR);
+            Journal.add(NoteType.ERROR, "TableExists", tableName, exception.getMessage());
             return false;
         }
     }
@@ -53,10 +53,10 @@ public abstract class DBTable {
         if (!tableExists())
             try {
                 getStatement("CREATE TABLE " + tableName + " (" + tableFields + ")").execute();
-                Journal.add("Создана таблица " + tableName + " (" + tableFields + ")", NoteType.WRINING);
+                Journal.add(NoteType.WARNING, "CreateTable", tableName, tableFields);
             } catch (Exception exception) {
                 //connection = null;
-                Journal.add("Не удалось создать таблицу " + tableName + " - " + exception.getMessage(), NoteType.ERROR);
+                Journal.add(NoteType.ERROR, "CreateTable", tableName, exception.getMessage());
                 return false;
             }
 
@@ -68,11 +68,11 @@ public abstract class DBTable {
         try {
             if (tableExists()) {
                 getStatement("DELETE FROM " + tableName).execute();
-                Journal.add("Таблица " + tableName + " очищена");
+                Journal.add(NoteType.WARNING, "EraseTable", tableName);
                 return true;
             }
         } catch (Exception exception) {
-            Journal.add(exception.getMessage(), NoteType.ERROR);
+            Journal.add(NoteType.ERROR, "EraseTable", tableName, exception.getMessage());
         }
         return false;
     }
@@ -82,10 +82,10 @@ public abstract class DBTable {
         try {
             if (tableExists()){
                 getStatement("DROP TABLE " + tableName).execute();
-                Journal.add("Удалена таблица " + tableName, NoteType.WRINING);
+                Journal.add(NoteType.WARNING, "DropTable", tableName);
             }
         } catch (Exception exception) {
-            Journal.add("Не удалось удалить таблицу " + tableName + exception.getMessage(), NoteType.ERROR);
+            Journal.add(NoteType.ERROR, "DropTable", tableName, exception.getMessage());
             return false;
         }
         return true;
@@ -102,15 +102,16 @@ public abstract class DBTable {
     public ResultSet getSelectResult(String fields, String condition){
         if (Database.disconnected()) return null;
         if (!tableExists()) return null;
+        String tableName = getTableName();
         try {
             PreparedStatement statement = getStatement(
-                "SELECT " + fields + " FROM " + getTableName() +
+                "SELECT " + fields + " FROM " + tableName +
                 ((condition == null) ? "" : " WHERE " + condition));
             statement.execute();
             if (statement.execute())
                 return statement.getResultSet();
         } catch (Exception exception) {
-            Journal.add(exception.getMessage(), NoteType.ERROR);
+            Journal.add(NoteType.ERROR, "ReadTable", tableName, exception.getMessage());
         }
         return null;
     }
@@ -125,9 +126,10 @@ public abstract class DBTable {
         try {
             long count = statement.executeUpdate();
             if (count > 0)
-                Journal.add("Удаление в таблице " + getTableName() + ". Удалено записей: " + count);
+                Journal.add(NoteType.WARNING, "DeleteTable", getTableName(), Long.toString(count));
             return count;
         } catch (Exception exception) {
+            Journal.add(NoteType.ERROR, "DeleteTable", getTableName(), exception.getMessage());
             return 0;
         }
 
@@ -139,7 +141,7 @@ public abstract class DBTable {
         try {
             return deleteFromTable(getStatement(query));
         } catch (Exception exception) {
-            Journal.add(exception.getMessage(), NoteType.ERROR);
+            Journal.add(NoteType.ERROR, "DeleteTable", getTableName(), exception.getMessage());
             return 0;
         }
     }

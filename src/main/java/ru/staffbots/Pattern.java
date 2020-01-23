@@ -3,13 +3,14 @@ package ru.staffbots;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.tools.ParsableProperties;
+import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.resources.Resources;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.webserver.WebServer;
 import ru.staffbots.webserver.servlets.BaseServlet;
 import ru.staffbots.windows.MainWindow;
 
-import javax.swing.*;
 import java.io.*;
 import java.util.Properties;
 
@@ -91,7 +92,7 @@ import java.util.Properties;
  */
 public abstract class Pattern {
 
-    /** Название проекта
+    /** Project name
     * <br>Определяется параметром <b>name</b> в исходном файле ресурсов <b>properties</b> перед компиляцией проекта
     * <br>Используется в имени БД, в заголовках веб-интерфейса и главного окна
     */
@@ -114,6 +115,7 @@ public abstract class Pattern {
     public static String projectVersion = "0.00";
 
     public static void solutionInit(Runnable SolutionInitAction){
+        Translator.init(); // Инициализируем мультиязычность
         propertiesInit(); // Загружаем свойства из cfg-файла
         Database.init(); // Подключаемся к базе данных
         SolutionInitAction.run(); // Инициализируем решение
@@ -131,9 +133,9 @@ public abstract class Pattern {
             property.load(Resources.getAsStream("properties"));
             projectVersion = property.getProperty("staffbots.version", "");
             projectWebsite = property.getProperty("staffbots.website", "");
-            Journal.add("Свойства проекта загружены", false);
-        } catch (IOException exception) {
-            Journal.add("Свойства проекта не загружены", NoteType.ERROR, exception, false);
+            Journal.add(false, "InitProperties");
+        } catch (Exception exception) {
+            Journal.add(NoteType.ERROR, false, "InitProperties");
         }
         // Имя исходного файла конфигурации, лежащего внутри jar-пакета
         String projectCfgFileName = "pattern.cfg"; // внутри jar-пакета
@@ -141,42 +143,45 @@ public abstract class Pattern {
         String solutionCfgFileName = projectName + "." + solutionName + "-" + projectVersion + ".cfg";
         try {
             // Извлекаем из jar-пакета файл конфигурации
-            Resources.ExtractFromJar(projectCfgFileName, solutionCfgFileName);
+            Resources.getAsFile(projectCfgFileName, solutionCfgFileName);
             // Читаем свойства из извлечённого файла
             FileInputStream inputStream = new FileInputStream(Resources.getJarDirName() + solutionCfgFileName);
-            Properties property = new Properties();
+
+            ParsableProperties property = new ParsableProperties();
             property.load(inputStream);
             inputStream.close();
 
             // Применяем конфигурацию
+
             Database.SERVER = property.getProperty("db.server", Database.SERVER);
-            Database.PORT = Integer.parseInt(property.getProperty("db.port", Database.PORT.toString()));
+            Database.PORT = property.getIntegerProperty("db.port", Database.PORT);
             Database.NAME = property.getProperty("db.name", (projectName + "_" + solutionName).toLowerCase());
             Database.USER = property.getProperty("db.user", Database.USER);
             Database.PASSWORD = property.getProperty("db.password", Database.PASSWORD);
-            Database.DROP = Boolean.parseBoolean(property.getProperty("db.drop", Database.DROP.toString()));
+            Database.DROP = property.getBooleanProperty("db.drop", Database.DROP);
 
-            MainWindow.USED = Boolean.parseBoolean(property.getProperty("gui.used", MainWindow.USED.toString()));
+            Devices.USED = Devices.isRaspbian() && property.getBooleanProperty("pi.used", Devices.USED);
 
-            Devices.USED = Devices.isRaspbian() && Boolean.parseBoolean(property.getProperty("pi.used", Devices.USED.toString()));
+            MainWindow.frameUsed = property.getBooleanProperty("ui.frame_used", MainWindow.frameUsed);
 
-            WebServer.ADMIN = property.getProperty("web.admin", WebServer.ADMIN);
-            WebServer.PASSWORD = property.getProperty("web.password", WebServer.PASSWORD);
-            WebServer.HTTP_PORT = Integer.parseInt(property.getProperty("web.http_port", WebServer.HTTP_PORT.toString()));
-            WebServer.HTTP_USED = Boolean.parseBoolean(property.getProperty("web.http_used", WebServer.HTTP_USED.toString()));
-            WebServer.HTTPS_PORT = Integer.parseInt(property.getProperty("web.https_port", WebServer.HTTPS_PORT.toString()));
-            WebServer.key_store = property.getProperty("web.key_store", WebServer.key_store);
-            WebServer.key_store_password = property.getProperty("web.key_store_password", WebServer.key_store_password);
-            WebServer.key_manager_password = property.getProperty("web.key_manager_password", WebServer.key_manager_password);
+            WebServer.defaultAdmin = property.getProperty("web.default_admin", WebServer.defaultAdmin);
+            WebServer.adminPassword = property.getProperty("web.admin_password", WebServer.adminPassword);
+            WebServer.httpPort = property.getIntegerProperty("web.http_port", WebServer.httpPort);
+            WebServer.httpUsed = property.getBooleanProperty("web.http_used", WebServer.httpUsed);
+            WebServer.httpsPort = property.getIntegerProperty("web.https_port", WebServer.httpsPort);
+            WebServer.keyStore = property.getProperty("web.key_store", WebServer.keyStore);
+            WebServer.storePassword = property.getProperty("web.store_password", WebServer.storePassword);
+            WebServer.managerPassword = property.getProperty("web.manager_password", WebServer.managerPassword);
+            WebServer.updateDelay = property.getIntegerProperty("web.update_delay", WebServer.updateDelay);
 
-            BaseServlet.site_bg_color = property.getProperty("web.site_bg_color", BaseServlet.site_bg_color);
-            BaseServlet.main_bg_color = property.getProperty("web.main_bg_color", BaseServlet.main_bg_color);
-            BaseServlet.page_bg_color = property.getProperty("web.page_bg_color", BaseServlet.page_bg_color);
+            BaseServlet.siteColor = property.getProperty("web.site_color", BaseServlet.siteColor);
+            BaseServlet.mainColor = property.getProperty("web.main_color", BaseServlet.mainColor);
+            BaseServlet.pageColor = property.getProperty("web.page_color", BaseServlet.pageColor);
 
-            Journal.add("Конфигурация загружена", false);
+            Journal.add(false, "InitProperties");
 
         }catch (Exception exception){
-            Journal.add("Конфигурация не загружена", NoteType.ERROR, exception, false);
+            Journal.add(NoteType.ERROR, false, "InitProperties");
         }
     }
 

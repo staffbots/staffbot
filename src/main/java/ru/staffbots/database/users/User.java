@@ -18,6 +18,12 @@ public class User {
         this.role = UserRole.valueOf(accessLevel);
     }
 
+    public User(String login, String password, String roleName) {
+        this.login = login;
+        this.password = password;
+        this.role = UserRole.valueByName(roleName);
+    }
+
     public User(String login, String password) {
         this.login = login;
         this.password = password;
@@ -26,6 +32,7 @@ public class User {
 
     @Override
     public String toString() {
-        return "login: " + login + "\npassword: " + "\nrole: " + role.getDescription();
+        return "login: " + login +
+               "\nrole: " + role.getDescription();
     }
 }

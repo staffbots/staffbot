@@ -2,6 +2,7 @@ package ru.staffbots.webserver.servlets;
 
 import ru.staffbots.database.DBValue;
 import ru.staffbots.database.journal.Journal;
+import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.dates.Period;
 import ru.staffbots.tools.tasks.Tasks;
 import ru.staffbots.tools.tasks.Task;
@@ -21,6 +22,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Predicate;
+import java.util.function.Supplier;
 
 /**
  *
@@ -40,52 +45,23 @@ public class StatusServlet extends BaseServlet {
         for (Lever lever : Levers.list)
             if (lever.toValue().isPlotPossible())
                 checkboxes.add(lever.toValue().getName() + "_checkbox");
-
-    }
-
-    public void doGetValue(Value value, HttpServletResponse response) throws ServletException, IOException {
-        response.getOutputStream().write( value.toViewString().getBytes("UTF-8") );
-        response.setContentType("text/html; charset=utf-8");
-        response.setStatus(HttpServletResponse.SC_OK);
+        getParameters.put("tasklist", (String nullValue) -> getTaskList());
+        getParameters.put("processstatus", (String nullValue) -> Tasks.getStatus().getDescription());
+        for (Lever lever : Levers.list)
+            if (!lever.isGroup())
+                getParameters.put(lever.toValue().getName(), (String nullValue) -> lever.toValue().toViewString());
+        for (Device device : Devices.list)
+            for (Value value : device.getValues())
+                getParameters.put(value.getName(), (String nullValue) -> value.toViewString());
     }
 
     // Вызывается при запросе странице с сервера
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-
-        Map<String, Object> pageVariables = new HashMap();
-        HttpSession session = request.getSession();
-
-        String getName = request.getParameter("get");
-        if (getName != null) {
-            if (isAccessDenied(request)) return;
-            if (getName.equals("tasklist")) {
-                response.getOutputStream().write( getTaskList().getBytes("UTF-8") );
-                response.setContentType("text/html; charset=utf-8");
-                response.setStatus(HttpServletResponse.SC_OK);
-                return;
-            }
-            if (getName.equals("processstatus")) {
-                response.getOutputStream().write( Tasks.getStatus().getDescription().getBytes("UTF-8") );
-                response.setContentType("text/html; charset=utf-8");
-                response.setStatus(HttpServletResponse.SC_OK);
-                return;
-            }
-            for (Lever lever : Levers.list)
-                if (getName.equals(lever.toValue().getName())) {
-                    doGetValue(lever.toValue(), response);
-                    return;
-                }
-            for (Device device : Devices.list)
-                for (Value value : device.getValues())
-                    if (getName.equals(value.getName())) {
-                        doGetValue(value, response);
-                        return;
-                    }
-            return;
-        }
-
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (isAccessDenied(request, response)) return;
+        if (getResponse(request, response)) return;
+
+        Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
+        HttpSession session = request.getSession();
 
         Period period = new Period(Journal.DATE_FORMAT);
 
@@ -127,9 +103,11 @@ public class StatusServlet extends BaseServlet {
         pageVariables.put("status_todate", period.getToDateAsString());
         pageVariables.put("status_devicelist", getDeviceList(session));
         pageVariables.put("status_leverlist", getLeverList(session));
-        pageVariables.put("page_bg_color", page_bg_color);
-        pageVariables.put("site_bg_color", site_bg_color);
+        pageVariables.put("page_color", pageColor);
+        pageVariables.put("site_color", siteColor);
         pageVariables.put("datasets", getDataSets(period));
+        //pageVariables.putAll(Translator.getSection(pageType.getName()));
+
         String content = FillTemplate("html/" + pageType.getName()+".html", pageVariables);
         super.doGet(request, response, content);
     }
@@ -153,7 +131,7 @@ public class StatusServlet extends BaseServlet {
     private String getDeviceList(HttpSession session) {
         String context = "";
         Map<String, Object> pageVariables = new HashMap();
-        pageVariables.put("page_bg_color", page_bg_color);
+        pageVariables.put("page_color", pageColor);
 
         for (Device device : Devices.list){
             pageVariables.put("device_url", device.getURL());
@@ -198,7 +176,7 @@ public class StatusServlet extends BaseServlet {
     private String getLeverList(HttpSession session) {
         String context = "";
         Map<String, Object> pageVariables = new HashMap();
-        pageVariables.put("page_bg_color", page_bg_color);
+        pageVariables.put("page_color", pageColor);
 
         for (Lever lever : Levers.list){
             if (lever.isButton()) continue;

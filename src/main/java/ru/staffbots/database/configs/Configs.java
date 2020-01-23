@@ -2,6 +2,7 @@ package ru.staffbots.database.configs;
 
 import ru.staffbots.database.DBTable;
 import ru.staffbots.database.journal.Journal;
+import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.levers.Lever;
 import ru.staffbots.tools.levers.Levers;
 
@@ -36,7 +37,7 @@ public class Configs extends DBTable {
         statement.setString(2, config.toString());
         statement.executeUpdate();
         statement.close();
-        Journal.add("Конфигурация параметров управления сохранена под именем: " + name);
+        Journal.add("SaveConfig", name);
     }
 
     public void load(String name) throws Exception {
@@ -61,14 +62,14 @@ public class Configs extends DBTable {
         for (Lever lever : Levers.list)
             if (config.containsKey(lever.toValue().getName()))
                 lever.toValue().set(Long.parseLong(config.get(lever.toValue().getName())));
-        Journal.add("Загружена конфигурация параметров управления с именем: " + name);
+        Journal.add(NoteType.WARNING, "LoadConfig", name);
     }
 
     public void delete(String name) throws Exception {
         statement = getStatement("DELETE FROM " + getTableName() + " WHERE (configname = ?)");
         statement.setString(1, name);
         deleteFromTable(statement);
-        Journal.add("Удалена конфигурация параметров управления с именем: " + name);
+        Journal.add(NoteType.WARNING, "DeleteConfig", name);
     }
 
     public ArrayList<String> getList() throws Exception {

@@ -5,24 +5,22 @@ import java.util.Map;
 
 public enum TaskStatus {
 
-    NEW(0, "Новый"),
-    WAITING(1, "Ожидание"),
-    EXECUTION(2, "Выполнение"),
-    OLD(3, "Старый");
+    NEW(0),
+    WAITING(1),
+    EXECUTION(2),
+    OLD(3);
 
-    private String description;
     private int value;
     private static Map map = new HashMap<>();
 
-    TaskStatus(int value, String description) {
+    TaskStatus(int value) {
         this.value = value;
-        this.description = description;
     }
 
 
-    public String getDescription(){
-        return description;
-    }
+  //  public String getDescription(){
+  //      return description;
+  //  }
 
     static {
         for (TaskStatus status : TaskStatus.values()) {

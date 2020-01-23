@@ -1,21 +1,22 @@
-:root { /* Глобальный контекст */
-    --border-radius: 1px;
-    --site_bg_color: #${site_bg_color};
-    --main_bg_color: #${main_bg_color};
-    --page_bg_color: #${page_bg_color};
+:root { /* Global content */
+    --border-radius: 5px;
+    --site_color: #${site_color};
+    --main_color: #${main_color};
+    --page_color: #${page_color};
     --text_color: #222222;
     --database_display: ${database_display};
     --device_display: ${device_display};
 }
 
-body { /* Содержание страницы */
-  background-color: var(--site_bg_color);
+body { /* Page content */
+  background-color: var(--site_color);
   text-align:left;
   /*
   font-family: Gill Sans, sans-serif;
   font-family: Marker Felt, fantasy;
-  */
   font-family: Arial, sans-serif;
+  */
+  font-family: Gill Sans, sans-serif;
 }
 
 input, textarea, select {
@@ -23,19 +24,19 @@ input, textarea, select {
 }
 
 
-.table { /* Все таблицы */
+.table { /* All tables */
     border: 0px;
     border-radius: var(--border-radius);
     border-spacing: 0px;
 }
 
-.table.parent { /* Таблицы с рамкой */
-    background-color: var(--page_bg_color);
+.table.parent { /* Tables with a frame */
+    background-color: var(--page_color);
     border-spacing: 5px;
     margin: 5px;
 }
 
-.table.parent.entry { /* Таблица для авторизации */
+.table.parent.entry { /* Authorization table */
     margin: auto;
 }
 
@@ -48,14 +49,14 @@ input, textarea, select {
 }
 
 .table.child { /* Таблицы в рамке */
-    background-color: var(--site_bg_color);
+    background-color: var(--site_color);
     border-spacing: 5px;
     padding: 0px;
     width: 100%;
 }
 
 .table.menu { /* Главное меню и строка состояния */
-     background-color: var(--main_bg_color);
+     background-color: var(--main_color);
      border-spacing: 0px;
      padding: 10px;
      width: 100%;
@@ -80,7 +81,7 @@ input, textarea, select {
 .table.tr.title { /* Строка таблицы с заголовком */
     border-radius: var(--border-radius);
     font-weight: bold;
-    background-color: var(--page_bg_color);
+    background-color: var(--page_color);
 }
 
 select { /* Элементы с выпадаюшим списком */
@@ -89,13 +90,13 @@ select { /* Элементы с выпадаюшим списком */
 
 button { /* Кнопки */
     border-radius: var(--border-radius);
-    background-color: var(--main_bg_color);
+    background-color: var(--main_color);
     border: 1px solid var(--text_color);
     padding: 3px 15px 3px 15px;
 }
 
 button:hover, button:focus {
     /*font-weight: bolder;*/
-    background-color: var(--page_bg_color);
+    background-color: var(--page_color);
 }
 

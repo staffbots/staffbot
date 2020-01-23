@@ -1,34 +1,34 @@
 
-<form action="/status" method="post">
+<form action='/status' method='post'>
 
-    <table style="text-align: left" cellpadding="3" border="0" cellspacing="0">
+    <table style='text-align: left' cellpadding='3' border='0' cellspacing='0'>
 
         <tbody>
-        <tr style="display:${tasks_display}">
-            <td colspan="1">
-                Состояние процесса:
+        <tr style='display:${tasks_display}'>
+            <td colspan='1'>
+                ${t_process}
             </td>
-            <td colspan="3">
+            <td colspan='3'>
                 <b>
                     <em>
-                        <div id="process_status" title="Текущие состояние процесса">
+                        <div id='process_status'>
                         <!-- Обновляется по udate_processs_tatus() -->
                         </div>
                     </em>
                 </b>
             </td>
-            <td colspan="2" align="right">
+            <td colspan='2' align='right'>
                 <b>
-                    <input type="hidden" name="start_time" value="${start_time}"/>
-                    <output name="process_time" title="Время после запуска"/>
+                    <input type='hidden' name='start_time' value='${start_time}'/>
+                    <output name='process_time' title='${t_time}'/>
                 </b>
             </td>
         </tr>
         <!-- Список заданий -->
-        <tr style="display:${tasks_display}">
-            <td colspan="6" style="text-align: right">
+        <tr style='display:${tasks_display}'>
+            <td colspan='6' style='text-align: right'>
                 <small>
-                    <div id="task_list" title="Текущие задания">
+                    <div id='task_list' title='${t_tasks}'>
                         <!-- Обновляется по udate_control_tasklist() -->
                     </div>
                 </small>
@@ -36,67 +36,67 @@
         </tr>
 
 
-        <tr class="table tr title">
-            <td colspan="2">Параметры управления</td>
-            <td colspan="2">Значение</td>
-            <td colspan="2">График</td>
+        <tr class='table tr title'>
+            <td colspan='2'>${t_lever}</td>
+            <td colspan='2'>${t_value}</td>
+            <td colspan='2'>${t_plot}</td>
         </tr>
             ${status_leverlist}
-        <tr  class="table tr title">
-            <td>Устройство</td>
-            <td>Описание</td>
-            <td colspan="2">Значение</td>
-            <td colspan="2">График</td>
+        <tr  class='table tr title'>
+            <td>${t_device}</td>
+            <td>${t_description}</td>
+            <td colspan='2'>${t_value}</td>
+            <td colspan='2'>${t_plot}</td>
         </tr>
         ${status_devicelist}
         </tbody>
     </table>
 
 <!-- Период и график -->
-    <table class="table parent">
+    <table class='table parent'>
     <tr>
-        <td style="font-weight: bold">Период:</td>
+        <td style='font-weight: bold'>${t_period}</td>
         <td>
-            <input type="checkbox" name="status_fromdate_on" ${status_fromdate_on}
-                   onclick="date_onClick('status_fromdate_on','status_fromdate');">
+            <input type='checkbox' name='status_fromdate_on' ${status_fromdate_on}
+                   onclick='date_onClick("status_fromdate_on","status_fromdate");'>
         </td>
         <td>c</td>
         <td>
-            <input name="status_fromdate" value="${status_fromdate}" size="16" placeholder="${dateformat}">
+            <input name='status_fromdate' value='${status_fromdate}' size='16' placeholder='${dateformat}'>
         </td>
         <td>
         </td>
-        <td style="width:100%" align="right"  title="Положение курсора - значение">
-            <b><em><span id="status_data_value"></span></em></b>
+        <td style='width:100%' align='right'  title='Положение курсора - значение'>
+            <b><em><span id='status_data_value'></span></em></b>
         </td>
     </tr>
     <tr>
         <td>
         </td>
         <td>
-            <input type="checkbox" name="status_todate_on" ${status_todate_on}
-                   onclick="date_onClick('status_todate_on','status_todate');">
+            <input type='checkbox' name='status_todate_on' ${status_todate_on}
+                   onclick='date_onClick("status_todate_on","status_todate");'>
         </td>
         <td>по</td>
         <td>
-            <input name="status_todate" value="${status_todate}" size="16" placeholder="${dateformat}">
+            <input name='status_todate' value='${status_todate}' size='16' placeholder='${dateformat}'>
         </td>
         <td>
-            <button name="status_apply" title="Применить фильтр" value="status_apply">
+            <button name='status_apply' title='Применить фильтр' value='status_apply'>
             Применить
             </button>
         </td>
-        <td style="width:100%" align="right" title="Положение курсора - время">
-            <b><em><span id="status_data_time"></span></em></b>
+        <td style='width:100%' align='right' title='Положение курсора - время'>
+            <b><em><span id='status_data_time'></span></em></b>
         </td>
     </tr>
     <!-- График -->
     <tr>
-        <td colspan="6">
-            <table class="table child">
+        <td colspan='6'>
+            <table class='table child'>
                 <tr>
                     <td>
-                        <div id="placeholder" style="width:100%;height:400px;float:left;"></div>
+                        <div id='placeholder' style='width:100%;height:400px;float:left;'></div>
                     </td>
                 </tr>
             </table>
@@ -107,40 +107,40 @@
 </form>
 
 
-<script language="javascript" type="text/javascript" src="/resource?js/moment.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/jquery.canvaswrapper.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/jquery.colorhelpers.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/jquery.event.drag.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/jquery.mousewheel.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.saturated.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.browser.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.drawSeries.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.errorbars.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.uiConstants.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.logaxis.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.symbol.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.flatdata.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.navigate.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.fillbetween.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.stack.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.touchNavigate.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.hover.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.touch.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.time.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.axislabels.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.selection.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.composeImages.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.legend.js"></script>
-<script language="javascript" type="text/javascript" src="/resource?js/jquery/flot/jquery.flot.spline.js"></script>
-<script language="javascript" type="text/javascript">
+<script language='javascript' type='text/javascript' src='/resource?js/moment.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/jquery.canvaswrapper.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/jquery.colorhelpers.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/jquery.event.drag.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/jquery.mousewheel.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.saturated.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.browser.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.drawSeries.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.errorbars.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.uiConstants.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.logaxis.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.symbol.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.flatdata.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.navigate.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.fillbetween.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.stack.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.touchNavigate.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.hover.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.touch.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.time.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.axislabels.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.selection.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.composeImages.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.legend.js'></script>
+<script language='javascript' type='text/javascript' src='/resource?js/jquery/flot/jquery.flot.spline.js'></script>
+<script language='javascript' type='text/javascript'>
     date_onClick('status_fromdate_on', 'status_fromdate');
     date_onClick('status_todate_on', 'status_todate');
 </script>
-<script language="javascript" type="text/javascript"> update_process_time(); </script>
-<script language="javascript" type="text/javascript"> update_task_list(); </script>
-<script language="javascript" type="text/javascript"> update_process_status(); </script>
-<script language="javascript" type="text/javascript">
+<script language='javascript' type='text/javascript'> update_process_time(); </script>
+<script language='javascript' type='text/javascript'> update_task_list(); </script>
+<script language='javascript' type='text/javascript'> update_process_status(); </script>
+<script language='javascript' type='text/javascript'>
 
 	$(function() {
 
@@ -148,8 +148,8 @@
 		};
 
 		$.each(datasets, function(key, val) {
-		    $("#" + key + "_checkbox").click(status_checkbox_onClick);
-			$("#" + key + "_cell").css('background', val.color);
+		    $('#' + key + '_checkbox').click(status_checkbox_onClick);
+			$('#' + key + '_cell').css('background', val.color);
 		});
 
 
@@ -157,51 +157,51 @@
 			var data = [];
 
 			$.each(datasets, function(key, val) {
-				if ($("#" + key + "_checkbox").is(":checked"))
+				if ($('#' + key + '_checkbox').is(':checked'))
 					data.push(datasets[key]);
 			});
 
 
-		var plot = $.plot("#placeholder", data, {
+		var plot = $.plot('#placeholder', data, {
 			grid: {
 				hoverable: true,
 				clickable: true
 			},
 			xaxis: {
-				mode: "time",
-				timezone: "browser",
-				timeformat: "%H:%M:%S"
+				mode: 'time',
+				timezone: 'browser',
+				timeformat: '%H:%M:%S'
 			}
 		});
 
-		$("<div id='tooltip'></div>").css({
-			position: "absolute",
-			display: "none",
-			border: "1px solid #fdd",
-			padding: "2px",
-			"background-color": "#fee",
+		$('<div id="tooltip"></div>').css({
+			position: 'absolute',
+			display: 'none',
+			border: '1px solid #fdd',
+			padding: '2px',
+			'background-color': '#fee',
 			opacity: 0.80
-		}).appendTo("body");
+		}).appendTo('body');
 
-		$("#placeholder").bind("plothover", function (event, pos, item) {
+		$('#placeholder').bind('plothover', function (event, pos, item) {
 
-    		$("#status_data_time").text(moment(new Date(pos.x.toFixed(0) * 1000)).format('DD.MM.YYYY HH:mm:ss'));
-			$("#status_data_value").text(pos.y.toFixed(3));
+    		$('#status_data_time').text(moment(new Date(pos.x.toFixed(0) * 1000)).format('DD.MM.YYYY HH:mm:ss'));
+			$('#status_data_value').text(pos.y.toFixed(3));
 
 			if (item) {
 				var x = item.datapoint[0].toFixed(0),
 					y = item.datapoint[1].toFixed(item.series.precision),
                     d = moment(new Date(x * 1000)).format('DD.MM.YYYY HH:mm:ss');
-				$("#tooltip").html(item.series.label + ": <b>" + y + "</b><br>" + d)
+				$('#tooltip').html(item.series.label + ': <b>' + y + '</b><br>' + d)
 					.css({top: item.pageY+5, left: item.pageX+5})
 					.fadeIn(200);
 			} else {
-				$("#tooltip").hide();
+				$('#tooltip').hide();
 			}
 		});
 
-		$("#placeholder").bind("plothovercleanup", function (event, pos, item) {
-				$("#tooltip").hide();
+		$('#placeholder').bind('plothovercleanup', function (event, pos, item) {
+				$('#tooltip').hide();
 		});
 
     };

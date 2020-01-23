@@ -15,21 +15,26 @@ import java.net.*;
 
 public class WebServer {
 
-    public static Integer HTTP_PORT = 80;
+    public static Integer httpPort = 80;
 
-    public static Integer HTTPS_PORT = 443;
+    public static Integer httpsPort = 443;
 
-    public static String ADMIN = "admin";
+    public static String defaultAdmin = "admin";
 
-    public static String PASSWORD = "admin";
+    public static String adminPassword = "1";
 
-    public static Boolean HTTP_USED = false;
+    public static Boolean httpUsed = true;
 
-    public static String key_store = "keystore";
+    public static String keyStore = "keystore";
 
-    public static String key_store_password = "staffbots";
+    public static String storePassword = "staffbots";
 
-    public static String key_manager_password = "staffbots";
+    public static String managerPassword = "staffbots";
+
+    /**
+     * Задержка между запросами на обновление данных на страницах, милисек.
+     */
+    public static Integer updateDelay = 10000;
 
     /**
      *
@@ -39,12 +44,12 @@ public class WebServer {
     private static ServerConnector getHttpConnector(){
         // HTTP connector
         ServerConnector connector = new ServerConnector(server);
-        connector.setPort(HTTP_PORT);
+        connector.setPort(httpPort);
         return connector;
     }
 
     private static ServerConnector getHttpsConnector(){
-        String keyStorePath = Resources.ExtractFromJar(key_store);
+        String keyStorePath = Resources.getAsFile(keyStore).getPath();
 
         // HTTPS configuration
         HttpConfiguration https = new HttpConfiguration();
@@ -54,14 +59,14 @@ public class WebServer {
 
         // Defining keystore path and passwords
         sslContextFactory.setKeyStorePath(keyStorePath);
-        sslContextFactory.setKeyStorePassword(key_store_password);
-        sslContextFactory.setKeyManagerPassword(key_manager_password);
+        sslContextFactory.setKeyStorePassword(storePassword);
+        sslContextFactory.setKeyManagerPassword(managerPassword);
 
         // Configuring the connector
         ServerConnector connector = new ServerConnector(server,
                 new SslConnectionFactory(sslContextFactory, "http/1.1"),
                 new HttpConnectionFactory(https));
-        connector.setPort(HTTPS_PORT);
+        connector.setPort(httpsPort);
 
         // HTTPS connectors
 //        server.setConnectors(new Connector[]{connector});
@@ -85,13 +90,13 @@ public class WebServer {
         }
         // Если порт занят, то сервер запустить не получится
         if(hostIsBusy()){
-            Journal.add("Неудачная попытка запустить веб-сервер. Порт уже занят", NoteType.ERROR);
+            Journal.add(NoteType.ERROR, "BusyHost");
             System.exit(0);
         }
 
         server = new Server();
         server.setConnectors(new Connector[]{getHttpsConnector()});
-        if (HTTP_USED)
+        if (httpUsed)
             server.addConnector(getHttpConnector());
 
         AccountService accountService = new AccountService();
@@ -112,11 +117,11 @@ public class WebServer {
         server.setHandler(handlers);
         try {
             server.start();
-            Journal.add("Веб-сервер запущен");
-            if (!MainWindow.USED)
+            Journal.add("StartServer");
+            if (!MainWindow.frameUsed)
                 server.join();
         } catch (Exception e){
-            Journal.add("Ошибка запуска веб-сервера", NoteType.ERROR);
+            Journal.add(NoteType.ERROR, "StartServer", e.getMessage());
             System.exit(0);
         }
     }
@@ -138,8 +143,8 @@ public class WebServer {
     public static URL getURL(boolean SSL){
         try {
             return SSL ?
-                new URL("https://localhost:" + HTTPS_PORT) :
-                new URL("http://localhost:" + HTTP_PORT);
+                new URL("https://localhost:" + httpsPort) :
+                new URL("http://localhost:" + httpPort);
         } catch (MalformedURLException exception) {
             return null;
         }

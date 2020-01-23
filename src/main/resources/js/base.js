@@ -1,21 +1,25 @@
 //////////////////////////////////////////////////////////////////////////////////////
-// Staffbots
+// Base
 //////////////////////////////////////////////////////////////////////////////////////
 
-var update_delay = element('main_update_delay').value;
-alert(update_delay);
+var updateDelay = 10000;
+
+function setUpdateDelay(){
+    updateDelay = Number(element('update_delay').value);
+}
 
 //Возвращает (первый) элемент с указанным именем
 function element(name){
-    return $("[name='" + name + "']")[0];
+    return $('[name="' + name + '"]')[0];
 }
+
 
 // Отработка нажатия checbox связанного с полем ввода
 function date_onClick(checkname, fieldname){
     var fromdate = element(fieldname);
     fromdate.disabled = !element(checkname).checked;
     if (fromdate.disabled)
-        fromdate.value = "";
+        fromdate.value = '';
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -25,7 +29,7 @@ function date_onClick(checkname, fieldname){
 // Отработка нажатия кнопки (LeverButton)
 function control_button_onclick(name){
     var xhr = new XMLHttpRequest();
-    xhr.open("POST", "/control?set="+name);
+    xhr.open('POST', '/control?set=' + name);
     xhr.send();
 }
 
@@ -35,14 +39,13 @@ function control_button_onclick(name){
 
 // Обновление списка текущих заданий по таймеру
 function update_process_status(){
-
     $.get(
         '/status?get=processstatus',
         function(data) {
             $('#process_status').html(data);
         }
     );
-    setTimeout(update_process_status, update_delay);
+    setTimeout(update_process_status, updateDelay);
 }
 
 // Обновление списка текущих заданий по таймеру
@@ -53,7 +56,7 @@ function update_task_list(){
             $('#task_list').html(data);
         }
     );
-    setTimeout(update_task_list, update_delay);
+    setTimeout(update_task_list, updateDelay);
 }
 
 // Показ продолжительности исполенения процесса
@@ -70,7 +73,7 @@ function update_process_time(){
         element('process_time').innerHTML =
         ((day > 0) ? (day + ' ' + str + ' ') : '') + hou + ':'+ min + ':'+ sec;
     }
-    setTimeout(update_process_time, 500);
+    setTimeout(update_process_time, 1000);
 }
 
 
@@ -83,37 +86,8 @@ function update_status_value(name){
             $('#' + name + '_value').html(data);
         }
     );
-    setTimeout(update_status_value, update_delay, name);
-}
 
-//////////////////////////////////////////////////////////////////////////////////////
-// Users
-//////////////////////////////////////////////////////////////////////////////////////
-
-// Отработка нажатия radiobox
-function users_radioboxClick() {
-    var radios = document.getElementsByName('users_radiobox');
-    var newUserMode = false;
-    var oldUserMode = true;
-    for (var i = 0, length = radios.length; i < length; i++){
-        if (radios[i].checked){
-            newUserMode = (radios[i].value == 'new');
-            oldUserMode = (radios[i].value == 'old');
-            break;
-        }
-    }
-    element('users_new_login').value = '';
-    if (element('users_select_login').length == 0){
-        radios[newUserMode ? 0 : 1].checked = true;
-        newUserMode = true;
-        oldUserMode = false;
-        element('users_new_login').value = 'newLogin';
-    }
-    radios[newUserMode ? 0 : 1].checked = true;
-    element('users_new_login').disabled = oldUserMode;
-    element('users_select_login').disabled = newUserMode;
-    element('users_delete').disabled = newUserMode;
-    //alert(Boolean(!newUserMode));
+    setTimeout(update_status_value, updateDelay, name);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////

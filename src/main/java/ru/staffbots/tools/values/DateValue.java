@@ -133,8 +133,7 @@ public class DateValue extends Value{
         try {
             setValue(fromString(value, format));
         } catch (Exception exception) {
-            Journal.add("Неудачная попытка присвоить " + name + " значение " + value,
-                    NoteType.ERROR, exception);
+            Journal.add(NoteType.ERROR, "SetValue", name, note, value, exception.getMessage());
         }
     }
 

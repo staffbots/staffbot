@@ -33,11 +33,6 @@ public class Staffbot extends Pattern {
     static DoubleLever frequencyLever = new DoubleLever("frequency",
             "Частота мигания светодиода, Гц", ValueMode.TEMPORARY, 2, 0.25);
 
-    static void leversInit() {
-        Levers.init(frequencyLever);
-        Journal.add("Рычаги управления успешно проинициализированы");
-    }
-
     /////////////////////////////////////////////////////////////
     // Переферийные устройства
     /////////////////////////////////////////////////////////////
@@ -60,7 +55,9 @@ public class Staffbot extends Pattern {
             () -> {// Команды выполнения задания
                 ledDevice.set(true); // Включаем светодиод
                 try { Thread.sleep(Math.round(500/frequencyLever.getValue())); } // Ждём
-                catch (Exception exception) { Journal.add("Мигание светодиода прервано", NoteType.WRINING); }
+                catch (Exception exception) {
+                    Journal.addAnyNote(NoteType.WARNING, "Мигание светодиода прервано");
+                }
                 ledDevice.set(false); // Выключаем светодиод
             }
     );

@@ -3,38 +3,38 @@
 
     <head>
 
-        <meta charset="UTF-8" />
-        <title>${main_pagename}</title>
-        <link href="resource?css/main.css" rel="stylesheet" type="text/css" />
-        <link href="resource?img/icon.ico" rel="icon" type="image/x-icon" />
+        <meta charset='UTF-8' />
+        <title>${page_title}</title>
+        <link href='resource?css/general.css' rel='stylesheet' type='text/css' />
+        <link href='resource?img/icon.ico' rel='icon' type='image/x-icon' />
 
     </head>
 
     <body>
 
-        <table class="table parent entry">
+        <table class='table parent entry'>
             <tr>
-                <td align="center">
-                    <a href="${website}" title="${website}" target="_blank">
-                        <img src="resource?img/logo.png"/>
+                <td align='center'>
+                    <a href='${website_link}' title='${website_link}' target='_blank'>
+                        <img src='resource?img/logo.png'/>
                     </a>
                 </td>
             </tr>
             <tr>
                 <td>
-                    <form action="/entry" method="post">
-                        <table class="table child">
+                    <form action='/entry' method='post'>
+                        <table class='table child'>
                             <tr>
-                                <td>Логин:</td>
-                                <td><input name="entry_login" value="${entry_login}"/></td>
+                                <td>${login_caption}:</td>
+                                <td><input name='login_input' value='${login_input}'/></td>
                             </tr>
                             <tr>
-                                <td>Пароль:</td>
-                                <td><input name="entry_password" type="password"/></td>
+                                <td>${password_caption}:</td>
+                                <td><input name='password_input' type='password'/></td>
                             </tr>
                             <tr>
                                 <td></td>
-                                <td align="right"><button>Войти</button></td>
+                                <td align='right'><button>${entry_button}</button></td>
                             </tr>
                         </table>
                     </form>

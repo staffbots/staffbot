@@ -125,8 +125,7 @@ public class LongValue extends Value {
         try {
             set(LongValue.fromString(value));
         } catch (Exception exception) {
-            Journal.add("Неудачная попытка присвоить " + name + " (" + note + ") значение " + value,
-                    NoteType.ERROR, exception);
+            Journal.add(NoteType.ERROR, "SetValue", name, note, value, exception.getMessage());
         }
     }
 

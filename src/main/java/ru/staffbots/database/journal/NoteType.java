@@ -1,5 +1,7 @@
 package ru.staffbots.database.journal;
 
+import ru.staffbots.tools.Translator;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -9,22 +11,19 @@ import java.util.Map;
 public enum NoteType {
 
     // ! Изменения могут привести к сбоям на закладке "Журнал" (см. JournalServlet)
-    CONFIRM(0, "Информация"),
-    WRINING(1, "Предупреждение"),
-    ERROR(2, "Ошибка");
+    INFORMATION(0),
+    WARNING(1),
+    ERROR(2);
 
-    private String description;
     private int value;
     private static Map map = new HashMap<>();
 
-    NoteType(int value, String description) {
+    NoteType(int value) {
         this.value = value;
-        this.description = description;
     }
 
-
     public String getDescription(){
-        return description;
+        return Translator.getValue("notetype", getName());
     }
 
     static {
@@ -38,4 +37,8 @@ public enum NoteType {
     public int getValue() {
         return value;
     }
+    public String getName() {
+        return name().toLowerCase();
+    }
+
 }

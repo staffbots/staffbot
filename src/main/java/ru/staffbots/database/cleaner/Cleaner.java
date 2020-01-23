@@ -3,6 +3,7 @@ package ru.staffbots.database.cleaner;
 import ru.staffbots.database.DBTable;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
+import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.dates.DateAccuracy;
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.devices.Device;
@@ -78,12 +79,10 @@ public class Cleaner {
                     new Date(autoStart.getTime() + period * (long) Math.ceil((double) dt/period));
             timer.scheduleAtFixedRate(cleanTask, delay, period);
             timerIsRuning = true;
-            Journal.add("Настроена автоматическая очистка базы данных с периодом "
-                + autoValue + " ("+ autoMeasure.getDescription() + "), первый запуск: "
-                + DateValue.toString(delay, DATE_FORMAT));
+            Journal.add("AutoClean", Long.toString(autoValue), autoMeasure.getDescription(), DateValue.toString(delay, DATE_FORMAT));
         } else {
             timerIsRuning = false;
-            Journal.add("Автоматическая очистка базы данных отменена");
+            Journal.add(NoteType.WARNING, "AutoClean");
         }
     }
 
@@ -105,7 +104,7 @@ public class Cleaner {
                     cleanByCount(lever.toValue().getTable(), tablesValue) :
                     cleanByDate(lever.toValue().getTable(), tablesValue);
 
-        Journal.add("Очистка базы. Всего удалено записей: " + count);
+        Journal.add(NoteType.WARNING, "CleaningDB", Long.toString(count));
     }
 
     private void loadSettings(){

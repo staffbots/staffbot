@@ -52,7 +52,7 @@ public class Devices{
 
     private static GpioController getController(){
         try {
-            if (!isRaspbian()) throw new Exception("Программа запущена не на контроллере Raspberry Pi");
+            if (!isRaspbian()) throw new Exception("Need Raspbian - operation system for Raspberry Pi");
             return GpioFactory.getInstance();
         } catch (Exception e) {
             Devices.USED = false;
@@ -70,7 +70,7 @@ public class Devices{
                 if (value.isStorable())
                     value.createTable();
         }
-        Journal.add("Устройства успешно проинициализированы");
+        Journal.add("InitDevice");
     }
 
     public static void reset(){

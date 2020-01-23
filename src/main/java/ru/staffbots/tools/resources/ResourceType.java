@@ -1,7 +1,5 @@
 package ru.staffbots.tools.resources;
 
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *

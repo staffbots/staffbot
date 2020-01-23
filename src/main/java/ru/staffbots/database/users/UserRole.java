@@ -1,35 +1,38 @@
 package ru.staffbots.database.users;
 
+import ru.staffbots.tools.Translator;
+
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * User roles and some methods
+ */
 public enum UserRole {
 
-    INSPECTOR(0, "Инспектор"),
-    MANAGER(1, "Управляющий"),
-    ADMIN(2, "Администратор");
+    INSPECTOR(0),
+    MANAGER(1),
+    ADMIN(2);
 
-    private String description;
     private int accessLevel;
     private static Map accessLevelMap = new HashMap<>();
-    private static Map nameMap = new HashMap<>();
+    private static Map<String, UserRole> nameMap = new HashMap<>();
+    private static Map descriptionMap = new HashMap<>();
 
-    private static final UserRole defaultRole = UserRole.INSPECTOR;
+    public static final UserRole defaultRole = UserRole.INSPECTOR;
 
-    UserRole(int accessLevel, String description) {
+    UserRole(int accessLevel) {
         this.accessLevel = accessLevel;
-        this.description = description;
     }
 
-
     public String getDescription(){
-        return description;
+        return Translator.getValue("userrole", getName());
     }
 
     static {
         for (UserRole userRole : UserRole.values()) {
             accessLevelMap.put(userRole.accessLevel, userRole);
-            nameMap.put(userRole.name(), userRole);
+            nameMap.put(userRole.getName(), userRole);
         }
     }
 
@@ -38,7 +41,16 @@ public enum UserRole {
     }
 
     public static UserRole valueByName(String name) {
-        return nameMap.containsKey(name) ? (UserRole) nameMap.get(name) : defaultRole;
+        if (name == null) return defaultRole;
+        name = (name).toLowerCase();
+        return nameMap.containsKey(name) ? nameMap.get(name) : defaultRole;
+    }
+
+    public static UserRole valueByDescription(String description) {
+        if (descriptionMap.size() == 0)
+            for (UserRole userRole : UserRole.values())
+                descriptionMap.put(userRole.getDescription(), userRole);
+        return descriptionMap.containsKey(description) ? (UserRole) descriptionMap.get(description) : defaultRole;
     }
 
     public int getAccessLevel() {

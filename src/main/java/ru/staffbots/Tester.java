@@ -49,7 +49,7 @@ public class Tester extends Pattern {
             for (Lever lever : Levers.list)
                 lever.toValue().setRandom(period);
             Tasks.setStatus(TasksStatus.STOP);
-        Journal.add("Нажата кнопка калибровки датчика");
+        Journal.addAnyNote("Нажата кнопка калибровки датчика");
     });
 
     static ListLever listLever = new ListLever("listLever",
@@ -72,8 +72,8 @@ public class Tester extends Pattern {
         "Ракетно ядерный залп", ValueMode.TEMPORARY, RaspiPin.GPIO_06,
         () -> {// Обработка нажатия кнопки
             //sensor.dataRead();
-            Journal.add("!!! Temperature = " + sensor.getTemperature());
-            Journal.add("!!! Humidity = " + sensor.getHumidity());
+            Journal.addAnyNote("!!! Temperature = " + sensor.getTemperature());
+            Journal.addAnyNote("!!! Humidity = " + sensor.getHumidity());
             //System.out.println("Distance = " + sonar.getDistance());
         }
     );
@@ -99,7 +99,7 @@ public class Tester extends Pattern {
                     Thread.sleep(1);
                 }
             } catch (Exception exception) {
-                Journal.add(taskNote + ": Задание прервано", NoteType.WRINING);
+                Journal.addAnyNote(NoteType.WARNING,taskNote + ": Задание прервано");
             }
         }
     );

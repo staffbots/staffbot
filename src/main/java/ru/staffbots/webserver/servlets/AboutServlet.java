@@ -3,6 +3,7 @@ package ru.staffbots.webserver.servlets;
 import com.pi4j.io.gpio.Pin;
 import ru.staffbots.Pattern;
 import ru.staffbots.database.Database;
+import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.webserver.AccountService;
@@ -31,7 +32,7 @@ public class AboutServlet extends BaseServlet {
         throws ServletException, IOException {
 
         if (isAccessDenied(request, response)) return;
-        Map<String, Object> pageVariables = new HashMap();
+        Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
         pageVariables.put("website", Pattern.projectWebsite);
         pageVariables.put("about_osname",System.getProperty("os.name"));
         pageVariables.put("about_osversion",System.getProperty("os.version"));
@@ -48,7 +49,7 @@ public class AboutServlet extends BaseServlet {
             for (StackTraceElement traceElement: Database.getException().getStackTrace())
                 trace += traceElement.toString() + "<br>";
         pageVariables.put("about_trace", trace);
-        pageVariables.put("about_admin", WebServer.ADMIN);
+        pageVariables.put("about_admin", WebServer.defaultAdmin);
         pageVariables.put("about_devicelist", getDeviceList());
         String content = FillTemplate("html/" + pageType.getName()+".html", pageVariables);
         super.doGet(request, response, content);
@@ -63,7 +64,7 @@ public class AboutServlet extends BaseServlet {
     private String getDeviceList() {
         String context = "";
         Map<String, Object> pageVariables = new HashMap();
-        pageVariables.put("page_bg_color", page_bg_color);
+        pageVariables.put("page_color", pageColor);
         String templateFileName = "html/items/device_pin.html";
         for (Device device : Devices.list){
             pageVariables.put("device_url", device.getURL());

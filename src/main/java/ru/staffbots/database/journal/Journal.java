@@ -19,7 +19,11 @@ import java.util.Date;
 public class Journal extends DBTable {
 
     private static final String DB_TABLE_NAME = "sys_journal";
-    private static final String DB_TABLE_FIELDS = "moment TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3), noteValue VARCHAR(255) CHARACTER SET utf8, noteType INT DEFAULT 0";
+    private static final String DB_TABLE_FIELDS =
+            "moment TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3), " +
+            "noteType INT DEFAULT 0, " +
+            "noteName VARCHAR(50) CHARACTER SET utf8, " +
+            "noteVariables VARCHAR(500) CHARACTER SET utf8";
 
     public Journal(){
         super(DB_TABLE_NAME, DB_TABLE_FIELDS);
@@ -39,47 +43,48 @@ public class Journal extends DBTable {
     private static final long DEFAULT_NOTE_COUNT = 20;
     public static final DateFormat DATE_FORMAT = DateFormat.DATETIME;
 
-    public static void add(String note, boolean isStorable){
-        add(note, NoteType.CONFIRM, null, isStorable);
+    public static void addAnyNote(String note){
+        add(NoteType.INFORMATION, true, "AnyMessage", note);
     }
 
-    public static void add(String note){
-        add(note, NoteType.CONFIRM);
+    public static void addAnyNote(NoteType noteType, String note){
+        add(noteType, true, "AnyMessage", note);
     }
 
-    public static void add(String note, NoteType noteType){
-        add(note, noteType, null);
+    public static void add(boolean isStorable, String noteName, String... noteVariables){
+        add(NoteType.INFORMATION, isStorable, noteName, noteVariables);
     }
 
-    public static void add(String noteValue, NoteType noteType, Exception exception){
-        add(noteValue, noteType, exception, true);
+    public static void add(String noteName, String... noteVariables){
+        add(NoteType.INFORMATION, true, noteName, noteVariables);
     }
 
-    public static void add(String noteValue, NoteType noteType, Exception exception, boolean isStorable){
+    public static void add(NoteType noteType, String noteName, String... noteVariables){
+        add(noteType, true, noteName, noteVariables);
+    }
+
+    public static void add(NoteType noteType, boolean isStorable, String noteName, String... noteVariables){
         Date noteDate = new Date();
-        if (exception != null)
-            if (NoteType.ERROR == noteType)
-                noteValue += "<br>Сообщение: " + exception.getMessage()
-                        + "<br>Стэк: "  + exception.getStackTrace();
-        Note note = new Note(noteDate, noteValue, noteType);
-        System.out.println(DateValue.toString(noteDate, DATE_FORMAT) + "  |  " + note);
+        Note note = new Note(noteDate, noteType, noteName, noteVariables);
+        System.out.println(DateValue.toString(noteDate, DATE_FORMAT) + "  |  " + note.toString());
         if (isStorable) insertNote(note);
     }
 
     private static boolean insertNote(Note note){
         if(Database.disconnected())return false;
         try {
-
             PreparedStatement statement = Database.getConnection().prepareStatement(
-                    "INSERT INTO " + DB_TABLE_NAME + " (moment, noteValue, noteType) VALUES (?, ?, ?)" );
+                    "INSERT INTO " + DB_TABLE_NAME + " (moment, noteType, noteName, noteVariables) VALUES (?, ?, ?, ?)" );
             statement.setTimestamp(1, new Timestamp(note.getDate().getTime()));
-            statement.setString(2, note.getValue());
-            statement.setInt(3, note.getType().getValue());
+            statement.setInt(2, note.getType().getValue());
+            statement.setString(3, note.getName());
+            statement.setString(4, note.getVariables());
+
             statement.executeUpdate();
             statement.close();
             return true;
         } catch (Exception exception) {
-            Journal.add("В журнал не добавлена запись: " + note.getValue(), NoteType.ERROR, exception, false);
+            //Journal.add("В журнал не добавлена запись: " + note.getValue(), NoteType.ERROR, exception, false);
             return false;
         }
     }
@@ -120,7 +125,7 @@ public class Journal extends DBTable {
     }
 
     public ArrayList<Note> getJournal(Map<Integer, Boolean> typesForShow, String searchString){
-        ArrayList<Note> journal = new ArrayList<>();
+        ArrayList<Note> journal = new ArrayList();
         try {
             String condition = null;
             for (NoteType noteType : NoteType.values())
@@ -137,10 +142,10 @@ public class Journal extends DBTable {
             String fromCondition = (period.getFromDate() == null) ? "" : " AND (? <= moment)";
             String toCondition = (period.getToDate() == null) ? "" : " AND (moment <= ?)";
             PreparedStatement statement = Database.getConnection().prepareStatement(
-                    "SELECT * FROM (SELECT moment, noteValue, noteType FROM " + getTableName()
+                    "SELECT * FROM (SELECT moment, noteType, noteName, noteVariables FROM " + getTableName()
                             + " WHERE " + condition + fromCondition + toCondition
-                            + " AND (LOWER(noteValue) LIKE '%" + searchString.toLowerCase()
-                            + "%') ORDER BY moment DESC LIMIT "  + getCount()
+                            //+ " AND (LOWER(noteValue) LIKE '%" + searchString.toLowerCase()+ "%')"
+                            + " ORDER BY moment DESC LIMIT "  + getCount()
                             + ") sub ORDER BY moment ASC");
 
             if (period.getFromDate() != null)
@@ -155,12 +160,21 @@ public class Journal extends DBTable {
                 ResultSet resultSet = statement.getResultSet();
                 while (resultSet.next()) {
                     Date date = new Date(resultSet.getTimestamp(1).getTime());
-                    journal.add(new Note(date, resultSet.getString(2), NoteType.valueOf(resultSet.getInt(3))));
+                    Note note = new Note(
+                            date,
+                            NoteType.valueOf(resultSet.getInt(2)),
+                            resultSet.getString(3),
+                            resultSet.getString(4));
+                    if ((searchString == null) || searchString.trim().isEmpty())
+                        journal.add(note);
+                    else
+                        if (note.toString().toLowerCase().indexOf(searchString.trim().toLowerCase()) > 0)
+                            journal.add(note);
                 }
             }
 
         } catch (SQLException exception) {
-            Journal.add("Журнал не сформирован", NoteType.ERROR, exception);
+            //Journal.add("Журнал не сформирован", NoteType.ERROR, exception);
         }
 
         return journal;

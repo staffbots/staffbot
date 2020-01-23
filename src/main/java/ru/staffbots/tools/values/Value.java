@@ -151,7 +151,7 @@ abstract public class Value extends DBTable {
             }
 
         } catch (SQLException exception) {
-            Journal.add("Value " + getName() + ": " + exception.getMessage(), NoteType.ERROR);
+            Journal.add(NoteType.ERROR, "GetValue", getName(), getNote(), exception.getMessage());
         }
 
 
@@ -194,7 +194,7 @@ abstract public class Value extends DBTable {
             set(new Date(moment), newValue);
             i++;
         }
-        Journal.add(name + ". Всего добавлено: " + i, NoteType.ERROR);
+        Journal.add(NoteType.WARNING, "SetRandom", name, note, Integer.toString(i));
     }
 
     protected LeverMode leverMode = LeverMode.CHANGEABLE;
@@ -247,10 +247,11 @@ abstract public class Value extends DBTable {
                 statement.executeUpdate();
                 valueChanged = true;
             } catch (Exception exception) {
-                Journal.add("Ошибка записи в таблицу " + getTableName() + exception.getMessage(), NoteType.ERROR);
+                Journal.add(NoteType.ERROR, "SetValue", getName(), getNote(), exception.getMessage());
             }
         value = newValue;
-        if (valueChanged) Journal.add(getNote() + " - установлено значение: " + toValueString(value));
+        if (valueChanged)
+            Journal.add("SetValue", getName(), getNote(), toValueString(value));
         return value;
     }
 
@@ -272,13 +273,13 @@ abstract public class Value extends DBTable {
                 statement.setLong(2, newValue);
                 statement.executeUpdate();
                 valueChanged = true;
-            } catch (Exception e) {
-                Journal.add("Ошибка записи в таблицу " + getTableName() + e.getMessage(), NoteType.ERROR);
+            } catch (Exception exception) {
+                Journal.add(NoteType.ERROR, "SetValue", getName(), getNote(), exception.getMessage());
             }
         value = newValue;
         if (valueChanged)
-            Journal.add(getNote() + " - установлено значение: " + toValueString(value)
-                    + " на дату " + DateValue.toString(moment, Journal.DATE_FORMAT));
+            Journal.add("SetValue", getName(), getNote(),
+                toValueString(value) + " (" + DateValue.toString(moment, Journal.DATE_FORMAT) + ")");
         return value;
     }
 

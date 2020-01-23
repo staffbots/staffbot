@@ -45,7 +45,7 @@ public enum DBMS {
                         "SET GLOBAL time_zone='+" + (int) (TimeZone.getDefault().getRawOffset() / 36E5) + ":00'");
                 break;
             default:
-                throw new Exception("Для драйвера СУБД " + this + " не описано подключение");
+                throw new Exception("No " + this + " driver");
         }
         return connection;
     }

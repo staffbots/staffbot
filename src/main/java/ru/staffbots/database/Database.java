@@ -62,11 +62,11 @@ public class Database {
             settings = new Settings();
             cleaner = new Cleaner();
             configs = new Configs();
-            Journal.add("База данных " + NAME + " готова к использованию");
+            Journal.add("InitDB", NAME);
         } catch (Exception exception) {
             connection = null;
             Database.exception = exception;
-            Journal.add("Ошибка инициализации базы данных " + NAME + " " + exception.getMessage());
+            Journal.add(NoteType.ERROR, "InitDB", NAME, exception.getMessage());
         }
         return connected();
     }
@@ -92,13 +92,13 @@ public class Database {
             Statement statement = connection.createStatement();
             statement.execute("DROP DATABASE " + NAME);
             statement.close();
-            Journal.add("Удалена БД " + NAME, NoteType.WRINING, null, false);
+            Journal.add(NoteType.WARNING, "DropDB", NAME);
             exists = false;
         } if(!exists) {
             Statement statement = connection.createStatement();
             statement.execute("CREATE DATABASE " + NAME);
             statement.close();
-            Journal.add("Создана БД " + NAME, NoteType.WRINING, null, false);
+            Journal.add(NoteType.WARNING, "CreateDB", NAME);
         }
         return true;
     }

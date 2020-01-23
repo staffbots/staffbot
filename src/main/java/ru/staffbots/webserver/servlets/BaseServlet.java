@@ -5,9 +5,11 @@ import freemarker.template.Template;
 import ru.staffbots.Pattern;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
+import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.resources.Resources;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
+import ru.staffbots.webserver.WebServer;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -18,14 +20,16 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.function.Supplier;
 
 public abstract class BaseServlet extends HttpServlet {
 
-    public static String site_bg_color = "fdfdfd";
+    public static String siteColor = "fdfdfd";
 
-    public static String main_bg_color = "dddddd";
+    public static String mainColor = "dddddd";
 
-    public static String page_bg_color = "bbbbbb";
+    public static String pageColor = "bbbbbb";
 
     protected AccountService accountService;
 
@@ -79,31 +83,33 @@ public abstract class BaseServlet extends HttpServlet {
                 int pageAccessLevel = pageType.getAccessLevel();
                 if (pageAccessLevel < 0) continue;
                 if (pageAccessLevel > userAccessLevel) continue;
-                menuVariables.put("bg_color", (pageType == this.pageType) ? page_bg_color : main_bg_color);
                 String caption = pageType.getCaption();
-                if (pageType == this.pageType) caption = "<b>" + caption + "</b>";
-                menuVariables.put("main_menuName", caption);
-                menuVariables.put("main_menuTitle", pageType.getDescription());
-                menuVariables.put("main_menuRef", (pageType == this.pageType) ? "" : "href=\"" + pageType.getName() + "\"");
-
+                boolean isCurrentPage = (pageType == this.pageType);
+                if (isCurrentPage) caption = "<b>" + caption + "</b>";
+                menuVariables.put("menu_caption", caption);
+                menuVariables.put("menu_hint", pageType.getDescription());
+                menuVariables.put("menu_link", isCurrentPage ? "" : "href=\"" + pageType.getName() + "\"");
                 menu += FillTemplate("html/items/menu_item.html", menuVariables);
             }
         }
         return menu;
     }
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response, String content)
-        throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response, String content)throws IOException {
         String login = accountService.getUserLogin(request.getSession());
-        Map<String, Object> pageVariables = new HashMap();
-        pageVariables.put("main_pagename", Pattern.projectName + ":" + Pattern.solutionName + " - " + pageType.getDescription());
-        pageVariables.put("main_menu", getMenu(accountService.getUserAccessLevel(login)));
-        pageVariables.put("main_content", content);
-        pageVariables.put("main_login", login);
-        pageVariables.put("main_role", accountService.users.getRole(login).getDescription());
-        pageVariables.put("main_update_delay", "1000");
 
-        String result = FillTemplate("html/main.html", pageVariables);
+        Map<String, Object> pageVariables = Translator.getSection(PageType.BASE.getName());
+        pageVariables.put("page_title",
+            Pattern.projectName + ":" +
+            Pattern.solutionName + " - " +
+            pageType.getCaption());
+        pageVariables.put("main_menu", getMenu(accountService.getUserAccessLevel(login)));
+        pageVariables.put("page_content", content);
+        pageVariables.put("login_value", login);
+        pageVariables.put("role_value", accountService.users.getRole(login).getDescription());
+        pageVariables.put("update_delay", WebServer.updateDelay.toString());
+
+        String result = FillTemplate("html/base.html", pageVariables);
 
         response.getOutputStream().write( result.getBytes("UTF-8") );
 
@@ -128,6 +134,32 @@ public abstract class BaseServlet extends HttpServlet {
             Journal.add(e.getMessage());
         }
         return stream.toString();
+    }
+
+    /**
+     * Карта хранит параметризированные функции, по которым расчитываются значения переменных
+     * Map<Name, Function<Parametr, Value>>
+     */
+    protected Map<String, Function<String,String>> getParameters = new HashMap();
+
+    /**
+     * Функция обрабатывает запросы вида get=name:value
+     */
+    protected boolean getResponse(HttpServletRequest request, HttpServletResponse response)throws IOException {
+        String getName = request.getParameter("get");
+        if (getName == null) return false;
+        String value;
+        for (String name : getParameters.keySet()){
+            if (getName.startsWith(name)) {
+                int index = getName.indexOf(":");
+                value = (index < 0) ? null : getName.substring(index + 1);
+                response.getOutputStream().write(getParameters.get(name).apply(value).getBytes("UTF-8"));
+                response.setContentType("text/html; charset=utf-8");
+                response.setStatus(HttpServletResponse.SC_OK);
+                break;
+            }
+        }
+        return true;
     }
 
 }

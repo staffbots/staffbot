@@ -53,6 +53,7 @@ public class Tasks {
                 task.start();
         }
     }
+
     /**
      * Пуск всех заданий
      */
@@ -61,7 +62,7 @@ public class Tasks {
             if (status != TasksStatus.PAUSE)
                 setStartTime((new Date()).getTime());
             status = TasksStatus.START;
-            Journal.add("Выполнен пуск заданий", NoteType.WRINING);
+            Journal.add(NoteType.WARNING, "StartTasks");
         }
     }
 
@@ -71,7 +72,7 @@ public class Tasks {
     private static void pause(){
         if(status == TasksStatus.START) {
             status = TasksStatus.PAUSE;
-            Journal.add("Произведена приостановка заданий", NoteType.WRINING);
+            Journal.add(NoteType.WARNING, "PauseTasks");
         }
     }
 
@@ -82,12 +83,12 @@ public class Tasks {
         if(status != TasksStatus.STOP) {
             status = TasksStatus.STOP;
             setStartTime(0);
-            Journal.add("Произведена остановка заданий", NoteType.WRINING);
+            Journal.add(NoteType.WARNING, "StopTasks");
         }
     }
 
     /*
-     * Выполняем инициализацию перед первым пуском
+     * Инициализация
      */
     public static void init(Task... tasks){
         list.clear();
@@ -96,7 +97,7 @@ public class Tasks {
                 list.add(task);
         status = TasksStatus.START;
         setStatus((getStartTime() == 0) ? TasksStatus.STOP : TasksStatus.PAUSE);
-        Journal.add("Задания проинициализированы");
+        Journal.add("InitTasks");
     }
 
     public static long getStartTime(){

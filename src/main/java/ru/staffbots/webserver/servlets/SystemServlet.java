@@ -4,6 +4,7 @@ import ru.staffbots.database.Database;
 import ru.staffbots.database.cleaner.Cleaner;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.tools.Translator;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
 
@@ -37,7 +38,7 @@ public class SystemServlet extends BaseServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
         if (isAccessDenied(request, response)) return;
-        Map<String, Object> pageVariables = new HashMap();
+        Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
 
         Database.cleaner.refresh();
 
@@ -88,7 +89,7 @@ public class SystemServlet extends BaseServlet {
         if (request.getParameter("system_reboot") != null) exiting = shutdown(true, "Перезагрузка системы " + message);
         if (request.getParameter("system_exit") != null) exiting = true;
         if (exiting) {
-            Journal.add("Закрытие приложения" + message , NoteType.WRINING);
+            Journal.add(NoteType.WARNING, "Закрытие приложения" + message);
             System.exit(0);
         } else
 
@@ -101,10 +102,10 @@ public class SystemServlet extends BaseServlet {
             "shutdown -" + (reboot ? "r" : "s") + " -t 0" :
             "shutdown -" + (reboot ? "r" : "h") + " now";
         try {
-            Journal.add(message, NoteType.WRINING);
+            Journal.add(NoteType.WARNING, message);
             Runtime.getRuntime().exec(shutdownCommand);
         } catch (IOException exception) {
-            Journal.add("Ошибка выполнения команды " + shutdownCommand + "\n" + exception.getMessage(), NoteType.ERROR);
+            Journal.add(NoteType.ERROR, "Ошибка выполнения команды " + shutdownCommand + "\n" + exception.getMessage());
             return false;
         }
         return true;

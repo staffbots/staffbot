@@ -1,6 +1,7 @@
 package ru.staffbots.webserver.servlets;
 
 import ru.staffbots.database.Database;
+import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.tasks.Tasks;
 import ru.staffbots.tools.tasks.TasksStatus;
 import ru.staffbots.tools.levers.ButtonLever;
@@ -30,33 +31,32 @@ public class ControlServlet extends BaseServlet {
 
     // Вызывается при запросе страницы с сервера
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (isAccessDenied(request, response)) return;
-        Map<String, Object> pageVariables = new HashMap();
-        for (TasksStatus status : TasksStatus.values()) {
-            String statusName = "control_" + status.name().toLowerCase();
+        Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
+
+        for (TasksStatus status : TasksStatus.values())
             if (status == TasksStatus.PAUSE)
-                pageVariables.put(statusName, TasksStatus.START == Tasks.getStatus() ? "" : "disabled");
+                pageVariables.put(status.getName(), TasksStatus.START == Tasks.getStatus() ? "" : "disabled");
             else
-                pageVariables.put(statusName, status == Tasks.getStatus() ? "disabled" : "");
-        }
+                pageVariables.put(status.getName(), status == Tasks.getStatus() ? "disabled" : "");
 
         pageVariables.put("start_time", Long.toString(Tasks.getStartTime()));
-        pageVariables.put("page_bg_color", page_bg_color);
         pageVariables.put("control_leverlist", getLeverList());
         pageVariables.put("control_configlist", getConfigList());
         pageVariables.put("tasks_display", Tasks.list.size() > 0 ? "inline-table" : "none");
+
         String content = FillTemplate("html/" + pageType.getName() + ".html", pageVariables);
 
         super.doGet(request, response, content);
     }
 
     // Вызывается при отправке страницы на сервер
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         String setName = request.getParameter("set");
         // Проверяем, не запрос ли это на обработку нажатия кнопки
-        // вызовом control_button_onclick() из main.js
+        // вызовом control_button_onclick() из base.js
         if (setName != null) {
             if (isAccessDenied(request)) return;
             // Обработка нажатия кнопки ButtonLever
@@ -76,10 +76,10 @@ public class ControlServlet extends BaseServlet {
 
         if (isAccessDenied(request, response)) return;
 
-        if (request.getParameter("control_apply") == null) {
+        if (request.getParameter("apply") == null) {
             // Обработка управляющих кнопок (пуск, пауза, старт)
             for (TasksStatus status : TasksStatus.values())
-                if (request.getParameter("control_" + status.name().toLowerCase()) != null)
+                if (request.getParameter(status.name().toLowerCase()) != null)
                     Tasks.setStatus(status);
 
             // Обработка кнопок для работы с конфигурацией (сохранить, загрузить, удалить)
@@ -122,7 +122,7 @@ public class ControlServlet extends BaseServlet {
             pageVariables.put("value", value);
             pageVariables.put("note", lever.toValue().getNote());
             pageVariables.put("size", maxSize);
-            context += FillTemplate("html/" + lever.getTemplateFile(),pageVariables);
+            context += FillTemplate("html/" + lever.getTemplateFile(), pageVariables);
         }
         return context;
     }

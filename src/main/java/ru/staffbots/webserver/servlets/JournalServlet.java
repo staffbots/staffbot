@@ -4,6 +4,7 @@ import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.Note;
 import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.values.DateValue;
 import ru.staffbots.webserver.AccountService;
@@ -34,7 +35,7 @@ public class JournalServlet extends BaseServlet {
         if (isAccessDenied(request, response)) return;
 
         HttpSession session = request.getSession();
-        Map<String, Object> pageVariables = new HashMap();
+        Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
 
         String toDateStr = accountService.getAttribute(session,"journal_todate");
         if (toDateStr.equals("")) toDateStr = request.getParameter("journal_todate");

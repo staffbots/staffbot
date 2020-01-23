@@ -71,7 +71,7 @@ public class SonarHCSR04Device extends Device {
             long duration = measureSignal(); //микроскекунд
             value.setValue(duration * SOUND_SPEED / ( 2 * 10000 ));
         } catch (Exception exception) {
-            Journal.add(note + " -  - неудачная попытка чтения", NoteType.ERROR, exception);
+            Journal.add(note + " -  reading error: " + exception.getMessage());
             return false;
         }
         return true;

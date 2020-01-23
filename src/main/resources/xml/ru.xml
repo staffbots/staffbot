@@ -1,0 +1,178 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language title="Русский">
+
+    <enums>
+        <dateaccuracy>
+            millisecond = Миллисекунда
+            second      = Секунда
+            minute      = Минута
+            hour        = Час
+            day         = Сутки
+            week        = Неделя
+        </dateaccuracy>
+        <notetype>
+            information = Информация
+            warning     = Предупреждение
+            error       = Ошибка
+        </notetype>
+        <userrole>
+            inspector =  Инспектор
+            manager   =  Управляющий
+            admin     =  Администратор
+        </userrole>
+        <tasksstatus>
+            start = Пуск
+            pause = Пауза
+            stop  = Стоп
+        </tasksstatus>
+    </enums>
+
+    <application>
+        <frame>
+            button_caption = Управление
+            button_hint = Перейти к управлению через web-браузер
+            checkbox_caption = SSL
+            checkbox_hint = Использовать SSL-протокол
+        </frame>
+    </application>
+
+    <pages>
+        <base>
+            login_caption = Логин
+            role_caption  = Роль
+            exit_link  = Выйти
+        </base>
+        <entry>
+            page_title       = Авторизация
+            login_caption    = Логин
+            password_caption = Пароль
+            entry_button     = Войти
+        </entry>
+        <control>
+            page_title    = Управление
+            page_hint     = Управление параметрами
+            start_button  = Пуск
+            start_hint    = Запустить выполнение процесса
+            pause_button  = Пауза
+            pause_hint    = Приостановить выполнение процесса
+            stop_button   = Стоп
+            stop_hint     = Закончить выполнение процесса
+            time_hint     = Время после запуска
+            tasks_hint    = Текущие задания
+            apply_button  = Применить
+            apply_hint    = Применить введённые параметры
+            config_hint   = Имя конфигурации
+            save_button   = Сохранить
+            save_hint     = Сохранить конфигурацию в БД под указанным именем
+            load_button   = Загрузить
+            load_hint     = Загрузить из БД конфигурацию с указанным именем
+            delete_button = Удалить
+            delete_hint   = Удалить из БД конфигурацию с указанным именем
+        </control>
+        <status>
+            page_title     = Состояние
+            page_hint      = Состояние системы
+            process =                Состояние процесса:
+            time =                Время после запуска
+            tasks =            Текущие задания
+            lever =                Параметр управления
+            device =     Устройство
+            description =                Описание
+            value = Значение
+            plot = График
+            period = Период:
+        </status>
+        <journal>
+            page_title     = Журнал
+            page_hint      = Журнал событий
+        </journal>
+        <users>
+            page_title     = Пользователи
+            page_hint      = Список пользователей
+            newlogin = Новый пользователь
+            selectlogin = Выбранный пользователь
+            delete = Удалить
+            delete_hint = Удалить пользователя
+            role = Роль
+            role_hint = Роль пользователя
+            password = Пароль
+            apply = Применить
+            apply_hint = Создать/изменить пользователя
+        </users>
+        <system>
+            page_title     = Система
+            page_hint      = Системные настройки
+        </system>
+        <about>
+            page_title     = Сведения
+            page_hint      = Сведения о системе
+        </about>
+    </pages>
+
+    <journal>
+        <information>
+            AnyNote        = %s%
+            InitProperties = Свойства проекта загружены
+            InitDB         = База данных %s% готова к использованию
+            AutoClean      = Настроена автоматическая очистка базы данных с периодом %s% (%s%), первый запуск: %s%
+            SaveConfig     = Конфигурация параметров управления сохранена под именем: %s%
+            AddUser        = Добавлен пользователь %s% с ролью %s%
+            ChangeUser     = Пользователь %s% с ролью %s% изменён
+            DeleteUser     = Пользователь %s% удалён
+            InitDevice     = Устройства успешно проинициализированы
+            CompliteTask   = %s%: Задание выполнено
+            CompliteTask   = %s%: Задание выполнено
+            InitTasks      = Задания проинициализированы
+            SetValue       = Для переменной %s% (%s%) установлено значение: %s%
+            InitWindow     = Главное окно приложения открыто
+            StartServer    = Веб-сервер запустился
+            FileNotFound   = Файл %s% не найден
+        </information>
+        <warning>
+            AnyNote        = %s%
+            CreateTable    = Таблица %s% создана (%s%)
+            EraseTable     = Таблица %s% очищена
+            DropTable      = Таблица %s% удалена (%s%)
+            DeleteTable    = Удаление в таблице %s%. Удалено записей: %s%
+            DropDB         = База данных %s% удалена!
+            CreateDB       = Создана база данных %s%
+            AutoClean      = Автоматическая очистка базы данных отменена
+            CleaningDB     = Очистка базы. Всего удалено записей: %s%
+            LoadConfig     = Загружена конфигурация параметров управления с именем: %s%
+            DeleteConfig   = Удалена конфигурация параметров управления с именем: %s%
+            InterrupteTask = %s%: Задание прервано
+            StartTasks     = Выполнен пуск заданий
+            PauseTasks     = Произведена приостановка заданий
+            StopTasks      = Произведена остановка заданий
+            SetRandom      = Для переменной %s% (%s%) добавлено %s% случайных значений
+            InitWindow     = Приложение работает без запуска главного окна
+            CloseWindow    = Закрытие приложения из главного окна на сервере
+            AddUser        = Добавить пользователя с именем %s% нельзя!
+        </warning>
+        <error>
+            AnyNote        = %s%
+            PropertiesInit = Ошибка загрузки конфигурации
+            TableExists = Ошибка поиска таблицы %s%. Сообщение: %s%
+            CreateTable = Ошибка создания таблицы %s%. Сообщение: %s%
+            EraseTable = Ошибка очистки таблицы %s%. Сообщение: %s%
+            DropTable = Ошибка удаления таблицы %s%. Сообщение: %s%
+            ReadTable = Ошибка запроса к таблице %s%. Сообщение: %s%
+            WriteTable = Ошибка записи в таблицу %s%. Сообщение: %s%
+            DeleteTable = Ошибка удаления записей в таблице %s%. Сообщение: %s%
+            InitDB = Ошибка инициализации базы данных %s%: %s%
+            DeleteUser = Ошибка удаления пользователя. Сообщение: %s%
+            AddUser = Ошибка создания пользователя. Сообщение: %s%
+            ChangeUser = Ошибка изменения пользователя. Сообщение: %s%
+            GetUser = Ошибка получения пользователя %s%. Сообщение: %s%
+            CryptPassword = Ошибка шифрования. Сообщение: %s%
+            SetValue = Неудачная попытка присвоить %s% (%s%) значение %s%: %s%
+            GetValue = Ошибка получения значения для %s% (%s%). Сообщение: %s%
+            LoadIcon = Иконка приложения не загружена (%s%). Сообщение: %s%
+            OpenBrowser = Неудачная попытка открыть браузер. Сообщение: %s%
+            BusyHost = Неудачная попытка запустить веб-сервер. Порт занят
+            StartServer = Ошибка запуска веб-сервера. Сообщение: %s%
+            InitProperties = Ошибка загрузки свойства проекта
+        </error>
+    </journal>
+
+</language>

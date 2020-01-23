@@ -1,61 +1,61 @@
 <!-- Журнал -->
-<form action="/journal" method="post">
-    <table class="table parent">
+<form action='/journal' method='post'>
+    <table class='table parent'>
         <tr>
-            <td style="font-weight: bold" colspan="3">Период:</td>
+            <td style='font-weight: bold' colspan='3'>Период:</td>
             <td>
-                <input type="checkbox" name="journal_confirm" ${journal_confirm}>
+                <input type='checkbox' name='journal_information' ${journal_information}>
             </td>
             <td>
                 Информация
             </td>
             <td>
-                <input style="width:100%" name="journal_search" value="${journal_search}" placeholder="Поиск...">
+                <input style='width:100%' name='journal_search' value='${journal_search}' placeholder='Поиск...'>
             </td>
         </tr>
         <tr>
             <td>
-                <input type="checkbox" name="journal_fromdate_on" ${journal_fromdate_on}
-                       onclick="date_onClick('journal_fromdate_on', 'journal_fromdate');">
+                <input type='checkbox' name='journal_fromdate_on' ${journal_fromdate_on}
+                       onclick='date_onClick('journal_fromdate_on', 'journal_fromdate');'>
             </td>
             <td>c</td>
             <td>
-                <input name="journal_fromdate" value="${journal_fromdate}" size="${journal_datesize}" placeholder="${dateformat}">
+                <input name='journal_fromdate' value='${journal_fromdate}' size='${journal_datesize}' placeholder='${dateformat}'>
             </td>
             <td>
-                <input type="checkbox" name="journal_wrining" ${journal_wrining}>
+                <input type='checkbox' name='journal_warning' ${journal_warning}>
             </td>
             <td>Предуреждения</td>
             <td><nobr>
-                <input name="journal_count" value="${journal_count}" size="3" title="Максимальное количество записей для отображения">
+                <input name='journal_count' value='${journal_count}' size='3' title='Максимальное количество записей для отображения'>
                 последних записей
                 </nobr>
             </td>
         </tr>
         <tr>
             <td>
-                <input type="checkbox" name="journal_todate_on" ${journal_todate_on}
-                       onclick="date_onClick('journal_todate_on', 'journal_todate');">
+                <input type='checkbox' name='journal_todate_on' ${journal_todate_on}
+                       onclick='date_onClick('journal_todate_on', 'journal_todate');'>
             </td>
             <td>по</td>
             <td>
-                <input name="journal_todate" value="${journal_todate}" size="${journal_datesize}" placeholder="${dateformat}">
+                <input name='journal_todate' value='${journal_todate}' size='${journal_datesize}' placeholder='${dateformat}'>
             </td>
             <td>
-                <input type="checkbox" name="journal_error" ${journal_error}>
+                <input type='checkbox' name='journal_error' ${journal_error}>
             </td>
             <td>Ошибки</td>
-            <td align="right">
-                <button name="journal_apply" title="Применить фильтр" value="journal_apply">
+            <td align='right'>
+                <button name='journal_apply' title='Применить фильтр' value='journal_apply'>
                     Показать
                 </button>
             </td>
-            <td style="width:100%">
+            <td style='width:100%'>
             </td>
         </tr>
         <tr>
-            <td colspan="7">
-                <table class="table child">
+            <td colspan='7'>
+                <table class='table child'>
                         ${journal_page}
                 </table>
             </td>
@@ -63,7 +63,7 @@
     </table>
 
 </form>
-<script type="text/javascript">
+<script type='text/javascript'>
     date_onClick('journal_fromdate_on', 'journal_fromdate');
     date_onClick('journal_todate_on', 'journal_todate');
 </script>

@@ -81,7 +81,7 @@ public class Task extends Thread implements DelayFunction {
 
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
-            Journal.add(note + ": Ожидание прервано", NoteType.WRINING);
+            Journal.add(NoteType.WARNING, "InterrupteTask", note);
         }
 
         if (!isInterrupted()) {
@@ -91,7 +91,7 @@ public class Task extends Thread implements DelayFunction {
             action.run();
 
             if (!silenceMode) {
-                Journal.add(note + ": Задание выполнено");
+                Journal.add("CompliteTask", note);
             }
             //Journal.add(note + ": выключение");
             // Просим запланировать следующий запуск

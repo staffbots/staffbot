@@ -106,9 +106,9 @@ public class Grower extends Pattern {
                 sunRelay.set(true);
                 Thread.sleep(sunsetTime - System.currentTimeMillis());
             } catch (InterruptedException exception) {
-                Journal.add(lightTaskNote + ": Задание прервано", NoteType.WRINING);
+                Journal.addAnyNote(NoteType.WARNING, lightTaskNote + ": Задание прервано");
             }
-            Journal.add(lightTaskNote + ": выключение");
+            Journal.addAnyNote(lightTaskNote + ": выключение");
             //Выключаем
             sunRelay.set(false);
         });
@@ -139,10 +139,10 @@ public class Grower extends Pattern {
                 funRelay.set(true);
                 Thread.sleep(funsetTime - System.currentTimeMillis());
             } catch (InterruptedException exception) {
-                Journal.add(ventingTaskNote + ": Задание прервано", NoteType.WRINING);
+                Journal.addAnyNote(NoteType.WARNING,ventingTaskNote + ": Задание прервано");
                 //Thread.currentThread().interrupt();
             } finally {
-                Journal.add(ventingTaskNote + ": выключение");
+                Journal.addAnyNote(ventingTaskNote + ": выключение");
                 //Выключаем
                 funRelay.set(false);
             }
@@ -159,25 +159,25 @@ public class Grower extends Pattern {
             },
         () -> {// Метод самой
             try {
-                Journal.add(irrigationTaskNote + ": Проверка уровня воды");
+                Journal.addAnyNote(irrigationTaskNote + ": Проверка уровня воды");
                 //double level = sonar.getDistance();
                 double volume = 3d / 5d;
                 volumeLever.setFromString(String.format("%.3f", volume));
                 volumeLever.setFromString(sunRelay.get() ? "День" : "Ночь" );
                 //Вырввнивание уровня
                 Thread.sleep(1000);
-                Journal.add(irrigationTaskNote + ": Проверка раствора на Ph и EC");
+                Journal.addAnyNote(irrigationTaskNote + ": Проверка раствора на Ph и EC");
                 //Замес Ph и EC
                 Thread.sleep(5000);
-                Journal.add(irrigationTaskNote + ": Затопление");
+                Journal.addAnyNote(irrigationTaskNote + ": Затопление");
                 // Продолжительность затопления определена durationLever
                 Thread.sleep(7000);
-                Journal.add(irrigationTaskNote + ": Слив");
+                Journal.addAnyNote(irrigationTaskNote + ": Слив");
             } catch (InterruptedException exception) {
-                Journal.add(irrigationTaskNote + ": Задание прервано",NoteType.WRINING);
+                Journal.addAnyNote(NoteType.WARNING, irrigationTaskNote + ": Задание прервано");
             } finally {
                 // Выключаем
-                Journal.add(irrigationTaskNote + ": выполнено");
+                Journal.addAnyNote(irrigationTaskNote + ": выполнено");
             }
         });
 
@@ -200,7 +200,7 @@ public class Grower extends Pattern {
                 for (Lever lever : Levers.list)
                     lever.toValue().setRandom(period);
                 Tasks.setStatus(TasksStatus.STOP);
-                Journal.add(testTaskNote + ": Задание выполнено");
+                Journal.addAnyNote(testTaskNote + ": Задание выполнено");
             });
 
 }

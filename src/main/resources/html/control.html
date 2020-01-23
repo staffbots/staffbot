@@ -1,45 +1,42 @@
 <p>
-<form action="/control" method="post">
-    <table style="text-align:right;" cellpadding="3">
+<form action='/control' method='post'>
+    <table style='text-align:right;' cellpadding='3'>
         <tbody>
-        <!-- Кнопки управления -->
+        <!-- Control buttons -->
         <tr>
-            <td colspan="2">
-                <table style="display:${tasks_display}; width:100%" border="0" cellpadding="3">
+            <td colspan='2'>
+                <table style='display:${tasks_display}; width:100%' border='0' cellpadding='3'>
                     <tbody>
                     <tr>
-                        <td align="center" valign="middle">
-                            <button name="control_start" ${control_start} title="Запустить выполнение процесса"
-                                    onclick="control_start_onClick()">
-                                Пуск
+                        <td align='center' valign='middle'>
+                            <button name='start' ${start} title='${start_hint}'>
+                                ${start_button}
                             </button>
                         </td>
-                        <td align="center" valign="middle">
-                            <button name="control_pause" ${control_pause} title="Приостановить выполнение процесса"
-                                    onclick="control_pause_onClick()">
-                                Пауза
+                        <td align='center' valign='middle'>
+                            <button name='pause' ${pause} title='${pause_hint}'>
+                                ${pause_button}
                             </button>
                         </td>
-                        <td align="center" valign="middle">
-                            <button name="control_stop" ${control_stop} title="Закончить выполнение процесса"
-                                    onclick="control_stop_onClick()">
-                                Стоп
+                        <td align='center' valign='middle'>
+                            <button name='stop' ${stop} title='${stop_hint}'>
+                                ${stop_button}
                             </button>
                         </td>
                         <td>
-                            <input type="hidden" name="start_time" value="${start_time}"></input>
+                            <input type='hidden' name='start_time' value='${start_time}'>
                         </td>
-                        <td valign="bottom" align="right" width="100%">
+                        <td valign='bottom' align='right' width='100%'>
                             <b>
-                                <output name="process_time" title="Время после запуска"></output>
+                                <output name='process_time' title='${time_hint}'></output>
                             </b>
                         </td>
                     </tr>
-                    <!-- Список заданий -->
+                    <!-- Task list -->
                     <tr>
-                        <td colspan="5" style="text-align: right">
+                        <td colspan='5' style='text-align: right'>
                             <small>
-                                <div id="task_list" title="Текущие задания">
+                                <div id='task_list' title='${tasks_hint}'>
                                     <!-- Обновляется по udate_control_tasklist() -->
                                 </div>
                             </small>
@@ -49,44 +46,44 @@
                 </table>
             </td>
         </tr>
-        <!-- Параметры (рычаги управления) -->
-        ${control_leverlist}
 
-        <tr style="background: #${page_bg_color}">
-            <td colspan="2" rowspan="1" align="right">
-                <button name="control_apply" title="Применить введённые параметры" value="control_apply">
-                    Применить
+            <!-- Parameters (control levers) -->
+            ${control_leverlist}
+        <tr>
+            <td class='table tr title' colspan='2' rowspan='1' align='right'>
+                <button name='apply' title='${apply_hint}' value='apply'>
+                    ${apply_button}
                 </button>
             </td>
         </tr>
-        <!-- Конфигурация -->
+        <!-- Configuration -->
         <tr>
-            <td colspan="2">
-                <table style="text-align:right;" border="0" cellpadding="0" cellspacing="5">
+            <td colspan='2'>
+                <table style='text-align:right;' border='0' cellpadding='0' cellspacing='5'>
                     <tr>
-                        <td align="center" valign="middle" width="100%">
-                            <input list="control_configlist" name="control_configname" title="Имя конфигурации"
-                                   autocomplete="off"/>
-                            <datalist id="control_configlist">
+                        <td align='center' valign='middle' width='100%'>
+                            <input list='control_configlist' name='control_configname' title='${config_hint}'
+                                   autocomplete='off'/>
+                            <datalist id='control_configlist'>
                                 ${control_configlist}
                             </datalist>
                         </td>
-                        <td align="center" valign="middle">
-                            <button name="control_save" value="control_save"
-                                    title="Сохранить конфигурацию в БД под указанным именем">
-                                Сохранить
+                        <td align='center' valign='middle'>
+                            <button name='control_save' value='control_save'
+                                    title='${save_hint}'>
+                                ${save_button}
                             </button>
                         </td>
-                        <td align="center" valign="middle">
-                            <button name="control_load" value="control_load"
-                                    title="Загрузить из БД конфигурацию с указанным именем">
-                                Загрузить
+                        <td align='center' valign='middle'>
+                            <button name='control_load' value='control_load'
+                                    title='${load_hint}'>
+                                ${load_button}
                             </button>
                         </td>
-                        <td align="center" valign="middle">
-                            <button name="control_delete" value="control_delete"
-                                    title="Удалить из БД конфигурацию с указанным именем">
-                                Удалить
+                        <td align='center' valign='middle'>
+                            <button name='control_delete' value='control_delete'
+                                    title='${delete_hint}'>
+                                ${delete_button}
                             </button>
                         </td>
                     </tr>
@@ -97,7 +94,7 @@
     </table>
 </form>
 </p>
-<script type="text/javascript"> update_process_time(); </script>
-<script type="text/javascript"> update_task_list(); </script>
+<script type='text/javascript'> update_process_time(); </script>
+<script type='text/javascript'> update_task_list(); </script>
 
 

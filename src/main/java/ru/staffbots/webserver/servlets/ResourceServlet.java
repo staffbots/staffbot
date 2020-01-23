@@ -32,9 +32,7 @@ public class ResourceServlet extends BaseServlet {
     }
 
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException{
-
+    public void doGet(HttpServletRequest request, HttpServletResponse response) {
         String resourceName = request.getQueryString().toLowerCase();
 
         if (resourceName == null)
@@ -47,9 +45,9 @@ public class ResourceServlet extends BaseServlet {
             switch (ResourceType.getByName(resourceName)){
                 case CSS:
                     Map<String, Object> pageVariables = new HashMap();
-                    pageVariables.put("site_bg_color", site_bg_color);
-                    pageVariables.put("page_bg_color", page_bg_color);
-                    pageVariables.put("main_bg_color", main_bg_color);
+                    pageVariables.put("site_color", siteColor);
+                    pageVariables.put("page_color", pageColor);
+                    pageVariables.put("main_color", mainColor);
                     pageVariables.put("database_display", Database.connected() ? "none" : "inline-table");
                     pageVariables.put("device_display", Devices.USED || Database.disconnected() ? "none" : "inline-table");
                     String result = FillTemplate(resourceName, pageVariables);
@@ -64,8 +62,7 @@ public class ResourceServlet extends BaseServlet {
     }
 
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) {
         doGet(request, response);
     }
 

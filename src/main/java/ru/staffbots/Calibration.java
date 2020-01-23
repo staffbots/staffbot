@@ -4,21 +4,15 @@ import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.devices.drivers.ECProbeI2CBusDevice;
-import ru.staffbots.tools.devices.drivers.UARTProbeDevice;
 import ru.staffbots.tools.levers.*;
 import ru.staffbots.tools.tasks.Tasks;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Base64;
-
-import static orangepi.I2CExample.TSL2561_REG_ID;
 
 public class Calibration extends Pattern {
 
     // Точка входа приложения
     public static void main(String[] args) {
-        solutionName = new Object(){}.getClass().getEnclosingClass().getSimpleName();
+        solutionName = (new Object()).getClass().getEnclosingClass().getSimpleName();
         solutionInit(()->{
             Levers.init(buttonLever); // Инициализируем список элементов управления
             Devices.init(probeDevice); // Инициализируем список устройств
@@ -47,7 +41,7 @@ public class Calibration extends Pattern {
                     System.out.println("SAL = " + probeDevice.getSalinity(false));
                     System.out.println("SG = " + probeDevice.getSpecificGravity(false));
                 } catch (Exception exception) {
-                    Journal.add("", NoteType.ERROR);
+                    Journal.addAnyNote(NoteType.ERROR, exception.getMessage());
                     //note = "I/O error during fetch of I2C busses occurred";
                 }
                 //System.out.println(note);

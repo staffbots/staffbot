@@ -54,7 +54,7 @@ public class SensorDHT22Device extends Device {
         if (!Devices.USED) return;
 
         if (Gpio.wiringPiSetup() == -1)
-            Journal.add(getName() + ": GPIO wiringPiSetup Failed!", NoteType.ERROR);
+            Journal.addAnyNote(getName() + ": GPIO wiringPiSetup Failed!");
         //gpioPin = Devices.gpioController.provisionDigitalInputPin(pin);
 
     }
@@ -147,7 +147,7 @@ public class SensorDHT22Device extends Device {
             getData();
             checkParity();
         } catch (Exception exception) {
-            Journal.add(note + " - неудачная попытка чтения", NoteType.ERROR, exception);
+            Journal.addAnyNote(note + " - reading error: " + exception.getMessage());
             return false;
         }
         humidity.setValue(getReadingValueFromBytes(data[0], data[1]));

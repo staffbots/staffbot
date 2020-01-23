@@ -16,7 +16,7 @@ public class MainWindowListener implements WindowListener {
     }
 
     public void windowClosing(WindowEvent event) {
-        Journal.add("Закрытие приложения из главного окна на сервере" , NoteType.WRINING);
+        Journal.add(NoteType.WARNING, "CloseWindow");
     }
 
     public void windowDeactivated(WindowEvent event) {

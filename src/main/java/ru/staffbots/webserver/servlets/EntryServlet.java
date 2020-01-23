@@ -1,6 +1,7 @@
 package ru.staffbots.webserver.servlets;
 
 import ru.staffbots.Pattern;
+import ru.staffbots.tools.Translator;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
 
@@ -8,6 +9,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,13 +25,17 @@ public class EntryServlet extends BaseServlet {
     // Вызывается при запросе странице с сервера (Обновление страницы)
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         String login = accountService.getUserLogin(request.getSession());
+
         if (login == null) login = "";
             accountService.forgetSession(request.getSession());
 
-        Map<String, Object> pageVariables = new HashMap();
-        pageVariables.put("main_pagename", Pattern.projectName + ":" + Pattern.solutionName + " - " + pageType.getDescription());
-        pageVariables.put("website", Pattern.projectWebsite);
-        pageVariables.put("entry_login", login);
+        Map<String, Object> pageVariables = Translator.getSection(PageType.ENTRY.getName());
+        pageVariables.put("page_title",
+                Pattern.projectName + ":" +
+                        Pattern.solutionName + " - " +
+                        pageType.getCaption());
+        pageVariables.put("website_link", Pattern.projectWebsite);
+        pageVariables.put("login_input", login);
 
         String result = FillTemplate("html/entry.html", pageVariables);
         response.getOutputStream().write( result.getBytes("UTF-8") );
@@ -40,8 +46,8 @@ public class EntryServlet extends BaseServlet {
 
     // Вызывается при отправке страницы
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-        String login = request.getParameter("entry_login");
-        String password = request.getParameter("entry_password");
+        String login = request.getParameter("login_input");
+        String password = request.getParameter("password_input");
         if (accountService.verifyUser(login, password) > -1) {
             accountService.addSession(request.getSession(), login);
             response.sendRedirect("/control");

@@ -1,22 +1,17 @@
 package ru.staffbots.webserver;
 
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.database.users.Users;
 import ru.staffbots.database.users.UserRole;
-
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
 public class AccountService {
 
-    // Карта сессий sessionId -> login
+    /**
+     * sessionId -> login
+     */
     private Map<String, String> sessions = new HashMap<>();
 
     public Users users = new Users();
@@ -56,7 +51,6 @@ public class AccountService {
         if (login == null ) return -1;
         return getUserAccessLevel(login);
     }
-
 
     public String getAttribute(HttpSession session, String attribute){
         Object value = session.getAttribute(attribute);

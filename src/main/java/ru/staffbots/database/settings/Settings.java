@@ -37,7 +37,7 @@ public class Settings extends DBTable {
             statement.executeUpdate();
             Journal.add("В таблице " + getTableName() + " сделана запись: " + name + " = " + value);
         } catch (Exception exception) {
-            Journal.add("Ошибка записи в таблицу " + getTableName() + ": "+ exception.getMessage(), NoteType.ERROR);
+            Journal.add(NoteType.ERROR, "WriteTable", getTableName(), exception.getMessage());
         }
     }
 
@@ -56,10 +56,15 @@ public class Settings extends DBTable {
                     settingValue = resultSet.getString(1);
             }
         } catch (Exception exception) {
-            Journal.add("Ошибка чтения таблицы " + getTableName() + ": "+ exception.getMessage(), NoteType.ERROR);
+            Journal.add(NoteType.ERROR, "ReadTable", getTableName(), exception.getMessage());
             return null;
         }
         return settingValue;
+    }
+
+    public String loadAsString(String name, String defaultValue){
+        String stringValue = load(name);
+        return (stringValue == null) ? defaultValue : stringValue;
     }
 
     public boolean loadAsBollean(String name, String trueValue, boolean defaultValue){
@@ -89,7 +94,7 @@ public class Settings extends DBTable {
                 Journal.add("Из таблицы " + getTableName() + " удалена запись: " + name);
             return recordCount;
         } catch (Exception exception) {
-            Journal.add("Ошибка при удалении записи из таблицы " + getTableName() + ": "+ exception.getMessage(), NoteType.ERROR);
+            Journal.add(NoteType.ERROR, "DeleteTable", getTableName(), exception.getMessage());
             return 0;
         }
     }

@@ -14,6 +14,7 @@ import javax.swing.ImageIcon;
 
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.tools.Translator;
 import ru.staffbots.webserver.WebServer;
 
 
@@ -32,7 +33,7 @@ public class MainWindow extends JFrame {
      * Значение можно выставить в cfg-файле параметром gui.used
      * Загрузка из файла осуществляется в методе propertiesInit() класса Pattern
      */
-    public static Boolean USED = true;
+    public static Boolean frameUsed = true;
 
     /*
      * Единственный экзэмпляр класса
@@ -46,11 +47,11 @@ public class MainWindow extends JFrame {
     public static void init(String windowTilte) {
         if (mainWindow != null)
             return;
-        if (USED) {
+        if (frameUsed) {
             mainWindow = new MainWindow(windowTilte);
-            Journal.add("Главное окно приложения открыто");
+            Journal.add("InitWindow");
         } else {
-            Journal.add("Приложение работает без запуска главного окна");
+            Journal.add(NoteType.WARNING, "InitWindow");
         }
     }
 
@@ -70,32 +71,32 @@ public class MainWindow extends JFrame {
             setIconImage(new ImageIcon(ImageIO.read(
                     getClass().getResourceAsStream(iconName))).getImage());
         } catch (Exception exception) {
-            Journal.add("Иконка приложения не загружена (" + iconName + ")", NoteType.ERROR, exception);
+            Journal.add(NoteType.ERROR, "LoadIcon", iconName, exception.getMessage());
         }
         // Панель содержимого
         Container container = getContentPane();
         container.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 25));
 
-        JCheckBox сheckBox = new JCheckBox("SSL");
-        //JCheckBox сheckBox = new JCheckBox("中国人");
-        сheckBox.setToolTipText("Использовать SSL-протокол");
+        JCheckBox сheckBox = new JCheckBox(Translator.getValue("frame", "checkbox_caption"));
+        сheckBox.setToolTipText(Translator.getValue("frame", "checkbox_hint"));
         сheckBox.setSelected(true);
 
         // Создание кнопки
-        JButton button = new JButton("Управление");
-        button.setToolTipText("Перейти к управлению через веб-интерфейс");
+        JButton button = new JButton(Translator.getValue("frame", "button_caption"));
+        button.setToolTipText(Translator.getValue("frame", "button_hint"));
+
         // Обработка нажатия кнопки
         button.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
                     java.awt.Desktop.getDesktop().browse(WebServer.getURL(сheckBox.isSelected()).toURI());
                 } catch (Exception exception) {
-                    Journal.add("Неудачная попытка открыть браузер", NoteType.ERROR, exception);
+                    Journal.add(NoteType.ERROR, "OpenBrowser", exception.getMessage());
                 }
             }
         });
         container.add(button);
-        if (WebServer.HTTP_USED)
+        if (WebServer.httpUsed)
             container.add(сheckBox);
         // Размеры и положение окна
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();

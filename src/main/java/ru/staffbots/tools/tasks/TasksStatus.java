@@ -1,26 +1,25 @@
 package ru.staffbots.tools.tasks;
 
+import ru.staffbots.tools.Translator;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public enum TasksStatus {
 
-    START(0, "Пуск"),
-    PAUSE(1, "Пауза"),
-    STOP(2, "Стоп");
+    START(0),
+    PAUSE(1),
+    STOP(2);
 
-    private String description;
     private int value;
     private static Map map = new HashMap<>();
 
-    TasksStatus(int value, String description) {
+    TasksStatus(int value) {
         this.value = value;
-        this.description = description;
     }
 
-
     public String getDescription(){
-        return description;
+        return Translator.getValue("tasksstatus", getName());
     }
 
     static {
@@ -34,6 +33,10 @@ public enum TasksStatus {
 
     public int getValue() {
         return value;
+    }
+
+    public String getName() {
+        return name().toLowerCase();
     }
 
 }
