@@ -32,8 +32,8 @@ public class EntryServlet extends BaseServlet {
         Map<String, Object> pageVariables = Translator.getSection(PageType.ENTRY.getName());
         pageVariables.put("page_title",
                 Pattern.projectName + ":" +
-                        Pattern.solutionName + " - " +
-                        pageType.getCaption());
+                Pattern.solutionName + " - " +
+                pageType.getCaption());
         pageVariables.put("website_link", Pattern.projectWebsite);
         pageVariables.put("login_input", login);
 

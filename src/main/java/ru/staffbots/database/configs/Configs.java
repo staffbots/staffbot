@@ -26,55 +26,54 @@ public class Configs extends DBTable {
         super(DB_TABLE_NAME, DB_TABLE_FIELDS);
     }
 
+    private String Condition = " WHERE LOWER(configname) LIKE LOWER(?)";
+
     public void save(String name) throws Exception {
         Map<String, String> config = new HashMap<>();
         for (Lever lever : Levers.list)
-            if (!(lever.toValue().getName().trim().equals("") || (lever.toValue().getName()==null)))
+            if (!lever.isGroup())
                 config.put(lever.toValue().getName(), Long.toString(lever.toValue().get()));
-        delete(name); // Удяляем что бы избежать повторений
-        statement = getStatement("INSERT INTO " + getTableName() + " (configname, configvalue) VALUES (?, ?)");
-        statement.setString(1, name);
-        statement.setString(2, config.toString());
+        statement = getStatement( getValue(name) == null ?
+            "INSERT INTO " + getTableName() + " (configvalue, configname) VALUES (?, ?)" :
+            "UPDATE " + getTableName() + " SET configvalue = ?" + Condition );
+        statement.setString(1, config.toString());
+        statement.setString(2, name);
         statement.executeUpdate();
         statement.close();
         Journal.add("SaveConfig", name);
     }
 
     public void load(String name) throws Exception {
-        String value = "";
-        statement = getStatement("SELECT configvalue FROM " + getTableName() + " WHERE (configname = ?)");
-        statement.setString(1, name);
-        if (statement.execute()) {
-            ResultSet resultSet = statement.getResultSet();
-            if (resultSet.next())
-                value = resultSet.getString(1);
-        }
-        Map<String, String> config = new HashMap<>();
+        String value = getValue(name);
+        if (value == null) return;
         Properties properties = new Properties();
         try {
             properties.load(new StringReader(value.substring(1, value.length() - 1).replace(", ", "\n")));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        for (Map.Entry<Object, Object> e : properties.entrySet()) {
-            config.put((String)e.getKey(), (String) e.getValue());
+        } catch (Exception e) {
+            return;
         }
         for (Lever lever : Levers.list)
-            if (config.containsKey(lever.toValue().getName()))
-                lever.toValue().set(Long.parseLong(config.get(lever.toValue().getName())));
+            if (!lever.isGroup())
+                if (properties.containsKey(lever.toValue().getName())) {
+                    String val = lever.toString();
+                    lever.toValue().set(
+                        Long.parseLong(
+                            properties.getProperty(
+                                lever.toValue().getName())));
+                    System.out.println( val + " => " +  lever.toString());
+                }
         Journal.add(NoteType.WARNING, "LoadConfig", name);
     }
 
     public void delete(String name) throws Exception {
-        statement = getStatement("DELETE FROM " + getTableName() + " WHERE (configname = ?)");
+        statement = getStatement("DELETE FROM " + getTableName() + Condition);
         statement.setString(1, name);
-        deleteFromTable(statement);
-        Journal.add(NoteType.WARNING, "DeleteConfig", name);
+        if (deleteFromTable(statement) > 0)
+            Journal.add(NoteType.WARNING, "DeleteConfig", name);
     }
 
     public ArrayList<String> getList() throws Exception {
-        //Configs config = new Configs("");
-        statement = getStatement("SELECT configname FROM " + DB_TABLE_NAME);
+        statement = getStatement("SELECT configname FROM " + getTableName());
         ArrayList<String> result = new ArrayList<>(0);
         if (statement.execute()) {
             ResultSet resultSet = statement.getResultSet();
@@ -82,6 +81,15 @@ public class Configs extends DBTable {
                 result.add(resultSet.getString(1));
         }
         return result;
+    }
+
+    private String getValue(String name) throws Exception {
+        statement = getStatement("SELECT configvalue FROM " + getTableName() + Condition);
+        statement.setString(1, name);
+        if (statement.execute())
+            return statement.getResultSet().next() ?
+                statement.getResultSet().getString(1) : null;
+        return null;
     }
 
 }

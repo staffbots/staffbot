@@ -21,9 +21,9 @@ public class WebServer {
 
     public static String defaultAdmin = "admin";
 
-    public static String adminPassword = "1";
+    public static String adminPassword = "";
 
-    public static Boolean httpUsed = true;
+    public static Boolean httpUsed = false;
 
     public static String keyStore = "keystore";
 

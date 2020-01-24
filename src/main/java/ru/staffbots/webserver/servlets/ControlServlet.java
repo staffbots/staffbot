@@ -87,10 +87,12 @@ public class ControlServlet extends BaseServlet {
             if (configName != null)
                 if (!configName.equals(""))
                     try {
+                        String sb = request.getParameter("save_button");
+                        String lb = request.getParameter("load_button");
                         //configName = PageGenerator.fromCode(configName);
-                        if (request.getParameter("control_save") != null) Database.configs.save(configName);
-                        if (request.getParameter("control_load") != null) Database.configs.load(configName);
-                        if (request.getParameter("control_delete") != null) Database.configs.delete(configName);
+                        if (request.getParameter("save_button") != null) Database.configs.save(configName);
+                        if (request.getParameter("load_button") != null) Database.configs.load(configName);
+                        if (request.getParameter("delete_button") != null) Database.configs.delete(configName);
                     } catch (Exception e) {} finally {
                         Tasks.reScheduleAll();
                     }
