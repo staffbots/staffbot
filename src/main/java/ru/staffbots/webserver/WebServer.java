@@ -90,19 +90,23 @@ public class WebServer {
         }
         // Если порт занят, то сервер запустить не получится
         if(hostIsBusy()){
-            Journal.add(NoteType.ERROR, "BusyHost");
+            Journal.add(NoteType.ERROR, "busy_host");
             System.exit(0);
         }
 
         server = new Server();
+
         server.setConnectors(new Connector[]{getHttpsConnector()});
         if (httpUsed)
             server.addConnector(getHttpConnector());
+            //server.setConnectors(new Connector[]{getHttpConnector()});
+        //else
 
         AccountService accountService = new AccountService();
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
-        context.addServlet(new ServletHolder(new EntryServlet(accountService)),"");
-        context.addServlet(new ServletHolder(new EntryServlet(accountService)),"/entry");
+        ServletHolder entryServletHolder = new ServletHolder(new EntryServlet(accountService));
+        context.addServlet(entryServletHolder,"");
+        context.addServlet(entryServletHolder,"/entry");
         context.addServlet(new ServletHolder(new ControlServlet(accountService)),"/control");
         context.addServlet(new ServletHolder(new StatusServlet(accountService)),"/status");
         context.addServlet(new ServletHolder(new JournalServlet(accountService)),"/journal");
@@ -117,11 +121,11 @@ public class WebServer {
         server.setHandler(handlers);
         try {
             server.start();
-            Journal.add("StartServer");
+            Journal.add("start_server");
             if (!MainWindow.frameUsed)
                 server.join();
         } catch (Exception e){
-            Journal.add(NoteType.ERROR, "StartServer", e.getMessage());
+            Journal.add(NoteType.ERROR, "start_server", e.getMessage());
             System.exit(0);
         }
     }

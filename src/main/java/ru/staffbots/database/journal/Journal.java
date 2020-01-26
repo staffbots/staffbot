@@ -18,37 +18,39 @@ import java.util.Date;
  */
 public class Journal extends DBTable {
 
-    private static final String DB_TABLE_NAME = "sys_journal";
-    private static final String DB_TABLE_FIELDS =
+    private static final String staticTableName = "sys_journal";
+    private static final String staticTableFields =
             "moment TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3), " +
             "noteType INT DEFAULT 0, " +
             "noteName VARCHAR(50) CHARACTER SET utf8, " +
             "noteVariables VARCHAR(500) CHARACTER SET utf8";
 
     public Journal(){
-        super(DB_TABLE_NAME, DB_TABLE_FIELDS);
+        super(staticTableName, staticTableFields);
     }
 
     public Journal(String fromDate, String toDate){
-        super(DB_TABLE_NAME, DB_TABLE_FIELDS);
+        super(staticTableName, staticTableFields);
         period.set(fromDate, toDate);
     }
 
     public Journal(Date fromDate, Date toDate){
-        super(DB_TABLE_NAME, DB_TABLE_FIELDS);
+        super(staticTableName, staticTableFields);
         period.set(fromDate, toDate);
     }
 
-    private static final long MAX_NOTE_COUNT = 99;
-    private static final long DEFAULT_NOTE_COUNT = 20;
-    public static final DateFormat DATE_FORMAT = DateFormat.DATETIME;
+    private static final long maxNoteCount = 99;
+
+    private static final long defaultNoteCount = 20;
+
+    public static final DateFormat dateFormat = DateFormat.DATETIME;
 
     public static void addAnyNote(String note){
-        add(NoteType.INFORMATION, true, "AnyMessage", note);
+        add(NoteType.INFORMATION, true, "any_message", note);
     }
 
     public static void addAnyNote(NoteType noteType, String note){
-        add(noteType, true, "AnyMessage", note);
+        add(noteType, true, "any_message", note);
     }
 
     public static void add(boolean isStorable, String noteName, String... noteVariables){
@@ -66,7 +68,7 @@ public class Journal extends DBTable {
     public static void add(NoteType noteType, boolean isStorable, String noteName, String... noteVariables){
         Date noteDate = new Date();
         Note note = new Note(noteDate, noteType, noteName, noteVariables);
-        System.out.println(DateValue.toString(noteDate, DATE_FORMAT) + "  |  " + note.toString());
+        System.out.println(DateValue.toString(noteDate, dateFormat) + "  |  " + note.toString());
         if (isStorable) insertNote(note);
     }
 
@@ -74,7 +76,7 @@ public class Journal extends DBTable {
         if(Database.disconnected())return false;
         try {
             PreparedStatement statement = Database.getConnection().prepareStatement(
-                    "INSERT INTO " + DB_TABLE_NAME + " (moment, noteType, noteName, noteVariables) VALUES (?, ?, ?, ?)" );
+                    "INSERT INTO " + staticTableName + " (moment, noteType, noteName, noteVariables) VALUES (?, ?, ?, ?)" );
             statement.setTimestamp(1, new Timestamp(note.getDate().getTime()));
             statement.setInt(2, note.getType().getValue());
             statement.setString(3, note.getName());
@@ -93,10 +95,9 @@ public class Journal extends DBTable {
         return (new Journal()).eraseTable();
     }
 
-    public Period period = new Period(DATE_FORMAT);
+    public Period period = new Period(dateFormat);
 
-    private LongValue noteCount = new LongValue("","", ValueMode.TEMPORARY,
-            1, DEFAULT_NOTE_COUNT, MAX_NOTE_COUNT);
+    private LongValue noteCount = new LongValue("","", ValueMode.TEMPORARY, 1, defaultNoteCount, maxNoteCount);
 
     public void setCount(long newCount){
         noteCount.setValue(newCount);
@@ -114,23 +115,23 @@ public class Journal extends DBTable {
         return noteCount.getValue();
     }
 
-    public ArrayList<Note> getJournal(Date fromDate, Date toDate, Map<Integer, Boolean> checkboxes, String searchString){
+    public ArrayList<Note> getJournal(Date fromDate, Date toDate, Map<Integer, Boolean> noteTypes, String searchString){
         period.set(fromDate, toDate);
-        return getJournal(checkboxes, searchString);
+        return getJournal(noteTypes, searchString);
     }
 
-    public ArrayList<Note> getJournal(String fromDate, String toDate, Map<Integer, Boolean> checkboxes, String searchString){
+    public ArrayList<Note> getJournal(String fromDate, String toDate, Map<Integer, Boolean> noteTypes, String searchString){
         period.set(fromDate, toDate);
-        return getJournal(checkboxes, searchString);
+        return getJournal(noteTypes, searchString);
     }
 
-    public ArrayList<Note> getJournal(Map<Integer, Boolean> typesForShow, String searchString){
+    public ArrayList<Note> getJournal(Map<Integer, Boolean> noteTypes, String searchString){
         ArrayList<Note> journal = new ArrayList();
         try {
             String condition = null;
             for (NoteType noteType : NoteType.values())
-                if (typesForShow.containsKey(noteType.getValue()))
-                    if (typesForShow.get(noteType.getValue()))
+                if (noteTypes.containsKey(noteType.getValue()))
+                    if (noteTypes.get(noteType.getValue()))
                     {
                         condition = (condition == null) ? " (" : condition + " OR ";
                             condition += "(";

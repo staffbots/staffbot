@@ -1,8 +1,11 @@
 package ru.staffbots.tools.levers;
 
 import ru.staffbots.tools.values.Value;
+import ru.staffbots.tools.values.ValueType;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
@@ -45,5 +48,29 @@ public class Levers{
         }
         return maxSize;
     }
+
+    public static Map<String, String> getNameValues(){
+        Map<String, String> nameValues = new HashMap<>();
+        for (Lever lever : list)
+            if (!lever.isGroup())
+                nameValues.put(
+                    lever.toValue().getName(),
+                    Long.toString(lever.toValue().get()));
+        return nameValues;
+    }
+
+    public static ArrayList<ButtonLever> getButtonList(){
+        ArrayList<ButtonLever> result = new ArrayList();
+        for (Lever lever: Levers.list)
+            if (lever.isButton())
+                try {
+                    ButtonLever buttonLever = (ButtonLever)lever;
+                    result.add(buttonLever);
+                } catch (Exception exception) {
+                    // Игнорируем
+                }
+        return result;
+    }
+
 
 }

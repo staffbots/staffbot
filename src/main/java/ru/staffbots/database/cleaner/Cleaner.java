@@ -79,10 +79,10 @@ public class Cleaner {
                     new Date(autoStart.getTime() + period * (long) Math.ceil((double) dt/period));
             timer.scheduleAtFixedRate(cleanTask, delay, period);
             timerIsRuning = true;
-            Journal.add("AutoClean", Long.toString(autoValue), autoMeasure.getDescription(), DateValue.toString(delay, DATE_FORMAT));
+            Journal.add("auto_clean", Long.toString(autoValue), autoMeasure.getDescription(), DateValue.toString(delay, DATE_FORMAT));
         } else {
             timerIsRuning = false;
-            Journal.add(NoteType.WARNING, "AutoClean");
+            Journal.add(NoteType.WARNING, "auto_clean");
         }
     }
 
@@ -104,7 +104,7 @@ public class Cleaner {
                     cleanByCount(lever.toValue().getTable(), tablesValue) :
                     cleanByDate(lever.toValue().getTable(), tablesValue);
 
-        Journal.add(NoteType.WARNING, "CleaningDB", Long.toString(count));
+        Journal.add(NoteType.WARNING, "clean_database", Long.toString(count));
     }
 
     private void loadSettings(){

@@ -70,7 +70,7 @@ public class Devices{
                 if (value.isStorable())
                     value.createTable();
         }
-        Journal.add("InitDevice");
+        Journal.add("init_device");
     }
 
     public static void reset(){

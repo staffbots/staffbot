@@ -15,9 +15,12 @@ import java.sql.ResultSet;
  */
 public class Settings extends DBTable {
 
+    private static final String staticTableName = "sys_settings";
+    private static final String staticTableFields =
+            "settingname VARCHAR(50), settingvalue VARCHAR(100)";
+
     public Settings(){
-        super("sys_settings",
-            "settingname VARCHAR(50), settingvalue VARCHAR(100)");
+        super(staticTableName, staticTableFields);
     }
 
     public void save(String name, String value){
@@ -54,7 +57,7 @@ public class Settings extends DBTable {
                     settingValue = resultSet.getString(1);
             }
         } catch (Exception exception) {
-            Journal.add(NoteType.ERROR, "ReadTable", getTableName(), exception.getMessage());
+            Journal.add(NoteType.ERROR, "read_table", getTableName(), exception.getMessage());
             return null;
         }
         return settingValue;
@@ -92,7 +95,7 @@ public class Settings extends DBTable {
                 Journal.add("Из таблицы " + getTableName() + " удалена запись: " + name);
             return recordCount;
         } catch (Exception exception) {
-            Journal.add(NoteType.ERROR, "DeleteTable", getTableName(), exception.getMessage());
+            Journal.add(NoteType.ERROR, "delete_table", getTableName(), exception.getMessage());
             return 0;
         }
     }

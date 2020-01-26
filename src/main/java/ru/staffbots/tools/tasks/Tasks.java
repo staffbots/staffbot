@@ -83,7 +83,7 @@ public class Tasks {
         if(status != TasksStatus.STOP) {
             status = TasksStatus.STOP;
             setStartTime(0);
-            Journal.add(NoteType.WARNING, "StopTasks");
+            Journal.add(NoteType.WARNING, "stop_tasks");
         }
     }
 
@@ -97,7 +97,7 @@ public class Tasks {
                 list.add(task);
         status = TasksStatus.START;
         setStatus((getStartTime() == 0) ? TasksStatus.STOP : TasksStatus.PAUSE);
-        Journal.add("InitTasks");
+        Journal.add("init_tasks");
     }
 
     public static long getStartTime(){

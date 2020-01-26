@@ -70,10 +70,10 @@ public class JournalServlet extends BaseServlet {
 
         String searchString = accountService.getAttribute(session,"journal_search");
         pageVariables.put("journal_search", searchString);
-        pageVariables.put("dateformat", Journal.DATE_FORMAT.getFormat());
+        pageVariables.put("dateformat", Journal.dateFormat.getFormat());
         pageVariables.put("journal_fromdate", Database.journal.period.getFromDateAsString());
         pageVariables.put("journal_todate", Database.journal.period.getToDateAsString());
-        pageVariables.put("journal_datesize", Database.journal.DATE_FORMAT.get().length());
+        pageVariables.put("journal_datesize", Database.journal.dateFormat.get().length());
         pageVariables.put("journal_count", Database.journal.getCount());
         pageVariables.put("journal_page", getJournalPage(typesForShow, searchString));
         String content = FillTemplate("html/" + pageType.getName() + ".html", pageVariables);

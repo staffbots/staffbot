@@ -133,9 +133,9 @@ public abstract class Pattern {
             property.load(Resources.getAsStream("properties"));
             projectVersion = property.getProperty("staffbots.version", "");
             projectWebsite = property.getProperty("staffbots.website", "");
-            Journal.add(false, "InitProperties");
+            Journal.add(false, "init_properties");
         } catch (Exception exception) {
-            Journal.add(NoteType.ERROR, false, "InitProperties");
+            Journal.add(NoteType.ERROR, false, "init_properties");
         }
         // Имя исходного файла конфигурации, лежащего внутри jar-пакета
         String projectCfgFileName = "pattern.cfg"; // внутри jar-пакета
@@ -178,10 +178,10 @@ public abstract class Pattern {
             BaseServlet.mainColor = property.getProperty("web.main_color", BaseServlet.mainColor);
             BaseServlet.pageColor = property.getProperty("web.page_color", BaseServlet.pageColor);
 
-            Journal.add(false, "InitProperties");
+            Journal.add(false, "init_properties");
 
         }catch (Exception exception){
-            Journal.add(NoteType.ERROR, false, "InitProperties");
+            Journal.add(NoteType.ERROR, false, "init_properties");
         }
     }
 

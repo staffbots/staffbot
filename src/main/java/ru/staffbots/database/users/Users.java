@@ -13,15 +13,12 @@ import java.util.ArrayList;
 
 public class Users extends DBTable {
 
-    private static final String DB_TABLE_NAME = "sys_users";
-
-    private static final String DB_TABLE_FIELDS =
-            "login VARCHAR(16), " +
-            "password VARCHAR(32), " +
-            "role INT";
+    private static final String staticTableName = "sys_users";
+    private static final String staticTableFields =
+            "login VARCHAR(16), password VARCHAR(32), role INT";
 
     public Users(){
-        super(DB_TABLE_NAME, DB_TABLE_FIELDS);
+        super(staticTableName, staticTableFields);
     }
 
     public boolean isAdmin(String login){
@@ -34,9 +31,9 @@ public class Users extends DBTable {
                     "DELETE FROM " + getTableName() + " WHERE (login = ?)");
             statement.setString(1, login);
             statement.executeUpdate();
-            Journal.add("DeleteUser", login);
+            Journal.add("delete_user", login);
         } catch (SQLException e) {
-            Journal.add(NoteType.ERROR, "DeleteUser", e.getMessage());
+            Journal.add(NoteType.ERROR, "delete_user", e.getMessage());
         }
     }
 
@@ -44,7 +41,7 @@ public class Users extends DBTable {
         boolean newLogin = (getUserList(user.login).size() == 0);
         try {
             if (isAdmin(user.login)) {
-                Journal.add(NoteType.WARNING, "AddUser", user.login.toLowerCase());
+                Journal.add(NoteType.WARNING, "add_user", user.login.toLowerCase());
                 return false;
             }
             //newLogin = (getUserList(user.login).size() == 0);
@@ -57,11 +54,11 @@ public class Users extends DBTable {
             statement.setString(2, cryptWithMD5(user.password));
             statement.setInt(1, user.role.getAccessLevel());
             statement.executeUpdate();
-            Journal.add(newLogin ? "AddUser" : "ChangeUser",
+            Journal.add(newLogin ? "add_user" : "change_user",
                     user.login, user.role.getDescription());
             return true;
         } catch (SQLException e) {
-            Journal.add(NoteType.ERROR, newLogin ? "AddUser" :"ChangeUser", e.getMessage());
+            Journal.add(NoteType.ERROR, newLogin ? "add_user" :"change_user", e.getMessage());
             return false;
         }
     }
@@ -111,7 +108,7 @@ public class Users extends DBTable {
                             resultSet.getInt(3)));
             }
         } catch (SQLException e) {
-            Journal.add(NoteType.ERROR, "GetUser", login, e.getMessage());
+            Journal.add(NoteType.ERROR, "get_user", login, e.getMessage());
         }
         return userList;
     }

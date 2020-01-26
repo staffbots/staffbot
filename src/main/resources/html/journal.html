@@ -16,7 +16,7 @@
         <tr>
             <td>
                 <input type='checkbox' name='journal_fromdate_on' ${journal_fromdate_on}
-                       onclick='date_onClick('journal_fromdate_on', 'journal_fromdate');'>
+                       onclick='date_onClick("journal_fromdate_on", "journal_fromdate");'>
             </td>
             <td>c</td>
             <td>
@@ -27,7 +27,8 @@
             </td>
             <td>Предуреждения</td>
             <td><nobr>
-                <input name='journal_count' value='${journal_count}' size='3' title='Максимальное количество записей для отображения'>
+                <input name='journal_count' value='${journal_count}' size='3'
+                       title='Максимальное количество записей для отображения'>
                 последних записей
                 </nobr>
             </td>
@@ -35,7 +36,7 @@
         <tr>
             <td>
                 <input type='checkbox' name='journal_todate_on' ${journal_todate_on}
-                       onclick='date_onClick('journal_todate_on', 'journal_todate');'>
+                       onclick='date_onClick("journal_todate_on", "journal_todate");'>
             </td>
             <td>по</td>
             <td>

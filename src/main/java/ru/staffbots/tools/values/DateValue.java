@@ -133,7 +133,7 @@ public class DateValue extends Value{
         try {
             setValue(fromString(value, format));
         } catch (Exception exception) {
-            Journal.add(NoteType.ERROR, "SetValue", name, note, value, exception.getMessage());
+            Journal.add(NoteType.ERROR, "set_value", getName(), note, value, exception.getMessage());
         }
     }
 

@@ -16,7 +16,7 @@ public class MainWindowListener implements WindowListener {
     }
 
     public void windowClosing(WindowEvent event) {
-        Journal.add(NoteType.WARNING, "CloseWindow");
+        Journal.add(NoteType.WARNING, "close_window");
     }
 
     public void windowDeactivated(WindowEvent event) {

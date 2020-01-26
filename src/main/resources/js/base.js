@@ -13,6 +13,46 @@ function element(name){
     return $('[name="' + name + '"]')[0];
 }
 
+function include(url) {
+    var script = document.createElement('script');
+    script.src = url;
+    document.getElementsByTagName('head')[0].appendChild(script);
+    //$("head").append(
+   // alert(url);
+    //element('head').appendChild(script);
+}
+
+// Показ продолжительности исполенения процесса
+function updateTime(){
+    var starttime = element('start_time').value;
+    if (starttime > 0) {
+        var currenttime = new Date().getTime();
+        var dt = Math.round((currenttime - starttime) / 1000);
+        var sec = dt%60;                        sec = (sec > 9) ? sec : '0' + sec;
+        var min = Math.trunc(dt/60)%60;         min = (min > 9) ? min : '0' + min;
+        var hou = Math.trunc(dt/(60*60))%60;    hou = (hou > 9) ? hou : '0' + hou;
+        var day = Math.trunc(dt/(60*60*24))%24;
+        var str = '-';
+        element('process_time').innerHTML =
+        ((day > 0) ? (day + ' ' + str + ' ') : '') + hou + ':'+ min + ':'+ sec;
+    }
+    setTimeout(updateTime, 1000);
+}
+
+// Обновление списка текущих заданий по таймеру
+function updateTasks(){
+    $.get(
+        '/status?get=tasklist',
+        function(data) {
+            $('#task_list').html(data);
+        }
+    );
+    setTimeout(updateTasks, updateDelay);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////
 
 // Отработка нажатия checbox связанного с полем ввода
 function date_onClick(checkname, fieldname){
@@ -20,17 +60,6 @@ function date_onClick(checkname, fieldname){
     fromdate.disabled = !element(checkname).checked;
     if (fromdate.disabled)
         fromdate.value = '';
-}
-
-//////////////////////////////////////////////////////////////////////////////////////
-// Control
-//////////////////////////////////////////////////////////////////////////////////////
-
-// Отработка нажатия кнопки (LeverButton)
-function control_button_onclick(name){
-    var xhr = new XMLHttpRequest();
-    xhr.open('POST', '/control?set=' + name);
-    xhr.send();
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -46,34 +75,6 @@ function update_process_status(){
         }
     );
     setTimeout(update_process_status, updateDelay);
-}
-
-// Обновление списка текущих заданий по таймеру
-function update_task_list(){
-    $.get(
-        '/status?get=tasklist',
-        function(data) {
-            $('#task_list').html(data);
-        }
-    );
-    setTimeout(update_task_list, updateDelay);
-}
-
-// Показ продолжительности исполенения процесса
-function update_process_time(){
-    var starttime = element('start_time').value;
-    if (starttime > 0) {
-        var currenttime = new Date().getTime();
-        var dt = Math.round((currenttime - starttime) / 1000);
-        var sec = dt%60;                        sec = (sec > 9) ? sec : '0' + sec;
-        var min = Math.trunc(dt/60)%60;         min = (min > 9) ? min : '0' + min;
-        var hou = Math.trunc(dt/(60*60))%60;    hou = (hou > 9) ? hou : '0' + hou;
-        var day = Math.trunc(dt/(60*60*24))%24;
-        var str = '-';
-        element('process_time').innerHTML =
-        ((day > 0) ? (day + ' ' + str + ' ') : '') + hou + ':'+ min + ':'+ sec;
-    }
-    setTimeout(update_process_time, 1000);
 }
 
 

@@ -125,7 +125,7 @@ public class LongValue extends Value {
         try {
             set(LongValue.fromString(value));
         } catch (Exception exception) {
-            Journal.add(NoteType.ERROR, "SetValue", name, note, value, exception.getMessage());
+            Journal.add(NoteType.ERROR, "set_value", name, note, value, exception.getMessage());
         }
     }
 

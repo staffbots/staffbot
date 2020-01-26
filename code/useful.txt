@@ -1,3 +1,6 @@
+=======  STAFFBOTS RUN  =============================
+Command line for maven is "compile package exec:java -f grower-pom.xml"
+
 =======  IntelliJ IDEA  =============================
 Ctrl + Alt + T          Поместить фрагмент кода в (if..else, try..catch, for, synchronized, etc.)
 Ctrl + /	            Однострочное комментирование / раскомментирование

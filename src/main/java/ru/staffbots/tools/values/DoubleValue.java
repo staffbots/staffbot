@@ -145,7 +145,7 @@ public class DoubleValue extends Value{
         try {
                setValue(fromString(value));
         } catch (Exception exception) {
-            Journal.add(NoteType.ERROR, "SetValue", name, note, value, exception.getMessage());
+            Journal.add(NoteType.ERROR, "set_value", getName(), note, value, exception.getMessage());
         }
     }
 

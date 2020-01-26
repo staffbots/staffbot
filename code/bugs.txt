@@ -1,12 +1,10 @@
-﻿Command line for maven is "compile package exec:java -f grower-pom.xml"
-test
+﻿
+
 ======= STAFFBOT ========
 - РЕФАКТОРИНГ always actuality:
     проверить доступы в классах - public, private...
     Протестировать в разных режимах работы (с/без БД и т.д.)
     Использовать CSS!!!
-
-- Создать класс для параметров заполнения вместо Map<String, Object> pageVariables = new HashMap();
 
 ======= CONTROL ==========
 
@@ -19,6 +17,7 @@ test
 ======= DATABASE ========
 
 ======= UTILS ===========
+- Если в расписании нет задач, то делаем СТОП
 
 ======= RASPBERRYY PI ===
 - Написать классы <xxx>Device (!!!)

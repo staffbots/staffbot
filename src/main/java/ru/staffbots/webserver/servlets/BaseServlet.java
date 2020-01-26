@@ -162,4 +162,17 @@ public abstract class BaseServlet extends HttpServlet {
         return true;
     }
 
+    /**
+     * Карта хранит параметризированные функции, по которым расчитываются значения переменных
+     * Map<Name, Function<Parametr, Value>>
+     */
+    protected Map<String, Function<HttpServletRequest, Boolean>> setParameters = new HashMap();
+
+    protected boolean setRequest(HttpServletRequest request)throws IOException {
+        for (String name : setParameters.keySet())
+            if (request.getParameter(name) != null)
+                return setParameters.get(name).apply(request);
+        return false;
+    }
+
 }

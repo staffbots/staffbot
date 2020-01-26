@@ -23,9 +23,10 @@ import java.util.Map;
 public class ResourceServlet extends BaseServlet {
 
     // Список защищенных ресурсов, для получения которых требуется авторизация
-    public static final List<String> PRIVATE_RESOURCES = asList(
+    public static final List<String> privateResources = asList(
             "keystore"
     );
+
 
     public ResourceServlet(AccountService accountService) {
         super(null, accountService);
@@ -38,7 +39,7 @@ public class ResourceServlet extends BaseServlet {
         if (resourceName == null)
             return;
 
-        if (PRIVATE_RESOURCES.contains(resourceName))
+        if (privateResources.contains(resourceName))
             if (accountService.getUserAccessLevel(request) < 0) return;
 
         try {

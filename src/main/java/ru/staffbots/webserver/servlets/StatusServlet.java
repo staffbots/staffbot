@@ -22,10 +22,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Predicate;
-import java.util.function.Supplier;
 
 /**
  *
@@ -46,6 +42,7 @@ public class StatusServlet extends BaseServlet {
             if (lever.toValue().isPlotPossible())
                 checkboxes.add(lever.toValue().getName() + "_checkbox");
         getParameters.put("tasklist", (String nullValue) -> getTaskList());
+        //getParameters.put("datasets", (String nullValue) -> getDa());
         getParameters.put("processstatus", (String nullValue) -> Tasks.getStatus().getDescription());
         for (Lever lever : Levers.list)
             if (!lever.isGroup())
@@ -63,7 +60,7 @@ public class StatusServlet extends BaseServlet {
         Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
         HttpSession session = request.getSession();
 
-        Period period = new Period(Journal.DATE_FORMAT);
+        Period period = new Period(Journal.dateFormat);
 
         String toDateStr = accountService.getAttribute(session,"status_todate");
         if (toDateStr.equals("")) toDateStr = request.getParameter("status_todate");
@@ -98,7 +95,7 @@ public class StatusServlet extends BaseServlet {
 
         pageVariables.put("tasks_display", Tasks.list.size() > 0 ? "table-row" : "none");
         pageVariables.put("start_time", Long.toString(Tasks.getStartTime()));
-        pageVariables.put("dateformat", Journal.DATE_FORMAT.getFormat());
+        pageVariables.put("dateformat", Journal.dateFormat.getFormat());
         pageVariables.put("status_fromdate", period.getFromDateAsString());
         pageVariables.put("status_todate", period.getToDateAsString());
         pageVariables.put("status_devicelist", getDeviceList(session));
@@ -248,8 +245,8 @@ public class StatusServlet extends BaseServlet {
             Task task = Tasks.list.get(index);
             String status = task.getStatusString();
             if (status == null) continue;
-            pageVariables.put("note", task.note);
-            pageVariables.put("status", status);
+            pageVariables.put("task_note", task.note);
+            pageVariables.put("task_status", status);
             context += FillTemplate("html/items/control_task.html",pageVariables);
         }
         return context;

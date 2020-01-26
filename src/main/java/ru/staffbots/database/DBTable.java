@@ -8,7 +8,7 @@ import java.sql.*;
 /*
  * Таблица БД,
  * Предоставляет интерфейс общий для всех таблиц БД,
- * является родителем для классов Value, Journal, Settings, Configs
+ * является родителем для классов Value, Journal, Settings, Configs, Users
  */
 public abstract class DBTable {
 
@@ -38,7 +38,7 @@ public abstract class DBTable {
             ResultSet tables = metaData.getTables(Database.NAME, null, tableName, null);
             return (tables.next());
         } catch (SQLException exception) {
-            Journal.add(NoteType.ERROR, "TableExists", tableName, exception.getMessage());
+            Journal.add(NoteType.ERROR, "table_exists", tableName, exception.getMessage());
             return false;
         }
     }
@@ -53,10 +53,10 @@ public abstract class DBTable {
         if (!tableExists())
             try {
                 getStatement("CREATE TABLE " + tableName + " (" + tableFields + ")").execute();
-                Journal.add(NoteType.WARNING, "CreateTable", tableName, tableFields);
+                Journal.add(NoteType.WARNING, "create_table", tableName, tableFields);
             } catch (Exception exception) {
                 //connection = null;
-                Journal.add(NoteType.ERROR, "CreateTable", tableName, exception.getMessage());
+                Journal.add(NoteType.ERROR, "create_table", tableName, exception.getMessage());
                 return false;
             }
 
@@ -68,11 +68,11 @@ public abstract class DBTable {
         try {
             if (tableExists()) {
                 getStatement("DELETE FROM " + tableName).execute();
-                Journal.add(NoteType.WARNING, "EraseTable", tableName);
+                Journal.add(NoteType.WARNING, "erase_table", tableName);
                 return true;
             }
         } catch (Exception exception) {
-            Journal.add(NoteType.ERROR, "EraseTable", tableName, exception.getMessage());
+            Journal.add(NoteType.ERROR, "erase_table", tableName, exception.getMessage());
         }
         return false;
     }
@@ -82,10 +82,10 @@ public abstract class DBTable {
         try {
             if (tableExists()){
                 getStatement("DROP TABLE " + tableName).execute();
-                Journal.add(NoteType.WARNING, "DropTable", tableName);
+                Journal.add(NoteType.WARNING, "drop_table", tableName);
             }
         } catch (Exception exception) {
-            Journal.add(NoteType.ERROR, "DropTable", tableName, exception.getMessage());
+            Journal.add(NoteType.ERROR, "drop_table", tableName, exception.getMessage());
             return false;
         }
         return true;
@@ -111,7 +111,7 @@ public abstract class DBTable {
             if (statement.execute())
                 return statement.getResultSet();
         } catch (Exception exception) {
-            Journal.add(NoteType.ERROR, "ReadTable", tableName, exception.getMessage());
+            Journal.add(NoteType.ERROR, "read_table", tableName, exception.getMessage());
         }
         return null;
     }
@@ -126,10 +126,10 @@ public abstract class DBTable {
         try {
             long count = statement.executeUpdate();
             if (count > 0)
-                Journal.add(NoteType.WARNING, "DeleteTable", getTableName(), Long.toString(count));
+                Journal.add(NoteType.WARNING, "delete_table", getTableName(), Long.toString(count));
             return count;
         } catch (Exception exception) {
-            Journal.add(NoteType.ERROR, "DeleteTable", getTableName(), exception.getMessage());
+            Journal.add(NoteType.ERROR, "delete_table", getTableName(), exception.getMessage());
             return 0;
         }
 
@@ -141,7 +141,7 @@ public abstract class DBTable {
         try {
             return deleteFromTable(getStatement(query));
         } catch (Exception exception) {
-            Journal.add(NoteType.ERROR, "DeleteTable", getTableName(), exception.getMessage());
+            Journal.add(NoteType.ERROR, "delete_table", getTableName(), exception.getMessage());
             return 0;
         }
     }

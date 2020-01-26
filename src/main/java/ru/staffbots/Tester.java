@@ -26,7 +26,7 @@ public class Tester extends Pattern {
             Levers.initGroup(null, delayLever, buttonLever, listLever, dateLever); // Инициализируем список элементов управления
             Devices.init(ledDevice, sensor, sonar, button); // Инициализируем список устройств
             // Tasks.init(task);
-            // Tasks.init(testTask);
+            Tasks.init(task, testTask);
         });
     }
 
@@ -41,14 +41,6 @@ public class Tester extends Pattern {
         "Выполнить","Калибровка датчика, методом триангуляции континума",
         () -> {
         // Обработка нажатия кнопки
-            long timePeriod = DateAccuracy.WEEK.getMilliseconds();
-            Period period = new Period(DateFormat.DATE, new Date(System.currentTimeMillis() - timePeriod), new Date());
-            for (Device device : Devices.list)
-                for (Value value : device.getValues())
-                    value.setRandom(period);
-            for (Lever lever : Levers.list)
-                lever.toValue().setRandom(period);
-            Tasks.setStatus(TasksStatus.STOP);
         Journal.addAnyNote("Нажата кнопка калибровки датчика");
     });
 
@@ -92,6 +84,7 @@ public class Tester extends Pattern {
             return delay;
         },
         () -> { // Задание
+
             if (!Devices.USED) return;
             try {
                 for (Device device: Devices.list) {

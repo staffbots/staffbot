@@ -6,7 +6,6 @@ import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.levers.Lever;
 import ru.staffbots.tools.levers.Levers;
 
-import java.io.IOException;
 import java.io.StringReader;
 import java.sql.ResultSet;
 import java.util.*;
@@ -19,31 +18,40 @@ import java.util.*;
  */
 public class Configs extends DBTable {
 
-    private static final String DB_TABLE_NAME = "sys_configs";
-    private static final String DB_TABLE_FIELDS = "configname VARCHAR(100), configvalue VARCHAR(500)";
+    private static final String staticTableName = "sys_configs";
+    private static final String staticTableFields =
+        "configname VARCHAR(100), configvalue VARCHAR(500)";
 
     public Configs(){
-        super(DB_TABLE_NAME, DB_TABLE_FIELDS);
+        super(staticTableName, staticTableFields);
     }
 
-    private String Condition = " WHERE LOWER(configname) LIKE LOWER(?)";
+    private static final String condition = " WHERE LOWER(configname) LIKE LOWER(?)";
 
-    public void save(String name) throws Exception {
-        Map<String, String> config = new HashMap<>();
-        for (Lever lever : Levers.list)
-            if (!lever.isGroup())
-                config.put(lever.toValue().getName(), Long.toString(lever.toValue().get()));
-        statement = getStatement( getValue(name) == null ?
-            "INSERT INTO " + getTableName() + " (configvalue, configname) VALUES (?, ?)" :
-            "UPDATE " + getTableName() + " SET configvalue = ?" + Condition );
-        statement.setString(1, config.toString());
-        statement.setString(2, name);
-        statement.executeUpdate();
-        statement.close();
-        Journal.add("SaveConfig", name);
+    private boolean checkName(String name){
+        if (name == null) return false;
+        if (name.equals("")) return false;
+        return true;
     }
 
-    public void load(String name) throws Exception {
+    public void save(String name) {
+        if (!checkName(name)) return;
+        try {
+            statement = getStatement( getValue(name) == null ?
+                "INSERT INTO " + getTableName() + " (configvalue, configname) VALUES (?, ?)" :
+                "UPDATE " + getTableName() + " SET configvalue = ?" + condition);
+            statement.setString(1, Levers.getNameValues().toString());
+            statement.setString(2, name);
+            statement.executeUpdate();
+            statement.close();
+            Journal.add("save_config", name);
+        } catch (Exception e) {
+            Journal.add(NoteType.ERROR, "save_config", name, e.getMessage());
+        }
+    }
+
+    public void load(String name) {
+        if (!checkName(name)) return;
         String value = getValue(name);
         if (value == null) return;
         Properties properties = new Properties();
@@ -54,41 +62,51 @@ public class Configs extends DBTable {
         }
         for (Lever lever : Levers.list)
             if (!lever.isGroup())
-                if (properties.containsKey(lever.toValue().getName())) {
-                    String val = lever.toString();
-                    lever.toValue().set(
+                if (properties.containsKey(lever.getName()))
+                    lever.set(
                         Long.parseLong(
                             properties.getProperty(
-                                lever.toValue().getName())));
-                    System.out.println( val + " => " +  lever.toString());
-                }
-        Journal.add(NoteType.WARNING, "LoadConfig", name);
+                                lever.getName())));
+        Journal.add(NoteType.WARNING, "load_config", name);
     }
 
-    public void delete(String name) throws Exception {
-        statement = getStatement("DELETE FROM " + getTableName() + Condition);
-        statement.setString(1, name);
-        if (deleteFromTable(statement) > 0)
-            Journal.add(NoteType.WARNING, "DeleteConfig", name);
+    public void delete(String name) {
+        if (!checkName(name)) return;
+        try {
+            statement = getStatement("DELETE FROM " + getTableName() + condition);
+            statement.setString(1, name);
+            if (deleteFromTable(statement) > 0)
+                Journal.add(NoteType.WARNING, "delete_config", name);
+        } catch (Exception e) {
+            Journal.add(NoteType.ERROR, "delete_config", name, e.getMessage());
+        }
     }
 
-    public ArrayList<String> getList() throws Exception {
-        statement = getStatement("SELECT configname FROM " + getTableName());
+    public ArrayList<String> getList() {
         ArrayList<String> result = new ArrayList<>(0);
-        if (statement.execute()) {
-            ResultSet resultSet = statement.getResultSet();
-            while (resultSet.next())
-                result.add(resultSet.getString(1));
+        try {
+            statement = getStatement("SELECT configname FROM " + getTableName());
+            if (statement.execute()) {
+                ResultSet resultSet = statement.getResultSet();
+                while (resultSet.next())
+                    result.add(resultSet.getString(1));
+            }
+        } catch (Exception e) {
+            Journal.add(NoteType.ERROR, "select_config", e.getMessage());
         }
         return result;
     }
 
-    private String getValue(String name) throws Exception {
-        statement = getStatement("SELECT configvalue FROM " + getTableName() + Condition);
-        statement.setString(1, name);
-        if (statement.execute())
-            return statement.getResultSet().next() ?
-                statement.getResultSet().getString(1) : null;
+    private String getValue(String name){
+        try {
+            statement = getStatement("SELECT configvalue FROM " + getTableName() + condition);
+            statement.setString(1, name);
+            if (statement.execute())
+                return statement.getResultSet().next() ?
+                    statement.getResultSet().getString(1) : null;
+        } catch (Exception e) {
+            Journal.add(NoteType.ERROR, "value_config", name, e.getMessage());
+        }
         return null;
     }
 

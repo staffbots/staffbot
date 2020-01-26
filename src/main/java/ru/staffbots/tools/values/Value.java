@@ -30,7 +30,8 @@ import java.util.Date;
  */
 abstract public class Value extends DBTable {
 
-    private static final String DB_TABLE_FIELDS = "moment TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3), value BIGINT";
+    private static final String staticTableFields =
+        "moment TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3), value BIGINT";
 
     protected ValueType valueType;
 
@@ -80,12 +81,12 @@ abstract public class Value extends DBTable {
      * @param value значение
      */
     public Value(String name, String note, ValueMode valueMode, ValueType valueType, long value) {
-        super("val_" + name.toLowerCase(), DB_TABLE_FIELDS, (valueMode == ValueMode.STORABLE));
+        super("val_" + name.toLowerCase(), staticTableFields, (valueMode == ValueMode.STORABLE));
         init(name, note, valueMode, valueType, value);
     }
 
     public Value(String name, String note, ValueType valueType, long value) {
-        super("val_" + name.toLowerCase(), DB_TABLE_FIELDS);
+        super("val_" + name.toLowerCase(), staticTableFields);
         init(name, note, valueMode, valueType, value);
     }
 
@@ -151,7 +152,7 @@ abstract public class Value extends DBTable {
             }
 
         } catch (SQLException exception) {
-            Journal.add(NoteType.ERROR, "GetValue", getName(), getNote(), exception.getMessage());
+            Journal.add(NoteType.ERROR, "get_value", getName(), getNote(), exception.getMessage());
         }
 
 
@@ -194,7 +195,7 @@ abstract public class Value extends DBTable {
             set(new Date(moment), newValue);
             i++;
         }
-        Journal.add(NoteType.WARNING, "SetRandom", name, note, Integer.toString(i));
+        Journal.add(NoteType.WARNING, "set_random", name, note, Integer.toString(i));
     }
 
     protected LeverMode leverMode = LeverMode.CHANGEABLE;
@@ -247,11 +248,11 @@ abstract public class Value extends DBTable {
                 statement.executeUpdate();
                 valueChanged = true;
             } catch (Exception exception) {
-                Journal.add(NoteType.ERROR, "SetValue", getName(), getNote(), exception.getMessage());
+                Journal.add(NoteType.ERROR, "set_value", getName(), getNote(), exception.getMessage());
             }
         value = newValue;
         if (valueChanged)
-            Journal.add("SetValue", getName(), getNote(), toValueString(value));
+            Journal.add("set_value", getName(), getNote(), toValueString(value));
         return value;
     }
 
@@ -274,12 +275,12 @@ abstract public class Value extends DBTable {
                 statement.executeUpdate();
                 valueChanged = true;
             } catch (Exception exception) {
-                Journal.add(NoteType.ERROR, "SetValue", getName(), getNote(), exception.getMessage());
+                Journal.add(NoteType.ERROR, "set_value", getName(), getNote(), exception.getMessage());
             }
         value = newValue;
         if (valueChanged)
-            Journal.add("SetValue", getName(), getNote(),
-                toValueString(value) + " (" + DateValue.toString(moment, Journal.DATE_FORMAT) + ")");
+            Journal.add("set_value", getName(), getNote(),
+                toValueString(value) + " (" + DateValue.toString(moment, Journal.dateFormat) + ")");
         return value;
     }
 

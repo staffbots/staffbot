@@ -1,25 +1,24 @@
 <p>
+<script src='/resource?js/control.js'></script>
 <form action='/control' method='post'>
     <table style='text-align:right;' cellpadding='3'>
-        <tbody>
-        <!-- Control buttons -->
         <tr>
             <td colspan='2'>
                 <table style='display:${tasks_display}; width:100%' border='0' cellpadding='3'>
                     <tbody>
                     <tr>
                         <td align='center' valign='middle'>
-                            <button name='start' ${start} title='${start_hint}'>
+                            <button name='start_button' ${start_visible} title='${start_hint}'>
                                 ${start_button}
                             </button>
                         </td>
                         <td align='center' valign='middle'>
-                            <button name='pause' ${pause} title='${pause_hint}'>
+                            <button name='pause_button' ${pause_visible} title='${pause_hint}'>
                                 ${pause_button}
                             </button>
                         </td>
                         <td align='center' valign='middle'>
-                            <button name='stop' ${stop} title='${stop_hint}'>
+                            <button name='stop_button' ${stop_visible} title='${stop_hint}'>
                                 ${stop_button}
                             </button>
                         </td>
@@ -46,26 +45,23 @@
                 </table>
             </td>
         </tr>
-
-            <!-- Parameters (control levers) -->
-            ${control_leverlist}
+            ${lever_list}
         <tr>
             <td class='table tr title' colspan='2' rowspan='1' align='right'>
-                <button name='apply' title='${apply_hint}' value='apply'>
+                <button name='apply_button' title='${apply_hint}' value='apply' disabled>
                     ${apply_button}
                 </button>
             </td>
         </tr>
-        <!-- Configuration -->
         <tr>
             <td colspan='2'>
                 <table style='text-align:right;' border='0' cellpadding='0' cellspacing='5'>
                     <tr>
                         <td align='center' valign='middle' width='100%'>
-                            <input list='control_configlist' name='control_configname' title='${config_hint}'
-                                   autocomplete='off'/>
-                            <datalist id='control_configlist'>
-                                ${control_configlist}
+                            <input list='config_list' name='config_name' title='${config_hint}'
+                                   autocomplete='off' value='${config_name}' onchange='configChange()'/>
+                            <datalist id='config_list'>
+                                ${config_list}
                             </datalist>
                         </td>
                         <td align='center' valign='middle'>
@@ -87,11 +83,10 @@
                 </table>
             </td>
         </tr>
-        </tbody>
     </table>
 </form>
 </p>
-<script type='text/javascript'> update_process_time(); </script>
-<script type='text/javascript'> update_task_list(); </script>
+<script type='text/javascript'> updateTime() </script>
+<script type='text/javascript'> updateTasks(); </script>
 
 

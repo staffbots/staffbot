@@ -1,8 +1,10 @@
 <tr>
   <td style='text-align: right' nowrap='nowrap' valign='middle'>
-    <select name='${name}' style='text-align:right; width: 100%;' align='middle'>
-      ${value}
+    <select name='${lever_name}' style='text-align:right; width: 100%;' align='middle' onchange='leverChange()'>
+      ${lever_value}
     </select>
   </td>
-  <td style='text-align: left' >${note}</td>
+  <td style='text-align: left' >
+    ${lever_note}
+  </td>
 </tr>

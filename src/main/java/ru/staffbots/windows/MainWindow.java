@@ -6,6 +6,8 @@ import java.awt.FlowLayout;
 import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
+import java.net.URISyntaxException;
 import javax.imageio.ImageIO;
 import javax.swing.JFrame;
 import javax.swing.JButton;
@@ -49,9 +51,9 @@ public class MainWindow extends JFrame {
             return;
         if (frameUsed) {
             mainWindow = new MainWindow(windowTilte);
-            Journal.add("InitWindow");
+            Journal.add("init_window");
         } else {
-            Journal.add(NoteType.WARNING, "InitWindow");
+            Journal.add(NoteType.WARNING, "init_window");
         }
     }
 
@@ -71,7 +73,7 @@ public class MainWindow extends JFrame {
             setIconImage(new ImageIcon(ImageIO.read(
                     getClass().getResourceAsStream(iconName))).getImage());
         } catch (Exception exception) {
-            Journal.add(NoteType.ERROR, "LoadIcon", iconName, exception.getMessage());
+            Journal.add(NoteType.ERROR, "load_icon", iconName, exception.getMessage());
         }
         // Панель содержимого
         Container container = getContentPane();
@@ -91,10 +93,11 @@ public class MainWindow extends JFrame {
                 try {
                     java.awt.Desktop.getDesktop().browse(WebServer.getURL(сheckBox.isSelected()).toURI());
                 } catch (Exception exception) {
-                    Journal.add(NoteType.ERROR, "OpenBrowser", exception.getMessage());
+                    Journal.add(NoteType.ERROR, "open_browser", exception.getMessage());
                 }
             }
         });
+
         container.add(button);
         if (WebServer.httpUsed)
             container.add(сheckBox);
@@ -109,6 +112,9 @@ public class MainWindow extends JFrame {
         setSize(width, height);
         // Открываем окно
         setVisible(true);
+
+        button.doClick();
+
     }
 
 }

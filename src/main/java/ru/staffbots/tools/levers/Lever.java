@@ -1,6 +1,7 @@
 package ru.staffbots.tools.levers;
 
 import ru.staffbots.tools.values.Value;
+import ru.staffbots.tools.values.ValueType;
 
 /**
  * <b>Рычаг управления</b><br>
@@ -33,5 +34,21 @@ public interface Lever{
     }
 
     Value toValue();
+
+    default String getName(){
+        return toValue().getName();
+    }
+
+    default long set(long newValue) {
+        return toValue().set(newValue);
+    }
+
+    default ValueType getValueType(){
+        return toValue().getValueType();
+    }
+
+    default boolean isChangeable(){
+        return toValue().isChangeable();
+    }
 
 }
