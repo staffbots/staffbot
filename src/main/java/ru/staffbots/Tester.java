@@ -15,19 +15,19 @@ import ru.staffbots.tools.devices.drivers.*;
 import ru.staffbots.tools.levers.*;
 import ru.staffbots.tools.values.Value;
 import ru.staffbots.tools.values.ValueMode;
+import java.lang.invoke.MethodHandles;
 import java.util.Date;
 
-public class Tester extends Pattern {
+public class Tester extends Staffbot {
 
     // Точка входа при запуске приложения
     public static void main(String[] args) {
-        solutionName = new Object(){}.getClass().getEnclosingClass().getSimpleName();
-        solutionInit(()->{
-            Levers.initGroup(null, delayLever, buttonLever, listLever, dateLever); // Инициализируем список элементов управления
-            Devices.init(ledDevice, sensor, sonar, button); // Инициализируем список устройств
-            // Tasks.init(task);
-            Tasks.init(task, testTask);
-        });
+        solutionInit(
+                MethodHandles.lookup().lookupClass().getSimpleName(), // Имя текущего класса
+                new Device[] {ledDevice, sensor, sonar, button}, // Инициализируем список устройств
+                new Object[] {"Группа параметров", booleanLever, delayLever, buttonLever, listLever, dateLever}, // Инициализируем список элементов управления
+                new Task[] {task, testTask}
+        );
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -50,17 +50,20 @@ public class Tester extends Pattern {
     static DateLever dateLever = new DateLever("dateLever",
             "тестовая дата", ValueMode.STORABLE, LeverMode.CHANGEABLE, DateFormat.SHORTTIME, "12:22");
 
+    static BooleanLever booleanLever = new BooleanLever("booleanLever",
+            "я гениален", ValueMode.STORABLE, false);
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  Devices - Устройства
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    static LedDevice ledDevice = new LedDevice("led",
+    static LedDevice ledDevice = new LedDevice("ledDevice",
             "Индикатор конца света", RaspiPin.GPIO_01, false);
-    static SensorDHT22Device sensor = new SensorDHT22Device("sensor",
+    static SensorDHT22Device sensor = new SensorDHT22Device("sensorDevice",
             "Датчик температуры и влажности", RaspiPin.GPIO_25);
-    static SonarHCSR04Device sonar = new SonarHCSR04Device("sonar",
+    static SonarHCSR04Device sonar = new SonarHCSR04Device("sonarDevice",
         "Расстояние до врага", RaspiPin.GPIO_04, RaspiPin.GPIO_05);
-    static ButtonDevice button = new ButtonDevice("button",
+    static ButtonDevice button = new ButtonDevice("buttonDevice",
         "Ракетно ядерный залп", ValueMode.TEMPORARY, RaspiPin.GPIO_06,
         () -> {// Обработка нажатия кнопки
             //sensor.dataRead();
@@ -108,7 +111,7 @@ public class Tester extends Pattern {
             return delay;
         },
         () -> { // Задание без повторений
-            long timePeriod = DateAccuracy.WEEK.getMilliseconds();
+            long timePeriod = DateAccuracy.DAY.getMilliseconds();
             Period period = new Period(DateFormat.DATE, new Date(System.currentTimeMillis() - timePeriod), new Date());
             for (Device device : Devices.list)
                 for (Value value : device.getValues())

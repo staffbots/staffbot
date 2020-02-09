@@ -4,6 +4,7 @@ import ru.staffbots.database.DBTable;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.tools.Translator;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,7 +21,7 @@ public class Settings extends DBTable {
             "settingname VARCHAR(50), settingvalue VARCHAR(100)";
 
     public Settings(){
-        super(staticTableName, staticTableFields);
+        super(staticTableName, Translator.getValue("database", "settings_table"), staticTableFields);
     }
 
     public void save(String name, String value){

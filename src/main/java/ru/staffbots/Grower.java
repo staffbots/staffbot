@@ -17,23 +17,27 @@ import ru.staffbots.tools.tasks.Task;
 import ru.staffbots.tools.tasks.Tasks;
 import ru.staffbots.tools.tasks.TasksStatus;
 import com.pi4j.io.gpio.RaspiPin;
+
+import java.lang.invoke.MethodHandles;
 import java.util.Date;
 
 /*
  *
  */
-public class Grower extends Pattern {
+public class Grower extends Staffbot {
 
     // Точка входа при запуске приложения
     public static void main(String[] args) {
-        solutionName = new Object(){}.getClass().getEnclosingClass().getSimpleName();
-        solutionInit(()->{
-            Levers.initGroup("Освещение и вентиляция", sunriseLever, sunsetLever, funUsedLever, funDelayLever);
-            Levers.initGroup("Подготовка раствора", phLever, ecLever, soluteLever, volumeLever);
-            Levers.initGroup("Орошение", dayRateLever, nightRateLever, durationLever);
-            Devices.init(sensor, sonar, sunRelay, funRelay); // Инициализируем список устройств
-            Tasks.init(testTask, lightTask, ventingTask, irrigationTask);
-        });
+        solutionInit(
+                MethodHandles.lookup().lookupClass().getSimpleName(), // Имя текущего класса
+                ()->{
+                    Levers.initGroup("Освещение и вентиляция", sunriseLever, sunsetLever, funUsedLever, funDelayLever);
+                    Levers.initGroup("Подготовка раствора", phLever, ecLever, soluteLever, volumeLever);
+                    Levers.initGroup("Орошение", dayRateLever, nightRateLever, durationLever);
+                    Devices.init(sensor, sonar, sunRelay, funRelay); // Инициализируем список устройств
+                    Tasks.init(testTask, lightTask, ventingTask, irrigationTask);
+                }
+        );
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

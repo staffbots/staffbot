@@ -3,6 +3,7 @@ package ru.staffbots.database.configs;
 import ru.staffbots.database.DBTable;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.levers.Lever;
 import ru.staffbots.tools.levers.Levers;
 
@@ -23,7 +24,7 @@ public class Configs extends DBTable {
         "configname VARCHAR(100), configvalue VARCHAR(500)";
 
     public Configs(){
-        super(staticTableName, staticTableFields);
+        super(staticTableName, Translator.getValue("database", "configs_table"), staticTableFields);
     }
 
     private static final String condition = " WHERE LOWER(configname) LIKE LOWER(?)";

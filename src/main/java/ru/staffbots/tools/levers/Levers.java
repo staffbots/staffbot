@@ -34,6 +34,16 @@ public class Levers{
         }
     }
 
+    public static void init(Object... levers) {
+        if (levers == null) levers = new Object[0];
+        for (Object lever:levers) {
+            if ((lever == null)||(lever instanceof String))
+                initGroup((String) lever);
+            if (lever instanceof Lever)
+                init((Lever) lever);
+        }
+    }
+
     public static void reset(){
         for (Lever lever: Levers.list)
             lever.toValue().reset();

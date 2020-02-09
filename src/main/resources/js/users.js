@@ -4,7 +4,7 @@
 
 // Отработка нажатия radiobox
 function radioboxClick() {
-    var radios = document.getElementsByName('radiobox');
+    var radios = document.getElementsByName('users_radiobox');
     var newUserMode = false;
     var oldUserMode = true;
     for (var i = 0, length = radios.length; i < length; i++){
@@ -14,8 +14,8 @@ function radioboxClick() {
             break;
         }
     }
-    newlogin = element('newlogin');
-    selectlogin = element('selectlogin');
+    newlogin = element('new_login');
+    selectlogin = element('select_login');
     newlogin.value = '';
     if (selectlogin.length == 0){
         radios[newUserMode ? 0 : 1].checked = true;
@@ -26,17 +26,17 @@ function radioboxClick() {
     radios[newUserMode ? 0 : 1].checked = true;
     newlogin.disabled = oldUserMode;
     selectlogin.disabled = newUserMode;
-    element('delete').disabled = newUserMode;
+    element('delete_button').disabled = newUserMode;
     rolelist();
 }
 
 function rolelist(){
-    selectlogin = element('selectlogin');
+    selectlogin = element('select_login');
     login = selectlogin.disabled ? '' : selectlogin.value;
     $.get(
-        '/users?get=rolelist:' + login,
+        '/users?get=role_list&login_name=' + login,
         function(data) {
-            $('#rolelist').html(data);
+            $('#role_list').html(data);
         }
     );
 }

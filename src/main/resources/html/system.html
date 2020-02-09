@@ -1,45 +1,47 @@
 
 <form action='/system' method='post'>
-    <p>
+    <div style='display:none'>
+        <button name='apply_button'/>
+    </div>
     <table style='text-align: right;' cellpadding='3' >
 
         <tr class='table tr title'>
             <td colspan='4' align='left'>
-                    Очистка базы данных
+                ${dbclean_title}
             </td>
         </tr>
         <tr>
             <td  colspan='2'>
-                В журнале событий оставлять последние
+                ${journal_title}
             </td>
             <td>
                 <input name='dbclean_journal_value' value='${dbclean_journal_value}' size='3'>
             </td>
             <td>
                 <select name='dbclean_journal_measure' style='width:100%'>
-                    <option value='record' ${dbclean_journal_measure_record}>строк</option>
-                    <option value='day' ${dbclean_journal_measure_day}>суток</option>
+                    <option value='record' ${dbclean_journal_measure_record}>${record_measure}</option>
+                    <option value='day' ${dbclean_journal_measure_day}>${day_measure}</option>
                 </select>
             </td>
         </tr>
         <tr>
             <td  colspan='2'>
-                В таблицах значений оставлять последние
+                ${tables_title}
             </td>
             <td>
                 <input name='dbclean_tables_value' value='${dbclean_tables_value}' size='3'>
             </td>
             <td>
                 <select name='dbclean_tables_measure' style='width:100%'>
-                    <option value='record' ${dbclean_tables_measure_record}>строк</option>
-                    <option value='day' ${dbclean_tables_measure_day}>суток</option>
+                    <option value='record' ${dbclean_tables_measure_record}>${record_measure}</option>
+                    <option value='day' ${dbclean_tables_measure_day}>${day_measure}</option>
                 </select>
             </td>
         </tr>
         <tr class='table tr title'>
             <td colspan='4'>
-                <button name='dbclean_now' value='dbclean_now'>
-                    Очистить сейчас
+                <button name='clean_button'>
+                    ${clean_button}
                 </button>
             </td>
         </tr>
@@ -48,7 +50,7 @@
                 <input name='dbclean_auto_cleaning' type='radio' value='off' ${dbclean_auto_cleaning_off} onclick='system_radioboxClick();'>
             </td>
             <td align='left'>
-                Отключить автоматическую очистку
+                ${autoclean_off}
             </td>
         </tr>
         <tr>
@@ -56,60 +58,68 @@
                 <input name='dbclean_auto_cleaning' type='radio' value='on' ${dbclean_auto_cleaning_on} onclick='system_radioboxClick();'>
             </td>
             <td align='left'>
-               Запускать автоматическую очистку каждые
+                ${autoclean_on}
             </td>
             <td>
                 <input  name='dbclean_auto_value' value='${dbclean_auto_value}' size='3'>
             </td>
             <td>
                 <select name='dbclean_auto_measure' style='width:100%'>
-                    <option value='minute' ${dbclean_auto_measure_minute}>минут</option>
-                    <option value='hour' ${dbclean_auto_measure_hour}>часов</option>
-                    <option value='day' ${dbclean_auto_measure_day}>суток</option>
+                    <option value='minute' ${dbclean_auto_measure_minute}>${minute_measure}</option>
+                    <option value='hour' ${dbclean_auto_measure_hour}>${hour_measure}</option>
+                    <option value='day' ${dbclean_auto_measure_day}>${day_measure}</option>
                 </select>
             </td>
         </tr>
         <tr>
             <td colspan='2'>
-                начиная с
+                ${start_from}
             </td>
             <td colspan='2'>
-                <input name='dbclean_auto_start' value='${dbclean_auto_start}' size='17'  placeholder='${dateformat}'>
+                <input name='dbclean_auto_start' value='${dbclean_auto_start}' size='17'  placeholder='${date_format}'>
             </td>
         </tr>
         <tr class='table tr title'>
             <td colspan='4'>
-                <button name='dbclean_apply' title='Применить введённые параметры' value='dbclean_apply'>
-                    Применить
+                <button name='apply_button' title='${apply_hint}'>
+                    ${apply_button}
                 </button>
             </td>
         </tr>
     </table>
-    </p>
 </form>
-<!--  -->
-<script type='text/javascript'> system_radioboxClick(); </script>
-<!--  -->
+<p>
+<table class='table' cellpadding='3'>
+    <tr class='table tr title'>
+        <td>${table_name}</td>
+        <td>${table_note}</td>
+        <td>${table_rows}</td>
+    </tr>
+    ${table_list}
+</table>
+</p>
 <form action='/system' method='post'>
     <table cellspacing='5' >
         <tr>
             <td>
-                <button name='system_reboot' title='Перезагрузка операционной системы'>
-                    Перезагрузить систему
+                <button name='reboot_button' title='${reboot_hint}'>
+                    ${reboot_button}
                 </button>
             </td>
             <td>
-                <button name='system_shutdown' title='Завершение работы операционной системы'>
-                    Завершить работу
+                <button name='shutdown_button' title='${shutdown_hint}'>
+                    ${shutdown_button}
                 </button>
             </td>
             <td>
-                <button name='system_exit' title='Выключение программы'>
-                    Выключить программу
+                <button name='exit_button' title='${exit_hint}'>
+                    ${exit_button}
                 </button>
             </td>
         </tr>
     </table>
 </form>
-</p>
+
+<script type='text/javascript'> system_radioboxClick(); </script>
+
 

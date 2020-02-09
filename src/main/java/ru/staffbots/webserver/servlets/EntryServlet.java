@@ -1,6 +1,6 @@
 package ru.staffbots.webserver.servlets;
 
-import ru.staffbots.Pattern;
+import ru.staffbots.Staffbot;
 import ru.staffbots.tools.Translator;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
@@ -31,13 +31,13 @@ public class EntryServlet extends BaseServlet {
 
         Map<String, Object> pageVariables = Translator.getSection(PageType.ENTRY.getName());
         pageVariables.put("page_title",
-                Pattern.projectName + ":" +
-                Pattern.solutionName + " - " +
+                Staffbot.projectName + ":" +
+                Staffbot.solutionName + " - " +
                 pageType.getCaption());
-        pageVariables.put("website_link", Pattern.projectWebsite);
+        pageVariables.put("website_link", Staffbot.projectWebsite);
         pageVariables.put("login_input", login);
 
-        String result = FillTemplate("html/entry.html", pageVariables);
+        String result = fillTemplate("html/entry.html", pageVariables);
         response.getOutputStream().write( result.getBytes("UTF-8") );
 
         response.setContentType("text/html; charset=utf-8");

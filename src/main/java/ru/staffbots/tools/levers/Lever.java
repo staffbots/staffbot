@@ -30,7 +30,7 @@ public interface Lever{
      */
     default String getTemplateFile(){
         // Из <Type> получаем имя ресурса: levers/<Type>.html
-        return "levers/" + getType() + ".html";
+        return "control/levers/" + getType() + ".html";
     }
 
     Value toValue();

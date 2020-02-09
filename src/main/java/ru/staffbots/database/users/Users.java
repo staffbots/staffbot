@@ -4,6 +4,7 @@ import ru.staffbots.database.DBTable;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.tools.Translator;
 import ru.staffbots.webserver.WebServer;
 
 import java.security.MessageDigest;
@@ -18,7 +19,7 @@ public class Users extends DBTable {
             "login VARCHAR(16), password VARCHAR(32), role INT";
 
     public Users(){
-        super(staticTableName, staticTableFields);
+        super(staticTableName, Translator.getValue("database", "users_table"), staticTableFields);
     }
 
     public boolean isAdmin(String login){

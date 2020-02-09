@@ -2,28 +2,32 @@ package ru.staffbots;
 
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.devices.drivers.ECProbeI2CBusDevice;
 import ru.staffbots.tools.levers.*;
+import ru.staffbots.tools.tasks.Task;
 import ru.staffbots.tools.tasks.Tasks;
 
+import java.lang.invoke.MethodHandles;
 
-public class Calibration extends Pattern {
+
+public class Calibration extends Staffbot {
 
     // Точка входа приложения
     public static void main(String[] args) {
-        solutionName = (new Object()).getClass().getEnclosingClass().getSimpleName();
-        solutionInit(()->{
-            Levers.init(buttonLever); // Инициализируем список элементов управления
-            Devices.init(probeDevice); // Инициализируем список устройств
-            Tasks.init(); // Инициализируем список заданий
-        });
+        solutionInit(
+                MethodHandles.lookup().lookupClass().getSimpleName(), // Имя текущего класса
+                new Device[] {probeDevice}, // Инициализируем список устройств
+                new Lever[] {buttonLever}, // Инициализируем список элементов управления
+                null
+        );
     }
     /////////////////////////////////////////////////////////////
     // Переферийные устройства
     /////////////////////////////////////////////////////////////
 
-    static ECProbeI2CBusDevice probeDevice = new ECProbeI2CBusDevice("ProbeDevice",
+    static ECProbeI2CBusDevice probeDevice = new ECProbeI2CBusDevice("EC-probe",
             "Датчик EC", 1, 100);
     //static UARTProbeDevice uartProbeDevice = new UARTProbeDevice("ProbeDevice","Датчик");
 
@@ -31,7 +35,7 @@ public class Calibration extends Pattern {
     /////////////////////////////////////////////////////////////
     // Рычаги управления
     /////////////////////////////////////////////////////////////
-    static ButtonLever buttonLever = new ButtonLever("buttonLever",
+    static ButtonLever buttonLever = new ButtonLever("button",
             "Выполнить","Калибровка датчика, методом триангуляции континума",
             () -> {
                 // Обработка нажатия кнопки

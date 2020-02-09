@@ -1,7 +1,7 @@
 package ru.staffbots.tools.devices;
 
 import com.pi4j.io.gpio.Pin;
-import ru.staffbots.Pattern;
+import ru.staffbots.Staffbot;
 import ru.staffbots.tools.values.Value;
 import ru.staffbots.webserver.servlets.*;
 
@@ -107,7 +107,7 @@ public abstract class Device{
     public URL getURL(){
         try {
              //return new URL("http://" + Pattern.website);
-            return new URL(Pattern.projectWebsite + "/technology/devices/" + getModel(true));
+            return new URL(Staffbot.projectWebsite + "/technology/devices/" + getModel(true));
             //return new URL(Pattern.projectWebsite + "/technology/devices/" + urlName);
         } catch (Exception exception) {
             return null;

@@ -92,12 +92,14 @@ public class Tasks {
      */
     public static void init(Task... tasks){
         list.clear();
+        if (tasks == null) tasks = new Task[0];
         for (Task task:tasks)
             if (!list.contains(task))
                 list.add(task);
         status = TasksStatus.START;
         setStatus((getStartTime() == 0) ? TasksStatus.STOP : TasksStatus.PAUSE);
-        Journal.add("init_tasks");
+        if (tasks.length > 0)
+            Journal.add("init_tasks");
     }
 
     public static long getStartTime(){

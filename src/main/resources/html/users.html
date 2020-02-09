@@ -1,29 +1,32 @@
 <script src='/resource?js/users.js'></script>
 
 <form action='/users' method='post'>
+    <div style='display:none'>
+        <button name='apply_button'/>
+    </div>
     <table class='table parent'>
         <tr>
             <td>
-                <input name='radiobox' type='radio' value='new' onclick='radioboxClick();'>
+                <input name='users_radiobox' type='radio' value='new' onclick='radioboxClick();'>
             </td>
             <td>
-                <input name='newlogin' title='${t_newlogin}' placeholder='${t_newlogin}'/>
+                <input name='new_login' title='${new_login}' placeholder='${new_login}'/>
             </td>
             <td>
             </td>
         </tr>
         <tr>
             <td>
-                <input name='radiobox' type='radio' value='old' checked onclick='radioboxClick();'>
+                <input name='users_radiobox' type='radio' value='old' checked onclick='radioboxClick();'>
             </td>
             <td>
-                <select name='selectlogin' title='${t_selectlogin}' onchange='rolelist();'>
-                    ${loginlist}
+                <select name='select_login' title='${select_login}' onchange='rolelist();'>
+                    ${login_list}
                 </select>
             </td>
             <td>
-                <button name='delete' value='delete' title='${t_delete_hint}'>
-                    ${t_delete}
+                <button name='delete_button' title='${delete_hint}'>
+                    ${delete_button}
                 </button>
             </td>
         </tr>
@@ -32,20 +35,22 @@
                 <table class='table child'>
                     <tbody>
                     <tr>
-                        <td>${t_role}:</td>
                         <td>
-                            <div id='rolelist'/>
+                            ${role_caption}:
+                        </td>
+                        <td>
+                            <div id='role_list'/>
                         </td>
                     </tr>
                     <tr>
-                        <td>${t_password}:</td>
-                        <td style='width: 100px;'><input name='password' type='password' autocomplete='off'></td>
+                        <td>${password_caption}:</td>
+                        <td style='width: 100px;'><input name='users_password' type='password' autocomplete='off'></td>
                     </tr>
                     <tr>
                         <td></td>
                         <td align='right'>
-                            <button name='apply' title='${t_apply_hint}' value='apply'>
-                                ${t_apply}
+                            <button name='apply_button' title='${apply_hint}'>
+                                ${apply_button}
                             </button>
                         </td>
                     </tr>

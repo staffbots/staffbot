@@ -19,56 +19,47 @@ import java.util.*;
 
 public class JournalServlet extends BaseServlet {
 
-    private ArrayList<String> checkboxes;
+    private ArrayList<String> checkboxes = new ArrayList<>();;
 
     public JournalServlet(AccountService accountService) {
         super(PageType.JOURNAL, accountService);
-        checkboxes = new ArrayList<>(Arrays.asList("journal_fromdate_on", "journal_todate_on"));
+        //checkboxes = new ArrayList<>(Arrays.asList("journal_fromdate_checkbox", "journal_todate_checkbox"));
+        checkboxes.add("journal_fromdate_checkbox");
+        checkboxes.add("journal_todate_checkbox");
         for (NoteType pageType : NoteType.values())
-            checkboxes.add("journal_" + pageType.name().toLowerCase());
+            checkboxes.add("journal_" + pageType.name().toLowerCase() + "_checkbox");
+        setParameters.put("apply_button", (HttpServletRequest request) -> buttonApplyClick(request));
     }
 
     // Вызывается при запросе странице с сервера
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (isAccessDenied(request, response)) return;
-
-        HttpSession session = request.getSession();
         Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
 
-        String toDateStr = accountService.getAttribute(session,"journal_todate");
-        if (toDateStr.equals("")) toDateStr = request.getParameter("journal_todate");
-
-        String fromDateStr = accountService.getAttribute(session,"journal_fromdate");
-        if (fromDateStr.equals("")) fromDateStr = request.getParameter("journal_fromdate");
-
+        Database.journal.setCount(accountService.getAttribute(request,"journal_count"));
+        String toDateStr = accountService.getAttribute(request,"journal_todate");
+        String fromDateStr = accountService.getAttribute(request,"journal_fromdate");
         Database.journal.period.set(fromDateStr, toDateStr);
-
-        Database.journal.setCount(accountService.getAttribute(session,"journal_count"));
 
         Map<Integer, Boolean> typesForShow = new HashMap<>();
 
         for (String checkboxName : checkboxes){
-            String checkboxValueStr = accountService.getAttribute(session,checkboxName); // Читаем из сессии
-            if (checkboxValueStr.equals("")) {
-                checkboxValueStr = "true"; // Значение при первой загрузке
-                accountService.setAttribute(session, checkboxName, checkboxValueStr);
-            }
+            String checkboxValueStr = accountService.getAttribute(request, checkboxName, "true");
             Boolean checkboxValue = Boolean.parseBoolean(checkboxValueStr);
             pageVariables.put(checkboxName, checkboxValue ? "checked" : "");
+
             for (NoteType pageType : NoteType.values())
-                if (checkboxName.equalsIgnoreCase("journal_" + pageType.name()))
+                if (checkboxName.equalsIgnoreCase("journal_" + pageType.name() + "_checkbox"))
                     typesForShow.put(pageType.getValue(), checkboxValue);
 
-            if (checkboxName.equals("journal_fromdate_on") && checkboxValue && (Database.journal.period.getFromDate() == null))
+            if (checkboxName.equals("journal_fromdate_checkbox") && checkboxValue && (Database.journal.period.getFromDate() == null))
                 Database.journal.period.initFromDate();
 
-            if (checkboxName.equals("journal_todate_on") && checkboxValue && (Database.journal.period.getToDate() == null))
+            if (checkboxName.equals("journal_todate_checkbox") && checkboxValue && (Database.journal.period.getToDate() == null))
                 Database.journal.period.initToDate();
         }
 
-        String searchString = accountService.getAttribute(session,"journal_search");
+        String searchString = accountService.getAttribute(request,"journal_search");
         pageVariables.put("journal_search", searchString);
         pageVariables.put("dateformat", Journal.dateFormat.getFormat());
         pageVariables.put("journal_fromdate", Database.journal.period.getFromDateAsString());
@@ -76,54 +67,46 @@ public class JournalServlet extends BaseServlet {
         pageVariables.put("journal_datesize", Database.journal.dateFormat.get().length());
         pageVariables.put("journal_count", Database.journal.getCount());
         pageVariables.put("journal_page", getJournalPage(typesForShow, searchString));
-        String content = FillTemplate("html/" + pageType.getName() + ".html", pageVariables);
+        String content = fillTemplate("html/" + pageType.getName() + ".html", pageVariables);
         super.doGet(request, response, content);
-        //request.setAttribute("fromdate", Converter.dateToString(fromDate, DateFormat.TIMEDATE));
     }
 
     // Вызывается при отправке страницы на сервер
     public void doPost(HttpServletRequest request, HttpServletResponse response)
         throws ServletException, IOException {
         if (isAccessDenied(request, response)) return;
-
-        HttpSession session = request.getSession();
+        setRequest(request);
         for (String checkboxName : checkboxes){
             String checkboxValueStr = request.getParameter(checkboxName); // Читаем со страницы
             checkboxValueStr = (checkboxValueStr == null) ? "false" : "true";
-            accountService.setAttribute(session, checkboxName, checkboxValueStr);
+            accountService.setAttribute(request, checkboxName, checkboxValueStr);
         }
-        accountService.setAttribute(request.getSession(), "journal_search",
-                request.getParameter("journal_search"));
-        accountService.setAttribute(request.getSession(),"journal_count",
-                request.getParameter("journal_count"));
-        accountService.setAttribute(request.getSession(),"journal_todate",
-                request.getParameter("journal_todate"));
-        accountService.setAttribute(request.getSession(),"journal_fromdate",
-                request.getParameter("journal_fromdate"));
         doGet(request, response);
     }
 
-    //
+    private boolean buttonApplyClick(HttpServletRequest request){
+        accountService.setAttribute(request,"journal_search");
+        accountService.setAttribute(request,"journal_count");
+        accountService.setAttribute(request,"journal_fromdate");
+        accountService.setAttribute(request,"journal_todate");
+        return true;
+    }
+
     private String getJournalPage(Map<Integer, Boolean> typesForShow, String searchString) {
         ArrayList<Note> journalList = Database.journal.getJournal(typesForShow, searchString);
-        Map<String, Object> pageVariables = new HashMap();
-        String htmlCode = "<tr><td><em>По указанному фильтру записей нет</em></td></tr>";
+        Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
+        String htmlPath = "html/journal/";
+        String htmlCode = fillTemplate(htmlPath + "empty.html",pageVariables);
         if(!journalList.isEmpty()) {
-            pageVariables.put("note_title", "");
-            pageVariables.put("note_date", "<b>Дата</b>");
-            pageVariables.put("note_value", "<b>Сообщение</b>");
-            String templateFileName = "html/items/journal_note.html";
-            htmlCode = FillTemplate(templateFileName,pageVariables);
+            htmlCode = fillTemplate(htmlPath + "title.html",pageVariables);
             for (Note note : journalList) {
                 pageVariables.put("note_title", DateValue.toString(note.getDate(), DateFormat.FULLTIMEDATE));
                 pageVariables.put("note_date", DateValue.toString(note.getDate(), DateFormat.CUTSHORTDATETIME));
                 pageVariables.put("note_value", note.getMessage());
-                htmlCode += FillTemplate(templateFileName,pageVariables);
+                htmlCode += fillTemplate(htmlPath + "note.html",pageVariables);
             }
-            pageVariables.put("note_title", "");
-            pageVariables.put("note_date", "<em>Выбрано записей:</em>");
-            pageVariables.put("note_value", "<em>" + journalList.size() + "</em>");
-            htmlCode += FillTemplate(templateFileName,pageVariables);
+            pageVariables.put("total_size", journalList.size());
+            htmlCode += fillTemplate(htmlPath + "total.html",pageVariables);
         }
         return htmlCode;
     }

@@ -66,10 +66,10 @@ public class Translator {
             for (NoteType noteType : NoteType.values())
                 readData("journal", noteType.getName());
 
-            for (String enumName : new String[]{"dateaccuracy","notetype", "userrole", "tasksstatus"})
+            for (String enumName : new String[]{"dateaccuracy", "notetype", "userrole", "tasksstatus"})
                 readData("enums", enumName);
 
-            for (String section : new String[]{"frame"})
+            for (String section : new String[]{"frame", "database"})
                 readData("application", section);
 
         } catch (Exception e) {

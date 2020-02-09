@@ -5,10 +5,11 @@ import ru.staffbots.database.cleaner.Cleaner;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.Translator;
+import ru.staffbots.tools.tasks.Task;
+import ru.staffbots.tools.tasks.Tasks;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
@@ -18,10 +19,6 @@ import java.util.*;
  *
  */
 public class SystemServlet extends BaseServlet {
-
-    public SystemServlet(AccountService accountService) {
-            super(PageType.SYSTEM, accountService);
-        }
 
     private List<String> dbcleanVariables = Arrays.asList(
             "dbclean_journal_value",
@@ -33,10 +30,18 @@ public class SystemServlet extends BaseServlet {
             "dbclean_auto_measure",
             "dbclean_auto_start");
 
+    public SystemServlet(AccountService accountService) {
+        super(PageType.SYSTEM, accountService);
+        setParameters.put("apply_button", (HttpServletRequest request) -> buttonApplyClick(request));
+        setParameters.put("clean_button", (HttpServletRequest request) -> buttonCleanClick(request));
+        setParameters.put("shutdown_button", (HttpServletRequest request) -> buttonShutdownClick(request));
+        setParameters.put("reboot_button", (HttpServletRequest request) -> buttonRebootClick(request));
+        setParameters.put("exit_button", (HttpServletRequest request) -> buttonExitClick(request));
+    }
+
     // Вызывается при запросе странице с сервера
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (isAccessDenied(request, response)) return;
         Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
 
@@ -61,54 +66,83 @@ public class SystemServlet extends BaseServlet {
             pageVariables.put(variable + "_" + value,
                     (value.equalsIgnoreCase(Database.settings.load(variable)) ? "checked" : ""));
 
-        pageVariables.put("dateformat", Cleaner.DATE_FORMAT.getFormat());
-        String content = FillTemplate("html/" + pageType.getName() + ".html", pageVariables);
+        pageVariables.put("date_format", Cleaner.DATE_FORMAT.getFormat());
+        pageVariables.put("table_list", getTableList());
+
+        String content = fillTemplate("html/" + pageType.getName() + ".html", pageVariables);
         super.doGet(request, response, content);
     }
 
     // Вызывается при отправке страницы на сервер
     @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (isAccessDenied(request, response)) return;
-
-        if (request.getParameter("dbclean_apply") != null){
-            for (String variable : dbcleanVariables)
-                Database.settings.save(variable, request.getParameter(variable));
-            Database.cleaner.update();
-        }
-        if (request.getParameter("dbclean_now") != null){
-            for (String variable : dbcleanVariables)
-                if (!variable.contains("_auto_"))
-                    Database.settings.save(variable, request.getParameter(variable));
-            Database.cleaner.clean();
-        }
-        boolean exiting = false;
-        String message = " из веб-интерфейса (пользователь: " + accountService.getUserLogin(request.getSession()) + ", адрес: " + request.getRemoteAddr() + ")";
-        if (request.getParameter("system_shutdown") != null) exiting = shutdown(false, "Выключение системы " + message);
-        if (request.getParameter("system_reboot") != null) exiting = shutdown(true, "Перезагрузка системы " + message);
-        if (request.getParameter("system_exit") != null) exiting = true;
-        if (exiting) {
-            Journal.add(NoteType.WARNING, "Закрытие приложения" + message);
-            System.exit(0);
-        } else
-
+        if (setRequest(request))
         doGet(request, response);
     }
 
-    private static boolean shutdown(boolean reboot, String message) throws RuntimeException {
+    private boolean buttonApplyClick(HttpServletRequest request){
+        for (String variable : dbcleanVariables)
+            Database.settings.save(variable, request.getParameter(variable));
+        Database.cleaner.update();
+        return true;
+    }
+
+    private boolean buttonCleanClick(HttpServletRequest request) {
+        for (String variable : dbcleanVariables)
+            if (!variable.contains("_auto_"))
+                Database.settings.save(variable, request.getParameter(variable));
+        Database.cleaner.clean();
+        return true;
+    }
+
+    private boolean buttonShutdownClick(HttpServletRequest request){
+        String login = accountService.getUserLogin(request.getSession());
+        Journal.add(NoteType.WARNING, "shutdown_system", login, request.getRemoteAddr());
+        shutdown(false);
+        return false;
+    }
+
+    private boolean buttonRebootClick(HttpServletRequest request){
+        String login = accountService.getUserLogin(request.getSession());
+        Journal.add(NoteType.WARNING, "reboot_system", login, request.getRemoteAddr());
+        shutdown(true);
+        return false;
+    }
+
+    private boolean buttonExitClick(HttpServletRequest request){
+        String login = accountService.getUserLogin(request.getSession());
+        Journal.add(NoteType.WARNING, "exit_program", login, request.getRemoteAddr());
+        System.exit(0);
+        return false;
+    }
+
+    private static boolean shutdown(boolean reboot) throws RuntimeException {
         String operatingSystem = System.getProperty("os.name").toLowerCase();
         String shutdownCommand = (operatingSystem.contains("windows")) ?
             "shutdown -" + (reboot ? "r" : "s") + " -t 0" :
             "shutdown -" + (reboot ? "r" : "h") + " now";
         try {
-            Journal.add(NoteType.WARNING, message);
             Runtime.getRuntime().exec(shutdownCommand);
         } catch (IOException exception) {
-            Journal.add(NoteType.ERROR, "Ошибка выполнения команды " + shutdownCommand + "\n" + exception.getMessage());
+            Journal.add(NoteType.ERROR, "shutdown_error", shutdownCommand, exception.getMessage());
             return false;
         }
         return true;
     }
+
+    private String getTableList() {
+        String context = "";
+        Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
+        ArrayList<String> tableList = Database.getTableList();
+        for (String tableName: tableList){
+            pageVariables.put("name_value", tableName);
+            pageVariables.put("note_value", Database.getTableNote(tableName));
+            pageVariables.put("rows_value", Database.getTableRows(tableName));
+            context += fillTemplate("html/system/table.html",pageVariables);
+        }
+        return context;
+    }
+
 
 }

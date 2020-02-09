@@ -60,11 +60,11 @@ public class ControlServlet extends BaseServlet {
 
         pageVariables.put("start_time", Long.toString(Tasks.getStartTime()));
         pageVariables.put("lever_list", getLeverList());
-        pageVariables.put("config_name", accountService.getAttribute(request.getSession(), "config_name"));
+        pageVariables.put("config_name", accountService.getAttribute(request, "config_name"));
         pageVariables.put("config_list", getConfigList());
         pageVariables.put("tasks_display", Tasks.list.size() > 0 ? "inline-table" : "none");
 
-        String content = FillTemplate("html/" + pageType.getName() + ".html", pageVariables);
+        String content = fillTemplate("html/" + pageType.getName() + ".html", pageVariables);
 
         super.doGet(request, response, content);
     }
@@ -73,9 +73,8 @@ public class ControlServlet extends BaseServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (isAccessDenied(request, response)) return;
         setLeverList(request);
+        accountService.setAttribute(request,"config_name", "");
         Tasks.reScheduleAll();
-        String configName = request.getParameter("config_name");
-        accountService.setAttribute(request.getSession(), "config_name", configName);
         setRequest(request);
         doGet(request, response);
     }
@@ -86,14 +85,14 @@ public class ControlServlet extends BaseServlet {
 
     // Обработка кнопок для работы с конфигурацией (сохранить)
     private boolean buttonSaveClick(HttpServletRequest request) {
-        String configName = request.getParameter("config_name");
+        String configName = accountService.setAttribute(request,"config_name");
         Database.configs.save(configName);
         return true;
     }
 
     // Обработка кнопок для работы с конфигурацией (загрузить)
     private boolean buttonLoadClick(HttpServletRequest request) {
-        String configName = request.getParameter("config_name");
+        String configName = accountService.setAttribute(request,"config_name");
         Database.configs.load(configName);
         return true;
     }
@@ -148,7 +147,7 @@ public class ControlServlet extends BaseServlet {
         return true;
     }
 
-    private String getLeverList() {
+    private String getLeverList()  {
         String context = "";
         Map<String, Object> pageVariables = new HashMap();
         int maxSize = Levers.getMaxStringValueSize();
@@ -159,7 +158,7 @@ public class ControlServlet extends BaseServlet {
             pageVariables.put("lever_value", value);
             pageVariables.put("lever_note", lever.toValue().getNote());
             pageVariables.put("lever_size", maxSize);
-            context += FillTemplate("html/" + lever.getTemplateFile(), pageVariables);
+            context += fillTemplate("html/" + lever.getTemplateFile(), pageVariables);
         }
         return context;
     }
@@ -174,7 +173,7 @@ public class ControlServlet extends BaseServlet {
     private String getConfig(String configName) {
         Map<String, Object> pageVariables = new HashMap();
         pageVariables.put("config_name", configName);
-        return FillTemplate("html/control/config.html", pageVariables);
+        return fillTemplate("html/control/config.html", pageVariables);
     }
 
 

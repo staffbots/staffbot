@@ -1,0 +1,24 @@
+<tr>
+    <td>
+        <a href='${device_url}' title='${device_url}' target='_blank'>${device_model}</a>
+    </td>
+    <td>
+        <em>${device_note}</em>
+    </td>
+    <td>
+        <b>
+            <div id='${value_name}_value'></div>
+        </b>
+        <script type='text/javascript'>
+                updateValue('${value_name}');
+        </script>
+    </td>
+    <td>${value_note}</td>
+    <td title='${plot_hint}' id='${value_name}_cell'>
+        <input style='display:${check_display};' type='checkbox' name='${check_name}'
+               id='${check_name}' ${check_value}>
+    </td>
+    <td title='${variable_name}' id='${value_name}'>
+        <em>${value_name}</em>
+    </td>
+</tr>

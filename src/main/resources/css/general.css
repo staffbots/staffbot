@@ -28,6 +28,7 @@ input, textarea, select {
     border: 0px;
     border-radius: var(--border-radius);
     border-spacing: 0px;
+
 }
 
 .table.parent { /* Tables with a frame */

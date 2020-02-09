@@ -1,7 +1,7 @@
 package ru.staffbots.webserver.servlets;
 
 import com.pi4j.io.gpio.Pin;
-import ru.staffbots.Pattern;
+import ru.staffbots.Staffbot;
 import ru.staffbots.database.Database;
 import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.devices.Device;
@@ -33,7 +33,7 @@ public class AboutServlet extends BaseServlet {
 
         if (isAccessDenied(request, response)) return;
         Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
-        pageVariables.put("website", Pattern.projectWebsite);
+        pageVariables.put("website", Staffbot.projectWebsite);
         pageVariables.put("about_osname",System.getProperty("os.name"));
         pageVariables.put("about_osversion",System.getProperty("os.version"));
         pageVariables.put("about_osarch",System.getProperty("os.arch"));
@@ -41,8 +41,8 @@ public class AboutServlet extends BaseServlet {
         pageVariables.put("about_dbserver",Database.SERVER);
         pageVariables.put("about_dbmsystem",Database.DBMSystem);
         pageVariables.put("about_dbname",Database.NAME);
-        pageVariables.put("about_project", Pattern.projectName);
-        pageVariables.put("about_solution", Pattern.solutionName + "-" + Pattern.projectVersion);
+        pageVariables.put("about_project", Staffbot.projectName);
+        pageVariables.put("about_solution", Staffbot.solutionName + "-" + Staffbot.projectVersion);
         pageVariables.put("about_message", Database.connected() ? "" : Database.getException().getMessage());
         String trace = "";
         if (Database.disconnected())
@@ -51,7 +51,7 @@ public class AboutServlet extends BaseServlet {
         pageVariables.put("about_trace", trace);
         pageVariables.put("about_admin", WebServer.defaultAdmin);
         pageVariables.put("about_devicelist", getDeviceList());
-        String content = FillTemplate("html/" + pageType.getName()+".html", pageVariables);
+        String content = fillTemplate("html/" + pageType.getName()+".html", pageVariables);
         super.doGet(request, response, content);
     }
 
@@ -65,7 +65,7 @@ public class AboutServlet extends BaseServlet {
         String context = "";
         Map<String, Object> pageVariables = new HashMap();
         pageVariables.put("page_color", pageColor);
-        String templateFileName = "html/items/device_pin.html";
+        String templateFileName = "html/about/device_pin.html";
         for (Device device : Devices.list){
             pageVariables.put("device_url", device.getURL());
             pageVariables.put("device_model", device.getModel());
@@ -76,7 +76,7 @@ public class AboutServlet extends BaseServlet {
             ArrayList<Pin> pins = device.getPins();
             int i = 0;
             if (pins.size() == 0)
-                context += FillTemplate(templateFileName, pageVariables);
+                context += fillTemplate(templateFileName, pageVariables);
             else
                 for (Pin pin : pins){
                     if (i>0){
@@ -86,7 +86,7 @@ public class AboutServlet extends BaseServlet {
                     }
                     pageVariables.put("pin_note", Devices.pins.get(pin).pinNote);
                     pageVariables.put("pin_name", pin.getName());
-                    context += FillTemplate(templateFileName, pageVariables);
+                    context += fillTemplate(templateFileName, pageVariables);
                     i++;
                 }
 

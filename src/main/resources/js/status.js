@@ -1,21 +1,21 @@
 //////////////////////////////////////////////////////////////////////////////////////
 // Control
 //////////////////////////////////////////////////////////////////////////////////////
-//includeJQuery();
-    date_onClick('status_fromdate_on', 'status_fromdate');
-    date_onClick('status_todate_on', 'status_todate');
-    updateTime();
-    updateTasks();
-    update_process_status();
+
+dateClick('plot_fromdate_checkbox', 'plot_fromdate');
+dateClick('plot_todate_checkbox', 'plot_todate');
+updateTime();
+updateTasks();
+updateStatus();
 
 $.each(datasets, function(key, val) {
-    $('#' + key + '_checkbox').click(status_checkbox_onClick);
+    $('#' + key + '_checkbox').click(checkboxClick);
 	$('#' + key + '_cell').css('background', val.color);
 });
 
-status_checkbox_onClick();
+checkboxClick();
 
-function status_checkbox_onClick(){
+function checkboxClick(){
 			var data = [];
 
 			$.each(datasets, function(key, val) {
@@ -47,8 +47,8 @@ function status_checkbox_onClick(){
 
 		$('#placeholder').bind('plothover', function (event, pos, item) {
 
-    		$('#status_data_time').text(moment(new Date(pos.x.toFixed(0) * 1000)).format('DD.MM.YYYY HH:mm:ss'));
-			$('#status_data_value').text(pos.y.toFixed(3));
+    		$('#data_time').text(moment(new Date(pos.x.toFixed(0) * 1000)).format('DD.MM.YYYY HH:mm:ss'));
+			$('#data_value').text(pos.y.toFixed(3));
 
 			if (item) {
 				var x = item.datapoint[0].toFixed(0),
@@ -67,34 +67,3 @@ function status_checkbox_onClick(){
 		});
 
     };
-
-function includeJQuery() {
-    var url = '/resource?js/jquery/';
-    include(url + 'jquery.canvaswrapper.js');
-    include(url + 'jquery.colorhelpers.js');
-    include(url + 'jquery.event.drag.js');
-    include(url + 'jquery.mousewheel.js');
-    var url = '/resource?js/jquery/flot/';
-    include(url + 'jquery.flot.js');
-    include(url + 'jquery.flot.saturated.js');
-    include(url + 'jquery.flot.browser.js');
-    include(url + 'jquery.flot.drawSeries.js');
-    include(url + 'jquery.flot.errorbars.js');
-    include(url + 'jquery.flot.uiConstants.js');
-    include(url + 'jquery.flot.logaxis.js');
-    include(url + 'jquery.flot.symbol.js');
-    include(url + 'jquery.flot.flatdata.js');
-    include(url + 'jquery.flot.navigate.js');
-    include(url + 'jquery.flot.fillbetween.js');
-    include(url + 'jquery.flot.stack.js');
-    include(url + 'jquery.flot.touchNavigate.js');
-    include(url + 'jquery.flot.hover.js');
-    include(url + 'jquery.flot.touch.js');
-    include(url + 'jquery.flot.time.js');
-    include(url + 'jquery.flot.axislabels.js');
-    include(url + 'jquery.flot.selection.js');
-    include(url + 'jquery.flot.composeImages.js');
-    include(url + 'jquery.flot.legend.js');
-    include(url + 'jquery.flot.spline.js');
-    console.log('Скрипты jquery загружены');
-}

@@ -45,11 +45,6 @@ abstract public class Value extends DBTable {
      */
     protected String name;
 
-    /**
-     * <b>Описание</b>,
-     * используется при формировании веб-интерфейса в {@link WebServer}.
-     */
-    protected String note;
 
     /**
      * <b>Значение</b>, используется при {@code dbStorage = false},<br>
@@ -67,10 +62,9 @@ abstract public class Value extends DBTable {
         return new Date();
     }
 
-    private void init(String name, String note, ValueMode valueMode, ValueType valueType, long value){
+    private void init(String name, ValueMode valueMode, ValueType valueType, long value){
         this.value = value;
         this.name = (name == null ? "" : name);
-        this.note = (note == null ? "" : note);
         this.valueMode = valueMode;
         this.valueType = valueType;
     }
@@ -81,13 +75,13 @@ abstract public class Value extends DBTable {
      * @param value значение
      */
     public Value(String name, String note, ValueMode valueMode, ValueType valueType, long value) {
-        super("val_" + name.toLowerCase(), staticTableFields, (valueMode == ValueMode.STORABLE));
-        init(name, note, valueMode, valueType, value);
+        super("val_" + name.toLowerCase(), note, staticTableFields, (valueMode == ValueMode.STORABLE));
+        init(name, valueMode, valueType, value);
     }
 
     public Value(String name, String note, ValueType valueType, long value) {
-        super("val_" + name.toLowerCase(), staticTableFields);
-        init(name, note, valueMode, valueType, value);
+        super("val_" + name.toLowerCase(), note, staticTableFields);
+        init(name, valueMode, valueType, value);
     }
 
     /**
@@ -96,14 +90,6 @@ abstract public class Value extends DBTable {
      */
     public String getName(){
         return name;
-    }
-
-    /**
-     * <b>Получить описание</b><br>
-     * @return описание
-     */
-    public String getNote(){
-        return note;
     }
 
     public int getStringValueSize(){

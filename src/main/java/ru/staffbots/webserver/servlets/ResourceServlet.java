@@ -9,12 +9,15 @@ import ru.staffbots.webserver.AccountService;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.io.File;
 import java.io.IOException;
 import static java.util.Arrays.asList;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
+import java.util.zip.ZipFile;
 
 // Обработка запроса ресурса
 // вида: <server>:<port>/resource?<resourceName>
@@ -34,7 +37,7 @@ public class ResourceServlet extends BaseServlet {
 
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
-        String resourceName = request.getQueryString().toLowerCase();
+        String resourceName = request.getQueryString();
 
         if (resourceName == null)
             return;
@@ -51,7 +54,7 @@ public class ResourceServlet extends BaseServlet {
                     pageVariables.put("main_color", mainColor);
                     pageVariables.put("database_display", Database.connected() ? "none" : "inline-table");
                     pageVariables.put("device_display", Devices.USED || Database.disconnected() ? "none" : "inline-table");
-                    String result = FillTemplate(resourceName, pageVariables);
+                    String result = fillTemplate(resourceName, pageVariables);
                     response.getOutputStream().write(result.getBytes("UTF-8") );
                     break;
                 default:

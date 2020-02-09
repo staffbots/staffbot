@@ -63,6 +63,7 @@ public class Devices{
 
     public static void init(Device... devices) {
         list.clear();
+        if (devices == null) devices = new Device[0];
         for (Device device : devices) {
             if (list.contains(device)) continue;
             list.add(device);
@@ -70,7 +71,8 @@ public class Devices{
                 if (value.isStorable())
                     value.createTable();
         }
-        Journal.add("init_device");
+        if (devices.length > 0)
+            Journal.add("init_device");
     }
 
     public static void reset(){

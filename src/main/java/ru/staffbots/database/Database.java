@@ -6,12 +6,20 @@ import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.database.settings.Settings;
 import ru.staffbots.database.users.User;
-
+import ru.staffbots.database.users.Users;
+import ru.staffbots.tools.devices.Device;
+import ru.staffbots.tools.devices.Devices;
+import ru.staffbots.tools.levers.Lever;
+import ru.staffbots.tools.levers.Levers;
+import ru.staffbots.tools.values.Value;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.Collections;
+
 
 public class Database {
 
-    public static final DBMS DBMSystem = DBMS.MySQL;
+    public static DBMS DBMSystem = DBMS.MySQL;
 
     public static String SERVER = "localhost";
 
@@ -32,6 +40,8 @@ public class Database {
     public static Settings settings;
 
     public static Configs configs;
+
+    public static Users users;
 
     private static Connection connection = null;
 
@@ -58,10 +68,11 @@ public class Database {
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD));
             createDatabase(DROP);
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD), NAME);
+            configs = new Configs();
             journal = new Journal();
             settings = new Settings();
+            users = new Users();
             cleaner = new Cleaner();
-            configs = new Configs();
             Journal.add("init_database", NAME);
         } catch (Exception exception) {
             connection = null;
@@ -101,6 +112,58 @@ public class Database {
             Journal.add(NoteType.WARNING, "create_database", NAME);
         }
         return true;
+    }
+
+    public static ArrayList<String> getTableList(){
+        ArrayList<String> result = new ArrayList(0);
+        if(!connected()) return result;
+        try {
+            Statement statement = connection.createStatement();
+            if(!statement.execute("SELECT table_name " +
+                    "FROM information_schema.TABLES " +
+                    "WHERE table_schema like '"+NAME+"'"))
+                return  result;
+            ResultSet resultSet = statement.getResultSet();
+            while (resultSet.next())
+                result.add(resultSet.getString(1));
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        Collections.sort(result);
+        return result;
+    }
+
+
+    public static String getTableNote(String tableName){
+        if (journal.getTableName().equalsIgnoreCase(tableName)) return journal.getNote();
+        if (configs.getTableName().equalsIgnoreCase(tableName)) return configs.getNote();
+        if (settings.getTableName().equalsIgnoreCase(tableName)) return settings.getNote();
+        if (users.getTableName().equalsIgnoreCase(tableName)) return users.getNote();
+        for (Lever lever : Levers.list)
+            if (lever.toValue().getTableName().equalsIgnoreCase(tableName))
+                return lever.toValue().getNote();
+        for (Device device : Devices.list)
+            for (Value value : device.getValues())
+                if (value.getTableName().equalsIgnoreCase(tableName))
+                    return value.getNote();
+        return "";
+    }
+
+    public static long getTableRows(String tableName){
+        long result = 0;
+        if(!connected()) return result;
+        try {
+            Statement statement = connection.createStatement();
+            if(!statement.execute("SELECT COUNT(*) FROM " + tableName))
+                return  result;
+            ResultSet resultSet = statement.getResultSet();
+            if(resultSet.next())
+                return resultSet.getLong(1);
+
+        } catch (SQLException exception) {
+            exception.printStackTrace();
+        }
+        return result;
     }
 
 }

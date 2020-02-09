@@ -12,22 +12,37 @@ import java.sql.*;
  */
 public abstract class DBTable {
 
-    private String tableName;
-    private String tableFields;
+    private String name;
+    /**
+     * <b>Описание</b>,
+     */
+    protected String note;
+    private String fields;
 
     public String getTableName(){
-        return tableName;
+        return name;
     }
 
-    public DBTable(String tableName, String tableFields){
-        this.tableName = tableName;
-        this.tableFields = tableFields;
+    /**
+     * <b>Получить описание</b><br>
+     * @return описание
+     */
+    public String getNote(){
+        return note;
+    }
+
+
+    public DBTable(String name, String note, String fields){
+        this.name = name;
+        this.note = (note == null ? "" : note);
+        this.fields = fields;
         createTable();
     }
 
-    public DBTable(String tableName, String tableFields, boolean isStorable){
-        this.tableName = tableName;
-        this.tableFields = tableFields;
+    public DBTable(String name, String note, String fields, boolean isStorable){
+        this.name = name;
+        this.note = (note == null ? "" : note);
+        this.fields = fields;
         if (isStorable) createTable();
     }
 
@@ -35,10 +50,10 @@ public abstract class DBTable {
         if(Database.disconnected())return false;
         try {
             DatabaseMetaData metaData = Database.getConnection().getMetaData();
-            ResultSet tables = metaData.getTables(Database.NAME, null, tableName, null);
+            ResultSet tables = metaData.getTables(Database.NAME, null, name, null);
             return (tables.next());
         } catch (SQLException exception) {
-            Journal.add(NoteType.ERROR, "table_exists", tableName, exception.getMessage());
+            Journal.add(NoteType.ERROR, "table_exists", name, exception.getMessage());
             return false;
         }
     }
@@ -52,11 +67,11 @@ public abstract class DBTable {
         if (drop) dropTable();
         if (!tableExists())
             try {
-                getStatement("CREATE TABLE " + tableName + " (" + tableFields + ")").execute();
-                Journal.add(NoteType.WARNING, "create_table", tableName, tableFields);
+                getStatement("CREATE TABLE " + name + " (" + fields + ")").execute();
+                Journal.add(NoteType.WARNING, "create_table", name, fields);
             } catch (Exception exception) {
                 //connection = null;
-                Journal.add(NoteType.ERROR, "create_table", tableName, exception.getMessage());
+                Journal.add(NoteType.ERROR, "create_table", name, exception.getMessage());
                 return false;
             }
 
@@ -67,12 +82,12 @@ public abstract class DBTable {
         if(Database.disconnected())return false;
         try {
             if (tableExists()) {
-                getStatement("DELETE FROM " + tableName).execute();
-                Journal.add(NoteType.WARNING, "erase_table", tableName);
+                getStatement("DELETE FROM " + name).execute();
+                Journal.add(NoteType.WARNING, "erase_table", name);
                 return true;
             }
         } catch (Exception exception) {
-            Journal.add(NoteType.ERROR, "erase_table", tableName, exception.getMessage());
+            Journal.add(NoteType.ERROR, "erase_table", name, exception.getMessage());
         }
         return false;
     }
@@ -81,11 +96,11 @@ public abstract class DBTable {
         if(Database.disconnected())return false;
         try {
             if (tableExists()){
-                getStatement("DROP TABLE " + tableName).execute();
-                Journal.add(NoteType.WARNING, "drop_table", tableName);
+                getStatement("DROP TABLE " + name).execute();
+                Journal.add(NoteType.WARNING, "drop_table", name);
             }
         } catch (Exception exception) {
-            Journal.add(NoteType.ERROR, "drop_table", tableName, exception.getMessage());
+            Journal.add(NoteType.ERROR, "drop_table", name, exception.getMessage());
             return false;
         }
         return true;

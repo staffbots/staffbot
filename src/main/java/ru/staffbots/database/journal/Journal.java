@@ -2,6 +2,7 @@ package ru.staffbots.database.journal;
 
 import ru.staffbots.database.DBTable;
 import ru.staffbots.database.Database;
+import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.dates.Period;
 import ru.staffbots.tools.values.DateValue;
@@ -26,16 +27,16 @@ public class Journal extends DBTable {
             "noteVariables VARCHAR(500) CHARACTER SET utf8";
 
     public Journal(){
-        super(staticTableName, staticTableFields);
+        super(staticTableName, Translator.getValue("database", "journal_table"), staticTableFields);
     }
 
     public Journal(String fromDate, String toDate){
-        super(staticTableName, staticTableFields);
+        super(staticTableName, Translator.getValue("database", "journal_table"), staticTableFields);
         period.set(fromDate, toDate);
     }
 
     public Journal(Date fromDate, Date toDate){
-        super(staticTableName, staticTableFields);
+        super(staticTableName, Translator.getValue("database", "journal_table"), staticTableFields);
         period.set(fromDate, toDate);
     }
 

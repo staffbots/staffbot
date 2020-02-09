@@ -2,16 +2,16 @@ package ru.staffbots.webserver.servlets;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import ru.staffbots.Pattern;
+import ru.staffbots.Staffbot;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
+import ru.staffbots.tools.TemplateFillable;
 import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.resources.Resources;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
 import ru.staffbots.webserver.WebServer;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -21,9 +21,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.function.Supplier;
 
-public abstract class BaseServlet extends HttpServlet {
+public abstract class BaseServlet extends HttpServlet implements TemplateFillable {
 
     public static String siteColor = "fdfdfd";
 
@@ -89,7 +88,7 @@ public abstract class BaseServlet extends HttpServlet {
                 menuVariables.put("menu_caption", caption);
                 menuVariables.put("menu_hint", pageType.getDescription());
                 menuVariables.put("menu_link", isCurrentPage ? "" : "href=\"" + pageType.getName() + "\"");
-                menu += FillTemplate("html/items/menu_item.html", menuVariables);
+                menu += fillTemplate("html/base/menu.html", menuVariables);
             }
         }
         return menu;
@@ -100,16 +99,16 @@ public abstract class BaseServlet extends HttpServlet {
 
         Map<String, Object> pageVariables = Translator.getSection(PageType.BASE.getName());
         pageVariables.put("page_title",
-            Pattern.projectName + ":" +
-            Pattern.solutionName + " - " +
+            Staffbot.projectName + ":" +
+            Staffbot.solutionName + " - " +
             pageType.getCaption());
         pageVariables.put("main_menu", getMenu(accountService.getUserAccessLevel(login)));
         pageVariables.put("page_content", content);
         pageVariables.put("login_value", login);
-        pageVariables.put("role_value", accountService.users.getRole(login).getDescription());
+        pageVariables.put("role_value", Database.users.getRole(login).getDescription());
         pageVariables.put("update_delay", WebServer.updateDelay.toString());
 
-        String result = FillTemplate("html/base.html", pageVariables);
+        String result = fillTemplate("html/base.html", pageVariables);
 
         response.getOutputStream().write( result.getBytes("UTF-8") );
 
@@ -117,48 +116,22 @@ public abstract class BaseServlet extends HttpServlet {
         response.setStatus( HttpServletResponse.SC_OK );
     }
 
-    /**
-     * Заполняет html-шаблон данными
-     */
-    protected String FillTemplate(String fileName, Map<String, Object> data) {
-        Writer stream = new StringWriter();
-        try {
-            Configuration conf = new Configuration(Configuration.DEFAULT_INCOMPATIBLE_IMPROVEMENTS);
-            String codePage = "UTF-8";
-            conf.setDefaultEncoding(codePage);
-            InputStream inputStream = Resources.getAsStream(fileName);
-            Charset charset = StandardCharsets.UTF_8;
-            Template template = new Template(fileName, new InputStreamReader(inputStream, charset), conf, codePage);
-            template.process(data, stream);
-        } catch (Exception e) {
-            Journal.add(e.getMessage());
-        }
-        return stream.toString();
-    }
 
     /**
      * Карта хранит параметризированные функции, по которым расчитываются значения переменных
      * Map<Name, Function<Parametr, Value>>
      */
-    protected Map<String, Function<String,String>> getParameters = new HashMap();
+    protected Map<String, Function<HttpServletRequest,String>> getParameters = new HashMap();
 
     /**
      * Функция обрабатывает запросы вида get=name:value
      */
     protected boolean getResponse(HttpServletRequest request, HttpServletResponse response)throws IOException {
-        String getName = request.getParameter("get");
-        if (getName == null) return false;
-        String value;
-        for (String name : getParameters.keySet()){
-            if (getName.startsWith(name)) {
-                int index = getName.indexOf(":");
-                value = (index < 0) ? null : getName.substring(index + 1);
-                response.getOutputStream().write(getParameters.get(name).apply(value).getBytes("UTF-8"));
-                response.setContentType("text/html; charset=utf-8");
-                response.setStatus(HttpServletResponse.SC_OK);
-                break;
-            }
-        }
+        String name = request.getParameter("get");
+        if (!getParameters.containsKey(name)) return false;
+        response.getOutputStream().write(getParameters.get(name).apply(request).getBytes("UTF-8"));
+        response.setContentType("text/html; charset=utf-8");
+        response.setStatus(HttpServletResponse.SC_OK);
         return true;
     }
 

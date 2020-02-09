@@ -1,13 +1,12 @@
-<!-- Журнал -->
 <form action='/journal' method='post'>
     <table class='table parent'>
         <tr>
-            <td style='font-weight: bold' colspan='3'>Период:</td>
+            <td style='font-weight: bold' colspan='3'>${period_title}</td>
             <td>
-                <input type='checkbox' name='journal_information' ${journal_information}>
+                <input type='checkbox' name='journal_information_checkbox' ${journal_information_checkbox}>
             </td>
             <td>
-                Информация
+                ${information_title}
             </td>
             <td>
                 <input style='width:100%' name='journal_search' value='${journal_search}' placeholder='Поиск...'>
@@ -15,40 +14,48 @@
         </tr>
         <tr>
             <td>
-                <input type='checkbox' name='journal_fromdate_on' ${journal_fromdate_on}
-                       onclick='date_onClick("journal_fromdate_on", "journal_fromdate");'>
+                <input type='checkbox' name='journal_fromdate_checkbox' ${journal_fromdate_checkbox}
+                       onclick='dateClick("journal_fromdate_checkbox", "journal_fromdate");'>
             </td>
-            <td>c</td>
+            <td>
+                ${from_title}
+            </td>
             <td>
                 <input name='journal_fromdate' value='${journal_fromdate}' size='${journal_datesize}' placeholder='${dateformat}'>
             </td>
             <td>
-                <input type='checkbox' name='journal_warning' ${journal_warning}>
+                <input type='checkbox' name='journal_warning_checkbox' ${journal_warning_checkbox}>
             </td>
-            <td>Предуреждения</td>
+            <td>
+                ${warning_title}
+            </td>
             <td><nobr>
                 <input name='journal_count' value='${journal_count}' size='3'
-                       title='Максимальное количество записей для отображения'>
-                последних записей
+                       title='${count_hint}'>
+                    ${count_title}
                 </nobr>
             </td>
         </tr>
         <tr>
             <td>
-                <input type='checkbox' name='journal_todate_on' ${journal_todate_on}
-                       onclick='date_onClick("journal_todate_on", "journal_todate");'>
+                <input type='checkbox' name='journal_todate_checkbox' ${journal_todate_checkbox}
+                       onclick='dateClick("journal_todate_checkbox", "journal_todate");'>
             </td>
-            <td>по</td>
+            <td>
+                ${to_title}
+            </td>
             <td>
                 <input name='journal_todate' value='${journal_todate}' size='${journal_datesize}' placeholder='${dateformat}'>
             </td>
             <td>
-                <input type='checkbox' name='journal_error' ${journal_error}>
+                <input type='checkbox' name='journal_error_checkbox' ${journal_error_checkbox}>
             </td>
-            <td>Ошибки</td>
+            <td>
+                ${error_title}
+            </td>
             <td align='right'>
-                <button name='journal_apply' title='Применить фильтр' value='journal_apply'>
-                    Показать
+                <button name='apply_button' title='${apply_hint}' value='apply'>
+                    ${apply_button}
                 </button>
             </td>
             <td style='width:100%'>
@@ -65,6 +72,6 @@
 
 </form>
 <script type='text/javascript'>
-    date_onClick('journal_fromdate_on', 'journal_fromdate');
-    date_onClick('journal_todate_on', 'journal_todate');
+    dateClick('journal_fromdate_checkbox', 'journal_fromdate');
+    dateClick('journal_todate_checkbox', 'journal_todate');
 </script>

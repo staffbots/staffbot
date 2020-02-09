@@ -55,11 +55,11 @@ function updateTasks(){
 //////////////////////////////////////////////////////////////////////////////////////
 
 // Отработка нажатия checbox связанного с полем ввода
-function date_onClick(checkname, fieldname){
-    var fromdate = element(fieldname);
-    fromdate.disabled = !element(checkname).checked;
-    if (fromdate.disabled)
-        fromdate.value = '';
+function dateClick(dateCheckbox, dateName){
+    var date = element(dateName);
+    date.disabled = !element(dateCheckbox).checked;
+    if (date.disabled)
+        date.value = '';
 }
 
 //////////////////////////////////////////////////////////////////////////////////////
@@ -67,19 +67,19 @@ function date_onClick(checkname, fieldname){
 //////////////////////////////////////////////////////////////////////////////////////
 
 // Обновление списка текущих заданий по таймеру
-function update_process_status(){
+function updateStatus(){
     $.get(
         '/status?get=processstatus',
         function(data) {
             $('#process_status').html(data);
         }
     );
-    setTimeout(update_process_status, updateDelay);
+    setTimeout(updateStatus, updateDelay);
 }
 
 
 // Обновление значения
-function update_status_value(name){
+function updateValue(name){
     if (name == '') return;
     $.get(
         '/status?get=' + name,
@@ -88,7 +88,7 @@ function update_status_value(name){
         }
     );
 
-    setTimeout(update_status_value, updateDelay, name);
+    setTimeout(updateValue, updateDelay, name);
 }
 
 //////////////////////////////////////////////////////////////////////////////////////

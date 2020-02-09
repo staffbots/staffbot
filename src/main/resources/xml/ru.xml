@@ -16,14 +16,14 @@
             error       = Ошибка
         </notetype>
         <userrole>
-            inspector = Инспектор
-            manager   = Управляющий
-            admin     = Администратор
+            inspector   = Инспектор
+            manager     = Управляющий
+            admin       = Администратор
         </userrole>
         <tasksstatus>
-            start = Пуск
-            pause = Пауза
-            stop  = Стоп
+            start       = Пуск
+            pause       = Пауза
+            stop        = Стоп
         </tasksstatus>
     </enums>
 
@@ -34,6 +34,12 @@
             checkbox_caption = SSL
             checkbox_hint    = Использовать SSL-протокол
         </frame>
+        <database>
+            configs_table    = Конфигурации
+            journal_table    = Журнал
+            settings_table   = Настройки системы
+            users_table      = Пользователи
+        </database>
     </application>
 
     <pages>
@@ -80,28 +86,70 @@
             description_title = Описание
             value_title       = Значение
             plot_title        = График
-            plot_period       = Период:
+            plot_hint         = Показать график
+            period_title      = Период:
+            apply_button      = Применить
+            apply_hint        = Применить введённые параметры
+            variable_name     = Имя переменной
         </status>
         <journal>
-            page_title     = Журнал
-            page_hint      = Журнал событий
+            page_title        = Журнал
+            page_hint         = Журнал событий
+            period_title      = Период:
+            from_title        = с
+            to_title          = по
+            information_title = Информация
+            warning_title     = Предупреждения
+            error_title       = Ошибки
+            count_hint        = Максимальное количество записей для отображения
+            count_title       = последних записей
+            apply_button      = Применить
+            apply_hint        = Применить фильтр
+            empty_journal     = По указанному фильтру записей нет
+            date_title        = Дата
+            note_title        = Сообщение
+            total_title       = Выбрано записей:
         </journal>
         <users>
-            page_title  = Пользователи
-            page_hint   = Список пользователей
-            newlogin    = Новый пользователь
-            selectlogin = Выбранный пользователь
-            delete      = Удалить
-            delete_hint = Удалить пользователя
-            role        = Роль
-            role_hint   = Роль пользователя
-            password    = Пароль
-            apply       = Применить
-            apply_hint  = Создать/изменить пользователя
+            page_title       = Пользователи
+            page_hint        = Список пользователей
+            new_login        = Новый пользователь
+            select_login     = Выбранный пользователь
+            delete_button    = Удалить
+            delete_hint      = Удалить пользователя
+            role_caption     = Роль
+            role_hint        = Роль пользователя
+            password_caption = Пароль
+            apply_button     = Применить
+            apply_hint       = Создать/изменить пользователя
         </users>
         <system>
-            page_title     = Система
-            page_hint      = Системные настройки
+            page_title        = Система
+            page_hint         = Системные настройки
+            dbclean_title     = Очистка базы данных
+            journal_title     = В журнале событий оставлять последние
+            tables_title      = В таблицах значений оставлять последние
+            clean_button      = Очистить сейчас
+            autoclean_off     = Отключить автоматическую очистку
+            autoclean_on      = Запускать автоматическую очистку каждые
+            record_measure    = записей
+            minute_measure    = минут
+            hour_measure      = часов
+            day_measure       = суток
+            start_from        = начиная с
+            apply_button      = Применить
+            apply_hint        = Применить введённые параметры
+            table_name        = Таблица
+            name_hint         = Имя таблицы в базе данных
+            table_rows        = Размер
+            rows_hint         = Количество записей в таблице
+            table_note        = Описание
+            shutdown_button   = Выключить систему
+            shutdown_hint     = Завершение работы операционной системы
+            exit_button       = Закрыть приложение
+            exit_hint         = Завершение работы приложения
+            reboot_button     = Перезагрузить систему
+            reboot_hint       = Перезагрузка операционной системы
         </system>
         <about>
             page_title     = Сведения
@@ -146,6 +194,9 @@
             init_window     = Приложение работает без запуска главного окна
             close_window    = Закрытие приложения из главного окна на сервере
             add_user        = Добавить пользователя с именем %s% нельзя!
+            shutdown_system = Выключение системы из веб-интерфейса (пользователь: %s%, адрес: %s%)
+            exit_program    = Закрытие приложения из веб-интерфейса (пользователь: %s%, адрес: %s%)
+            reboot_system   = Перезагрузка системы из веб-интерфейса (пользователь: %s%, адрес: %s%)
         </warning>
         <error>
             any_message     = %s%
@@ -173,6 +224,7 @@
             busy_host       = Неудачная попытка запустить веб-сервер. Порт занят
             start_server    = Ошибка запуска веб-сервера. Сообщение: %s%
             init_properties = Ошибка загрузки свойств проекта
+            shutdown_error  = Ошибка выполнения команды %s%: %s%)
         </error>
     </journal>
 

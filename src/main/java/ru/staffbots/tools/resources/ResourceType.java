@@ -12,11 +12,6 @@ public enum ResourceType {
     IMG,
     UNKNOWN;
 
-    @Override
-    public String toString(){
-        return super.toString().toLowerCase();
-    }
-
     public static ResourceType getByName(String resourceName) {
         if (resourceName == null)
             return UNKNOWN;

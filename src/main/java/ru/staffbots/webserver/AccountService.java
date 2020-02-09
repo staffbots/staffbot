@@ -1,5 +1,6 @@
 package ru.staffbots.webserver;
 
+import ru.staffbots.database.Database;
 import ru.staffbots.database.users.Users;
 import ru.staffbots.database.users.UserRole;
 import javax.servlet.http.HttpServletRequest;
@@ -14,10 +15,10 @@ public class AccountService {
      */
     private Map<String, String> sessions = new HashMap<>();
 
-    public Users users = new Users();
+
 
     public int verifyUser(String login, String password){
-        return users.verify(login, password);
+        return Database.users.verify(login, password);
     }
 
     public void addSession(HttpSession session, String login){
@@ -41,7 +42,7 @@ public class AccountService {
     }
 
     public int getUserAccessLevel(String login){
-        UserRole role = users.getRole(login);
+        UserRole role = Database.users.getRole(login);
         return (role == null) ? -1 : role.getAccessLevel();
     }
 
@@ -52,13 +53,28 @@ public class AccountService {
         return getUserAccessLevel(login);
     }
 
-    public String getAttribute(HttpSession session, String attribute){
-        Object value = session.getAttribute(attribute);
-        return (value == null) ? "" : value.toString();
+    public String getAttribute(HttpServletRequest request, String attribute, String defaultValue){
+        Object attributeValue = request.getSession().getAttribute(attribute);
+        String value = (attributeValue == null) ? "" : attributeValue.toString();
+        if (value.isEmpty())
+            value = (defaultValue == null) ? request.getParameter(attribute) : defaultValue;
+        if (value == null) value = "";
+        setAttribute(request, attribute, value);
+        return value;
     }
 
-    public void setAttribute(HttpSession session, String attribute, String value){
-        session.setAttribute(attribute, value);
+    public String getAttribute(HttpServletRequest request, String attribute){
+        return getAttribute(request, attribute, null);
+    }
+
+    public void setAttribute(HttpServletRequest request, String attribute, String value){
+        request.getSession().setAttribute(attribute, value);
+    }
+
+    public String setAttribute(HttpServletRequest request, String attribute){
+        String value = request.getParameter(attribute);
+        setAttribute(request, attribute, value);
+        return value;
     }
 
 }
