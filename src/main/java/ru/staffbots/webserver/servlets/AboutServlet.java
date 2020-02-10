@@ -33,7 +33,7 @@ public class AboutServlet extends BaseServlet {
 
         if (isAccessDenied(request, response)) return;
         Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
-        pageVariables.put("website", Staffbot.projectWebsite);
+        pageVariables.put("website_link", Staffbot.projectWebsite);
         pageVariables.put("about_osname",System.getProperty("os.name"));
         pageVariables.put("about_osversion",System.getProperty("os.version"));
         pageVariables.put("about_osarch",System.getProperty("os.arch"));

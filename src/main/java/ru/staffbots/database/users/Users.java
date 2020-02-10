@@ -22,14 +22,10 @@ public class Users extends DBTable {
         super(staticTableName, Translator.getValue("database", "users_table"), staticTableFields);
     }
 
-    public boolean isAdmin(String login){
-        return WebServer.defaultAdmin.equalsIgnoreCase(login);
-    }
-
-    public void delete(String login){
+    public static void delete(String login){
         try {
             PreparedStatement statement = Database.getConnection().prepareStatement(
-                    "DELETE FROM " + getTableName() + " WHERE (login = ?)");
+                    "DELETE FROM " + staticTableName + " WHERE (login = ?)");
             statement.setString(1, login);
             statement.executeUpdate();
             Journal.add("delete_user", login);
@@ -38,7 +34,7 @@ public class Users extends DBTable {
         }
     }
 
-    public boolean setUser(User user){
+    public static boolean setUser(User user){
         boolean newLogin = (getUserList(user.login).size() == 0);
         try {
             if (isAdmin(user.login)) {
@@ -48,8 +44,8 @@ public class Users extends DBTable {
             //newLogin = (getUserList(user.login).size() == 0);
             PreparedStatement statement = Database.getConnection().prepareStatement(
                 newLogin ?
-                    "INSERT INTO " + getTableName() + " (role, password, login) VALUES (?, ?, ?)" :
-                    "UPDATE " + getTableName() + " SET role = ?, password = ? WHERE login = ?"
+                    "INSERT INTO " + staticTableName + " (role, password, login) VALUES (?, ?, ?)" :
+                    "UPDATE " + staticTableName + " SET role = ?, password = ? WHERE login = ?"
             );
             statement.setString(3, user.login);
             statement.setString(2, cryptWithMD5(user.password));
@@ -64,32 +60,31 @@ public class Users extends DBTable {
         }
     }
 
-    public int verify(String login, String password){
+    public static int verify(String login, String password){
         if (isAdmin(login))
-            if (WebServer.adminPassword.equals(password))
-                return UserRole.ADMIN.getAccessLevel();
+            return WebServer.adminPassword.equals(password) ? UserRole.ADMIN.getAccessLevel() : -1;
         User user = getUser(login);
         return (user == null) ? -1 : user.password.equals(cryptWithMD5(password)) ? user.role.getAccessLevel() : -1;
     }
 
-    public UserRole getRole(String login){
+    public static UserRole getRole(String login){
         if (isAdmin(login))
             return UserRole.ADMIN;
         User user = getUser(login);
         return (user == null) ? UserRole.INSPECTOR : user.role;
     }
 
-    public User getUser(String login){
+    public static User getUser(String login){
         if (login == null) return null;
         ArrayList<User> userList = getUserList(login);
         return (userList.size() > 0) ? userList.get(0) : null;
     }
 
-    public ArrayList<User> getUserList() {
+    public static ArrayList<User> getUserList() {
         return getUserList(null);
     }
 
-    private ArrayList<User> getUserList(String login){
+    private static ArrayList<User> getUserList(String login){
         ArrayList<User> userList = new ArrayList<>();
         if (Database.disconnected()) return userList;
         if (login != null)
@@ -97,7 +92,7 @@ public class Users extends DBTable {
                 return userList;
         try {
             PreparedStatement statement = Database.getConnection().prepareStatement(
-                    "SELECT login, password, role FROM "  + getTableName()
+                    "SELECT login, password, role FROM "  + staticTableName
                             + ((login == null) ? "" : " WHERE (login = ?)"));
             if (login != null) statement.setString(1, login);
             if(statement.execute()) {
@@ -114,7 +109,7 @@ public class Users extends DBTable {
         return userList;
     }
 
-    private String cryptWithMD5(String password){
+    private static String cryptWithMD5(String password){
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] passBytes = password.getBytes();
@@ -130,5 +125,10 @@ public class Users extends DBTable {
         }
         return password;
     }
+
+    public static boolean isAdmin(String login){
+        return WebServer.defaultAdmin.equalsIgnoreCase(login);
+    }
+
 
 }

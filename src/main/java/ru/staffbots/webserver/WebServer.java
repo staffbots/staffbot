@@ -7,6 +7,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.database.users.UserRole;
 import ru.staffbots.tools.resources.Resources;
 import ru.staffbots.webserver.servlets.*;
 import ru.staffbots.windows.MainWindow;

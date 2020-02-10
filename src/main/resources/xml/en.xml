@@ -1,0 +1,246 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<language title="English">
+
+    <enums>
+        <dateaccuracy>
+            millisecond = Millisecond
+            second      = Second
+            minute      = Minute
+            hour        = Hour
+            day         = Day
+            week        = Week
+        </dateaccuracy>
+        <notetype>
+            information = Information
+            warning     = Warning
+            error       = Error
+        </notetype>
+        <userrole>
+            inspector   = Inspector
+            manager     = Manager
+            admin       = Admin
+        </userrole>
+        <tasksstatus>
+            start       = Start
+            pause       = Pause
+            stop        = Stop
+        </tasksstatus>
+    </enums>
+
+    <application>
+        <frame>
+            button_caption   = Management
+            button_hint      = Go to web-browser control
+            checkbox_caption = SSL
+            checkbox_hint    = Use SSL-protocol
+        </frame>
+        <database>
+            configs_table    = Configurations
+            journal_table    = Journal
+            settings_table   = System settings
+            users_table      = Users
+        </database>
+    </application>
+
+    <pages>
+        <base>
+            login_caption = Login
+            role_caption  = Role
+            exit_link     = Exit
+        </base>
+        <entry>
+            page_title       = Authorization
+            login_caption    = Login
+            password_caption = Password
+            entry_button     = Entry
+        </entry>
+        <control>
+            page_title    = Control
+            page_hint     = Control levers
+            start_button  = Start
+            start_hint    = Run process
+            pause_button  = Pause
+            pause_hint    = Pause process
+            stop_button   = Stop
+            stop_hint     = Finish process
+            time_hint     = Time after launch
+            tasks_hint    = Current tasks
+            apply_button  = Apply
+            apply_hint    = Apply entered parameters
+            config_hint   = Configuration name
+            save_button   = Save
+            save_hint     = Save the configuration in the database
+            load_button   = Load
+            load_hint     = Load the configuration from the database
+            delete_button = Delete
+            delete_hint   = Delete configuration from the database
+        </control>
+        <status>
+            page_title        = Status
+            page_hint         = System status
+            process_status    = Process status:
+            process_time      = Time after launch
+            task_list         = Current tasks
+            lever_title       = Control lever
+            device_title      = Device
+            description_title = Description
+            value_title       = Value
+            plot_title        = Plot
+            plot_hint         = Show plot
+            period_title      = Period:
+            apply_button      = Apply
+            apply_hint        = Apply entered parameters
+            variable_name     = Variable name
+        </status>
+        <journal>
+            page_title        = Journal
+            page_hint         = Event journal
+            period_title      = Period:
+            from_title        = from
+            to_title          = to
+            information_title = Information
+            warning_title     = Warnings
+            error_title       = Errors
+            count_hint        = Maximum count of notes to display
+            count_title       = recent entries
+            apply_button      = Apply
+            apply_hint        = Apply filter
+            empty_journal     = There are no records for the specified filter
+            date_title        = Date
+            note_title        = Note
+            total_title       = Records count:
+        </journal>
+        <users>
+            page_title       = Users
+            page_hint        = Users list
+            new_login        = New user
+            select_login     = Select user
+            delete_button    = Delete
+            delete_hint      = Delete user
+            role_caption     = Role
+            role_hint        = User role
+            password_caption = Password
+            apply_button     = Apply
+            apply_hint       = Create/modify user
+        </users>
+        <system>
+            page_title        = System
+            page_hint         = System settings
+            dbclean_title     = Database cleanup
+            journal_title     = Leave the last in the event journal
+            tables_title      = Leave the last in the value tables
+            clean_button      = Clear now
+            autoclean_off     = Turn off automatic cleaning
+            autoclean_on      = Turn on automatic cleaning every
+            record_measure    = records
+            minute_measure    = minutes
+            hour_measure      = hour
+            day_measure       = days
+            start_from        = starting
+            apply_button      = Apply
+            apply_hint        = Apply entered parameters
+            table_name        = Table
+            name_hint         = Table name in database
+            table_rows        = Rows
+            rows_hint         = Records count in table
+            table_note        = Description
+            shutdown_button   = Shutdown
+            shutdown_hint     = Shutdown the operating system
+            exit_button       = Exit
+            exit_hint         = Application close
+            reboot_button     = Reboot
+            reboot_hint       = Reboot the operating system
+        </system>
+        <about>
+            page_title         = About
+            page_hint          = System Information
+            osname_title       = Operating system
+            osversion_title    = OS version
+            osarch_title       = Architecture
+            javaversion_title  = Java version
+            dbserver_title     = Database server
+            dbmsystem_title    = DBMS
+            dbmsystem_hint     = Database Management System
+            dbname_title       = Database
+            project_title      = Project
+            solution_title     = Solution
+            website_title      = Project site
+            device_title       = Device
+            device_description = Description
+            device_pins        = Pins
+
+        </about>
+    </pages>
+
+    <journal>
+        <information>
+            any_message     = %s%
+            init_properties = Свойства проекта загружены
+            init_database   = База данных %s% готова к использованию
+            auto_clean      = Настроена автоматическая очистка базы данных с периодом %s% (%s%), первый запуск: %s%
+            save_config     = Конфигурация параметров управления сохранена под именем: %s%
+            add_user        = Добавлен пользователь %s% с ролью %s%
+            change_user     = Пользователь %s% с ролью %s% изменён
+            delete_user     = Пользователь %s% удалён
+            init_device     = Устройства успешно проинициализированы
+            complite_task   = %s%: Задание выполнено
+            init_tasks      = Задания проинициализированы
+            set_value       = Для переменной %s% (%s%) установлено значение: %s%
+            init_window     = Главное окно приложения открыто
+            start_server    = Веб-сервер запустился
+        </information>
+        <warning>
+            any_message     = %s%
+            create_table    = Таблица %s% создана (%s%)
+            erase_table     = Таблица %s% очищена
+            drop_table      = Таблица %s% удалена (%s%)
+            delete_table    = Удаление в таблице %s%. Удалено записей: %s%
+            drop_database   = База данных %s% удалена!
+            create_database = Создана база данных %s%
+            auto_clean      = Автоматическая очистка базы данных отменена
+            clean_database  = Очистка базы. Всего удалено записей: %s%
+            load_config     = Загружена конфигурация параметров управления с именем: %s%
+            delete_config   = Удалена конфигурация параметров управления с именем: %s%
+            interrupte_task = %s%: Задание прервано
+            start_tasks     = Выполнен пуск заданий
+            pause_tasks     = Произведена приостановка заданий
+            stop_tasks      = Произведена остановка заданий
+            set_random      = Для переменной %s% (%s%) добавлено %s% случайных значений
+            init_window     = Приложение работает без запуска главного окна
+            close_window    = Закрытие приложения из главного окна на сервере
+            add_user        = Добавить пользователя с именем %s% нельзя!
+            shutdown_system = Выключение системы из веб-интерфейса (пользователь: %s%, адрес: %s%)
+            exit_program    = Закрытие приложения из веб-интерфейса (пользователь: %s%, адрес: %s%)
+            reboot_system   = Перезагрузка системы из веб-интерфейса (пользователь: %s%, адрес: %s%)
+        </warning>
+        <error>
+            any_message     = %s%
+            table_exists    = Ошибка поиска таблицы %s%. Сообщение: %s%
+            create_table    = Ошибка создания таблицы %s%. Сообщение: %s%
+            erase_table     = Ошибка очистки таблицы %s%. Сообщение: %s%
+            drop_table      = Ошибка удаления таблицы %s%. Сообщение: %s%
+            read_table      = Ошибка запроса к таблице %s%. Сообщение: %s%
+            write_table     = Ошибка записи в таблицу %s%. Сообщение: %s%
+            delete_table    = Ошибка удаления записей в таблице %s%. Сообщение: %s%
+            init_database   = Ошибка инициализации базы данных %s%: %s%
+            save_config     = Ошибка сохранения конфигурации %s%: %s%
+            select_config   = Ошибка загрузки списка конфигураций: %s%
+            delete_config   = Ошибка удаления конфигурации %s%: %s%
+            value_config    = Ошибка загрузки значения конфигурации %s%: %s%
+            delete_user     = Ошибка удаления пользователя. Сообщение: %s%
+            add_user        = Ошибка создания пользователя. Сообщение: %s%
+            change_user     = Ошибка изменения пользователя. Сообщение: %s%
+            get_user        = Ошибка получения пользователя %s%. Сообщение: %s%
+            crypt_password  = Ошибка шифрования. Сообщение: %s%
+            set_value       = Неудачная попытка присвоить %s% (%s%) значение %s%: %s%
+            get_value       = Ошибка получения значения для %s% (%s%). Сообщение: %s%
+            load_icon       = Иконка приложения не загружена (%s%). Сообщение: %s%
+            open_browser    = Неудачная попытка открыть браузер. Сообщение: %s%
+            busy_host       = Неудачная попытка запустить веб-сервер. Порт занят
+            start_server    = Ошибка запуска веб-сервера. Сообщение: %s%
+            init_properties = Ошибка загрузки свойств проекта
+            shutdown_error  = Ошибка выполнения команды %s%: %s%)
+        </error>
+    </journal>
+
+</language>

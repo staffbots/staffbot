@@ -5,6 +5,7 @@ import freemarker.template.Template;
 import ru.staffbots.Staffbot;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
+import ru.staffbots.database.users.Users;
 import ru.staffbots.tools.TemplateFillable;
 import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.resources.Resources;
@@ -105,7 +106,7 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
         pageVariables.put("main_menu", getMenu(accountService.getUserAccessLevel(login)));
         pageVariables.put("page_content", content);
         pageVariables.put("login_value", login);
-        pageVariables.put("role_value", Database.users.getRole(login).getDescription());
+        pageVariables.put("role_value", Users.getRole(login).getDescription());
         pageVariables.put("update_delay", WebServer.updateDelay.toString());
 
         String result = fillTemplate("html/base.html", pageVariables);

@@ -152,8 +152,22 @@
             reboot_hint       = Перезагрузка операционной системы
         </system>
         <about>
-            page_title     = Сведения
-            page_hint      = Сведения о системе
+            page_title         = Сведения
+            page_hint          = Сведения о системе
+            osname_title       = Операционная система
+            osversion_title    = Версия ОС
+            osarch_title       = Архитектура
+            javaversion_title  = Версия java
+            dbserver_title     = Сервер баз данных
+            dbmsystem_title    = СУБД
+            dbmsystem_hint     = Система Управления Базами Данных
+            dbname_title       = База данных
+            project_title      = Проект
+            solution_title     = Решение
+            website_title      = Сайт проекта
+            device_title       = Устройство
+            device_description = Описание
+            device_pins        = Пины
         </about>
     </pages>
 

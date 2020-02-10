@@ -6,53 +6,53 @@
             <table style='width:100%' cellpadding='3' border='0' cellspacing='0'>
                 <tr class='table tr title'>
                     <td align='center' colspan='2'>
-                        <a href='${website}' title='${website}' target='_blank'>
+                        <a href='${website_link}' title='${website_link}' target='_blank'>
                             <img src='/resource?img/logo.png'>
                         </a>
                     </td>
                 </tr>
                 <tr>
-                    <td>Операционная система</td>
+                    <td><nobr>${osname_title}</nobr></td>
                     <td><em>${about_osname}</em></td>
                 </tr>
                 <tr>
-                    <td>Версия ОС</td>
+                    <td>${osversion_title}</td>
                     <td><em>${about_osversion}</em></td>
                 </tr>
                 <tr>
-                    <td>Архитектура</td>
+                    <td>${osarch_title}</td>
                     <td><em>${about_osarch}</em></td>
                 </tr>
                 <tr class='table tr title'><td colspan='2'></td></tr>
                 <tr>
-                    <td>Версия java</td>
+                    <td>${javaversion_title}</td>
                     <td><em>${about_javaversion}</em></td>
                 </tr>
                 <tr class='table tr title'><td colspan='2'></td></tr>
                 <tr>
-                    <td>Сервер баз данных</td>
-                    <td title='Относительное имя'><em>${about_dbserver}</em></td>
+                    <td>${dbserver_title}</td>
+                    <td><em>${about_dbserver}</em></td>
                 </tr>
                 <tr>
-                    <td title='Система Управления Базами Данных'>СУБД</td>
+                    <td title='${dbmsystem_hint}'>${dbmsystem_title}</td>
                     <td><em>${about_dbmsystem}</em></td>
                 </tr>
                 <tr>
-                    <td>База данных</td>
+                    <td>${dbname_title}</td>
                     <td><em>${about_dbname}</em></td>
                 </tr>
                 <tr class='table tr title'><td colspan='2'></td></tr>
                 <tr>
-                    <td>Проект</td>
+                    <td>${project_title}</td>
                     <td><b><em>${about_project}</em></b></td>
                 </tr>
                 <tr>
-                    <td>Решение</td>
+                    <td>${solution_title}</td>
                     <td><em>${about_solution}</em></td>
                 </tr>
                 <tr>
-                    <td>Сайт проекта</td>
-                    <td><em><a href='${website}' title='Сайт проекта' target='_blank'>${website}</a></em></td>
+                    <td>${website_title}</td>
+                    <td><em><a href='${website_link}' target='_blank'>${website_link}</a></em></td>
                 </tr>
                 <tr><td colspan='2'></td></tr>
             </table>
@@ -63,9 +63,9 @@
             <!-- Устройства -->
             <table cellpadding='5' border='0' cellspacing='0'>
                 <tr class='table tr title'>
-                    <td>Устройство</td>
-                    <td>Описание</td>
-                    <td colspan='2'>Пины</td>
+                    <td>${device_title}</td>
+                    <td>${device_description}</td>
+                    <td colspan='2'>${device_pins}</td>
                 </tr>
                 ${about_devicelist}
             </table>
@@ -73,7 +73,6 @@
     </tr>
 </table>
 
-<!-- Описание ощибки контролера -->
 <table class='table parent database'>
     <tr>
         <td style='font-weight: bold;'>

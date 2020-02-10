@@ -100,9 +100,11 @@ public class JournalServlet extends BaseServlet {
         if(!journalList.isEmpty()) {
             htmlCode = fillTemplate(htmlPath + "title.html",pageVariables);
             for (Note note : journalList) {
-                pageVariables.put("note_title", DateValue.toString(note.getDate(), DateFormat.FULLTIMEDATE));
+                pageVariables.put("note_fulldate", DateValue.toString(note.getDate(), DateFormat.FULLTIMEDATE));
+                pageVariables.put("note_type", note.getType().getName());
                 pageVariables.put("note_date", DateValue.toString(note.getDate(), DateFormat.CUTSHORTDATETIME));
                 pageVariables.put("note_value", note.getMessage());
+                pageVariables.put("type_description", note.getType().getDescription());
                 htmlCode += fillTemplate(htmlPath + "note.html",pageVariables);
             }
             pageVariables.put("total_size", journalList.size());

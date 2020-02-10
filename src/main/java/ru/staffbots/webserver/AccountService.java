@@ -1,6 +1,7 @@
 package ru.staffbots.webserver;
 
 import ru.staffbots.database.Database;
+import ru.staffbots.database.users.User;
 import ru.staffbots.database.users.Users;
 import ru.staffbots.database.users.UserRole;
 import javax.servlet.http.HttpServletRequest;
@@ -15,10 +16,8 @@ public class AccountService {
      */
     private Map<String, String> sessions = new HashMap<>();
 
-
-
     public int verifyUser(String login, String password){
-        return Database.users.verify(login, password);
+        return  Users.verify(login, password);
     }
 
     public void addSession(HttpSession session, String login){
@@ -42,7 +41,7 @@ public class AccountService {
     }
 
     public int getUserAccessLevel(String login){
-        UserRole role = Database.users.getRole(login);
+        UserRole role = Users.isAdmin(login) ? UserRole.ADMIN : Database.users.getRole(login);
         return (role == null) ? -1 : role.getAccessLevel();
     }
 

@@ -30,7 +30,7 @@ public class Note {
                 note = note.replaceFirst("%s%", variables[i]);
         }
         //note = note.replaceAll("%s%","");
-        return type.getDescription() + ": " + note;
+        return note;
     }
 
     public Date getDate() {

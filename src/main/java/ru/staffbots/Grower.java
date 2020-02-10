@@ -36,6 +36,7 @@ public class Grower extends Staffbot {
                     Levers.initGroup("Орошение", dayRateLever, nightRateLever, durationLever);
                     Devices.init(sensor, sonar, sunRelay, funRelay); // Инициализируем список устройств
                     Tasks.init(testTask, lightTask, ventingTask, irrigationTask);
+                    Journal.add(NoteType.ERROR, "any_message", "Ошибочка для теста");
                 }
         );
     }
