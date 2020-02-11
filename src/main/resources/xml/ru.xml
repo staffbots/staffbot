@@ -167,7 +167,15 @@
             website_title      = Сайт проекта
             device_title       = Устройство
             device_description = Описание
+            description_hint   = Описание устройства
             device_pins        = Пины
+            device_hint        = Пин устройства
+            controller_hint    = Пин контроллера
+            dberror_title      = Нет подключнения к базе данных
+            message_title      = Сообщение
+            trace_title        = Последовательность вызовов
+            detail_title       = Подробно
+            piwarning_title    = Работа с устройствами отключена
         </about>
     </pages>
 
@@ -175,6 +183,7 @@
         <information>
             any_message     = %s%
             init_properties = Свойства проекта загружены
+            init_configs    = Конфигурация проекта загружена
             init_database   = База данных %s% готова к использованию
             auto_clean      = Настроена автоматическая очистка базы данных с периодом %s% (%s%), первый запуск: %s%
             save_config     = Конфигурация параметров управления сохранена под именем: %s%
@@ -214,6 +223,8 @@
         </warning>
         <error>
             any_message     = %s%
+            init_properties = Ошибка загрузки свойств проекта
+            init_configs    = Ошибка загрузки конфигурации проекта
             table_exists    = Ошибка поиска таблицы %s%. Сообщение: %s%
             create_table    = Ошибка создания таблицы %s%. Сообщение: %s%
             erase_table     = Ошибка очистки таблицы %s%. Сообщение: %s%
@@ -237,7 +248,6 @@
             open_browser    = Неудачная попытка открыть браузер. Сообщение: %s%
             busy_host       = Неудачная попытка запустить веб-сервер. Порт занят
             start_server    = Ошибка запуска веб-сервера. Сообщение: %s%
-            init_properties = Ошибка загрузки свойств проекта
             shutdown_error  = Ошибка выполнения команды %s%: %s%)
         </error>
     </journal>

@@ -68,6 +68,7 @@ public class Database {
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD));
             createDatabase(DROP);
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD), NAME);
+            Journal.add(null);
             configs = new Configs();
             journal = new Journal();
             settings = new Settings();

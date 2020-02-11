@@ -69,9 +69,7 @@ public class Journal extends DBTable {
     public static void add(NoteType noteType, boolean isStorable, String noteName, String... noteVariables){
         Date noteDate = new Date();
         Note note = new Note(noteDate, noteType, noteName, noteVariables);
-        System.out.println(DateValue.toString(noteDate, dateFormat) +
-                " | " + note.getType().getDescription() +
-                ": " + note.getMessage());
+        System.out.println(note.getMessage(false));
         if (isStorable) insertNote(note);
     }
 

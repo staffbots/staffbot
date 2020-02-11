@@ -201,10 +201,10 @@ public abstract class Staffbot {
             BaseServlet.mainColor = property.getProperty("web.main_color", BaseServlet.mainColor);
             BaseServlet.pageColor = property.getProperty("web.page_color", BaseServlet.pageColor);
 
-            Journal.add(false, "init_properties");
+            Journal.add(false, "init_configs");
 
         }catch (Exception exception){
-            Journal.add(NoteType.ERROR, false, "init_properties");
+            Journal.add(NoteType.ERROR, false, "init_configs");
         }
     }
 

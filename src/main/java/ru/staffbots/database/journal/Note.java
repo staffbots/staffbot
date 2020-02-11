@@ -1,6 +1,8 @@
 package ru.staffbots.database.journal;
 
 import ru.staffbots.tools.Translator;
+import ru.staffbots.tools.dates.DateFormat;
+import ru.staffbots.tools.values.DateValue;
 
 import java.util.Date;
 
@@ -23,13 +25,22 @@ public class Note {
 
     @Override
     public String toString() {
+        return toString(true);
+    }
+
+    public String toString(boolean htmlFormat) {
+        if (name == null) return "";
         String note = Translator.getValue(type.getName(), name);
         if (variables != null) {
             String[] variables = getVariables().split(variableSeparator);
             for (int i = 0; i < variables.length; i++)
-                note = note.replaceFirst("%s%", variables[i]);
+                note = note.replaceFirst("%s%",
+                        htmlFormat ? "<em>" + variables[i] + "</em>" : variables[i]);
         }
-        //note = note.replaceAll("%s%","");
+        if (!htmlFormat)
+        note = DateValue.toString(getDate(), DateFormat.DATETIME) +
+               " | " + getType().getDescription() +
+               ": " + note;
         return note;
     }
 
@@ -47,6 +58,10 @@ public class Note {
 
     public String getMessage() {
         return toString();
+    }
+
+    public String getMessage(boolean htmlFormat) {
+        return toString(htmlFormat);
     }
 
     public String getVariables() {

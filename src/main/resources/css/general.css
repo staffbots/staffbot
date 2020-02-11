@@ -4,8 +4,8 @@
     --main_color: #${main_color};
     --page_color: #${page_color};
     --text_color: #222222;
-    --database_display: ${database_display};
-    --device_display: ${device_display};
+    --dberror_display: ${dberror_display};
+    --piwarning_display: ${piwarning_display};
 }
 
 body { /* Page content */
@@ -41,12 +41,14 @@ input, textarea, select {
     margin: auto;
 }
 
-.table.parent.database { /* Таблица с описанием ощибки БД */
-    display: var(--database_display);
+.table.parent.dberror { /* Таблица с описанием ощибки БД */
+    display: var(--dberror_display);
+
 }
 
-.table.parent.device { /* Таблица с описанием ощибки контролера */
-    display: var(--device_display);
+.table.parent.piwarning { /* Таблица с описанием ощибки контролера */
+    display: var(--piwarning_display);
+    text-align:right;
 }
 
 .table.child { /* Таблицы в рамке */

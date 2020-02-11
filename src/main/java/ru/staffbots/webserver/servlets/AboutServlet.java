@@ -8,7 +8,6 @@ import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
-import ru.staffbots.webserver.WebServer;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -28,8 +27,7 @@ public class AboutServlet extends BaseServlet {
     }
 
     // Вызывается при запросе странице с сервера
-    public void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
 
         if (isAccessDenied(request, response)) return;
         Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
@@ -43,35 +41,34 @@ public class AboutServlet extends BaseServlet {
         pageVariables.put("about_dbname",Database.NAME);
         pageVariables.put("about_project", Staffbot.projectName);
         pageVariables.put("about_solution", Staffbot.solutionName + "-" + Staffbot.projectVersion);
-        pageVariables.put("about_message", Database.connected() ? "" : Database.getException().getMessage());
+        pageVariables.put("about_devicelist", getDeviceList());
+
+        pageVariables.put("dberror_message", Database.connected() ? "" : Database.getException().getMessage());
         String trace = "";
         if (Database.disconnected())
             for (StackTraceElement traceElement: Database.getException().getStackTrace())
                 trace += traceElement.toString() + "<br>";
-        pageVariables.put("about_trace", trace);
-        pageVariables.put("about_admin", WebServer.defaultAdmin);
-        pageVariables.put("about_devicelist", getDeviceList());
+        pageVariables.put("dberror_trace", trace);
+
         String content = fillTemplate("html/" + pageType.getName()+".html", pageVariables);
         super.doGet(request, response, content);
     }
 
     // Вызывается при отправке страницы на сервер
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         doGet(request, response);
     }
 
     private String getDeviceList() {
         String context = "";
-        Map<String, Object> pageVariables = new HashMap();
-        pageVariables.put("page_color", pageColor);
-        String templateFileName = "html/about/device_pin.html";
+        Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
+        String templateFileName = "html/about/device.html";
         for (Device device : Devices.list){
             pageVariables.put("device_url", device.getURL());
             pageVariables.put("device_model", device.getModel());
-            pageVariables.put("device_note", device.getNote());
-            pageVariables.put("pin_note", "");
-            pageVariables.put("pin_name", "");
+            pageVariables.put("device_description", device.getNote());
+            pageVariables.put("device_pin", "");
+            pageVariables.put("controller_pin", "");
 
             ArrayList<Pin> pins = device.getPins();
             int i = 0;
@@ -81,11 +78,11 @@ public class AboutServlet extends BaseServlet {
                 for (Pin pin : pins){
                     if (i>0){
                         pageVariables.put("device_model", "");
-                        pageVariables.put("device_note", "");
+                        pageVariables.put("device_description", "");
 
                     }
-                    pageVariables.put("pin_note", Devices.pins.get(pin).pinNote);
-                    pageVariables.put("pin_name", pin.getName());
+                    pageVariables.put("device_pin", Devices.pins.get(pin).pinNote);
+                    pageVariables.put("controller_pin", pin.getName());
                     context += fillTemplate(templateFileName, pageVariables);
                     i++;
                 }

@@ -72,8 +72,7 @@ public class JournalServlet extends BaseServlet {
     }
 
     // Вызывается при отправке страницы на сервер
-    public void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (isAccessDenied(request, response)) return;
         setRequest(request);
         for (String checkboxName : checkboxes){

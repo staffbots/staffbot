@@ -52,8 +52,8 @@ public class ResourceServlet extends BaseServlet {
                     pageVariables.put("site_color", siteColor);
                     pageVariables.put("page_color", pageColor);
                     pageVariables.put("main_color", mainColor);
-                    pageVariables.put("database_display", Database.connected() ? "none" : "inline-table");
-                    pageVariables.put("device_display", Devices.USED || Database.disconnected() ? "none" : "inline-table");
+                    pageVariables.put("dberror_display", Database.connected() ? "none" : "inline-table");
+                    pageVariables.put("piwarning_display", Devices.USED || Database.disconnected() ? "none" : "inline-table");
                     String result = fillTemplate(resourceName, pageVariables);
                     response.getOutputStream().write(result.getBytes("UTF-8") );
                     break;

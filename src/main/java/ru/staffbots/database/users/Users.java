@@ -22,7 +22,7 @@ public class Users extends DBTable {
         super(staticTableName, Translator.getValue("database", "users_table"), staticTableFields);
     }
 
-    public static void delete(String login){
+    public void delete(String login){
         try {
             PreparedStatement statement = Database.getConnection().prepareStatement(
                     "DELETE FROM " + staticTableName + " WHERE (login = ?)");
@@ -34,7 +34,7 @@ public class Users extends DBTable {
         }
     }
 
-    public static boolean setUser(User user){
+    public boolean setUser(User user){
         boolean newLogin = (getUserList(user.login).size() == 0);
         try {
             if (isAdmin(user.login)) {
@@ -58,13 +58,6 @@ public class Users extends DBTable {
             Journal.add(NoteType.ERROR, newLogin ? "add_user" :"change_user", e.getMessage());
             return false;
         }
-    }
-
-    public static int verify(String login, String password){
-        if (isAdmin(login))
-            return WebServer.adminPassword.equals(password) ? UserRole.ADMIN.getAccessLevel() : -1;
-        User user = getUser(login);
-        return (user == null) ? -1 : user.password.equals(cryptWithMD5(password)) ? user.role.getAccessLevel() : -1;
     }
 
     public static UserRole getRole(String login){
@@ -130,5 +123,11 @@ public class Users extends DBTable {
         return WebServer.defaultAdmin.equalsIgnoreCase(login);
     }
 
+    public static int verify(String login, String password){
+        if (isAdmin(login))
+            return WebServer.adminPassword.equals(password) ? UserRole.ADMIN.getAccessLevel() : -1;
+        User user = getUser(login);
+        return (user == null) ? -1 : user.password.equals(cryptWithMD5(password)) ? user.role.getAccessLevel() : -1;
+    }
 
 }
