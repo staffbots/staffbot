@@ -101,6 +101,7 @@
             information_title = Information
             warning_title     = Warnings
             error_title       = Errors
+            placeholder_word  = Search...
             count_hint        = Maximum count of notes to display
             count_title       = recent entries
             apply_button      = Apply

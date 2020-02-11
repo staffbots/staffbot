@@ -9,7 +9,7 @@
                 ${information_title}
             </td>
             <td>
-                <input style='width:100%' name='journal_search' value='${journal_search}' placeholder='Поиск...'>
+                <input style='width:100%' name='journal_search' value='${journal_search}' placeholder='${placeholder_word}'>
             </td>
         </tr>
         <tr>
@@ -55,7 +55,10 @@
             </td>
             <td align='right'>
                 <button name='apply_button' title='${apply_hint}' value='apply'>
-                    ${apply_button}
+                    <nobr>
+                        <img src='resource?img/apply.png' valign='top'/>
+                        ${apply_button}
+                    </nobr>
                 </button>
             </td>
             <td style='width:100%'>

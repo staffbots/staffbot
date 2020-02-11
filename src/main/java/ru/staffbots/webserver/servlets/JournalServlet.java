@@ -97,13 +97,15 @@ public class JournalServlet extends BaseServlet {
         String htmlPath = "html/journal/";
         String htmlCode = fillTemplate(htmlPath + "empty.html",pageVariables);
         if(!journalList.isEmpty()) {
-            htmlCode = fillTemplate(htmlPath + "title.html",pageVariables);
+            htmlCode = fillTemplate(htmlPath + "title.html", pageVariables);
             for (Note note : journalList) {
-                pageVariables.put("note_fulldate", DateValue.toString(note.getDate(), DateFormat.FULLTIMEDATE));
-                pageVariables.put("note_type", note.getType().getName());
-                pageVariables.put("note_date", DateValue.toString(note.getDate(), DateFormat.CUTSHORTDATETIME));
-                pageVariables.put("note_value", note.getMessage());
-                pageVariables.put("type_description", note.getType().getDescription());
+                boolean line = (note.getName() == null);
+
+                pageVariables.put("note_fulldate", line ? "" : DateValue.toString(note.getDate(), DateFormat.FULLTIMEDATE));
+                pageVariables.put("note_type", line ? "init" : note.getType().getName());
+                pageVariables.put("note_date", line ? "" : DateValue.toString(note.getDate(), DateFormat.CUTSHORTDATETIME));
+                pageVariables.put("note_value", line ? "<hr>" : note.getMessage());
+                pageVariables.put("type_description", line ? "" : note.getType().getDescription());
                 htmlCode += fillTemplate(htmlPath + "note.html",pageVariables);
             }
             pageVariables.put("total_size", journalList.size());

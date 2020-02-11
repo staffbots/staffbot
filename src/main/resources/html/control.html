@@ -6,19 +6,28 @@
                 <table style='display:${tasks_display}; width:100%' border='0' cellpadding='3'>
                     <tbody>
                     <tr>
-                        <td align='center' valign='middle'>
-                            <button name='start_button' ${start_visible} title='${start_hint}'>
+                        <td>
+                            <button class='button' name='start_button' ${start_visible} title='${start_hint}'>
+                                <nobr>
+                                <img src='resource?img/start.png' valign='top'/>
                                 ${start_button}
+                                </nobr>
                             </button>
                         </td>
                         <td align='center' valign='middle'>
                             <button name='pause_button' ${pause_visible} title='${pause_hint}'>
+                                <nobr>
+                                <img src='resource?img/pause.png'/>
                                 ${pause_button}
+                                </nobr>
                             </button>
                         </td>
                         <td align='center' valign='middle'>
                             <button name='stop_button' ${stop_visible} title='${stop_hint}'>
+                                <nobr>
+                                <img src='resource?img/stop.png'/>
                                 ${stop_button}
+                                </nobr>
                             </button>
                         </td>
                         <td>
@@ -45,7 +54,10 @@
         <tr>
             <td class='table tr title' colspan='2' rowspan='1' align='right'>
                 <button name='apply_button' title='${apply_hint}' value='apply' disabled>
-                    ${apply_button}
+                    <nobr>
+                        <img src='resource?img/apply.png' valign='top'/>
+                        ${apply_button}
+                    </nobr>
                 </button>
             </td>
         </tr>
@@ -62,17 +74,26 @@
                         </td>
                         <td align='center' valign='middle'>
                             <button name='save_button' value='save_value' title='${save_hint}'>
-                                ${save_button}
+                                <nobr>
+                                    <img src='resource?img/save.png' valign='top'/>
+                                    ${save_button}
+                                </nobr>
                             </button>
                         </td>
                         <td align='center' valign='middle'>
                             <button name='load_button' value='load_value' title='${load_hint}'>
-                                ${load_button}
+                                <nobr>
+                                    <img src='resource?img/load.png' valign='top'/>
+                                    ${load_button}
+                                </nobr>
                             </button>
                         </td>
                         <td align='center' valign='middle'>
                             <button name='delete_button' value='delete_value' title='${delete_hint}'>
-                                ${delete_button}
+                                <nobr>
+                                    <img src='resource?img/delete.png' valign='top'/>
+                                    ${delete_button}
+                                </nobr>
                             </button>
                         </td>
                     </tr>

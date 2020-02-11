@@ -101,6 +101,7 @@
             information_title = Информация
             warning_title     = Предупреждения
             error_title       = Ошибки
+            placeholder_word  = Поиск...
             count_hint        = Максимальное количество записей для отображения
             count_title       = последних записей
             apply_button      = Применить
