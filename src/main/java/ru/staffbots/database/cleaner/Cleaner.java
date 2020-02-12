@@ -79,10 +79,10 @@ public class Cleaner {
                     new Date(autoStart.getTime() + period * (long) Math.ceil((double) dt/period));
             timer.scheduleAtFixedRate(cleanTask, delay, period);
             timerIsRuning = true;
-            Journal.add("auto_clean", Long.toString(autoValue), autoMeasure.getDescription(), DateValue.toString(delay, DATE_FORMAT));
+            Journal.add(NoteType.WARNING, "turnon_clean", Long.toString(autoValue), autoMeasure.getDescription(), DateValue.toString(delay, DATE_FORMAT));
         } else {
             timerIsRuning = false;
-            Journal.add(NoteType.WARNING, "auto_clean");
+            Journal.add(NoteType.WARNING, "turnoff_clean");
         }
     }
 
@@ -136,6 +136,8 @@ public class Cleaner {
     private long cleanByCount(DBTable table, long count){
         long recordsCount = table.getRows();
         if (recordsCount <= count) return 0;
+        if (table.getTableName().equalsIgnoreCase(Database.journal.getTableName()))
+            count -= 2;
         String query = "DELETE FROM " + table.getTableName() +
                 " ORDER BY moment ASC LIMIT " + (recordsCount - count);
         return table.deleteFromTable(query);

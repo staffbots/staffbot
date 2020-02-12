@@ -6,8 +6,6 @@ import ru.staffbots.database.cleaner.Cleaner;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.Translator;
-import ru.staffbots.tools.tasks.Task;
-import ru.staffbots.tools.tasks.Tasks;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
 
@@ -135,7 +133,7 @@ public class SystemServlet extends BaseServlet {
     private String getTableList() {
         String context = "";
         Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
-        Map<String, DBTable> tableList = Database.getTableList(false);
+        Map<String, DBTable> tableList = Database.getTableList();
         for (String tableName: tableList.keySet()){
             pageVariables.put("name_value", tableName);
             DBTable dbTable = tableList.get(tableName);

@@ -1,3 +1,33 @@
+<form action='/system' method='post'>
+    <table cellspacing='5' >
+        <tr>
+            <td>
+                <button name='shutdown_button' title='${shutdown_hint}'>
+                    <nobr>
+                        <img src='resource?img/shutdown.png' valign='top'/>
+                        ${shutdown_button}
+                    </nobr>
+                </button>
+            </td>
+            <td>
+                <button name='reboot_button' title='${reboot_hint}'>
+                    <nobr>
+                        <img src='resource?img/reboot.png' valign='top'/>
+                        ${reboot_button}
+                    </nobr>
+                </button>
+            </td>
+            <td>
+                <button name='exit_button' title='${exit_hint}'>
+                    <nobr>
+                        <img src='resource?img/exit.png' valign='top'/>
+                        ${exit_button}
+                    </nobr>
+                </button>
+            </td>
+        </tr>
+    </table>
+</form>
 
 <form action='/system' method='post'>
     <div style='display:none'>
@@ -104,37 +134,6 @@
     ${table_list}
 </table>
 </p>
-<form action='/system' method='post'>
-    <table cellspacing='5' >
-        <tr>
-            <td>
-                <button name='shutdown_button' title='${shutdown_hint}'>
-                    <nobr>
-                        <img src='resource?img/shutdown.png' valign='top'/>
-                        ${shutdown_button}
-                    </nobr>
-                </button>
-            </td>
-            <td>
-                <button name='reboot_button' title='${reboot_hint}'>
-                    <nobr>
-                        <img src='resource?img/reboot.png' valign='top'/>
-                        ${reboot_button}
-                    </nobr>
-                </button>
-            </td>
-            <td>
-                <button name='exit_button' title='${exit_hint}'>
-                    <nobr>
-                        <img src='resource?img/exit.png' valign='top'/>
-                        ${exit_button}
-                    </nobr>
-                </button>
-            </td>
-        </tr>
-    </table>
-</form>
-
 <script type='text/javascript'> system_radioboxClick(); </script>
 
 

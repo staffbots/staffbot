@@ -68,23 +68,25 @@ public class Database {
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD));
             createDatabase(DROP);
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD), NAME);
-            Journal.add(null);
-            configs = new Configs();
             journal = new Journal();
-            settings = new Settings();
-            users = new Users();
-            cleaner = new Cleaner();
+            Journal.add(null);
             Journal.add("init_database", NAME);
         } catch (Exception exception) {
             connection = null;
             Database.exception = exception;
             Journal.add(NoteType.ERROR, "init_database", NAME, exception.getMessage());
         }
+        if (connected()) {
+            configs = new Configs();
+            settings = new Settings();
+            users = new Users();
+            cleaner = new Cleaner();
+        }
         return connected();
     }
 
     private static boolean dbExists() throws Exception{
-        if(!connected())return false;
+        if(disconnected())return false;
         boolean result = false;
         DatabaseMetaData metaData = connection.getMetaData();
         ResultSet rs = metaData.getCatalogs();
@@ -150,21 +152,47 @@ public class Database {
         return new TreeMap<String, DBTable>(result);
     }
 
+    public static int dropUnuseTable(){
+        int result = 0;
+        Map<String, DBTable>tableList = getTableList(false);
+        for (String tableName: tableList.keySet())
+            if (tableList.get(tableName)== null)
+                if (dropTable(tableName))
+                    result++;
+        return result;
+    }
 
-//    public static String getTableNote(String tableName){
-//        if (journal.getTableName().equalsIgnoreCase(tableName)) return journal.getNote();
-//        if (configs.getTableName().equalsIgnoreCase(tableName)) return configs.getNote();
-//        if (settings.getTableName().equalsIgnoreCase(tableName)) return settings.getNote();
-//        if (users.getTableName().equalsIgnoreCase(tableName)) return users.getNote();
-//        for (Lever lever : Levers.list)
-//            if (lever.toValue().getTableName().equalsIgnoreCase(tableName))
-//                return lever.toValue().getNote();
-//        for (Device device : Devices.list)
-//            for (Value value : device.getValues())
-//                if (value.getTableName().equalsIgnoreCase(tableName))
-//                    return value.getNote();
-//        return "";
-//    }
+    public static boolean dropTable(String tableName){
+        if(Database.disconnected())return false;
+        try {
+            if (tableExists(tableName)){
+                getStatement("DROP TABLE " + tableName).execute();
+                Journal.add(NoteType.WARNING, "drop_table", tableName);
+            }
+        } catch (Exception exception) {
+            Journal.add(NoteType.ERROR, "drop_table", tableName, exception.getMessage());
+            return false;
+        }
+        return true;
+    }
+
+    public static PreparedStatement getStatement(String query) throws Exception {
+        if (disconnected())
+            throw getException();
+        return getConnection().prepareStatement(query);
+    }
+
+    public static boolean tableExists(String tableName){
+        if(disconnected())return false;
+        try {
+            DatabaseMetaData metaData = getConnection().getMetaData();
+            ResultSet tables = metaData.getTables(Database.NAME, null, tableName, null);
+            return (tables.next());
+        } catch (SQLException exception) {
+            Journal.add(NoteType.ERROR, "table_exists", tableName, exception.getMessage());
+            return false;
+        }
+    }
 
     public static long getTableRows(String tableName){
         long result = 0;

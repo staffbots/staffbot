@@ -47,15 +47,7 @@ public abstract class DBTable {
     }
 
     public boolean tableExists(){
-        if(Database.disconnected())return false;
-        try {
-            DatabaseMetaData metaData = Database.getConnection().getMetaData();
-            ResultSet tables = metaData.getTables(Database.NAME, null, name, null);
-            return (tables.next());
-        } catch (SQLException exception) {
-            Journal.add(NoteType.ERROR, "table_exists", name, exception.getMessage());
-            return false;
-        }
+        return Database.tableExists(name);
     }
 
     public boolean createTable(){
@@ -93,25 +85,13 @@ public abstract class DBTable {
     }
 
     public boolean dropTable(){
-        if(Database.disconnected())return false;
-        try {
-            if (tableExists()){
-                getStatement("DROP TABLE " + name).execute();
-                Journal.add(NoteType.WARNING, "drop_table", name);
-            }
-        } catch (Exception exception) {
-            Journal.add(NoteType.ERROR, "drop_table", name, exception.getMessage());
-            return false;
-        }
-        return true;
+        return Database.dropTable(name);
     }
 
     protected PreparedStatement statement;
 
     public PreparedStatement getStatement(String query) throws Exception {
-        if (Database.disconnected())
-            throw Database.getException();
-        return Database.getConnection().prepareStatement(query);
+        return Database.getStatement(query);
     }
 
     public ResultSet getSelectResult(String fields, String condition){

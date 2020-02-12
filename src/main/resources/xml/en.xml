@@ -195,7 +195,6 @@
             init_properties = Project properties loaded
             init_configs    = Project configuration loaded
             init_database   = Database %s% is ready to use
-            auto_clean      = Set up automatic database cleanup with a period %s% (%s%), first start: %s%
             save_config     = Management parameter configuration %s% saved
             add_user        = User %s% with role %s% added
             change_user     = User %s% with role %s% changed
@@ -209,14 +208,15 @@
         </information>
         <warning>
             any_message     = %s%
-            create_table    = Table %s% created (%s%)
+            create_table    = Table %s% created
             erase_table     = Table %s% erased
-            drop_table      = Table %s% droped (%s%)
+            drop_table      = Table %s% droped
             delete_table    = Deletion in table %s%. %s% records deleted
             drop_database   = Database %s% deleted!
             create_database = Database %s% created
-            auto_clean      = Automatic database cleanup canceled
             clean_database  = Base cleaning. Deleted %s% records
+            turnon_clean    = Set up automatic database cleanup with a period %s% %s%, first start: %s%
+            turnoff_clean   = Automatic database cleanup canceled
             load_config     = Configuration %s% loaded
             delete_config   = Configuration %s% deleted
             interrupte_task = %s%: task aborted

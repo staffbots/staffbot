@@ -1,5 +1,6 @@
 package ru.staffbots.tools.levers;
 
+import ru.staffbots.database.journal.Journal;
 import ru.staffbots.tools.values.Value;
 import ru.staffbots.tools.values.ValueType;
 

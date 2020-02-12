@@ -44,7 +44,7 @@ public class Grower extends Staffbot {
     //  Levers - Рычаги
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    static DateLever sunriseLever = new DateLever("sunriseLever_1",
+    static DateLever sunriseLever = new DateLever("sunriseLever",
             "Время включения света", DateFormat.SHORTTIME, "8:30");
     static DateLever sunsetLever = new DateLever("sunsetLever",
             "Время выключения света", DateFormat.SHORTTIME, "16:45");

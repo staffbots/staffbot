@@ -141,11 +141,11 @@ public abstract class Staffbot {
         Translator.init(); // Инициализируем мультиязычность
         propertiesInit(); // Загружаем свойства из cfg-файла
         Database.init(); // Подключаемся к базе данных
-        Journal.add(NoteType.ERROR, "any_message", "Тестовая ошибка");
         solutionInitAction.run(); // Инициализируем решение (Levers, Devices and Tasks)
         WebServer.init(); // Запускаем веб-сервер
         String windowTitle = projectName + ":" + solutionName + "-" + projectVersion;
         MainWindow.init(windowTitle); // Открываем главное окно приложения
+        Database.dropUnuseTable();
     }
 
     // Инициализация параметров
