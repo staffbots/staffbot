@@ -25,6 +25,13 @@
             pause       = Пауза
             stop        = Стоп
         </tasksstatus>
+        <taskstatus>
+            new       =
+            waiting   = Ожидание
+            execution = Выполнение
+            old       =
+        </taskstatus>
+
     </enums>
 
     <application>
@@ -109,7 +116,8 @@
             empty_journal     = По указанному фильтру записей нет
             date_title        = Дата
             note_title        = Сообщение
-            total_title       = Выбрано записей:
+            start_title       = Запуск приложения
+            total_title       = Всего:
         </journal>
         <users>
             page_title       = Пользователи
@@ -130,7 +138,8 @@
             dbclean_title     = Очистка базы данных
             journal_title     = В журнале событий оставлять последние
             tables_title      = В таблицах значений оставлять последние
-            clean_button      = Очистить сейчас
+            clean_button      = Очистить
+            clean_hint        = Очистить сейчас
             autoclean_off     = Отключить автоматическую очистку
             autoclean_on      = Запускать автоматическую очистку каждые
             record_measure    = записей
@@ -145,6 +154,7 @@
             table_rows        = Размер
             rows_hint         = Количество записей в таблице
             table_note        = Описание
+            table_unuse       = Таблица неиспользуется
             shutdown_button   = Выключить систему
             shutdown_hint     = Завершение работы операционной системы
             exit_button       = Закрыть приложение

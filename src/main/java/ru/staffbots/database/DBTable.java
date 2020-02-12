@@ -161,7 +161,7 @@ public abstract class DBTable {
         }
     }
 
-    public long getRecordsCount(){
+    public long getRows(){
         ResultSet resultSet = getSelectResult("COUNT(1)", null);
         if (resultSet == null) return 0;
         try {

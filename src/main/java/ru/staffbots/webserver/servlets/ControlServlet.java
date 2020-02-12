@@ -60,7 +60,8 @@ public class ControlServlet extends BaseServlet {
 
         pageVariables.put("start_time", Long.toString(Tasks.getStartTime()));
         pageVariables.put("lever_list", getLeverList());
-        pageVariables.put("config_name", accountService.getAttribute(request, "config_name"));
+        pageVariables.put("config_name", accountService.getAttribute(request, "config_name", ""));
+//        pageVariables.put("config_name", request.getAttribute("config_name"));
         pageVariables.put("config_list", getConfigList());
         pageVariables.put("tasks_display", Tasks.list.size() > 0 ? "inline-table" : "none");
 
@@ -101,6 +102,7 @@ public class ControlServlet extends BaseServlet {
     private boolean buttonDeleteClick(HttpServletRequest request) {
         String configName = request.getParameter("config_name");
         Database.configs.delete(configName);
+        accountService.setAttribute(request,"config_name", "");
         return true;
     }
 

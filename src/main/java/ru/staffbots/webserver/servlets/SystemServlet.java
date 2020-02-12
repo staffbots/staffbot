@@ -1,5 +1,6 @@
 package ru.staffbots.webserver.servlets;
 
+import ru.staffbots.database.DBTable;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.cleaner.Cleaner;
 import ru.staffbots.database.journal.Journal;
@@ -134,11 +135,12 @@ public class SystemServlet extends BaseServlet {
     private String getTableList() {
         String context = "";
         Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
-        ArrayList<String> tableList = Database.getTableList();
-        for (String tableName: tableList){
+        Map<String, DBTable> tableList = Database.getTableList(false);
+        for (String tableName: tableList.keySet()){
             pageVariables.put("name_value", tableName);
-            pageVariables.put("note_value", Database.getTableNote(tableName));
-            pageVariables.put("rows_value", Database.getTableRows(tableName));
+            DBTable dbTable = tableList.get(tableName);
+            pageVariables.put("note_value", dbTable == null ? pageVariables.get("table_unuse") : dbTable.getNote());
+            pageVariables.put("rows_value", dbTable == null ? Database.getTableRows(tableName) : dbTable.getRows());
             context += fillTemplate("html/system/table.html",pageVariables);
         }
         return context;

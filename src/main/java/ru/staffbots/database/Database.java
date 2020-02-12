@@ -13,8 +13,8 @@ import ru.staffbots.tools.levers.Lever;
 import ru.staffbots.tools.levers.Levers;
 import ru.staffbots.tools.values.Value;
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.Collections;
+import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class Database {
@@ -115,9 +115,23 @@ public class Database {
         return true;
     }
 
-    public static ArrayList<String> getTableList(){
-        ArrayList<String> result = new ArrayList(0);
+    public static Map<String, DBTable> getTableList(){
+        return getTableList(true);
+    }
+
+    public static Map<String, DBTable> getTableList(boolean useOnly){
+        Map<String, DBTable> result = new HashMap(0);
         if(!connected()) return result;
+        result.put(journal.getTableName(), journal);
+        result.put(configs.getTableName(), configs);
+        result.put(settings.getTableName(), settings);
+        result.put(users.getTableName(), users);
+        for (Lever lever : Levers.list)
+            result.put(lever.toValue().getTableName(), lever.toValue());
+        for (Device device : Devices.list)
+            for (Value value : device.getValues())
+                result.put(value.toValue().getTableName(), value.toValue());
+        if (!useOnly)
         try {
             Statement statement = connection.createStatement();
             if(!statement.execute("SELECT table_name " +
@@ -125,35 +139,38 @@ public class Database {
                     "WHERE table_schema like '"+NAME+"'"))
                 return  result;
             ResultSet resultSet = statement.getResultSet();
-            while (resultSet.next())
-                result.add(resultSet.getString(1));
+            while (resultSet.next()) {
+                String tableName = resultSet.getString(1);
+                if (!result.containsKey(tableName))
+                    result.put(tableName, null);
+            }
         } catch (SQLException exception) {
             exception.printStackTrace();
         }
-        Collections.sort(result);
-        return result;
+        return new TreeMap<String, DBTable>(result);
     }
 
 
-    public static String getTableNote(String tableName){
-        if (journal.getTableName().equalsIgnoreCase(tableName)) return journal.getNote();
-        if (configs.getTableName().equalsIgnoreCase(tableName)) return configs.getNote();
-        if (settings.getTableName().equalsIgnoreCase(tableName)) return settings.getNote();
-        if (users.getTableName().equalsIgnoreCase(tableName)) return users.getNote();
-        for (Lever lever : Levers.list)
-            if (lever.toValue().getTableName().equalsIgnoreCase(tableName))
-                return lever.toValue().getNote();
-        for (Device device : Devices.list)
-            for (Value value : device.getValues())
-                if (value.getTableName().equalsIgnoreCase(tableName))
-                    return value.getNote();
-        return "";
-    }
+//    public static String getTableNote(String tableName){
+//        if (journal.getTableName().equalsIgnoreCase(tableName)) return journal.getNote();
+//        if (configs.getTableName().equalsIgnoreCase(tableName)) return configs.getNote();
+//        if (settings.getTableName().equalsIgnoreCase(tableName)) return settings.getNote();
+//        if (users.getTableName().equalsIgnoreCase(tableName)) return users.getNote();
+//        for (Lever lever : Levers.list)
+//            if (lever.toValue().getTableName().equalsIgnoreCase(tableName))
+//                return lever.toValue().getNote();
+//        for (Device device : Devices.list)
+//            for (Value value : device.getValues())
+//                if (value.getTableName().equalsIgnoreCase(tableName))
+//                    return value.getNote();
+//        return "";
+//    }
 
     public static long getTableRows(String tableName){
         long result = 0;
         if(!connected()) return result;
         try {
+
             Statement statement = connection.createStatement();
             if(!statement.execute("SELECT COUNT(*) FROM " + tableName))
                 return  result;

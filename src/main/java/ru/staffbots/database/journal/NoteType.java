@@ -34,9 +34,11 @@ public enum NoteType {
     public static NoteType valueOf(int noteType) {
         return (NoteType) map.get(noteType);
     }
+
     public int getValue() {
         return value;
     }
+
     public String getName() {
         return name().toLowerCase();
     }

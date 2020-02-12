@@ -127,28 +127,20 @@ public class Journal extends DBTable {
     }
 
     public ArrayList<Note> getJournal(Map<Integer, Boolean> noteTypes, String searchString){
-        ArrayList<Note> journal = new ArrayList();
+        ArrayList<Note> result = new ArrayList();
         try {
-            String condition = null;
+            String condition = "((noteName IS NULL)";
             for (NoteType noteType : NoteType.values())
                 if (noteTypes.containsKey(noteType.getValue()))
                     if (noteTypes.get(noteType.getValue()))
-                    {
-                        condition = (condition == null) ? " (" : condition + " OR ";
-                            condition += "(";
-                            condition += "noteType = ";
-                            condition += noteType.getValue();
-                            condition += ")";
-                    }
-            condition = (condition == null) ? "(noteType = -1)" : condition + ")";
+                        condition += " OR (noteType = " + noteType.getValue() + ")";
+            condition += ")";
             String fromCondition = (period.getFromDate() == null) ? "" : " AND (? <= moment)";
             String toCondition = (period.getToDate() == null) ? "" : " AND (moment <= ?)";
-            PreparedStatement statement = Database.getConnection().prepareStatement(
-                    "SELECT * FROM (SELECT moment, noteType, noteName, noteVariables FROM " + getTableName()
-                            + " WHERE " + condition + fromCondition + toCondition
-                            //+ " AND (LOWER(noteValue) LIKE '%" + searchString.toLowerCase()+ "%')"
-                            + " ORDER BY moment DESC LIMIT "  + getCount()
-                            + ") sub ORDER BY moment ASC");
+            String sql ="SELECT moment, noteType, noteName, noteVariables FROM " + getTableName()
+                    + " WHERE " + condition + fromCondition + toCondition
+                    + " ORDER BY moment DESC ";
+            PreparedStatement statement = Database.getConnection().prepareStatement(sql);
 
             if (period.getFromDate() != null)
                 statement.setTimestamp(1,
@@ -160,7 +152,7 @@ public class Journal extends DBTable {
 
             if(statement.execute()) {
                 ResultSet resultSet = statement.getResultSet();
-                while (resultSet.next()) {
+                while (resultSet.next() && (result.size() < getCount())) {
                     Date date = new Date(resultSet.getTimestamp(1).getTime());
                     Note note = new Note(
                             date,
@@ -168,10 +160,12 @@ public class Journal extends DBTable {
                             resultSet.getString(3),
                             resultSet.getString(4));
                     if ((searchString == null) || searchString.trim().isEmpty())
-                        journal.add(note);
+                        result.add(note);
                     else
                         if (note.toString().toLowerCase().indexOf(searchString.trim().toLowerCase()) > 0)
-                            journal.add(note);
+                            result.add(note);
+
+
                 }
             }
 
@@ -179,7 +173,7 @@ public class Journal extends DBTable {
             //Journal.add("Журнал не сформирован", NoteType.ERROR, exception);
         }
 
-        return journal;
+        return result;
     }
 
 }

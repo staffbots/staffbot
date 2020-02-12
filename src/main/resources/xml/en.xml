@@ -25,6 +25,12 @@
             pause       = Pause
             stop        = Stop
         </tasksstatus>
+        <taskstatus>
+            new       =
+            waiting   = Waiting
+            execution = Execution
+            old       =
+        </taskstatus>
     </enums>
 
     <application>
@@ -109,7 +115,8 @@
             empty_journal     = There are no records for the specified filter
             date_title        = Date
             note_title        = Note
-            total_title       = Records count:
+            start_title       = Start application
+            total_title       = Total:
         </journal>
         <users>
             page_title       = Users
@@ -130,7 +137,8 @@
             dbclean_title     = Database cleanup
             journal_title     = Leave the last in the event journal
             tables_title      = Leave the last in the value tables
-            clean_button      = Clear now
+            clean_button      = Clean
+            clean_hint        = Clean now
             autoclean_off     = Turn off automatic cleaning
             autoclean_on      = Turn on automatic cleaning every
             record_measure    = records
@@ -145,6 +153,7 @@
             table_rows        = Rows
             rows_hint         = Records count in table
             table_note        = Description
+            table_unuse       = Table unuse
             shutdown_button   = Shutdown
             shutdown_hint     = Shutdown the operating system
             exit_button       = Exit

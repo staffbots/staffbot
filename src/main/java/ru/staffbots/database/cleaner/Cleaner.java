@@ -134,7 +134,7 @@ public class Cleaner {
     }
 
     private long cleanByCount(DBTable table, long count){
-        long recordsCount = table.getRecordsCount();
+        long recordsCount = table.getRows();
         if (recordsCount <= count) return 0;
         String query = "DELETE FROM " + table.getTableName() +
                 " ORDER BY moment ASC LIMIT " + (recordsCount - count);

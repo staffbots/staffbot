@@ -72,8 +72,8 @@ public class Task extends Thread implements DelayFunction {
         try {
             if (!silenceMode) {
                 status = TaskStatus.WAITING;
-                statusString = "Запуск ожидается "
-                        + DateValue.toString(new Date(System.currentTimeMillis() + delay), DateFormat.DATETIME);
+                String runTime = DateValue.toString(new Date(System.currentTimeMillis() + delay), DateFormat.DATETIME);
+                statusString = status.getDescription() + " (" + runTime + ")";
                 Journal.add(note + ": " + statusString);
             }
             // Ожидаем запуск
@@ -86,7 +86,7 @@ public class Task extends Thread implements DelayFunction {
 
         if (!isInterrupted()) {
             status = TaskStatus.EXECUTION;
-            statusString = "Выполняется";
+            statusString = status.getDescription();
             // Выполняем задачу
             action.run();
 

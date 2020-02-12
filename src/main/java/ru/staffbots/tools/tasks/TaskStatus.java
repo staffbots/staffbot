@@ -1,5 +1,7 @@
 package ru.staffbots.tools.tasks;
 
+import ru.staffbots.tools.Translator;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,9 +20,9 @@ public enum TaskStatus {
     }
 
 
-  //  public String getDescription(){
-  //      return description;
-  //  }
+    public String getDescription(){
+        return Translator.getValue("taskstatus", getName());
+    }
 
     static {
         for (TaskStatus status : TaskStatus.values()) {
@@ -33,6 +35,10 @@ public enum TaskStatus {
 
     public int getValue() {
         return value;
+    }
+
+    public String getName() {
+        return name().toLowerCase();
     }
 
 }
