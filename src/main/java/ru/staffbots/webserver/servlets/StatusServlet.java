@@ -112,6 +112,8 @@ public class StatusServlet extends BaseServlet {
     }
 
     private boolean buttonApplyClick(HttpServletRequest request){
+        accountService.setAttribute(request,"plot_fromdate");
+        accountService.setAttribute(request,"plot_todate");
         for (String checkboxName : checkboxes){
             String checkboxValueStr = (request.getParameter(checkboxName) == null) ? "false" : "true";
             accountService.setAttribute(request, checkboxName, checkboxValueStr);
