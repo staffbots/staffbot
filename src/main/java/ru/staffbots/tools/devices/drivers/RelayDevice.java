@@ -2,7 +2,6 @@ package ru.staffbots.tools.devices.drivers;
 
 import com.pi4j.io.gpio.*;
 import ru.staffbots.tools.devices.Device;
-import ru.staffbots.tools.devices.DevicePin;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.values.BooleanValue;
 import ru.staffbots.tools.values.ValueMode;
@@ -34,7 +33,10 @@ public class RelayDevice extends Device {
         this.value = new BooleanValue(name, note, valueMode, value);
 
         values.add(this.value);
-        Devices.putToPins(pin, new DevicePin(name));
+
+        putPin(pin, "");
+
+//        if (!Devices.putDevice(this)) return;
 
 //        this.value.trueValue = "<input type=\"checkbox\" checked disabled>";
 //        this.value.falseValue = "<input type=\"checkbox\" disabled>";

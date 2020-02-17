@@ -3,9 +3,7 @@ package ru.staffbots.tools.devices.drivers;
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.wiringpi.Gpio;
 import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.devices.Device;
-import ru.staffbots.tools.devices.DevicePin;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.values.DoubleValue;
 import ru.staffbots.tools.values.ValueMode;
@@ -46,8 +44,9 @@ public class SensorDHT22Device extends Device {
         values.add(this.temperature);
         values.add(this.humidity);
 
+        putPin(pin, "DATA");
 
-        Devices.putToPins(pin, new DevicePin(name,"DATA"));
+//        if (!Devices.putDevice(this)) return;
 
         pinNumber = pin.getAddress();
 

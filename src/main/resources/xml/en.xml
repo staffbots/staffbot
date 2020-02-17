@@ -181,6 +181,7 @@
             device_pins        = Pins
             device_hint        = Device pin
             controller_hint    = Controller pin
+            busaddress_hint    = Bus address I2C
             dberror_title      = No database connect
             message_title      = Message
             trace_title        = Stack trace
@@ -259,6 +260,7 @@
             busy_host       = Unsuccessful attempt to run a browser. Port in use
             start_server    = Error starting web server. Message: %s%
             shutdown_error  = Command %s% execution error. Message: %s%
+            overlap_pin     = Overlap pin in device %s%
         </error>
     </journal>
 

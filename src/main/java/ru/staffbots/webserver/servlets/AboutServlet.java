@@ -81,8 +81,9 @@ public class AboutServlet extends BaseServlet {
                         pageVariables.put("device_description", "");
 
                     }
-                    pageVariables.put("device_pin", Devices.pins.get(pin).pinNote);
+                    pageVariables.put("device_pin", device.getPinName(pin));
                     pageVariables.put("controller_pin", pin.getName());
+                    pageVariables.put("busaddress_pin", device.busAddress < 0 ? "" : device.busAddress);
                     context += fillTemplate(templateFileName, pageVariables);
                     i++;
                 }

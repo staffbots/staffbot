@@ -184,9 +184,9 @@ abstract public class Value extends DBTable {
         Journal.add(NoteType.WARNING, "set_random", name, note, Integer.toString(i));
     }
 
+    // Изменяется ли на закладке "Управление"
     protected LeverMode leverMode = LeverMode.CHANGEABLE;
 
-    // Является ли это параметром, который изменяется на закладке "Управление"
     public boolean isChangeable(){
         return (leverMode == LeverMode.CHANGEABLE);
     }

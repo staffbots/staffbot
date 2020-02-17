@@ -24,54 +24,47 @@ public class Tester extends Staffbot {
     public static void main(String[] args) {
         solutionInit(
                 MethodHandles.lookup().lookupClass().getSimpleName(), // Имя текущего класса
-                new Device[] {ledDevice, sensor, sonar, button}, // Инициализируем список устройств
-                new Object[] {"Группа параметров", booleanLever, delayLever, buttonLever, listLever, dateLever}, // Инициализируем список элементов управления
-                new Task[] {task, testTask}
+                new Device[] {ledDevice, distanceDevice, sensorDevice, buttonDevice}, // Инициализируем список устройств
+                new Lever[] {buttonLever, distanceLever}, // Инициализируем список элементов управления
+                new Task[] {}
         );
     }
+
+
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  Levers - Рычаги
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    static LongLever delayLever = new LongLever("delayLever",
-            "Частота опроса, сек", ValueMode.TEMPORARY, 20, 2, 60*60);
+    static LedDevice ledDevice = new LedDevice("ledDevice",
+            "Светодиод", ValueMode.TEMPORARY, RaspiPin.GPIO_29, false);
+
+    static DoubleLever distanceLever = new DoubleLever("distanceLever",
+            "Расстояние", LeverMode.OBSERVABLE, 3);
+
+    static SonarHCSR04Device distanceDevice = new SonarHCSR04Device("distanceDevice",
+            "Расстояние", ValueMode.TEMPORARY, RaspiPin.GPIO_25, RaspiPin.GPIO_28);
+
+    static SensorDHT22Device sensorDevice = new SensorDHT22Device("sensorDevice",
+           "Датчик температуры и влажности", RaspiPin.GPIO_04);
+
+    static Runnable buttonClickAction = () -> {
+        ledDevice.set(!ledDevice.get());
+        distanceLever.setValue(distanceDevice.getDistance());
+        //Journal.addAnyNote("!!! Temperature = " + sensor.getTemperature());
+        //Journal.addAnyNote("!!! Humidity = " + sensor.getHumidity());
+    };
 
     static ButtonLever buttonLever = new ButtonLever("buttonLever",
-        "Выполнить","Калибровка датчика, методом триангуляции континума",
-        () -> {
-        // Обработка нажатия кнопки
-        Journal.addAnyNote("Нажата кнопка калибровки датчика");
-    });
-
-    static ListLever listLever = new ListLever("listLever",
-            "Тестовый список", "строка 0","строка 1","строка 2","строка 3");
-
-    static DateLever dateLever = new DateLever("dateLever",
-            "тестовая дата", ValueMode.STORABLE, LeverMode.CHANGEABLE, DateFormat.SHORTTIME, "12:22");
-
-    static BooleanLever booleanLever = new BooleanLever("booleanLever",
-            "я гениален", ValueMode.STORABLE, false);
-
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-    //  Devices - Устройства
-    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-    static LedDevice ledDevice = new LedDevice("ledDevice",
-            "Индикатор конца света", RaspiPin.GPIO_01, false);
-    static SensorDHT22Device sensor = new SensorDHT22Device("sensorDevice",
-            "Датчик температуры и влажности", RaspiPin.GPIO_25);
-    static SonarHCSR04Device sonar = new SonarHCSR04Device("sonarDevice",
-        "Расстояние до врага", RaspiPin.GPIO_04, RaspiPin.GPIO_05);
-    static ButtonDevice button = new ButtonDevice("buttonDevice",
-        "Ракетно ядерный залп", ValueMode.TEMPORARY, RaspiPin.GPIO_06,
-        () -> {// Обработка нажатия кнопки
-            //sensor.dataRead();
-            Journal.addAnyNote("!!! Temperature = " + sensor.getTemperature());
-            Journal.addAnyNote("!!! Humidity = " + sensor.getHumidity());
-            //System.out.println("Distance = " + sonar.getDistance());
-        }
+        "Кнопка","Кнопка интефейса",
+            buttonClickAction
     );
+
+    static ButtonDevice buttonDevice = new ButtonDevice("buttonDevice",
+        "Физическая кнопка", ValueMode.TEMPORARY, RaspiPin.GPIO_06,
+            buttonClickAction
+    );
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  Tasks - Зададия
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,7 +76,7 @@ public class Tester extends Staffbot {
     static Task task = new Task(
             taskNote, true,
         () -> { // Расчёт задержки перед следующим запуском задания
-            long delay = delayLever.getValue()*1000;
+            long delay = 5000;//delayLever.getValue()*1000;
             return delay;
         },
         () -> { // Задание

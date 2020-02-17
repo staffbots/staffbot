@@ -180,8 +180,8 @@ public abstract class Staffbot {
             Database.SERVER = property.getProperty("db.server", Database.SERVER);
             Database.PORT = property.getIntegerProperty("db.port", Database.PORT);
             Database.NAME = property.getProperty("db.name", (projectName + "_" + solutionName).toLowerCase());
-            Database.USER = property.getProperty("db.user", Database.USER);
-            Database.PASSWORD = property.getProperty("db.password", Database.PASSWORD);
+            Database.USER = property.getProperty("db.user", Database.USER).trim();
+            Database.PASSWORD = property.getProperty("db.password", Database.PASSWORD).trim();
             Database.DROP = property.getBooleanProperty("db.drop", Database.DROP);
 
             Devices.USED = Devices.isRaspbian() && property.getBooleanProperty("pi.used", Devices.USED);

@@ -6,10 +6,7 @@ import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
 import ru.staffbots.tools.devices.Device;
-import ru.staffbots.tools.devices.DevicePin;
 import ru.staffbots.tools.devices.Devices;
-import ru.staffbots.tools.values.DoubleValue;
-import ru.staffbots.tools.values.ValueMode;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -37,21 +34,24 @@ public abstract class I2CBusDevice extends Device {
     }
 
 
-    public I2CBusDevice(String name, String note, int busNumber, int address) {
+    public I2CBusDevice(String name, String note, int busNumber, int busAddress) {
 
         this.model = "Шина I2C"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
         this.note = note; // Описание устройства (например, "Сонар для измерения уровня воды")
         this.name = name; // Уникальное имя устройства, используется для именования таблиц в БД (например, "WaterSonar")
 
+
         for (int pinNumber = 0; pinNumber < 2; pinNumber++)
-            Devices.putToPins(getPin(busNumber, pinNumber), new DevicePin(name, getPinNote(busNumber, pinNumber)));
+            putPin(getPin(busNumber, pinNumber), busAddress, getPinNote(pinNumber));
+
+//        if (!Devices.putDevice(this)) return;
 
         if (!Devices.USED) return;
 
         try {
             bus = I2CFactory.getInstance(busNumber);
             bus.getBusNumber();
-            device = bus.getDevice(address);
+            device = bus.getDevice(busAddress);
         } catch (I2CFactory.UnsupportedBusNumberException e) {
             e.printStackTrace();
         } catch (IOException e) {
@@ -59,9 +59,10 @@ public abstract class I2CBusDevice extends Device {
         }
     }
 
-    private String getPinNote(int busNumber, int pinNumber){
-        return ((pinNumber == 0) ? "SDA" : "SCL") + busNumber;
+    private String getPinNote(int pinNumber){
+        return ((pinNumber == 0) ? "SDA" : "SCL");
     }
+
 
     private Pin getPin(int busNumber, int pinNumber){
         // Для Rpi3

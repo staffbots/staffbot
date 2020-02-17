@@ -4,7 +4,6 @@ import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.PinState;
 import ru.staffbots.tools.devices.Device;
-import ru.staffbots.tools.devices.DevicePin;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.values.BooleanValue;
 import ru.staffbots.tools.values.ValueMode;
@@ -34,10 +33,8 @@ public class LedDevice extends Device {
         this.value = new BooleanValue(name, note, valueMode, value);
 
         values.add(this.value);
-        Devices.putToPins(pin, new DevicePin(name));
 
-//        this.value.trueValue = "<input type=\"checkbox\" checked disabled>";
-//        this.value.falseValue = "<input type=\"checkbox\" disabled>";
+        putPin(pin, "");
 
         if(!Devices.USED)return;
         gpioPin = Devices.gpioController.provisionDigitalOutputPin(getPins().get(0), getName(), PinState.LOW);

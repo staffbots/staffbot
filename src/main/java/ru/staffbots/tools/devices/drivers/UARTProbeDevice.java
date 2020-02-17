@@ -4,7 +4,6 @@ import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.io.serial.*;
 import ru.staffbots.tools.devices.Device;
-import ru.staffbots.tools.devices.DevicePin;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.values.DoubleValue;
 import ru.staffbots.tools.values.ValueMode;
@@ -12,7 +11,6 @@ import ru.staffbots.tools.values.ValueMode;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 
 // Класс не доделан в части декодирования строки, приходящей от устройства
 public abstract class UARTProbeDevice extends Device {
@@ -44,11 +42,12 @@ public abstract class UARTProbeDevice extends Device {
 
         values.add(this.value);
 
-        Devices.putToPins(txPin, new DevicePin(name, "Tx"));
-        Devices.putToPins(rxPin, new DevicePin(name, "Rx"));
+        putPin(txPin, "Tx");
+        putPin(rxPin, "Rx");
+
+//        if (!Devices.putDevice(this)) return;
 
         if (!Devices.USED) return;
-
 
         serial.addListener(new SerialDataEventListener() {
             @Override

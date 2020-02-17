@@ -51,4 +51,12 @@ public interface Lever{
         return toValue().isChangeable();
     }
 
+    default boolean isStorable(){
+        return toValue().isStorable();
+    }
+
+    default String getTableName() {
+        return  toValue().getTableName();
+    }
+
 }

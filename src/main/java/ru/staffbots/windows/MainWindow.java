@@ -1,9 +1,6 @@
 package ru.staffbots.windows;
 
-import java.awt.Dimension;
-import java.awt.Container;
-import java.awt.FlowLayout;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
@@ -91,7 +88,7 @@ public class MainWindow extends JFrame {
         button.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    java.awt.Desktop.getDesktop().browse(WebServer.getURL(сheckBox.isSelected()).toURI());
+                    Desktop.getDesktop().browse(WebServer.getURL(сheckBox.isSelected()).toURI());
                 } catch (Exception exception) {
                     Journal.add(NoteType.ERROR, "open_browser", exception.getMessage());
                 }
@@ -101,7 +98,7 @@ public class MainWindow extends JFrame {
         container.add(button);
         if (WebServer.httpUsed)
             container.add(сheckBox);
-        // Размеры и положение окна
+        // window size and location
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = 350;
         int height = 100;
@@ -110,11 +107,10 @@ public class MainWindow extends JFrame {
         setBounds(locationX, locationY, width, height);
         setResizable(false);
         setSize(width, height);
-        // Открываем окно
+        // Open window
         setVisible(true);
-
-        button.doClick();
-
+        // Run browser for management
+        //button.doClick();
     }
 
 }

@@ -129,10 +129,12 @@ public class Database {
         result.put(settings.getTableName(), settings);
         result.put(users.getTableName(), users);
         for (Lever lever : Levers.list)
-            result.put(lever.toValue().getTableName(), lever.toValue());
+            if (lever.isStorable())
+                result.put(lever.getTableName(), lever.toValue());
         for (Device device : Devices.list)
             for (Value value : device.getValues())
-                result.put(value.toValue().getTableName(), value.toValue());
+                if (value.isStorable())
+                    result.put(value.toValue().getTableName(), value.toValue());
         if (!useOnly)
         try {
             Statement statement = connection.createStatement();

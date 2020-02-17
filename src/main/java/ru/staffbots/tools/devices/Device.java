@@ -2,17 +2,56 @@ package ru.staffbots.tools.devices;
 
 import com.pi4j.io.gpio.Pin;
 import ru.staffbots.Staffbot;
+import ru.staffbots.database.journal.Journal;
+import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.values.Value;
 import ru.staffbots.webserver.servlets.*;
 
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * <b>Устройство</b>
  * Базовый класс для всех драйверов работающих с устройствами<br>
  */
 public abstract class Device{
+
+    public boolean overlap = false;
+    public int busAddress = -1;
+
+    /**
+     * Массив пинов с привязкой к пину на этом устройстве
+     */
+    private Map<Pin, String> pins = new HashMap(0);
+
+    public ArrayList<Pin> getPins(){
+        ArrayList<Pin> result = new ArrayList(0);
+        for (Pin pin: pins.keySet())
+            result.add(pin);
+        return result;
+    }
+
+    public boolean putPin(Pin pin, String name){
+        return putPin(pin, -1, name);
+    }
+
+    public boolean putPin(Pin pin, int busAddress, String name){
+        this.busAddress = busAddress;
+        if (pins.containsKey(pin)){
+            overlap = true;
+            return false;
+        } else {
+            pins.put(pin, name);
+            return true;
+        }
+    }
+
+    public String getPinName(Pin pin){
+        return pins.containsKey(pin) ? pins.get(pin) : "";
+    }
+
 
     // Уникальное имя устройства, значение задаётся при описании объекта дочернего класса
     // (конкретного устройства)
@@ -63,23 +102,6 @@ public abstract class Device{
     protected void reset() {
         for(Value value: values)
             value.reset();
-    }
-
-
-    public ArrayList<DevicePin> getDevicePins(){
-        ArrayList<DevicePin> devicePins = new ArrayList();
-        for (Pin pin : Devices.pins.keySet())
-            if (name.equals(Devices.pins.get(pin).device))
-                devicePins.add(Devices.pins.get(pin));
-        return devicePins;
-    }
-
-    public ArrayList<Pin> getPins(){
-        ArrayList<Pin> pins = new ArrayList();
-        for (Pin pin : Devices.pins.keySet())
-            if (name.equals(Devices.pins.get(pin).device))
-                pins.add(pin);
-        return pins;
     }
 
     public ArrayList<Value> getValues(){

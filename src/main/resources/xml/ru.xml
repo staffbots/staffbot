@@ -182,6 +182,7 @@
             device_pins        = Пины
             device_hint        = Пин устройства
             controller_hint    = Пин контроллера
+            busaddress_hint    = Адресс шины I2C
             dberror_title      = Нет подключнения к базе данных
             message_title      = Сообщение
             trace_title        = Последовательность вызовов
@@ -260,6 +261,7 @@
             busy_host       = Неудачная попытка запустить веб-сервер. Порт занят
             start_server    = Ошибка запуска веб-сервера. Сообщение: %s%
             shutdown_error  = Ошибка выполнения команды %s%: %s%)
+            overlap_pin     = Повторное использование пина в устройстве %s%
         </error>
     </journal>
 

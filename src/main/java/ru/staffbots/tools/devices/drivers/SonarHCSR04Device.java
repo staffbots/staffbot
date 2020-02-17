@@ -4,9 +4,7 @@ import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.Pin;
 import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.devices.Device;
-import ru.staffbots.tools.devices.DevicePin;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.values.DoubleValue;
 import ru.staffbots.tools.values.ValueMode;
@@ -55,8 +53,10 @@ public class SonarHCSR04Device extends Device {
         this.value = new DoubleValue(name, "Дистанция, см", valueMode, ACCURACY);
 
         values.add(this.value);
-        Devices.putToPins(pinTRIG, new DevicePin(name, "TRIG"));
-        Devices.putToPins(pinECHO, new DevicePin(name, "ECHO"));
+        putPin(pinTRIG,"TRIG");
+        putPin(pinECHO,"ECHO");
+
+//        if (!Devices.putDevice(this)) return;
 
         if (!Devices.USED) return;
         gpioPinTRIG = Devices.gpioController.provisionDigitalOutputPin(getPins().get(0));

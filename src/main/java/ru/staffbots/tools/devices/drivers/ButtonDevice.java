@@ -4,7 +4,6 @@ import com.pi4j.io.gpio.*;
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
 import ru.staffbots.tools.devices.Device;
-import ru.staffbots.tools.devices.DevicePin;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.values.BooleanValue;
 import ru.staffbots.tools.values.ValueMode;
@@ -31,9 +30,13 @@ public class ButtonDevice extends Device {
         this.value = new BooleanValue(name, note, valueMode, false);
 
         values.add(this.value);
-        Devices.putToPins(pin, new DevicePin(name));
+
+        putPin(pin, "");
+
+//        if (!Devices.putDevice(this)) return;
 
         if(!Devices.USED)return;
+
         gpioPin = Devices.gpioController.provisionDigitalInputPin(pin, PinPullResistance.PULL_DOWN);
         //gpioPin.setShutdownOptions(true, PinState.LOW);
         gpioPin.setShutdownOptions(true);

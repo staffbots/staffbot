@@ -4,6 +4,7 @@ import com.pi4j.io.gpio.GpioController;
 import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.Pin;
 import ru.staffbots.database.journal.Journal;
+import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.values.Value;
 
 import java.util.ArrayList;
@@ -14,6 +15,7 @@ import java.util.Map;
  * Устройства
  */
 public class Devices{
+
 
     /*
      * Парамер включения/отключения gpio-библиотек для контроллера Raspberry Pi:
@@ -29,14 +31,33 @@ public class Devices{
      */
     public static ArrayList<Device> list = new ArrayList();
 
-    /**
-     * Массив пинов с привязкой к пину на этом устройстве
-     */
-    public static Map<Pin, DevicePin> pins = new HashMap();
+    public static ArrayList<Pin> getPins(){
+        ArrayList<Pin> result = new ArrayList(0);
+        for (Device device: list)
+            result.addAll(device.getPins());
+        return result;
+    }
 
-    public static boolean putToPins(Pin pin, DevicePin devicePin){
-        pins.put(pin, devicePin);
-        return true;
+    public static int getBusAddress(Pin pin) {
+        for (Device device: list)
+            if (device.getPins().contains(pin))
+                return device.busAddress;
+        return -1;
+    }
+
+    public static boolean putDevice(Device device) {
+        boolean overlap = device.overlap;
+        if (!overlap)
+            for (Pin pin: getPins())
+                if (device.getPins().contains(pin)) {
+                    overlap = (device.busAddress < 0) ? true : (device.busAddress == getBusAddress(pin) || (getBusAddress(pin) == -1));
+                    if (overlap) break;
+                }
+        if (overlap)
+            Journal.add(NoteType.ERROR, "overlap_pin", device.getName());
+        else
+            list.add(device);
+        return !overlap;
     }
 
     /**
@@ -58,18 +79,17 @@ public class Devices{
             Devices.USED = false;
             return null;
         }
-
     }
 
     public static void init(Device... devices) {
         list.clear();
         if (devices == null) devices = new Device[0];
-        for (Device device : devices) {
-            if (list.contains(device)) continue;
-            list.add(device);
-            for (Value value : device.getValues())
-                if (value.isStorable())
-                    value.createTable();
+        for (Device device: devices) {
+            if(list.contains(device)) continue;
+            if(putDevice(device))
+                for (Value value : device.getValues())
+                    if (value.isStorable())
+                        value.createTable();
         }
         if (devices.length > 0)
             Journal.add("init_device");
