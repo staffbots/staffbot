@@ -4,6 +4,8 @@ import com.pi4j.io.gpio.Pin;
 import ru.staffbots.Staffbot;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.tools.devices.drivers.general.I2CBusDevice;
+import ru.staffbots.tools.devices.drivers.general.SpiBusDevice;
 import ru.staffbots.tools.values.Value;
 import ru.staffbots.webserver.servlets.*;
 
@@ -19,7 +21,7 @@ import java.util.Map;
 public abstract class Device{
 
     public boolean overlap = false;
-    public int busAddress = -1;
+
 
     /**
      * Массив пинов с привязкой к пину на этом устройстве
@@ -34,11 +36,6 @@ public abstract class Device{
     }
 
     public boolean putPin(Pin pin, String name){
-        return putPin(pin, -1, name);
-    }
-
-    public boolean putPin(Pin pin, int busAddress, String name){
-        this.busAddress = busAddress;
         if (pins.containsKey(pin)){
             overlap = true;
             return false;
@@ -51,7 +48,6 @@ public abstract class Device{
     public String getPinName(Pin pin){
         return pins.containsKey(pin) ? pins.get(pin) : "";
     }
-
 
     // Уникальное имя устройства, значение задаётся при описании объекта дочернего класса
     // (конкретного устройства)
@@ -136,5 +132,12 @@ public abstract class Device{
         }
     }
 
+    public int getI2CBusAddress() {
+       return (this instanceof I2CBusDevice) ? ((I2CBusDevice) this).getBusAddress() : -1;
+    }
+
+    public int getSpiBusChannel() {
+        return (this instanceof SpiBusDevice) ? ((SpiBusDevice) this).getBusChannel() : -1;
+    }
 
 }

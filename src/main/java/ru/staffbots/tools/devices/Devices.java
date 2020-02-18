@@ -5,6 +5,7 @@ import com.pi4j.io.gpio.GpioFactory;
 import com.pi4j.io.gpio.Pin;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.tools.devices.drivers.general.I2CBusDevice;
 import ru.staffbots.tools.values.Value;
 
 import java.util.ArrayList;
@@ -38,10 +39,10 @@ public class Devices{
         return result;
     }
 
-    public static int getBusAddress(Pin pin) {
+    public static int getI2CBusAddress(Pin pin) {
         for (Device device: list)
             if (device.getPins().contains(pin))
-                return device.busAddress;
+                return device.getI2CBusAddress();
         return -1;
     }
 
@@ -50,7 +51,7 @@ public class Devices{
         if (!overlap)
             for (Pin pin: getPins())
                 if (device.getPins().contains(pin)) {
-                    overlap = (device.busAddress < 0) ? true : (device.busAddress == getBusAddress(pin) || (getBusAddress(pin) == -1));
+                    overlap = (device.getI2CBusAddress() < 0) ? true : (device.getI2CBusAddress() == getI2CBusAddress(pin) || (getI2CBusAddress(pin) == -1));
                     if (overlap) break;
                 }
         if (overlap)

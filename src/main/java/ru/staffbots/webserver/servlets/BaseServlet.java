@@ -45,6 +45,10 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
     }
 
     public boolean isAccessDenied(HttpServletRequest request, HttpServletResponse response)throws IOException {
+        return  isAccessDenied(request, response, true);
+    }
+
+    public boolean isAccessDenied(HttpServletRequest request, HttpServletResponse response, boolean redirecting)throws IOException {
         int userAccessLevel = accountService.getUserAccessLevel(request);
         int pageAccessLevel = pageType.getAccessLevel();
         boolean accessDenied = (userAccessLevel < pageAccessLevel);
@@ -61,7 +65,7 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
                 redirectLink = "/about";
         };
 
-        if ((redirectLink != null)&&(response != null))
+        if (redirecting && (redirectLink != null) && (response != null))
             response.sendRedirect(redirectLink);
 
         return accessDenied;
@@ -130,6 +134,7 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
     protected boolean getResponse(HttpServletRequest request, HttpServletResponse response)throws IOException {
         String name = request.getParameter("get");
         if (!getParameters.containsKey(name)) return false;
+        if (isAccessDenied(request, response, false)) return true;
         response.getOutputStream().write(getParameters.get(name).apply(request).getBytes("UTF-8"));
         response.setContentType("text/html; charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);

@@ -56,8 +56,8 @@ public class StatusServlet extends BaseServlet {
 
     // Вызывается при запросе странице с сервера
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (isAccessDenied(request, response)) return;
         if (getResponse(request, response)) return;
+        if (isAccessDenied(request, response)) return;
 
         Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
 

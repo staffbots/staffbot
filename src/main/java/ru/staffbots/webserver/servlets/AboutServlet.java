@@ -28,8 +28,8 @@ public class AboutServlet extends BaseServlet {
 
     // Вызывается при запросе странице с сервера
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-
         if (isAccessDenied(request, response)) return;
+
         Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
         pageVariables.put("website_link", Staffbot.projectWebsite);
         pageVariables.put("about_osname",System.getProperty("os.name"));
@@ -83,7 +83,19 @@ public class AboutServlet extends BaseServlet {
                     }
                     pageVariables.put("device_pin", device.getPinName(pin));
                     pageVariables.put("controller_pin", pin.getName());
-                    pageVariables.put("busaddress_pin", device.busAddress < 0 ? "" : device.busAddress);
+
+                    String bus = "";
+                    String hint = "";
+                    if (device.getI2CBusAddress() < 0) {
+                        bus = device.getSpiBusChannel() < 0 ? "" : String.valueOf(device.getSpiBusChannel());
+                        if(!bus.isEmpty())
+                            hint = "SPI";
+                    } else {
+                        bus = String.valueOf(device.getI2CBusAddress());
+                        hint = "I2C";
+                    }
+                    pageVariables.put("busaddress_hint", hint);
+                    pageVariables.put("busaddress_pin", bus);
                     context += fillTemplate(templateFileName, pageVariables);
                     i++;
                 }

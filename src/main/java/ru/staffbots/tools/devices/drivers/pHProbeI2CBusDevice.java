@@ -1,10 +1,9 @@
 package ru.staffbots.tools.devices.drivers;
 
-import ru.staffbots.tools.devices.drivers.I2CBusDevice;
+import ru.staffbots.tools.devices.drivers.general.I2CBusDevice;
 import ru.staffbots.tools.values.DoubleValue;
 import ru.staffbots.tools.values.ValueMode;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 public class pHProbeI2CBusDevice extends I2CBusDevice {

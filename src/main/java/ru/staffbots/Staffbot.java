@@ -7,6 +7,7 @@ import ru.staffbots.tools.ParsableProperties;
 import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
+import ru.staffbots.tools.devices.drivers.general.RpiModel;
 import ru.staffbots.tools.levers.Lever;
 import ru.staffbots.tools.levers.Levers;
 import ru.staffbots.tools.resources.Resources;
@@ -97,6 +98,8 @@ import java.util.Properties;
  * </code>
  */
 public abstract class Staffbot {
+
+    public static RpiModel rpiModel = RpiModel.RaspberryPi_3B_plus;
 
     /** Project name
     * <br>Определяется параметром <b>name</b> в исходном файле ресурсов <b>properties</b> перед компиляцией проекта
@@ -212,4 +215,5 @@ public abstract class Staffbot {
     protected static String getClassName(){
         return MethodHandles.lookup().lookupClass().getSimpleName();
     }
+
 }

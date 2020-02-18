@@ -45,8 +45,8 @@ public class ControlServlet extends BaseServlet {
     // Вызывается при запросе страницы с сервера
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (isAccessDenied(request, response)) return;
         if (getResponse(request, response)) return;
+        if (isAccessDenied(request, response)) return;
 
         Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
 
@@ -125,7 +125,7 @@ public class ControlServlet extends BaseServlet {
     }
 
     // Проверяем, не запрос ли это на обработку нажатия кнопки
-    // вызовом control_button_onclick() из base.js
+    // вызовом control_button_onclick() из .js
     private boolean buttonLeverClick(HttpServletRequest request) {
         for (ButtonLever buttonLever: Levers.getButtonList())
             if (request.getParameter(buttonLever.getName().toLowerCase() + "_lever") != null){

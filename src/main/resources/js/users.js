@@ -38,5 +38,7 @@ function rolelist(){
         function(data) {
             $('#role_list').html(data);
         }
-    );
+    ).fail(function() {
+                 location.reload();
+    });
 }

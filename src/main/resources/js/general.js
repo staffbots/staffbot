@@ -13,15 +13,6 @@ function element(name){
     return $('[name="' + name + '"]')[0];
 }
 
-function include(url) {
-    var script = document.createElement('script');
-    script.src = url;
-    document.getElementsByTagName('head')[0].appendChild(script);
-    //$("head").append(
-   // alert(url);
-    //element('head').appendChild(script);
-}
-
 // Показ продолжительности исполенения процесса
 function updateTime(){
     var starttime = element('start_time').value;
@@ -46,7 +37,9 @@ function updateTasks(){
         function(data) {
             $('#task_list').html(data);
         }
-    );
+    ).fail(function() {
+                 location.reload();
+             });
     setTimeout(updateTasks, updateDelay);
 }
 
@@ -73,7 +66,9 @@ function updateStatus(){
         function(data) {
             $('#process_status').html(data);
         }
-    );
+    ).fail(function() {
+                 location.reload();
+    });
     setTimeout(updateStatus, updateDelay);
 }
 
@@ -85,8 +80,9 @@ function updateValue(name){
         '/status?get=' + name,
         function(data) {
             $('#' + name + '_value').html(data);
-        }
-    );
+        }).fail(function() {
+            location.reload();
+        });
 
     setTimeout(updateValue, updateDelay, name);
 }

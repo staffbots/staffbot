@@ -1,10 +1,11 @@
-package ru.staffbots.tools.devices.drivers;
+package ru.staffbots.tools.devices.drivers.general;
 
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
+import ru.staffbots.Staffbot;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import java.util.Arrays;
 /**
  * https://www.atlas-scientific.com/product_pages/kits/ph-kit.html
  */
+
 public abstract class I2CBusDevice extends Device {
 
     protected Charset charset = StandardCharsets.US_ASCII;
@@ -29,26 +31,26 @@ public abstract class I2CBusDevice extends Device {
         return bus.getBusNumber();
     }
 
-    public int getAddress(){
-        return device.getAddress();
-    }
+    private int busAddress;
 
+    public int getBusAddress(){
+        return (device == null) ? busAddress : device.getAddress();
+    }
 
     public I2CBusDevice(String name, String note, int busNumber, int busAddress) {
 
         this.model = "Шина I2C"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
         this.note = note; // Описание устройства (например, "Сонар для измерения уровня воды")
         this.name = name; // Уникальное имя устройства, используется для именования таблиц в БД (например, "WaterSonar")
-
+        this.busAddress = busAddress;
 
         for (int pinNumber = 0; pinNumber < 2; pinNumber++)
-            putPin(getPin(busNumber, pinNumber), busAddress, getPinNote(pinNumber));
-
-//        if (!Devices.putDevice(this)) return;
+            putPin(getPin(busNumber, pinNumber),getPinNote(pinNumber));
 
         if (!Devices.USED) return;
 
         try {
+
             bus = I2CFactory.getInstance(busNumber);
             bus.getBusNumber();
             device = bus.getDevice(busAddress);
@@ -63,12 +65,17 @@ public abstract class I2CBusDevice extends Device {
         return ((pinNumber == 0) ? "SDA" : "SCL");
     }
 
-
     private Pin getPin(int busNumber, int pinNumber){
-        // Для Rpi3
-        switch (busNumber) {
-            case 0: return (pinNumber == 0) ? RaspiPin.GPIO_30 : RaspiPin.GPIO_31;
-            case 1: return (pinNumber == 0) ? RaspiPin.GPIO_08 : RaspiPin.GPIO_09;
+        switch (Staffbot.rpiModel) {
+            case RaspberryPi_B_plus:
+            case RaspberryPi_2B:
+            case RaspberryPi_3B:
+            case RaspberryPi_3B_plus:
+                switch (busNumber) {
+                    case 0: return (pinNumber == 0) ? RaspiPin.GPIO_30 : RaspiPin.GPIO_31;
+                    case 2:
+                    case 1: return (pinNumber == 0) ? RaspiPin.GPIO_08 : RaspiPin.GPIO_09;
+                }
         }
         return null;
     }
