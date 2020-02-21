@@ -33,4 +33,7 @@ public class ParsableProperties extends Properties {
         return value;
     }
 
+    public String getProperty(String key, String defaultValue){
+        return super.getProperty(key, defaultValue).trim();
+    }
 }

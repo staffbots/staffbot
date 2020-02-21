@@ -1,6 +1,7 @@
 package ru.staffbots;
 
 import com.pi4j.io.gpio.RaspiPin;
+import com.pi4j.system.SystemInfo;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.levers.DoubleLever;
@@ -21,6 +22,7 @@ public class Sample extends Staffbot {
     // Точка входа приложения
     public static void main(String[] args) {
         solutionInit(
+                SystemInfo.BoardType.RaspberryPi_3B,
                 MethodHandles.lookup().lookupClass().getSimpleName(), // Имя текущего класса
                 ()->{
                     Levers.init(frequencyLever); // Инициализируем список элементов управления

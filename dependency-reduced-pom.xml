@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>ru.staffbots</groupId>
-  <artifactId>Staffbots.Calibration</artifactId>
+  <artifactId>Staffbots.Tester</artifactId>
   <version>${staffbots.version}</version>
   <url>${staffbots.website}</url>
   <build>
@@ -74,7 +74,7 @@
     <pi4j.version>1.2</pi4j.version>
     <exec.maven.version>1.6.0</exec.maven.version>
     <properties.maven.plugin>1.0.0</properties.maven.plugin>
-    <mainClass.name>ru.staffbots.Calibration</mainClass.name>
+    <mainClass.name>ru.staffbots.Tester</mainClass.name>
     <maven.compiler.version>3.8.1</maven.compiler.version>
     <propertiesFile>src/main/resources/properties</propertiesFile>
     <mysql.version>8.0.16</mysql.version>

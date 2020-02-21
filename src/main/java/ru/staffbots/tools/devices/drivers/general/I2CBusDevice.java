@@ -23,7 +23,7 @@ public abstract class I2CBusDevice extends Device {
 
     protected int maxSize = 40;
 
-    private I2CDevice device;
+    protected I2CDevice device;
 
     private I2CBus bus;
 
@@ -39,7 +39,7 @@ public abstract class I2CBusDevice extends Device {
 
     public I2CBusDevice(String name, String note, int busNumber, int busAddress) {
 
-        this.model = "Шина I2C"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
+        this.model = "I2C bus"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
         this.note = note; // Описание устройства (например, "Сонар для измерения уровня воды")
         this.name = name; // Уникальное имя устройства, используется для именования таблиц в БД (например, "WaterSonar")
         this.busAddress = busAddress;
@@ -66,14 +66,13 @@ public abstract class I2CBusDevice extends Device {
     }
 
     private Pin getPin(int busNumber, int pinNumber){
-        switch (Staffbot.rpiModel) {
-            case RaspberryPi_B_plus:
+        switch (Staffbot.boardType) {
+            case RaspberryPi_B_Plus:
             case RaspberryPi_2B:
             case RaspberryPi_3B:
-            case RaspberryPi_3B_plus:
+            case RaspberryPi_3B_Plus:
                 switch (busNumber) {
                     case 0: return (pinNumber == 0) ? RaspiPin.GPIO_30 : RaspiPin.GPIO_31;
-                    case 2:
                     case 1: return (pinNumber == 0) ? RaspiPin.GPIO_08 : RaspiPin.GPIO_09;
                 }
         }
@@ -87,8 +86,12 @@ public abstract class I2CBusDevice extends Device {
         return className.substring(0, className.length() - 6);
     }
 
-    public void write(byte[] bytes) throws IOException{
-        device.write(bytes);
+    public void write(byte[] data) throws IOException{
+        device.write(data);
+    }
+
+    public void write(byte data) throws IOException{
+        device.write(data);
     }
 
     public void write(String string) throws IOException{
@@ -98,17 +101,17 @@ public abstract class I2CBusDevice extends Device {
     public byte[] read() throws Exception{
         byte[] bytes = new byte[maxSize];
         device.read(bytes, 0, maxSize);
+        return bytes;
+    }
+
+    public String readln() throws Exception{
+        byte[] bytes = read();
         int size = maxSize - 1;
         while (size > 1) {
             if (bytes[size] > 0) break;
             size--;
         }
-        return Arrays.copyOfRange(bytes, 1, size + 1);
-
-    }
-
-    public String readln() throws Exception{
-        return new String(read(), charset);
+        return new String(Arrays.copyOfRange(bytes, 1, size + 1), charset);
     }
 
     public String readln(String command, int delay) throws Exception{

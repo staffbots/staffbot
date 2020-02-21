@@ -1,6 +1,7 @@
 package ru.staffbots;
 
 import com.pi4j.io.gpio.RaspiPin;
+import com.pi4j.system.SystemInfo;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.dates.DateAccuracy;
@@ -23,8 +24,9 @@ public class Tester extends Staffbot {
     // Точка входа при запуске приложения
     public static void main(String[] args) {
         solutionInit(
+                SystemInfo.BoardType.RaspberryPi_3B,
                 MethodHandles.lookup().lookupClass().getSimpleName(), // Имя текущего класса
-                new Device[] {ledDevice, distanceDevice, sensorDevice, buttonDevice}, // Инициализируем список устройств
+                new Device[] {bh1750Device, ledDevice, distanceDevice, sensorDevice, buttonDevice}, // Инициализируем список устройств
                 new Lever[] {buttonLever, distanceLever}, // Инициализируем список элементов управления
                 new Task[] {}
         );
@@ -45,12 +47,16 @@ public class Tester extends Staffbot {
     static SonarHCSR04Device distanceDevice = new SonarHCSR04Device("distanceDevice",
             "Расстояние", ValueMode.TEMPORARY, RaspiPin.GPIO_25, RaspiPin.GPIO_28);
 
+    static BH1750Device bh1750Device = new BH1750Device("bh1750Device",
+            "Освещение", 1);
+
     static SensorDHT22Device sensorDevice = new SensorDHT22Device("sensorDevice",
            "Датчик температуры и влажности", RaspiPin.GPIO_04);
 
     static Runnable buttonClickAction = () -> {
         ledDevice.set(!ledDevice.get());
         distanceLever.setValue(distanceDevice.getDistance());
+        bh1750Device.getLightIntensity();
         //Journal.addAnyNote("!!! Temperature = " + sensor.getTemperature());
         //Journal.addAnyNote("!!! Humidity = " + sensor.getHumidity());
     };

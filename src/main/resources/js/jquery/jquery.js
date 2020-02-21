@@ -4171,7 +4171,7 @@ Expr = Sizzle.selectors = {
 
 		"CHILD": function( match ) {
 			/* matches from matchExpr["CHILD"]
-				1 type (only|nth|...)
+			"	, 0), type (only|nth|...)
 				2 argument (even|odd|\d*|\d*n([+-]\d+)?|...)
 				3 xn-component of xn+y argument ([+-]?\d*n|)
 				4 sign of xn-component

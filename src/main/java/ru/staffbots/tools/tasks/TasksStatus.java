@@ -12,6 +12,7 @@ public enum TasksStatus {
     STOP(2);
 
     private int value;
+
     private static Map map = new HashMap<>();
 
     TasksStatus(int value) {
@@ -27,6 +28,7 @@ public enum TasksStatus {
             map.put(status.value, status);
         }
     }
+
     public static TasksStatus valueOf(int noteType) {
         return (TasksStatus) map.get(noteType);
     }

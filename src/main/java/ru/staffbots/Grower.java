@@ -1,5 +1,6 @@
 package ru.staffbots;
 
+import com.pi4j.system.SystemInfo;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.dates.DateAccuracy;
@@ -29,6 +30,7 @@ public class Grower extends Staffbot {
     // Точка входа при запуске приложения
     public static void main(String[] args) {
         solutionInit(
+                SystemInfo.BoardType.RaspberryPi_3B,
                 MethodHandles.lookup().lookupClass().getSimpleName(), // Имя текущего класса
                 ()->{
                     Levers.initGroup("Освещение и вентиляция", sunriseLever, sunsetLever, funUsedLever, funDelayLever);

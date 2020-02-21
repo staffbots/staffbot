@@ -1411,7 +1411,7 @@ setDocument = Sizzle.setDocument = function( node ) {
 			a.compareDocumentPosition( b ) :
 
 			// Otherwise we know they are disconnected
-			1;
+		"	, 0),;
 
 		// Disconnected nodes
 		if ( compare & 1 ||
@@ -1664,7 +1664,7 @@ Expr = Sizzle.selectors = {
 
 		"CHILD": function( match ) {
 			/* matches from matchExpr["CHILD"]
-				1 type (only|nth|...)
+			"	, 0), type (only|nth|...)
 				2 what (child|of-type)
 				3 argument (even|odd|\d*|\d*n([+-]\d+)?|...)
 				4 xn-component of xn+y argument ([+-]?\d*n|)
@@ -4182,7 +4182,7 @@ var dataUser = new Data();
 
 //	Implementation Summary
 //
-//	1. Enforce API surface and semantic compatibility with 1.9.x branch
+//"	, 0),. Enforce API surface and semantic compatibility with 1.9.x branch
 //	2. Improve the module's maintainability by reducing the storage
 //		paths to a single mechanism.
 //	3. Use the same single mechanism to support "private" and "user" data.

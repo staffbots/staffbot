@@ -1,6 +1,7 @@
 package ru.staffbots;
 
 import com.pi4j.io.gpio.RaspiPin;
+import com.pi4j.system.SystemInfo;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.devices.Device;
@@ -20,6 +21,7 @@ public class Calibration extends Staffbot {
     // Точка входа приложения
     public static void main(String[] args) {
         solutionInit(
+                SystemInfo.BoardType.RaspberryPi_3B,
                 MethodHandles.lookup().lookupClass().getSimpleName(), // Имя текущего класса
                 new Device[] {probeDevice, ledDevice, probeDevice1}, // Инициализируем список устройств
                 new Lever[] {buttonLever}, // Инициализируем список элементов управления
@@ -35,7 +37,7 @@ public class Calibration extends Staffbot {
     static ECProbeI2CBusDevice probeDevice1 = new ECProbeI2CBusDevice("probeDevice1",
             "Датчик EC", 1, 102);
     static LedDevice ledDevice = new LedDevice("ledDevice",
-            "Светодиод", ValueMode.TEMPORARY, RaspiPin.GPIO_08, false);
+            "Светодиод", ValueMode.STORABLE, RaspiPin.GPIO_07, false);
 
     //static UARTProbeDevice uartProbeDevice = new UARTProbeDevice("ProbeDevice","Датчик");
 

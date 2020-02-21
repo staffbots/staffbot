@@ -27,7 +27,7 @@
  String note
  ValueMode valueMode
  LeverMode leverMode   Lever only
- Pin pin               Device only
+ Pin pin or pins       Device only
  Runnable action       ButtonDevice & ButtonLever only
  ValueType valueType
  DateFormat format     DateType & DateLever only

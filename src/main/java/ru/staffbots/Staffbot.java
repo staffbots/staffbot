@@ -1,5 +1,9 @@
 package ru.staffbots;
 
+import com.pi4j.io.gpio.Pin;
+import com.pi4j.io.gpio.PinMode;
+import com.pi4j.io.gpio.RaspiPin;
+import com.pi4j.system.SystemInfo;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
@@ -7,7 +11,6 @@ import ru.staffbots.tools.ParsableProperties;
 import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
-import ru.staffbots.tools.devices.drivers.general.RpiModel;
 import ru.staffbots.tools.levers.Lever;
 import ru.staffbots.tools.levers.Levers;
 import ru.staffbots.tools.resources.Resources;
@@ -20,6 +23,8 @@ import ru.staffbots.windows.MainWindow;
 import java.io.FileInputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.Properties;
+
+import static com.pi4j.io.gpio.RaspiPin.allPins;
 
 /**
  * <b>Прототип обслуживающего робота</b>
@@ -99,7 +104,7 @@ import java.util.Properties;
  */
 public abstract class Staffbot {
 
-    public static RpiModel rpiModel = RpiModel.RaspberryPi_3B_plus;
+    public static SystemInfo.BoardType boardType = SystemInfo.BoardType.UNKNOWN;
 
     /** Project name
     * <br>Определяется параметром <b>name</b> в исходном файле ресурсов <b>properties</b> перед компиляцией проекта
@@ -123,12 +128,13 @@ public abstract class Staffbot {
     // Используется в наименовании файлов .jar и .cfg и в заголовке главного окна
     public static String projectVersion = "0.00";
 
-    public static void solutionInit(String solutionName, Device[] devices, Lever[] levers, Task[] tasks) {
-        solutionInit(solutionName, devices, (Object[]) levers, tasks);
+    public static void solutionInit(SystemInfo.BoardType boardType, String solutionName, Device[] devices, Lever[] levers, Task[] tasks) {
+        solutionInit(boardType, solutionName, devices, (Object[]) levers, tasks);
     }
 
-    public static void solutionInit(String solutionName, Device[] devices, Object[] levers, Task[] tasks) {
+    public static void solutionInit(SystemInfo.BoardType boardType, String solutionName, Device[] devices, Object[] levers, Task[] tasks) {
         solutionInit(
+                boardType,
                 solutionName, // Имя текущего класса
                 ()->{
                     Levers.init(levers); // Инициализируем список элементов управления
@@ -139,7 +145,7 @@ public abstract class Staffbot {
 
     }
 
-    public static void solutionInit(String solutionName, Runnable solutionInitAction){
+    public static void solutionInit(SystemInfo.BoardType boardType, String solutionName, Runnable solutionInitAction){
         Staffbot.solutionName = solutionName;
         Translator.init(); // Инициализируем мультиязычность
         propertiesInit(); // Загружаем свойства из cfg-файла
@@ -149,6 +155,13 @@ public abstract class Staffbot {
         String windowTitle = projectName + ":" + solutionName + "-" + projectVersion;
         MainWindow.init(windowTitle); // Открываем главное окно приложения
         Database.dropUnuseTable();
+
+        //SystemInfo.BoardType bt = SystemInfo.BoardType.RaspberryPi_3B;
+        //System.out.println(boardType.name());
+//        Pin[] pins = RaspiPin.allPins(boardType);
+//        for (Pin pin: pins)
+//            System.out.println(pin.getName() + "\t" + pin.supportsPinEdges());
+
     }
 
     // Инициализация параметров
@@ -183,7 +196,7 @@ public abstract class Staffbot {
             Database.SERVER = property.getProperty("db.server", Database.SERVER);
             Database.PORT = property.getIntegerProperty("db.port", Database.PORT);
             Database.NAME = property.getProperty("db.name", (projectName + "_" + solutionName).toLowerCase());
-            Database.USER = property.getProperty("db.user", Database.USER).trim();
+            Database.USER = property.getProperty("db.user", Database.USER);
             Database.PASSWORD = property.getProperty("db.password", Database.PASSWORD).trim();
             Database.DROP = property.getBooleanProperty("db.drop", Database.DROP);
 

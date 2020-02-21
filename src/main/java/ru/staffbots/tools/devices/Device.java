@@ -1,6 +1,7 @@
 package ru.staffbots.tools.devices;
 
 import com.pi4j.io.gpio.Pin;
+import com.pi4j.io.gpio.RaspiPin;
 import ru.staffbots.Staffbot;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
@@ -36,6 +37,12 @@ public abstract class Device{
     }
 
     public boolean putPin(Pin pin, String name){
+        Pin[] boardPins = RaspiPin.allPins(Staffbot.boardType);
+        boolean pinPosible = false;
+        for(Pin boardPin: boardPins)
+            pinPosible = pinPosible || (boardPin == pin);
+        if (!pinPosible)
+            return false;
         if (pins.containsKey(pin)){
             overlap = true;
             return false;
