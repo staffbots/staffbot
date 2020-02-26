@@ -4,6 +4,7 @@ import ru.staffbots.tools.devices.drivers.general.I2CBusDevice;
 import ru.staffbots.tools.values.DoubleValue;
 import ru.staffbots.tools.values.ValueMode;
 
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 
 public class pHProbeI2CBusDevice extends I2CBusDevice {
@@ -45,6 +46,11 @@ public class pHProbeI2CBusDevice extends I2CBusDevice {
     @Override
     public String toString() {
         return value.toString();
+    }
+
+    @Override
+    public String getClassName() {
+        return MethodHandles.lookup().lookupClass().getSimpleName();
     }
 
 }

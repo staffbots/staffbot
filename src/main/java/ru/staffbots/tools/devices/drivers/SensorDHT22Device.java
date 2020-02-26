@@ -10,6 +10,7 @@ import ru.staffbots.tools.values.ValueMode;
 
 import java.io.Closeable;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.util.Objects;
@@ -256,11 +257,8 @@ public class SensorDHT22Device extends Device {
     }
 
     @Override
-    public String getModel(boolean byClassName) {
-        if(!byClassName) return model;
-        String className = (new Object(){}.getClass().getEnclosingClass().getSimpleName());
-        return className.substring(0, className.length() - 6);
+    public String getClassName() {
+        return MethodHandles.lookup().lookupClass().getSimpleName();
     }
-
 
 }

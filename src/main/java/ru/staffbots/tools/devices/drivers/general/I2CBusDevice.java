@@ -9,6 +9,7 @@ import ru.staffbots.Staffbot;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
@@ -77,13 +78,6 @@ public abstract class I2CBusDevice extends Device {
                 }
         }
         return null;
-    }
-
-    @Override
-    public String getModel(boolean byClassName) {
-        if(!byClassName) return model;
-        String className = (new Object(){}.getClass().getEnclosingClass().getSimpleName());
-        return className.substring(0, className.length() - 6);
     }
 
     public void write(byte[] data) throws IOException{

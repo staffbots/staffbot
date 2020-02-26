@@ -9,6 +9,8 @@ import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.values.DoubleValue;
 import ru.staffbots.tools.values.ValueMode;
 
+import java.lang.invoke.MethodHandles;
+
 
 /**
  * Ультразвуковой дальномер HC-SR04
@@ -136,11 +138,8 @@ public class SonarHCSR04Device extends Device {
     }
 
     @Override
-    public String getModel(boolean byClassName) {
-        if(!byClassName) return model;
-        String className = (new Object(){}.getClass().getEnclosingClass().getSimpleName());
-        return className.substring(0, className.length() - 6);
+    public String getClassName() {
+        return MethodHandles.lookup().lookupClass().getSimpleName();
     }
-
 
 }

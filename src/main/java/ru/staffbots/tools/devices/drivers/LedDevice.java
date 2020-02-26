@@ -8,6 +8,8 @@ import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.values.BooleanValue;
 import ru.staffbots.tools.values.ValueMode;
 
+import java.lang.invoke.MethodHandles;
+
 /**
  * <b>Переключатель</b> позволяет работать с реле, светодиодами и т.п.<br>
  */
@@ -66,10 +68,8 @@ public class LedDevice extends Device {
     }
 
     @Override
-    public String getModel(boolean byClassName) {
-        if(!byClassName) return model;
-        String className = (new Object(){}.getClass().getEnclosingClass().getSimpleName());
-        return className.substring(0, className.length() - 6);
+    public String getClassName() {
+        return MethodHandles.lookup().lookupClass().getSimpleName();
     }
 
 }

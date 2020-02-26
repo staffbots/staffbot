@@ -9,6 +9,7 @@ import ru.staffbots.tools.values.DoubleValue;
 import ru.staffbots.tools.values.ValueMode;
 
 import java.io.IOException;
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
@@ -79,11 +80,8 @@ public abstract class UARTProbeDevice extends Device {
 
     }
 
-    @Override
-    public String getModel(boolean byClassName) {
-        if(!byClassName) return model;
-        String className = (new Object(){}.getClass().getEnclosingClass().getSimpleName());
-        return className.substring(0, className.length() - 6);
+    public void write(String string) throws IOException{
+        write(string.getBytes(charset));
     }
 
     @Override
@@ -100,8 +98,9 @@ public abstract class UARTProbeDevice extends Device {
         serial.write(out);
     }
 
-    public void write(String string) throws IOException{
-        write(string.getBytes(charset));
+    @Override
+    public String getClassName() {
+        return MethodHandles.lookup().lookupClass().getSimpleName();
     }
 
 }

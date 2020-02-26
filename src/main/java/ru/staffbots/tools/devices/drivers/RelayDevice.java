@@ -6,6 +6,8 @@ import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.values.BooleanValue;
 import ru.staffbots.tools.values.ValueMode;
 
+import java.lang.invoke.MethodHandles;
+
 import static javax.management.Query.value;
 
 /**
@@ -71,10 +73,8 @@ public class RelayDevice extends Device {
     }
 
     @Override
-    public String getModel(boolean byClassName) {
-        if(!byClassName) return model;
-        String className = (new Object(){}.getClass().getEnclosingClass().getSimpleName());
-        return className.substring(0, className.length() - 6);
+    public String getClassName() {
+        return MethodHandles.lookup().lookupClass().getSimpleName();
     }
 
 }

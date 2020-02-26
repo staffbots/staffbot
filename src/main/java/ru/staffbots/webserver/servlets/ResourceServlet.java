@@ -38,7 +38,6 @@ public class ResourceServlet extends BaseServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
         String resourceName = request.getQueryString();
-
         if (resourceName == null)
             return;
 

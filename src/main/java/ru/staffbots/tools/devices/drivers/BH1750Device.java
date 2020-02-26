@@ -8,6 +8,7 @@ import ru.staffbots.tools.values.DoubleValue;
 import ru.staffbots.tools.values.LongValue;
 import ru.staffbots.tools.values.ValueMode;
 
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 
 public class BH1750Device extends I2CBusDevice {
@@ -74,6 +75,11 @@ public class BH1750Device extends I2CBusDevice {
     @Override
     public String toString() {
         return lightIntensity.toString();
+    }
+
+    @Override
+    public String getClassName() {
+        return MethodHandles.lookup().lookupClass().getSimpleName();
     }
 
 }

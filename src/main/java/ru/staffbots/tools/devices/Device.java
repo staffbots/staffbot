@@ -10,6 +10,7 @@ import ru.staffbots.tools.devices.drivers.general.SpiBusDevice;
 import ru.staffbots.tools.values.Value;
 import ru.staffbots.webserver.servlets.*;
 
+import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -83,7 +84,13 @@ public abstract class Device{
     // При значении параметра byClassName
     // true - работает как getModel();
     // false - возвращает часть имени класса-дравера, используется в URL
-    abstract public String getModel(boolean byClassName);
+    public String getModel(boolean byClassName){
+        if(!byClassName) return model;
+        String className = getClassName();
+        return className.substring(0, className.length() - 6);
+    }
+
+    abstract public String getClassName();
 
     // Описание устройства, значение задаётся при описании объекта дочернего класса
     // (конкретного устройства)

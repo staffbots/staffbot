@@ -5,6 +5,7 @@ import ru.staffbots.tools.values.DoubleValue;
 import ru.staffbots.tools.values.LongValue;
 import ru.staffbots.tools.values.ValueMode;
 
+import java.lang.invoke.MethodHandles;
 import java.nio.charset.StandardCharsets;
 
 public class ECProbeI2CBusDevice extends I2CBusDevice {
@@ -99,6 +100,11 @@ public class ECProbeI2CBusDevice extends I2CBusDevice {
         totalDissolvedSolids.toString() + separator +
         salinity.toString() + separator +
         specificGravity.toString();
+    }
+
+    @Override
+    public String getClassName() {
+        return MethodHandles.lookup().lookupClass().getSimpleName();
     }
 
 }
