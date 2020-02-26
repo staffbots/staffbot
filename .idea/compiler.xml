@@ -7,7 +7,6 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="staffbot" />
-        <module name="Staffbots.Pattern" />
         <module name="test" />
       </profile>
     </annotationProcessing>

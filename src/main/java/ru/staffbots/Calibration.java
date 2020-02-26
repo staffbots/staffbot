@@ -5,16 +5,11 @@ import com.pi4j.system.SystemInfo;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.devices.Device;
-import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.devices.drivers.ECProbeI2CBusDevice;
 import ru.staffbots.tools.devices.drivers.LedDevice;
 import ru.staffbots.tools.levers.*;
-import ru.staffbots.tools.tasks.Task;
-import ru.staffbots.tools.tasks.Tasks;
 import ru.staffbots.tools.values.ValueMode;
-
 import java.lang.invoke.MethodHandles;
-
 
 public class Calibration extends Staffbot {
 
