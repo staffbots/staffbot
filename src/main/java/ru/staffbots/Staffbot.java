@@ -1,8 +1,5 @@
 package ru.staffbots;
 
-import com.pi4j.io.gpio.Pin;
-import com.pi4j.io.gpio.PinMode;
-import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.system.SystemInfo;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
@@ -24,8 +21,6 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.FileInputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.Properties;
-
-import static com.pi4j.io.gpio.RaspiPin.allPins;
 
 /**
  * <b>Прототип обслуживающего робота</b>

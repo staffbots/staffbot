@@ -2,13 +2,7 @@ package ru.staffbots.tools.devices.drivers.general;
 
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
-import org.eclipse.jetty.client.api.Request;
 import ru.staffbots.tools.devices.Device;
-
-import javax.servlet.http.HttpServletResponse;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeoutException;
-
 
 public abstract class NetworkDevice extends Device {
 
