@@ -4,12 +4,13 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.staffbots</groupId>
-    <artifactId>Staffbots.Pattern</artifactId>
-    <version>${staffbots.version}</version>
+    <artifactId>Staffbot.Staffbot</artifactId>
+    <version>${staffbot.version}</version>
     <packaging>jar</packaging>
-    <url>${staffbots.website}</url>
+    <url>${staffbot.website}</url>
     <!--==============-->
     <properties>
+        <mainClass.name>ru.staffbots.Staffbot</mainClass.name>
         <propertiesFile>src/main/resources/properties</propertiesFile>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <jdk.version>1.8</jdk.version>

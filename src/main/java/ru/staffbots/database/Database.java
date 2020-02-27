@@ -27,9 +27,9 @@ public class Database {
 
     public static String NAME = "staffbot";
 
-    public static String USER = "root";
+    public static String USER = "pi";
 
-    public static String PASSWORD = "root";
+    public static String PASSWORD = "pi";
 
     public static Boolean DROP = false;
 

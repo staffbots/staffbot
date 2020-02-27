@@ -20,6 +20,7 @@ import ru.staffbots.webserver.WebServer;
 import ru.staffbots.webserver.servlets.BaseServlet;
 import ru.staffbots.windows.MainWindow;
 
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.FileInputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.Properties;
@@ -171,8 +172,9 @@ public abstract class Staffbot {
         try {
             Properties property = new Properties();
             property.load(Resources.getAsStream("properties"));
-            projectVersion = property.getProperty("staffbots.version", "");
-            projectWebsite = property.getProperty("staffbots.website", "");
+            projectVersion = property.getProperty("staffbot.version", "");
+            projectWebsite = property.getProperty("staffbot.website", "");
+            Translator.languageCode = property.getProperty("staffbot.language", Translator.languageCode);
             Journal.add(false, "init_properties");
         } catch (Exception exception) {
             Journal.add(NoteType.ERROR, false, "init_properties");

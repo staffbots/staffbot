@@ -2,14 +2,15 @@
 
 const char* WIFI_SSID     = "RT-WiFi_5B84";
 const char* WIFI_PASSWORD = "23834659";
-//const char* REMOTE_SERVER = "10.10.10.10"; //Raspberry Pi
-const char* REMOTE_SERVER = "10.10.10.102"; //Developer station
+//const char* REMOTE_SERVER = "10.10.10.3"; //Raspberry Pi 3
+//const char* REMOTE_SERVER = "10.10.10.4"; //Raspberry Pi 4
+const char* REMOTE_SERVER = "10.10.10.10"; //Developer station
 const char* DEVICE_NAME     = "esp32Device";
 
 WiFiServer server(80);
 
 char inputLine[80]; // заводим буфер
-int charCount = 0;// и счетчик для буфера
+int charCount = 0; // и счетчик для буфера
 bool connecting = false;
 String requestValue;
 /************************************************************************************************/

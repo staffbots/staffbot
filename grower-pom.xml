@@ -4,10 +4,10 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>ru.staffbots</groupId>
-    <artifactId>Staffbots.Grower</artifactId>
-    <version>${staffbots.version}</version>
+    <artifactId>Staffbot.Grower</artifactId>
+    <version>${staffbot.version}</version>
     <packaging>jar</packaging>
-    <url>${staffbots.website}</url>
+    <url>${staffbot.website}</url>
     <!--==============-->
     <properties>
         <mainClass.name>ru.staffbots.Grower</mainClass.name>

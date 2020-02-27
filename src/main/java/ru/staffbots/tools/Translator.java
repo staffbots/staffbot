@@ -50,9 +50,9 @@ public class Translator {
      **/
     public static void init(){
         try {
-            Properties property = new Properties();
-            property.load(Resources.getAsStream("properties"));
-            languageCode = property.getProperty("staffbots.language", languageCode);
+//            Properties property = new Properties();
+//            property.load(Resources.getAsStream("properties"));
+//            languageCode = property.getProperty("staffbot.language", languageCode);
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             XPathFactory xPathFactory = XPathFactory.newInstance();
