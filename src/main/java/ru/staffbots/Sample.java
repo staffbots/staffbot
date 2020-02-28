@@ -22,7 +22,6 @@ public class Sample extends Staffbot {
     // Точка входа приложения
     public static void main(String[] args) {
         solutionInit(
-                SystemInfo.BoardType.RaspberryPi_3B,
                 MethodHandles.lookup().lookupClass().getSimpleName(), // Имя текущего класса
                 ()->{
                     Levers.init(frequencyLever); // Инициализируем список элементов управления
@@ -30,6 +29,10 @@ public class Sample extends Staffbot {
                     Tasks.init(ledFlashingTask); // Инициализируем список заданий
                 }
         );
+    }
+
+    static {
+        boardType = SystemInfo.BoardType.RaspberryPi_3B;
     }
 
     /////////////////////////////////////////////////////////////

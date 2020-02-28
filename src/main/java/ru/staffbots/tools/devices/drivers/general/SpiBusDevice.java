@@ -31,4 +31,9 @@ public abstract class SpiBusDevice extends Device {
             e.printStackTrace();
         }
     }
+
+    static public SpiBusDevice convertDevice(Device device){
+        return (device instanceof SpiBusDevice) ? (SpiBusDevice) device : null;
+    }
+
 }

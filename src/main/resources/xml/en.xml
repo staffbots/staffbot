@@ -164,6 +164,7 @@
         <about>
             page_title         = About
             page_hint          = System Information
+            board_title        = Board type
             osname_title       = Operating system
             osversion_title    = OS version
             osarch_title       = Architecture
@@ -181,7 +182,10 @@
             device_pins        = Pins
             device_hint        = Device pin
             controller_hint    = Controller pin
-            busaddress_hint    = Bus address I2C
+            address_hint       = Remote controller address
+            address_null       = [Not connected]
+            busaddress_hint    = I2C bus address
+            buschannel_hint    = SPI bus channel
             dberror_title      = No database connect
             message_title      = Message
             trace_title        = Stack trace

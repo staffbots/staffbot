@@ -6,6 +6,9 @@ import ru.staffbots.database.Database;
 import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
+import ru.staffbots.tools.devices.drivers.general.I2CBusDevice;
+import ru.staffbots.tools.devices.drivers.general.NetworkDevice;
+import ru.staffbots.tools.devices.drivers.general.SpiBusDevice;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
 
@@ -29,27 +32,26 @@ public class AboutServlet extends BaseServlet {
     // Вызывается при запросе странице с сервера
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (isAccessDenied(request, response)) return;
-
         Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
+        pageVariables.put("board_value", Staffbot.boardType);
+        pageVariables.put("board_link", Staffbot.projectWebsite + "/" + Staffbot.boardType);
+        pageVariables.put("osname_value",System.getProperty("os.name"));
+        pageVariables.put("osversion_value",System.getProperty("os.version"));
+        pageVariables.put("osarch_value",System.getProperty("os.arch"));
+        pageVariables.put("javaversion_value",System.getProperty("java.version"));
+        pageVariables.put("dbserver_value",Database.SERVER);
+        pageVariables.put("dbmsystem_value",Database.DBMSystem);
+        pageVariables.put("dbname_value",Database.NAME);
+        pageVariables.put("project_value", Staffbot.projectName);
+        pageVariables.put("solution_value", Staffbot.solutionName + "-" + Staffbot.projectVersion);
         pageVariables.put("website_link", Staffbot.projectWebsite);
-        pageVariables.put("about_osname",System.getProperty("os.name"));
-        pageVariables.put("about_osversion",System.getProperty("os.version"));
-        pageVariables.put("about_osarch",System.getProperty("os.arch"));
-        pageVariables.put("about_javaversion",System.getProperty("java.version"));
-        pageVariables.put("about_dbserver",Database.SERVER);
-        pageVariables.put("about_dbmsystem",Database.DBMSystem);
-        pageVariables.put("about_dbname",Database.NAME);
-        pageVariables.put("about_project", Staffbot.projectName);
-        pageVariables.put("about_solution", Staffbot.solutionName + "-" + Staffbot.projectVersion);
-        pageVariables.put("about_devicelist", getDeviceList());
-
+        pageVariables.put("device_list", getDeviceList());
         pageVariables.put("dberror_message", Database.connected() ? "" : Database.getException().getMessage());
         String trace = "";
         if (Database.disconnected())
             for (StackTraceElement traceElement: Database.getException().getStackTrace())
                 trace += traceElement.toString() + "<br>";
         pageVariables.put("dberror_trace", trace);
-
         String content = fillTemplate("html/" + pageType.getName()+".html", pageVariables);
         super.doGet(request, response, content);
     }
@@ -67,42 +69,49 @@ public class AboutServlet extends BaseServlet {
             pageVariables.put("device_url", device.getURL());
             pageVariables.put("device_model", device.getModel());
             pageVariables.put("device_description", device.getNote());
-            pageVariables.put("device_pin", "");
-            pageVariables.put("controller_pin", "");
-
+            NetworkDevice networkDevice = NetworkDevice.convertDevice(device);
+            if (networkDevice != null) {
+                String address = networkDevice.getAddress();
+                pageVariables.put("address_value",
+                    networkDevice.connected() ?
+                        networkDevice.getAddress() :
+                        Translator.getValue(pageType.getName(), "address_null"));
+                context += fillTemplate("html/about/controller.html", pageVariables);
+                continue;
+            }
             ArrayList<Pin> pins = device.getPins();
             int i = 0;
             if (pins.size() == 0)
                 context += fillTemplate(templateFileName, pageVariables);
             else
                 for (Pin pin : pins){
-                    if (i>0){
+                    if (i>0){ // in case pin is not first
                         pageVariables.put("device_model", "");
                         pageVariables.put("device_description", "");
-
                     }
                     pageVariables.put("device_pin", device.getPinName(pin));
                     pageVariables.put("controller_pin", pin.getName());
-
                     String bus = "";
                     String hint = "";
-                    if (device.getI2CBusAddress() < 0) {
-                        bus = device.getSpiBusChannel() < 0 ? "" : String.valueOf(device.getSpiBusChannel());
-                        if(!bus.isEmpty())
-                            hint = "SPI";
-                    } else {
-                        bus = String.valueOf(device.getI2CBusAddress());
-                        hint = "I2C";
+                    SpiBusDevice spiBusDevice = SpiBusDevice.convertDevice(device);
+                    if (spiBusDevice != null) {
+                        bus = String.valueOf(spiBusDevice.getBusChannel());
+                        hint = Translator.getValue(pageType.getName(), "buschannel_hint");
                     }
-                    pageVariables.put("busaddress_hint", hint);
-                    pageVariables.put("busaddress_pin", bus);
+                    I2CBusDevice i2CBusDevice = I2CBusDevice.convertDevice(device);
+                    if (i2CBusDevice != null) {
+                        bus = String.valueOf(i2CBusDevice.getBusAddress());
+                        hint = Translator.getValue(pageType.getName(), "busaddress_hint");
+                    }
+                    pageVariables.put("bus_hint", hint);
+                    pageVariables.put("bus_pin", bus);
                     context += fillTemplate(templateFileName, pageVariables);
                     i++;
                 }
-
         }
         return context;
     }
+
 
 
 }

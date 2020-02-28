@@ -146,6 +146,7 @@ public abstract class Device{
         }
     }
 
+/*
     public int getI2CBusAddress() {
        return (this instanceof I2CBusDevice) ? ((I2CBusDevice) this).getBusAddress() : -1;
     }
@@ -153,5 +154,6 @@ public abstract class Device{
     public int getSpiBusChannel() {
         return (this instanceof SpiBusDevice) ? ((SpiBusDevice) this).getBusChannel() : -1;
     }
+*/
 
 }

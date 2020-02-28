@@ -215,12 +215,9 @@ public class StatusServlet extends BaseServlet {
         return context;
     }
 
+
     private String getDataSet(Value value, Period period, int numberOfValue) {
         // Количество значенийй, по которым возможно построить график
-        int plotValueCount = getPlotValueCount();
-
-        // Насыщенности
-        double[] hue = getRandomHue(plotValueCount);
 
         String[] booleans = {"false", "true"};
         int index = (value.getValueType() == ValueType.BOOLEAN) ? 1 : 0;
@@ -261,8 +258,13 @@ public class StatusServlet extends BaseServlet {
     }
 
 
+    static int plotValueCount = getPlotValueCount();
+
+    // Насыщенности
+    static double[] hue = getRandomHue(plotValueCount);
+
     // Расчёт количества значенийй, по которым возможно построить график
-    private int getPlotValueCount(){
+    static private int getPlotValueCount(){
         int count = 0;
         for (Device device : Devices.list)
             for (Value value : device.getValues())
@@ -276,7 +278,7 @@ public class StatusServlet extends BaseServlet {
 
 
     // Возращает масиив размером length с перемешанными в нём случайными значениями (насыщенности) от 0 до 360
-    private double[] getRandomHue(int length) {
+    static private double[] getRandomHue(int length) {
         int plotValueCount = getPlotValueCount();
 
         ArrayList<Integer> random = new ArrayList<>();

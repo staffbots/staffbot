@@ -165,6 +165,7 @@
         <about>
             page_title         = Сведения
             page_hint          = Сведения о системе
+            board_title        = Тип платы
             osname_title       = Операционная система
             osversion_title    = Версия ОС
             osarch_title       = Архитектура
@@ -182,7 +183,10 @@
             device_pins        = Пины
             device_hint        = Пин устройства
             controller_hint    = Пин контроллера
-            busaddress_hint    = Адресс шины I2C
+            address_hint       = Адресс удалённого контроллера
+            address_null       = [Не подключён]
+            busaddress_hint    = Адресс I2C-шины
+            buschannel_hint    = Канал SPI-шины
             dberror_title      = Нет подключнения к базе данных
             message_title      = Сообщение
             trace_title        = Последовательность вызовов

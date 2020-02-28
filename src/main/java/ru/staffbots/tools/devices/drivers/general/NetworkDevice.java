@@ -19,6 +19,14 @@ public abstract class NetworkDevice extends Device {
         this.address = address;
     }
 
+    public boolean connected(){
+        return (address != null);
+    }
+
+    public String getAddress(){
+        return address;
+    }
+
     public String get(String query){
         return send(true, query);
     }
@@ -44,6 +52,10 @@ public abstract class NetworkDevice extends Device {
             return badResult;
         }
         return (response.getStatus() == 200) ? response.getContentAsString() : badResult;
+    }
+
+    static public NetworkDevice convertDevice(Device device){
+        return (device instanceof NetworkDevice) ? (NetworkDevice) device : null;
     }
 
 }

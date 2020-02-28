@@ -114,4 +114,7 @@ public abstract class I2CBusDevice extends Device {
         return readln();
     }
 
+    static public I2CBusDevice convertDevice(Device device){
+        return (device instanceof I2CBusDevice) ? (I2CBusDevice) device : null;
+    }
 }

@@ -1,6 +1,5 @@
 package ru.staffbots;
 
-import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.system.SystemInfo;
 import ru.staffbots.database.journal.Journal;
@@ -25,7 +24,6 @@ public class Tester extends Staffbot {
     // Точка входа при запуске приложения
     public static void main(String[] args) {
         solutionInit(
-                SystemInfo.BoardType.RaspberryPi_3B,
                 MethodHandles.lookup().lookupClass().getSimpleName(), // Имя текущего класса
                 new Device[] {esp32Device,bh1750Device, ledDevice, distanceDevice, sensorDevice, buttonDevice}, // Инициализируем список устройств
                 new Lever[] {buttonLever, distanceLever}, // Инициализируем список элементов управления
@@ -33,7 +31,9 @@ public class Tester extends Staffbot {
         );
     }
 
-
+    static {
+        boardType = SystemInfo.BoardType.RaspberryPi_3B;
+    }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  Levers - Рычаги
@@ -49,7 +49,7 @@ public class Tester extends Staffbot {
             "Расстояние", ValueMode.TEMPORARY, RaspiPin.GPIO_25, RaspiPin.GPIO_28);
 
     static BH1750Device bh1750Device = new BH1750Device("bh1750Device",
-            "Освещение", 1, PinState.HIGH);
+            "Освещение", 1);
 
     static SensorDHT22Device sensorDevice = new SensorDHT22Device("sensorDevice",
            "Датчик температуры и влажности", RaspiPin.GPIO_04);

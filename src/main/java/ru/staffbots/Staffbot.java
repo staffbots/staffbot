@@ -17,7 +17,6 @@ import ru.staffbots.webserver.WebServer;
 import ru.staffbots.webserver.servlets.BaseServlet;
 import ru.staffbots.windows.MainWindow;
 
-import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.FileInputStream;
 import java.lang.invoke.MethodHandles;
 import java.util.Properties;
@@ -106,7 +105,7 @@ public abstract class Staffbot {
     * <br>Определяется параметром <b>name</b> в исходном файле ресурсов <b>properties</b> перед компиляцией проекта
     * <br>Используется в имени БД, в заголовках веб-интерфейса и главного окна
     */
-    public static String projectName = getClassName();
+    public static String projectName = MethodHandles.lookup().lookupClass().getSimpleName(); // Имя текущего класса
 
     /** Адрес веб-сайта проекта в www
     * Определяется параметром website в файле ресурсов properties
@@ -124,13 +123,12 @@ public abstract class Staffbot {
     // Используется в наименовании файлов .jar и .cfg и в заголовке главного окна
     public static String projectVersion = "0.00";
 
-    public static void solutionInit(SystemInfo.BoardType boardType, String solutionName, Device[] devices, Lever[] levers, Task[] tasks) {
-        solutionInit(boardType, solutionName, devices, (Object[]) levers, tasks);
+    public static void solutionInit(String solutionName, Device[] devices, Lever[] levers, Task[] tasks) {
+        solutionInit(solutionName, devices, (Object[]) levers, tasks);
     }
 
-    public static void solutionInit(SystemInfo.BoardType boardType, String solutionName, Device[] devices, Object[] levers, Task[] tasks) {
+    public static void solutionInit(String solutionName, Device[] devices, Object[] levers, Task[] tasks) {
         solutionInit(
-                boardType,
                 solutionName, // Имя текущего класса
                 ()->{
                     Levers.init(levers); // Инициализируем список элементов управления
@@ -141,7 +139,7 @@ public abstract class Staffbot {
 
     }
 
-    public static void solutionInit(SystemInfo.BoardType boardType, String solutionName, Runnable solutionInitAction){
+    public static void solutionInit(String solutionName, Runnable solutionInitAction){
         Staffbot.solutionName = solutionName;
         Translator.init(); // Инициализируем мультиязычность
         propertiesInit(); // Загружаем свойства из cfg-файла
@@ -222,8 +220,8 @@ public abstract class Staffbot {
         }
     }
 
-    protected static String getClassName(){
-        return MethodHandles.lookup().lookupClass().getSimpleName();
-    }
+  //  protected static String getClassName(){
+  //      return MethodHandles.lookup().lookupClass().getSimpleName();
+  //  }
 
 }

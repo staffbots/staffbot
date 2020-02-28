@@ -30,7 +30,6 @@ public class Grower extends Staffbot {
     // Точка входа при запуске приложения
     public static void main(String[] args) {
         solutionInit(
-                SystemInfo.BoardType.RaspberryPi_3B,
                 MethodHandles.lookup().lookupClass().getSimpleName(), // Имя текущего класса
                 ()->{
                     Levers.initGroup("Освещение и вентиляция", sunriseLever, sunsetLever, funUsedLever, funDelayLever);
@@ -40,6 +39,10 @@ public class Grower extends Staffbot {
                     Tasks.init(testTask, lightTask, ventingTask, irrigationTask);
                 }
         );
+    }
+
+    static {
+        boardType = SystemInfo.BoardType.RaspberryPi_3B;
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

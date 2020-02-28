@@ -41,8 +41,11 @@ public class Devices{
 
     public static int getI2CBusAddress(Pin pin) {
         for (Device device: list)
-            if (device.getPins().contains(pin))
-                return device.getI2CBusAddress();
+            if (device.getPins().contains(pin)) {
+                I2CBusDevice busDevice = I2CBusDevice.convertDevice(device);
+                if (busDevice != null)
+                    return busDevice.getBusAddress();
+            }
         return -1;
     }
 
@@ -51,7 +54,8 @@ public class Devices{
         if (!overlap)
             for (Pin pin: getPins())
                 if (device.getPins().contains(pin)) {
-                    overlap = (device.getI2CBusAddress() < 0) ? true : (device.getI2CBusAddress() == getI2CBusAddress(pin) || (getI2CBusAddress(pin) == -1));
+                    I2CBusDevice busDevice = I2CBusDevice.convertDevice(device);
+                    overlap = (busDevice == null) ? true : (busDevice.getBusAddress() == getI2CBusAddress(pin) || (getI2CBusAddress(pin) == -1));
                     if (overlap) break;
                 }
         if (overlap)
