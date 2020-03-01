@@ -1,7 +1,5 @@
-package ru.staffbots.tools.devices.drivers.general;
+package ru.staffbots.tools.devices.drivers.spi;
 
-import com.pi4j.io.i2c.I2CBus;
-import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.spi.SpiChannel;
 import com.pi4j.io.spi.SpiDevice;
 import com.pi4j.io.spi.SpiFactory;

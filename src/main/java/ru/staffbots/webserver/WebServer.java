@@ -115,7 +115,6 @@ public class WebServer {
         context.addServlet(new ServletHolder(new SystemServlet(accountService)),"/system");
         context.addServlet(new ServletHolder(new AboutServlet(accountService)),"/about");
         context.addServlet(new ServletHolder(new ResourceServlet(accountService)),"/resource");
-        context.addServlet(new ServletHolder(new DeviceServlet(accountService)),"/device");
 
         HandlerList handlers = new HandlerList();
         handlers.addHandler(context);

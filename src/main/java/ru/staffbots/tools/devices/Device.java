@@ -3,14 +3,9 @@ package ru.staffbots.tools.devices;
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.RaspiPin;
 import ru.staffbots.Staffbot;
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
-import ru.staffbots.tools.devices.drivers.general.I2CBusDevice;
-import ru.staffbots.tools.devices.drivers.general.SpiBusDevice;
 import ru.staffbots.tools.values.Value;
 import ru.staffbots.webserver.servlets.*;
 
-import java.lang.invoke.MethodHandles;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;

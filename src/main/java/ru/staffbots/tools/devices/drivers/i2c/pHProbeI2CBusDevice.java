@@ -1,6 +1,6 @@
-package ru.staffbots.tools.devices.drivers;
+package ru.staffbots.tools.devices.drivers.i2c;
 
-import ru.staffbots.tools.devices.drivers.general.I2CBusDevice;
+import ru.staffbots.tools.devices.drivers.i2c.I2CBusDevice;
 import ru.staffbots.tools.values.DoubleValue;
 import ru.staffbots.tools.values.ValueMode;
 

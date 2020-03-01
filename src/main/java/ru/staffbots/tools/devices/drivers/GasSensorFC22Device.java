@@ -4,7 +4,8 @@ import ru.staffbots.tools.devices.Device;
 
 import java.lang.invoke.MethodHandles;
 
-public class GasSensorFC22Device extends Device {
+public class
+GasSensorFC22Device extends Device {
 
     @Override
     public String toString() {

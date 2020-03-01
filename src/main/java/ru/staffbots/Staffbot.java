@@ -22,7 +22,7 @@ import java.lang.invoke.MethodHandles;
 import java.util.Properties;
 
 /**
- * <b>Прототип обслуживающего робота</b>
+ * <b>Parent for all staffbots</b>
  * - абстрактный класс, на базе которого реализуются классы для конкретных решений.
  * Каждое такое решение (класс-наследник <b>{@code Pattern}</b>) представляет из себя <b>обслуживающего робота</b>
  * по автоматизации определённого процесса с определёнными переферийными устройствами и рычагами управления.
@@ -149,13 +149,6 @@ public abstract class Staffbot {
         String windowTitle = projectName + ":" + solutionName + "-" + projectVersion;
         MainWindow.init(windowTitle); // Открываем главное окно приложения
         Database.dropUnuseTable();
-
-        //SystemInfo.BoardType bt = SystemInfo.BoardType.RaspberryPi_3B;
-        //System.out.println(boardType.name());
-//        Pin[] pins = RaspiPin.allPins(boardType);
-//        for (Pin pin: pins)
-//            System.out.println(pin.getName() + "\t" + pin.supportsPinEdges());
-
     }
 
     // Инициализация параметров
@@ -167,7 +160,6 @@ public abstract class Staffbot {
             property.load(Resources.getAsStream("properties"));
             projectVersion = property.getProperty("staffbot.version", "");
             projectWebsite = property.getProperty("staffbot.website", "");
-            Translator.languageCode = property.getProperty("staffbot.language", Translator.languageCode);
             Journal.add(false, "init_properties");
         } catch (Exception exception) {
             Journal.add(NoteType.ERROR, false, "init_properties");

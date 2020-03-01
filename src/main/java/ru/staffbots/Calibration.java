@@ -5,7 +5,7 @@ import com.pi4j.system.SystemInfo;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.devices.Device;
-import ru.staffbots.tools.devices.drivers.ECProbeI2CBusDevice;
+import ru.staffbots.tools.devices.drivers.i2c.ECProbeI2CBusDevice;
 import ru.staffbots.tools.devices.drivers.LedDevice;
 import ru.staffbots.tools.levers.*;
 import ru.staffbots.tools.values.ValueMode;

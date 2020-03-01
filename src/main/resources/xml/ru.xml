@@ -31,10 +31,12 @@
             execution = Выполнение
             old       =
         </taskstatus>
-
     </enums>
 
     <application>
+        <general>
+            device_disconnect  = не подключён
+        </general>
         <frame>
             button_caption   = Управление
             button_hint      = Перейти к управлению через web-браузер
@@ -184,7 +186,6 @@
             device_hint        = Пин устройства
             controller_hint    = Пин контроллера
             address_hint       = Адресс удалённого контроллера
-            address_null       = [Не подключён]
             busaddress_hint    = Адресс I2C-шины
             buschannel_hint    = Канал SPI-шины
             dberror_title      = Нет подключнения к базе данных

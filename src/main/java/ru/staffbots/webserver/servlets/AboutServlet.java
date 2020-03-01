@@ -6,18 +6,16 @@ import ru.staffbots.database.Database;
 import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
-import ru.staffbots.tools.devices.drivers.general.I2CBusDevice;
-import ru.staffbots.tools.devices.drivers.general.NetworkDevice;
-import ru.staffbots.tools.devices.drivers.general.SpiBusDevice;
+import ru.staffbots.tools.devices.drivers.i2c.I2CBusDevice;
+import ru.staffbots.tools.devices.drivers.network.NetworkDevice;
+import ru.staffbots.tools.devices.drivers.spi.SpiBusDevice;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -71,11 +69,7 @@ public class AboutServlet extends BaseServlet {
             pageVariables.put("device_description", device.getNote());
             NetworkDevice networkDevice = NetworkDevice.convertDevice(device);
             if (networkDevice != null) {
-                String address = networkDevice.getAddress();
-                pageVariables.put("address_value",
-                    networkDevice.connected() ?
-                        networkDevice.getAddress() :
-                        Translator.getValue(pageType.getName(), "address_null"));
+                pageVariables.put("address_value", networkDevice.getAddress());
                 context += fillTemplate("html/about/controller.html", pageVariables);
                 continue;
             }
@@ -111,7 +105,5 @@ public class AboutServlet extends BaseServlet {
         }
         return context;
     }
-
-
 
 }

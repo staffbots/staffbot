@@ -46,6 +46,9 @@
             settings_table   = System settings
             users_table      = Users
         </database>
+        <general>
+            device_disconnect  = disconnected
+        </general>
     </application>
 
     <pages>
@@ -183,7 +186,6 @@
             device_hint        = Device pin
             controller_hint    = Controller pin
             address_hint       = Remote controller address
-            address_null       = [Not connected]
             busaddress_hint    = I2C bus address
             buschannel_hint    = SPI bus channel
             dberror_title      = No database connect

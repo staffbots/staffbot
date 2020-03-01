@@ -118,7 +118,7 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
         response.getOutputStream().write( result.getBytes("UTF-8") );
 
         response.setContentType("text/html; charset=UTF-8");
-        response.setStatus( HttpServletResponse.SC_OK );
+        response.setStatus(HttpServletResponse.SC_OK );
     }
 
 

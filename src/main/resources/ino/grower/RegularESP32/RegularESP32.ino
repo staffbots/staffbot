@@ -1,47 +1,43 @@
 #include <HTTPClient.h>
+#include <Wire.h>
+#include <BH1750.h>
 
-const char* WIFI_SSID     = "RT-WiFi_5B84";
+const char* WIFI_SSID = "RT-WiFi_5B84";
 const char* WIFI_PASSWORD = "23834659";
-//const char* REMOTE_SERVER = "10.10.10.3"; //Raspberry Pi 3
-//const char* REMOTE_SERVER = "10.10.10.4"; //Raspberry Pi 4
-const char* REMOTE_SERVER = "10.10.10.10"; //Developer station
-const char* DEVICE_NAME     = "esp32Device";
+IPAddress address(10,10,10,200); //unique ip address
+IPAddress gateway(10,10,10,1);
 
-WiFiServer server(80);
+const int HTTP_PORT = 80;
+WiFiServer server(HTTP_PORT);
+String deviceName = "";
 
-char inputLine[80]; // заводим буфер
+char inputLine[80]; 
 int charCount = 0; // и счетчик для буфера
-bool connecting = false;
 String requestValue;
+
+BH1750 lightMeter(0x23); //(0x5C) - if addr pin to 3.3V 
+
 /************************************************************************************************/
-void setup() {
+void setup() {   
     Serial.begin(9600);// иницилизируем монитор порта
-    delay(5000);// запас времени на открытие монитора порта — 5 секунд
+    delay(2000); // запас времени на открытие монитора порта — 2 секунды
+    if (!WiFi.config(address, gateway, IPAddress(255,255,255,0), gateway, gateway)){
+        Serial.println("Address configure failed");
+    }
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);// подключаемся к Wi-Fi сети
     while (WiFi.status() != WL_CONNECTED) {
         delay(1000);
         Serial.println("Connecting to Wi-Fi..");
     }
-    Serial.println("Connected to the Wi-Fi network");
+    Serial.println("Connected to the Wi-Fi network!");
     server.begin();
-}
-/************************************************************************************************/
-void loop() {
-    if (!connecting) connecting = serverConnecting();
-    if (connecting) checkRequest();
-}
-/************************************************************************************************/
-bool serverConnecting(){
-    String uri = "https://" + String(REMOTE_SERVER) + "/device?name=" + String(DEVICE_NAME);
-    HTTPClient http;
-    http.begin(uri);
-    Serial.println("Send " + uri);
-    delay(1000);
-    return (http.GET() == 200);
+    Wire.begin();
+    lightMeter.begin();
 }
 /************************************************************************************************/
 bool isGettingValue(char* variable){
-    String sampleStr = "GET /" + String(DEVICE_NAME) + "_" + variable;
+    if (deviceName.isEmpty()) return false;
+    String sampleStr = "GET /" + deviceName + "_" + variable;
     int sampleLen = sampleStr.length();
     char sampleChr[sampleLen];
     sampleStr.toCharArray(sampleChr, sampleLen);
@@ -49,7 +45,13 @@ bool isGettingValue(char* variable){
 }
 /************************************************************************************************/
 bool isPostingValue(char* variable){
-    String sampleStr = "POST /" + String(DEVICE_NAME) + "_" + variable + "=";
+    String sampleStr = "POST /";
+    if (String(variable).isEmpty()) {
+        sampleStr += "device_name=";
+    } else {
+        if (deviceName == "") return false;
+        sampleStr += deviceName + "_" + variable + "=";
+    };
     int sampleLen = sampleStr.length();
     char sampleChr[sampleLen];
     sampleStr.toCharArray(sampleChr, sampleLen);
@@ -59,12 +61,12 @@ bool isPostingValue(char* variable){
     return true;
 }
 /************************************************************************************************/
-void checkRequest(){
+void loop(){
     WiFiClient client = server.available();
     if (!client) return;
     memset(inputLine, 0, sizeof(inputLine));
     charCount = 0;
-    requestValue = "";
+    requestValue = "";    
     boolean currentLineIsBlank = true; // HTTP-запрос заканчивается пустой строкой
     while (client.connected()) {
         if (!client.available()) continue;
@@ -76,7 +78,13 @@ void checkRequest(){
         // на символ конца строки отправляем ответ
         if (c == '\n' && currentLineIsBlank) {
             // отправляем стандартный заголовок HTTP-ответа
-            client.println("HTTP/1.1 200 OK");
+            if (deviceName.isEmpty()){
+                client.println("HTTP/1.1 500 INTERNAL SERVER ERROR");
+            } else if (requestValue.isEmpty()){
+                client.println("HTTP/1.1 400 BAD REQUEST");
+            } else { 
+                client.println("HTTP/1.1 200 OK");
+            }
             client.println("Content-Type: text/html");
             client.println("Connection: close");
             client.println();
@@ -86,10 +94,10 @@ void checkRequest(){
         if (c == '\n') {
             currentLineIsBlank = true;
             char* value;
-            if (isGettingValue("intensity")){
-                requestValue = getIntensity();
-            }else if (isPostingValue("led")){
-                setLed(requestValue);
+            if (isPostingValue("")){
+                setDeviceName(requestValue);
+            }else if (isGettingValue("lightLevel")){
+                requestValue = getLightLevel();
             }
             currentLineIsBlank = true; // начинаем новую строку
             memset(inputLine, 0, sizeof(inputLine));
@@ -104,10 +112,14 @@ void checkRequest(){
     Serial.println("client disconnected");
 }
 /************************************************************************************************/
-float getIntensity(){
-  return 13.55;
+float getLightLevel(){
+  return lightMeter.readLightLevel();
 }
 /************************************************************************************************/
-void setLed(String value){
-    Serial.println(value);
+void setDeviceName(String value){
+    deviceName = value;
+    Serial.println("Set device name is " + value);
 }
+/************************************************************************************************/
+
+

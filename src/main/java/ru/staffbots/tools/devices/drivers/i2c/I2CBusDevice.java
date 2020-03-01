@@ -1,4 +1,4 @@
-package ru.staffbots.tools.devices.drivers.general;
+package ru.staffbots.tools.devices.drivers.i2c;
 
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.RaspiPin;
@@ -9,7 +9,6 @@ import ru.staffbots.Staffbot;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import java.io.IOException;
-import java.lang.invoke.MethodHandles;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;

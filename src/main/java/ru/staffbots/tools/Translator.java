@@ -27,6 +27,7 @@ public class Translator {
 
     public static String languageCode = "ru";
 
+    private static String defaultSection = "general";
     /**
      * Переводы,
      * languageCode -> xmlDocument
@@ -50,9 +51,9 @@ public class Translator {
      **/
     public static void init(){
         try {
-//            Properties property = new Properties();
-//            property.load(Resources.getAsStream("properties"));
-//            languageCode = property.getProperty("staffbot.language", languageCode);
+            Properties property = new Properties();
+            property.load(Resources.getAsStream("properties"));
+            Translator.languageCode = property.getProperty("staffbot.language", Translator.languageCode);
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             XPathFactory xPathFactory = XPathFactory.newInstance();
@@ -69,7 +70,7 @@ public class Translator {
             for (String enumName : new String[]{"dateaccuracy", "notetype", "userrole", "tasksstatus"})
                 readData("enums", enumName);
 
-            for (String section : new String[]{"frame", "database"})
+            for (String section : new String[]{defaultSection, "frame", "database"})
                 readData("application", section);
 
         } catch (Exception e) {
@@ -101,6 +102,10 @@ public class Translator {
         } catch (XPathExpressionException e) {
             return defaultValue;
         }
+    }
+
+    public static String getValue(String key){
+        return getValue(defaultSection, key);
     }
 
     public static String getValue(String section, String key){

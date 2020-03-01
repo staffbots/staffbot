@@ -19,7 +19,6 @@ import ru.staffbots.webserver.PageType;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
 
@@ -41,9 +40,7 @@ public class StatusServlet extends BaseServlet {
         for (Lever lever : Levers.list)
             if (lever.toValue().isPlotPossible())
                 checkboxes.add(lever.toValue().getName() + "_checkbox");
-
         setParameters.put("apply_button", (HttpServletRequest request) -> buttonApplyClick(request));
-
         getParameters.put("tasklist", (HttpServletRequest request) -> getTaskList());
         getParameters.put("processstatus", (HttpServletRequest request) -> Tasks.getStatus().getDescription());
         for (Lever lever : Levers.list)
@@ -58,14 +55,11 @@ public class StatusServlet extends BaseServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (getResponse(request, response)) return;
         if (isAccessDenied(request, response)) return;
-
         Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
-
         Period period = new Period(Journal.dateFormat);
         String toDateStr = accountService.getAttribute(request,"plot_todate");
         String fromDateStr = accountService.getAttribute(request,"plot_fromdate");
         period.set(fromDateStr, toDateStr);
-
         for (String checkboxName : checkboxes) {
             String checkboxValueStr = accountService.getAttribute(request, checkboxName); // Читаем из сессии
             if (checkboxValueStr.equals("")) {
@@ -80,14 +74,11 @@ public class StatusServlet extends BaseServlet {
             }
             Boolean checkboxValue = Boolean.parseBoolean(checkboxValueStr);
             pageVariables.put(checkboxName, checkboxValue ? "checked" : "");
-
             if (checkboxName.equals("plot_fromdate_checkbox") && checkboxValue && (period.getFromDate() == null))
                 period.initFromDate();
-
             if (checkboxName.equals("plot_todate_checkbox") && checkboxValue && (period.getToDate() == null))
                 period.initToDate();
         }
-
         pageVariables.put("tasks_display", Tasks.list.size() > 0 ? "table-row" : "none");
         pageVariables.put("plot_display", checkboxes.size() > 2 ? "inline-table" : "none");
         pageVariables.put("start_time", Long.toString(Tasks.getStartTime()));
@@ -99,7 +90,6 @@ public class StatusServlet extends BaseServlet {
         pageVariables.put("page_color", pageColor);
         pageVariables.put("site_color", siteColor);
         pageVariables.put("datasets_value", getDataSets(period));
-
         String content = fillTemplate("html/" + pageType.getName()+".html", pageVariables);
         super.doGet(request, response, content);
     }
@@ -126,15 +116,17 @@ public class StatusServlet extends BaseServlet {
         Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
         pageVariables.put("page_color", pageColor);
         String htmlPath = "html/status/device/";
+        String deviceNote;
+        String valueNote;
         for (Device device : Devices.list){
             pageVariables.put("device_url", device.getURL());
             pageVariables.put("device_model", device.getModel());
-            pageVariables.put("device_note", device.getNote());
+            deviceNote = device.getNote();
+            pageVariables.put("device_note", deviceNote);
             pageVariables.put("check_name", device.getName() + "_check");
             pageVariables.put("check_value", "");
             pageVariables.put("value_name", "");
             pageVariables.put("value_note", "");
-
             ArrayList<Value> values = device.getValues();
             int i = 0;
             if (device.getValues().size() == 0)
@@ -144,24 +136,18 @@ public class StatusServlet extends BaseServlet {
                 if (i>0){
                     pageVariables.put("device_model", "");
                     pageVariables.put("device_note", "");
-
                 }
                 pageVariables.put("check_display", (value.isPlotPossible() ? "inline" : "none"));
-
                 String checkName = value.getName() + "_checkbox";
-                String checkValue = accountService.getAttribute(request,checkName, "false"); // Читаем из сессии
-//                if (checkValue.equals("")) {
-//                    checkValue = "false"; // Значение при первой загрузке
-//                    accountService.setAttribute(request.getSession(), checkName, checkValue);
-//                }
+                String checkValue = accountService.getAttribute(request,checkName, "false");
                 pageVariables.put("check_value", Boolean.parseBoolean(checkValue) ? "checked" : "");
                 pageVariables.put("check_name", checkName);
                 pageVariables.put("value_name", value.getName());
-                pageVariables.put("value_note", value.getNote().equals(device.getNote()) ? "" : value.getNote());
+                valueNote = value.getNote();
+                pageVariables.put("value_note", deviceNote.equals(valueNote) ? "" : valueNote);
                 context += fillTemplate(htmlPath + "value.html",pageVariables);
                 i++;
             }
-
         }
         if (!context.isEmpty())
             context = fillTemplate(htmlPath + "title.html",pageVariables) + context;
@@ -215,14 +201,10 @@ public class StatusServlet extends BaseServlet {
         return context;
     }
 
-
     private String getDataSet(Value value, Period period, int numberOfValue) {
-        // Количество значенийй, по которым возможно построить график
-
         String[] booleans = {"false", "true"};
         int index = (value.getValueType() == ValueType.BOOLEAN) ? 1 : 0;
         int precision = (value.getValueType() == ValueType.DOUBLE) ? ((DoubleValue) value).precision : 0;
-
         String context = "'" + value.getName() + "':{";
         context += "label:'" + value.getNote() + "',\n";
         context += "lines:{show:" + booleans[index] + "},\n";
@@ -257,7 +239,6 @@ public class StatusServlet extends BaseServlet {
         return context;
     }
 
-
     static int plotValueCount = getPlotValueCount();
 
     // Насыщенности
@@ -276,11 +257,9 @@ public class StatusServlet extends BaseServlet {
         return count;
     }
 
-
     // Возращает масиив размером length с перемешанными в нём случайными значениями (насыщенности) от 0 до 360
     static private double[] getRandomHue(int length) {
         int plotValueCount = getPlotValueCount();
-
         ArrayList<Integer> random = new ArrayList<>();
         ArrayList<Integer> resource = new ArrayList<>();
         for (int i = 0; i < length; i++)
@@ -295,6 +274,5 @@ public class StatusServlet extends BaseServlet {
             result[i] = 360 * random.get(i) / plotValueCount;
         return result;
     }
-
 
 }
