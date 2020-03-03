@@ -71,5 +71,4 @@ public class Sample extends Staffbot {
             }
     );
 
-
 }

@@ -64,7 +64,7 @@ public class AboutServlet extends BaseServlet {
         Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
         String templateFileName = "html/about/device.html";
         for (Device device : Devices.list){
-            pageVariables.put("device_url", device.getURL());
+            pageVariables.put("device_url", device.getLink());
             pageVariables.put("device_model", device.getModel());
             pageVariables.put("device_description", device.getNote());
             NetworkDevice networkDevice = NetworkDevice.convertDevice(device);

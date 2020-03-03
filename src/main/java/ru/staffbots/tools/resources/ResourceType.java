@@ -6,10 +6,12 @@ package ru.staffbots.tools.resources;
  */
 public enum ResourceType {
 
-    HTML,
-    JS,
     CSS,
+    HTML,
     IMG,
+    INO,
+    JS,
+    XML,
     UNKNOWN;
 
     public static ResourceType getByName(String resourceName) {

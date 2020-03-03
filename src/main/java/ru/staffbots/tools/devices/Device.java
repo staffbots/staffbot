@@ -131,24 +131,21 @@ public abstract class Device{
     }
 
     //
-    public URL getURL(){
+    public String getLink(){
         try {
              //return new URL("http://" + Pattern.website);
-            return new URL(Staffbot.projectWebsite + "/technology/devices/" + getModel(true));
+            return Staffbot.projectWebsite + "/technology/devices/" + getModel(true);
+            //return new URL(Staffbot.projectWebsite + "/technology/devices/" + getModel(true));
             //return new URL(Pattern.projectWebsite + "/technology/devices/" + urlName);
         } catch (Exception exception) {
             return null;
         }
     }
 
-/*
-    public int getI2CBusAddress() {
-       return (this instanceof I2CBusDevice) ? ((I2CBusDevice) this).getBusAddress() : -1;
+    public void initValue(){
+        for (Value value : getValues())
+            if (value.isStorable())
+                value.createTable();
     }
-
-    public int getSpiBusChannel() {
-        return (this instanceof SpiBusDevice) ? ((SpiBusDevice) this).getBusChannel() : -1;
-    }
-*/
 
 }

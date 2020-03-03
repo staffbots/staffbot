@@ -20,7 +20,6 @@ public abstract class SpiBusDevice extends Device {
     public SpiBusDevice(SpiChannel channel){
         this.channel = channel;
         try {
-
             device = SpiFactory.getInstance(channel,
                      SpiDevice.DEFAULT_SPI_SPEED, // default spi speed 1 MHz
                      SpiDevice.DEFAULT_SPI_MODE);

@@ -7,8 +7,7 @@
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="staffbot" />
-        <module name="Staffbot.Staffbot" />
-        <module name="Staffbots.Pattern" />
+        <module name="Staffbot" />
         <module name="test" />
       </profile>
     </annotationProcessing>
@@ -19,10 +18,7 @@
       <module name="launcher" target="11" />
       <module name="st1affbotgrower" target="11" />
       <module name="Staff" target="11" />
-      <module name="Staffbot" target="1.8" />
-      <module name="Staffbot.Pattern" target="1.8" />
       <module name="Staffbots" target="1.8" />
-      <module name="Staffbots.Pattern" target="1.8" />
     </bytecodeTargetLevel>
   </component>
 </project>

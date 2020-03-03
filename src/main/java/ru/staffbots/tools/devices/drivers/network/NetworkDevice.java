@@ -2,6 +2,7 @@ package ru.staffbots.tools.devices.drivers.network;
 
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
+import ru.staffbots.Staffbot;
 import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.webserver.WebServer;
@@ -67,7 +68,7 @@ public abstract class NetworkDevice extends Device {
             if (!connect())
                 return badResult;
         String uri = "http://" + address + ":" + WebServer.httpPort + "/" + query;
-        ContentResponse response = null;
+        ContentResponse response;
         try {
             httpClient.start();
             response = isGetQuery ? httpClient.GET(uri) : httpClient.POST(uri).send();
@@ -91,6 +92,18 @@ public abstract class NetworkDevice extends Device {
 
     static public NetworkDevice convertDevice(Device device){
         return (device instanceof NetworkDevice) ? (NetworkDevice) device : null;
+    }
+
+    /**
+     * Link to resource ino-file contein sketch for remote device.
+     * This sketch diferent for diferent devices.
+     * Every device type descripted diferent class.
+     * Class name is set in method as parameter.
+     **/
+    protected String getInoResourceLink(String className){
+        String shortClassName = className.replaceFirst("Device", "");
+        return "resource?ino/" + Staffbot.solutionName + "/" + shortClassName + ".ino"
+                + "&" + name;
     }
 
 }

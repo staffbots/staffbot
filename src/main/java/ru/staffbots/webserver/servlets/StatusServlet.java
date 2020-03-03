@@ -119,7 +119,7 @@ public class StatusServlet extends BaseServlet {
         String deviceNote;
         String valueNote;
         for (Device device : Devices.list){
-            pageVariables.put("device_url", device.getURL());
+            pageVariables.put("device_url", device.getLink());
             pageVariables.put("device_model", device.getModel());
             deviceNote = device.getNote();
             pageVariables.put("device_note", deviceNote);

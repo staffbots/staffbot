@@ -1,6 +1,5 @@
 package ru.staffbots.tools.devices.drivers.network.grower;
 
-import com.pi4j.component.relay.Relay;
 import ru.staffbots.tools.devices.drivers.network.NetworkDevice;
 import ru.staffbots.tools.values.BooleanValue;
 import ru.staffbots.tools.values.DoubleValue;
@@ -25,11 +24,23 @@ public class RegularESP32Device extends NetworkDevice {
     }
 
     private void init(ValueMode valueMode) {
-        this.model = "ESP-WROOM-32";
+        this.model = "ESP32";
+        valveRelay = new BooleanValue(name + "_valveRelay", "Valve relay", valueMode, false);
         lightLevel = new DoubleValue(name + "_lightLevel", "Light level, lux", valueMode, 2, 0.11 , 100000.00 );
-        valveRelay = new BooleanValue(name + "_valveRelay", "Valve relay", valueMode, true);
-        values.add(lightLevel);
         values.add(valveRelay);
+        values.add(lightLevel);
+    }
+
+    @Override
+    public void initValue() {
+        super.initValue();
+        setValveRelay(valveRelay.getValue());
+        getLightLevel();
+    }
+
+    public void setValveRelay(boolean value){
+        if (post(valveRelay.getName() + "=" + (value ? "on" : "off")) != null)
+            valveRelay.setValue(value);
     }
 
     public double getLightLevel() {
@@ -43,7 +54,6 @@ public class RegularESP32Device extends NetworkDevice {
         return value;
     }
 
-
     @Override
     public String toString() {
         return model + ": " + name;
@@ -52,6 +62,11 @@ public class RegularESP32Device extends NetworkDevice {
     @Override
     public String getClassName() {
         return MethodHandles.lookup().lookupClass().getSimpleName();
+    }
+
+    @Override
+    public String getLink(){
+        return getInoResourceLink(getClassName());
     }
 
 }

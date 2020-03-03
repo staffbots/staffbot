@@ -90,9 +90,7 @@ public class Devices{
         for (Device device: devices) {
             if(list.contains(device)) continue;
             if(putDevice(device))
-                for (Value value : device.getValues())
-                    if (value.isStorable())
-                        value.createTable();
+                device.initValue();
         }
         if (devices.length > 0)
             Journal.add("init_device");
