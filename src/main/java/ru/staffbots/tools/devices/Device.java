@@ -132,17 +132,10 @@ public abstract class Device{
 
     //
     public String getLink(){
-        try {
-             //return new URL("http://" + Pattern.website);
-            return Staffbot.projectWebsite + "/technology/devices/" + getModel(true);
-            //return new URL(Staffbot.projectWebsite + "/technology/devices/" + getModel(true));
-            //return new URL(Pattern.projectWebsite + "/technology/devices/" + urlName);
-        } catch (Exception exception) {
-            return null;
-        }
+        return Staffbot.projectWebsite + "/technology/devices/" + getModel(true);
     }
 
-    public void initValue(){
+    public void initValues(){
         for (Value value : getValues())
             if (value.isStorable())
                 value.createTable();

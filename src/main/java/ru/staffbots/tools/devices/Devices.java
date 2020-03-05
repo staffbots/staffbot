@@ -1,8 +1,6 @@
 package ru.staffbots.tools.devices;
 
-import com.pi4j.io.gpio.GpioController;
-import com.pi4j.io.gpio.GpioFactory;
-import com.pi4j.io.gpio.Pin;
+import com.pi4j.io.gpio.*;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.devices.drivers.i2c.I2CBusDevice;
@@ -15,7 +13,6 @@ import java.util.ArrayList;
  */
 public class Devices{
 
-
     /*
      * Парамер включения/отключения gpio-библиотек для контроллера Raspberry Pi:
      * true - gpio-библиотеки включены, используется для боевой компиляции на контроллере
@@ -24,6 +21,7 @@ public class Devices{
      */
     public static Boolean USED = true;
 
+    public static CoolingDevice coolingDevice = null;
     /**
      * <b>Список устройств</b>,
      * используется для групповой обработки в StatusServlet
@@ -48,6 +46,7 @@ public class Devices{
     }
 
     public static boolean putDevice(Device device) {
+        if (device == null) return false;
         boolean overlap = device.overlap;
         if (!overlap)
             for (Pin pin: getPins())
@@ -86,11 +85,13 @@ public class Devices{
 
     public static void init(Device... devices) {
         list.clear();
+        if(putDevice(coolingDevice))
+            coolingDevice.initValues();
         if (devices == null) devices = new Device[0];
         for (Device device: devices) {
             if(list.contains(device)) continue;
             if(putDevice(device))
-                device.initValue();
+                device.initValues();
         }
         if (devices.length > 0)
             Journal.add("init_device");

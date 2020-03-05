@@ -53,9 +53,9 @@ public class Grower extends Staffbot {
             "Время включения света", DateFormat.SHORTTIME, "8:30");
     static DateLever sunsetLever = new DateLever("sunsetLever",
             "Время выключения света", DateFormat.SHORTTIME, "16:45");
-    static BooleanLever funUsedLever = new BooleanLever("funUsedLever",
+    static BooleanLever funUsedLever = new BooleanLever("fanUsedLever",
             "Включить вентиляцию", true);
-    static LongLever funDelayLever = new LongLever("funDelayLever",
+    static LongLever funDelayLever = new LongLever("fanDelayLever",
             "Инертность вентилятора, мин", 0, 20, 2 * 60);
 
     static DoubleLever phLever = new DoubleLever("phLever",

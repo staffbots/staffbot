@@ -91,6 +91,10 @@ public class DoubleValue extends Value{
         return fromLong(super.get(date));
     }
 
+    public double getDefaultValue(){
+        return defaultValue;
+    }
+
     @Override
     public void reset() {
         setValue(defaultValue);

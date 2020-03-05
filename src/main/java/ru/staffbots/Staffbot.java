@@ -1,11 +1,16 @@
 package ru.staffbots;
 
+import com.pi4j.io.gpio.GpioPin;
+import com.pi4j.io.gpio.Pin;
+import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.system.SystemInfo;
+import com.pi4j.wiringpi.Gpio;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.ParsableProperties;
 import ru.staffbots.tools.Translator;
+import ru.staffbots.tools.devices.CoolingDevice;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.levers.Lever;
@@ -137,7 +142,6 @@ public abstract class Staffbot {
                     Tasks.init(tasks);
                 }
         );
-
     }
 
     public static void solutionInit(String solutionName, Runnable solutionInitAction){
@@ -189,6 +193,9 @@ public abstract class Staffbot {
             Database.DROP = property.getBooleanProperty("db.drop", Database.DROP);
 
             Devices.USED = Devices.isRaspbian() && property.getBooleanProperty("pi.used", Devices.USED);
+            Pin pin = RaspiPin.getPinByAddress(property.getIntegerProperty("pi.fanpin", -1));
+            Devices.coolingDevice = (pin == null) ? null :
+                    new CoolingDevice(pin, property.getIntegerProperty("pi.temperature", 50));
 
             MainWindow.frameUsed = property.getBooleanProperty("ui.frame_used", MainWindow.frameUsed);
 
