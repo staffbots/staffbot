@@ -26,7 +26,7 @@ public class Tester extends Staffbot {
     public static void main(String[] args) {
         solutionInit(
                 MethodHandles.lookup().lookupClass().getSimpleName(), // Имя текущего класса
-                new Device[] {regularDevice, bh1750Device, ledDevice, distanceDevice, sensorDevice, buttonDevice}, // Инициализируем список устройств
+                new Device[] {regularDevice, bh1750Device, distanceDevice, sensorDevice, buttonDevice}, // Инициализируем список устройств
                 new Lever[] {buttonLever, distanceLever}, // Инициализируем список элементов управления
                 new Task[] {}
         );
@@ -40,8 +40,8 @@ public class Tester extends Staffbot {
     //  Levers - Рычаги
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    static LedDevice ledDevice = new LedDevice("ledDevice",
-            "Светодиод", ValueMode.TEMPORARY, RaspiPin.GPIO_29, false);
+//    static LedDevice ledDevice = new LedDevice("ledDevice",
+//            "Светодиод", ValueMode.TEMPORARY, RaspiPin.GPIO_29, false);
 
     static DoubleLever distanceLever = new DoubleLever("distanceLever",
             "Расстояние", LeverMode.OBSERVABLE, 3);

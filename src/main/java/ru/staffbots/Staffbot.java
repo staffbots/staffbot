@@ -168,6 +168,7 @@ public abstract class Staffbot {
             Journal.add(false, "init_properties");
         } catch (Exception exception) {
             Journal.add(NoteType.ERROR, false, "init_properties");
+            exception.printStackTrace();
         }
         // Имя исходного файла конфигурации, лежащего внутри jar-пакета
         String projectCfgFileName = "pattern.cfg"; // внутри jar-пакета
@@ -194,9 +195,7 @@ public abstract class Staffbot {
 
             Devices.USED = Devices.isRaspbian() && property.getBooleanProperty("pi.used", Devices.USED);
             Pin pin = RaspiPin.getPinByAddress(property.getIntegerProperty("pi.fanpin", -1));
-            Devices.coolingDevice = (pin == null) ? null :
-                    new CoolingDevice(pin, property.getIntegerProperty("pi.temperature", 50));
-
+            Devices.coolingDevice = new CoolingDevice(pin, property.getIntegerProperty("pi.temperature", 50));
             MainWindow.frameUsed = property.getBooleanProperty("ui.frame_used", MainWindow.frameUsed);
 
             WebServer.defaultAdmin = property.getProperty("web.default_admin", WebServer.defaultAdmin);
@@ -217,6 +216,7 @@ public abstract class Staffbot {
 
         }catch (Exception exception){
             Journal.add(NoteType.ERROR, false, "init_configs");
+            exception.printStackTrace();
         }
     }
 

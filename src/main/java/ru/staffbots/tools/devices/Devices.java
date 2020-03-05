@@ -85,14 +85,16 @@ public class Devices{
 
     public static void init(Device... devices) {
         list.clear();
-        if(putDevice(coolingDevice))
-            coolingDevice.initValues();
         if (devices == null) devices = new Device[0];
         for (Device device: devices) {
             if(list.contains(device)) continue;
             if(putDevice(device))
                 device.initValues();
         }
+        System.out.println("coolingDevice = " + coolingDevice);
+        if(coolingDevice.coolingRunnable())
+            if(putDevice(coolingDevice))
+                coolingDevice.initValues();
         if (devices.length > 0)
             Journal.add("init_device");
     }
