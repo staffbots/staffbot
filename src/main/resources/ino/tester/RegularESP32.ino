@@ -1,12 +1,17 @@
+/*
+** Sketch for ESP-WROOM-32 controller
+*/
 
 #include <HTTPClient.h>
 #include <Wire.h>
 #include <BH1750.h>
+#include <DHT.h>
 
 const char* WIFI_SSID = "RT-WiFi_5B84";
 const char* WIFI_PASSWORD = "23834659";
 IPAddress address(${device_address}); //unique static ip address
-IPAddress gateway(10,10,10,1);   //gateway and dns servers
+IPAddress gateway(${device_gateway});   //gateway and dns servers
+IPAddress subnetMask(${device_subnetMask}); //subnet mask
 
 WiFiServer server(${http_port});
 String deviceName = "${device_name}";
@@ -15,14 +20,18 @@ char inputLine[80]; // input buffer
 int charCount = 0; // count of input buffer
 String requestValue;
 
-int valveRelay = 4; // GPIO pin of valve relay
-BH1750 lightMeter(0x23); //(0x5C) - if addr pin to 3.3V 
+const int valveRelayPin = 16; // GPIO pin of valve relay
+const int dhtPin = 17; // GPIO pin of dht11 sensor
+const int soilMoisturePin = 32; // GPIO pin of capacitive soil moisture sensor v1.2
+
+BH1750 lightMeter(0x23); //(0x5C) - if addr pin to 3.3V; SCL - GPIO22, SDA - GPIO21
+DHT dht(dhtPin, DHT11);
 
 /************************************************************************************************/
 void setup() {   
     Serial.begin(9600);// иницилизируем монитор порта
     delay(2000); // запас времени на открытие монитора порта — 2 секунды
-    if (!WiFi.config(address, gateway, IPAddress(255,255,255,0), gateway, gateway)){
+    if (!WiFi.config(address, gateway, subnetMask, gateway, gateway)){
         Serial.println("Address configure failed");
     }
     WiFi.begin(WIFI_SSID, WIFI_PASSWORD);// подключаемся к Wi-Fi сети
@@ -32,10 +41,10 @@ void setup() {
     }
     Serial.println("Connected to the Wi-Fi network!");
     server.begin();
-
-    pinMode(valveRelay, OUTPUT);
+    pinMode(valveRelayPin, OUTPUT);
     Wire.begin();
     lightMeter.begin();
+    dht.begin();
 }
 /************************************************************************************************/
 bool isGettingValue(char* variable){
@@ -103,6 +112,12 @@ void loop(){
                 setValveRelay(requestValue);
             }else if (isGettingValue("lightLevel")){
                 requestValue = getLightLevel();
+            }else if (isGettingValue("airTemperature")){
+                requestValue = getAirTemperature();
+            }else if (isGettingValue("airHumidity")){
+                requestValue = getAirHumidity();
+            }else if (isGettingValue("soilMoisture")){
+                requestValue = getSoilMoisture();
             }
 
             currentLineIsBlank = true; // начинаем новую строку
@@ -124,16 +139,36 @@ void setDeviceName(String value){
 }
 /************************************************************************************************/
 void setValveRelay(String value){
-    if (value = "on") {
-        digitalWrite(valveRelay, HIGH);
+    if (value.equals("on")) {
+        digitalWrite(valveRelayPin, HIGH);
     } else {
-        digitalWrite(valveRelay, LOW);
+        digitalWrite(valveRelayPin, LOW);
     }
     Serial.println("Set valve relay is " + value);
 }
 /************************************************************************************************/
 float getLightLevel(){
   return lightMeter.readLightLevel();
+}
+/************************************************************************************************/
+float getAirTemperature(){
+  return dht.readTemperature();
+}
+/************************************************************************************************/
+float getAirHumidity(){
+  return dht.readHumidity();
+}
+/************************************************************************************************/
+float getSoilMoisture(){
+  //float vmin = 0.1; // min of sensor;
+  //float vmax = 3.2; // max of sensor;
+  //float volt = vmin + (vmax - vmin) * analogRead(soilMoisturePin) / 4095;
+  //if (volt < vmin) volt = vmin;
+  //if (volt > vmax) volt = vmax;
+  //return (vmax - volt) * 100 / (vmax - vmin); // 46% - air, 84% - water
+  float xmin = 640; // value in water
+  float xmax = 2600; // value in air
+  return (xmax - analogRead(soilMoisturePin)) * 100 / (xmax - xmin); // 0% - air, 100% - water
 }
 /************************************************************************************************/
 

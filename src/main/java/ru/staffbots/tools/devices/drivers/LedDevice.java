@@ -37,10 +37,15 @@ public class LedDevice extends Device {
         values.add(this.value);
 
         putPin(pin, "");
+    }
 
-        if(!Devices.USED)return;
+    @Override
+    public boolean initPins() {
+        if (!Devices.USED) return false;
+        if (getPins().size() < 1) return false;
         gpioPin = Devices.gpioController.provisionDigitalOutputPin(getPins().get(0), getName(), PinState.LOW);
         gpioPin.setShutdownOptions(true, PinState.LOW);
+        return true;
     }
 
     public Boolean set(Boolean value) {

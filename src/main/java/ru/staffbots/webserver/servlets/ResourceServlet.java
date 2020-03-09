@@ -72,7 +72,9 @@ public class ResourceServlet extends BaseServlet {
                             networkDevice = NetworkDevice.convertDevice(device);
                     if (networkDevice == null) break;
                     pageVariables.put("device_name", networkDevice.getName());
-                    pageVariables.put("device_address", networkDevice.getAddress().replaceAll("\\.", ","));
+                    pageVariables.put("device_address", networkDevice.getAddressSettings().getAddress(true));
+                    pageVariables.put("device_gateway", networkDevice.getAddressSettings().getGateway(true));
+                    pageVariables.put("device_subnetMask", networkDevice.getAddressSettings().getSubnetMask(true));
                     pageVariables.put("http_port", WebServer.httpPort);
                     break;
                 default:

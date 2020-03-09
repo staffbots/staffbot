@@ -3,6 +3,7 @@ package ru.staffbots.tools.devices.drivers;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.Pin;
+import com.pi4j.io.gpio.PinState;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
@@ -58,11 +59,15 @@ public class SonarHCSR04Device extends Device {
         putPin(pinTRIG,"TRIG");
         putPin(pinECHO,"ECHO");
 
-//        if (!Devices.putDevice(this)) return;
+    }
 
-        if (!Devices.USED) return;
+    @Override
+    public boolean initPins() {
+        if (!Devices.USED) return false;
+        if (getPins().size() < 2) return false;
         gpioPinTRIG = Devices.gpioController.provisionDigitalOutputPin(getPins().get(0));
         gpioPinECHO = Devices.gpioController.provisionDigitalInputPin(getPins().get(1));
+        return true;
     }
 
     @Override

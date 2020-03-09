@@ -1,22 +1,20 @@
 package ru.staffbots;
 
-import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.system.SystemInfo;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.dates.DateAccuracy;
 import ru.staffbots.tools.dates.Period;
 import ru.staffbots.tools.dates.DateFormat;
+import ru.staffbots.tools.devices.drivers.network.AddressSettings;
 import ru.staffbots.tools.devices.drivers.network.grower.RegularESP32Device;
 import ru.staffbots.tools.tasks.Tasks;
 import ru.staffbots.tools.tasks.TasksStatus;
 import ru.staffbots.tools.tasks.Task;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
-import ru.staffbots.tools.devices.drivers.*;
 import ru.staffbots.tools.levers.*;
 import ru.staffbots.tools.values.Value;
-import ru.staffbots.tools.values.ValueMode;
 import java.lang.invoke.MethodHandles;
 import java.util.Date;
 
@@ -26,8 +24,10 @@ public class Tester extends Staffbot {
     public static void main(String[] args) {
         solutionInit(
                 MethodHandles.lookup().lookupClass().getSimpleName(), // Имя текущего класса
-                new Device[] {regularDevice, bh1750Device, distanceDevice, sensorDevice, buttonDevice}, // Инициализируем список устройств
-                new Lever[] {buttonLever, distanceLever}, // Инициализируем список элементов управления
+//                new Device[] {regularDevice, bh1750Device, distanceDevice, sensorDevice, buttonDevice}, // Инициализируем список устройств
+//                new Lever[] {buttonLever, distanceLever}, // Инициализируем список элементов управления
+                new Device[] {regularDevice}, // Инициализируем список устройств
+                new Lever[] {buttonLever}, // Инициализируем список элементов управления
                 new Task[] {}
         );
     }
@@ -40,8 +40,8 @@ public class Tester extends Staffbot {
     //  Levers - Рычаги
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-//    static LedDevice ledDevice = new LedDevice("ledDevice",
-//            "Светодиод", ValueMode.TEMPORARY, RaspiPin.GPIO_29, false);
+/*    static LedDevice ledDevice = new LedDevice("ledDevice",
+            "Светодиод", ValueMode.TEMPORARY, RaspiPin.GPIO_29, false);
 
     static DoubleLever distanceLever = new DoubleLever("distanceLever",
             "Расстояние", LeverMode.OBSERVABLE, 3);
@@ -54,14 +54,20 @@ public class Tester extends Staffbot {
 
     static SensorDHT22Device sensorDevice = new SensorDHT22Device("sensorDevice",
            "Датчик температуры и влажности", RaspiPin.GPIO_04);
-
-    static RegularESP32Device regularDevice = new RegularESP32Device("10.10.10.200","regularDevice", "Первый ESP32");
+*/
+    static RegularESP32Device regularDevice =
+        new RegularESP32Device(new AddressSettings("10.10.10.200"),"regularDevice", "First ESP32");
 
     static Runnable buttonClickAction = () -> {
         //ledDevice.set(!ledDevice.get());
         //distanceLever.setValue(distanceDevice.getDistance());
         //bh1750Device.getLightIntensity();
+
+        regularDevice.setValveRelay(!regularDevice.getValveRelay());
         System.out.println(regularDevice.getLightLevel());
+        System.out.println(regularDevice.getAirTemperature());
+        System.out.println(regularDevice.getAirHumidity());
+        System.out.println(regularDevice.getSoilMoisture());
         //System.out.println(esp32Device.getLightIntensity());
         //System.out.println(esp32Device.post("esp32Device_led=23.2"));
         //Journal.addAnyNote("!!! Temperature = " + sensor.getTemperature());
@@ -69,15 +75,15 @@ public class Tester extends Staffbot {
     };
 
     static ButtonLever buttonLever = new ButtonLever("buttonLever",
-        "Кнопка","Кнопка интефейса",
+        "Measuring","Кнопка интефейса",
             buttonClickAction
     );
-
+/*
     static ButtonDevice buttonDevice = new ButtonDevice("buttonDevice",
         "Физическая кнопка", ValueMode.TEMPORARY, RaspiPin.GPIO_06,
             buttonClickAction
     );
-
+*/
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     //  Tasks - Зададия
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

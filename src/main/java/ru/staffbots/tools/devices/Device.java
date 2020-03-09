@@ -7,9 +7,7 @@ import ru.staffbots.tools.values.Value;
 import ru.staffbots.webserver.servlets.*;
 
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  * <b>Устройство</b>
@@ -33,11 +31,8 @@ public abstract class Device{
     }
 
     public boolean putPin(Pin pin, String name){
-        Pin[] boardPins = RaspiPin.allPins(Staffbot.boardType);
-        boolean pinPosible = false;
-        for(Pin boardPin: boardPins)
-            pinPosible = pinPosible || (boardPin == pin);
-        if (!pinPosible)
+        List<Pin> boardPins = Arrays.asList(RaspiPin.allPins(Staffbot.boardType));
+        if (!boardPins.contains(pin))
             return false;
         if (pins.containsKey(pin)){
             overlap = true;
@@ -123,6 +118,8 @@ public abstract class Device{
 
     @Override
     abstract public String toString();
+
+    abstract public boolean initPins();
 
     // Чтение данных,
     // Переопределяется для датчиков, считывающих данные

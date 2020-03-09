@@ -38,7 +38,7 @@ import java.util.Properties;
  *
  * <br><br><b>Простейший пример с миганием светодиода на пине {@code GPIO_01}</b>
  *
- * <br></><code>
+ * <br><code>
  * <br>public class <b>{@link Sample}</b> extends Staffbot {
  * <blockquote>
  *         // Точка входа приложения
@@ -195,7 +195,7 @@ public abstract class Staffbot {
 
             Devices.USED = Devices.isRaspbian() && property.getBooleanProperty("pi.used", Devices.USED);
             Pin pin = RaspiPin.getPinByAddress(property.getIntegerProperty("pi.fanpin", -1));
-            Devices.coolingDevice = new CoolingDevice(pin, property.getIntegerProperty("pi.temperature", 50));
+            Devices.coolingDevice = new CoolingDevice(pin, property.getDoubleProperty("pi.temperature", 50));
             MainWindow.frameUsed = property.getBooleanProperty("ui.frame_used", MainWindow.frameUsed);
 
             WebServer.defaultAdmin = property.getProperty("web.default_admin", WebServer.defaultAdmin);

@@ -1,5 +1,7 @@
 package ru.staffbots.tools.devices.drivers.i2c;
 
+import com.pi4j.io.gpio.PinState;
+import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.devices.drivers.i2c.I2CBusDevice;
 import ru.staffbots.tools.values.DoubleValue;
 import ru.staffbots.tools.values.ValueMode;
@@ -27,6 +29,12 @@ public class pHProbeI2CBusDevice extends I2CBusDevice {
         this.model = "Датчик pH"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
         this.value = new DoubleValue(name, "Водородный показатель", valueMode, 3);
         values.add(this.value);
+    }
+
+    @Override
+    public boolean initPins() {
+        if (!Devices.USED) return false;
+        return true;
     }
 
     public double getValue(){

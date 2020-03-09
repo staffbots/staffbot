@@ -9,13 +9,13 @@ import ru.staffbots.webserver.WebServer;
 
 public abstract class NetworkDevice extends Device {
 
-    private String address;
+    private AddressSettings addressSettings;
     private int timeout = 1500;
     private HttpClient httpClient = new HttpClient();
     private boolean connected = false;
 
-    public NetworkDevice(String address, String name, String note){
-        this.address = address;
+    public NetworkDevice(AddressSettings addressSettings, String name, String note){
+        this.addressSettings = addressSettings;
         this.name = name;
         this.note = note;
         httpClient.setConnectTimeout(timeout);
@@ -39,8 +39,8 @@ public abstract class NetworkDevice extends Device {
         return connected;
     }
 
-    public String getAddress(){
-        return address;
+    public AddressSettings getAddressSettings(){
+        return addressSettings;
     }
 
     public Double getAsDouble(String query, Double defaultValue){
@@ -67,7 +67,7 @@ public abstract class NetworkDevice extends Device {
         if (disconnected())
             if (!connect())
                 return badResult;
-        String uri = "http://" + address + ":" + WebServer.httpPort + "/" + query;
+        String uri = "http://" + addressSettings.getAddress() + ":" + WebServer.httpPort + "/" + query;
         ContentResponse response;
         try {
             httpClient.start();
@@ -77,8 +77,7 @@ public abstract class NetworkDevice extends Device {
             return badResult;
         }
         connected = (response.getStatus() == 200);
-        System.out.println(" status:" + response.getStatus() + "   query:" + query +
-                "   value:" + response.getContentAsString().trim());
+        System.out.println(" status:" + response.getStatus() + "   query:" + query + "   value:" + response.getContentAsString().trim());
         if (response.getStatus() == 500)
             return send(isGetQuery, query); //reconnect in case reboot remote device
         return connected ? response.getContentAsString() : badResult;

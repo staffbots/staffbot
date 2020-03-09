@@ -47,6 +47,7 @@ public class Devices{
 
     public static boolean putDevice(Device device) {
         if (device == null) return false;
+        if (list.contains(device)) return false;
         boolean overlap = device.overlap;
         if (!overlap)
             for (Pin pin: getPins())
@@ -57,8 +58,11 @@ public class Devices{
                 }
         if (overlap)
             Journal.add(NoteType.ERROR, "overlap_pin", device.getName());
-        else
+        else {
+            if (!device.initPins()) return false;
+            device.initValues();
             list.add(device);
+        }
         return !overlap;
     }
 
@@ -86,15 +90,9 @@ public class Devices{
     public static void init(Device... devices) {
         list.clear();
         if (devices == null) devices = new Device[0];
-        for (Device device: devices) {
-            if(list.contains(device)) continue;
-            if(putDevice(device))
-                device.initValues();
-        }
-        System.out.println("coolingDevice = " + coolingDevice);
-        if(coolingDevice.coolingRunnable())
-            if(putDevice(coolingDevice))
-                coolingDevice.initValues();
+        for (Device device: devices)
+            putDevice(device);
+        putDevice(coolingDevice);
         if (devices.length > 0)
             Journal.add("init_device");
     }

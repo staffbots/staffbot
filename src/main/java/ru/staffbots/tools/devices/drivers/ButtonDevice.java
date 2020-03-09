@@ -24,22 +24,26 @@ public class ButtonDevice extends Device {
         init(name, note, valueMode, pin, action);
     }
 
+    private Runnable actionOnClick;
+
     private void init(String name, String note, ValueMode valueMode, Pin pin, Runnable actionOnClick) {
 
         this.model = "Кнопка"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
         this.note = note; // Описание устройства (например, "Сонар для измерения уровня воды")
         this.name = name; // Уникальное имя устройства, используется для именования таблиц в БД (например, "WaterSonar")
+        this.actionOnClick = actionOnClick;
         this.value = new BooleanValue(name, note, valueMode, false);
 
         values.add(this.value);
 
         putPin(pin, "");
+    }
 
-//        if (!Devices.putDevice(this)) return;
-
-        if(!Devices.USED)return;
-
-        gpioPin = Devices.gpioController.provisionDigitalInputPin(pin, PinPullResistance.PULL_DOWN);
+    @Override
+    public boolean initPins() {
+        if (!Devices.USED) return false;
+        if (getPins().size() < 1) return false;
+        gpioPin = Devices.gpioController.provisionDigitalInputPin(getPins().get(0), PinPullResistance.PULL_DOWN);
         //gpioPin.setShutdownOptions(true, PinState.LOW);
         gpioPin.setShutdownOptions(true);
 
@@ -54,6 +58,7 @@ public class ButtonDevice extends Device {
             }
 
         });
+        return true;
     }
 
     public boolean get() {

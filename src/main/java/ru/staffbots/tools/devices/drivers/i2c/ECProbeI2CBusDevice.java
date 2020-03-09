@@ -1,5 +1,7 @@
 package ru.staffbots.tools.devices.drivers.i2c;
 
+import com.pi4j.io.gpio.PinState;
+import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.devices.drivers.i2c.I2CBusDevice;
 import ru.staffbots.tools.values.DoubleValue;
 import ru.staffbots.tools.values.LongValue;
@@ -43,6 +45,11 @@ public class ECProbeI2CBusDevice extends I2CBusDevice {
         values.add(specificGravity);//1.00 – 1.300
     }
 
+    @Override
+    public boolean initPins() {
+        if (!Devices.USED) return false;
+        return true;
+    }
 
     public double getConductivity() throws Exception{
         return getConductivity(true);

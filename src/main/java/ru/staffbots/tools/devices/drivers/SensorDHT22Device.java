@@ -47,16 +47,17 @@ public class SensorDHT22Device extends Device {
 
         putPin(pin, "DATA");
 
-//        if (!Devices.putDevice(this)) return;
-
         pinNumber = pin.getAddress();
+    }
 
-        if (!Devices.USED) return;
-
+    @Override
+    public boolean initPins() {
+        if (!Devices.USED) return false;
+        if (getPins().size() < 1) return false;
         if (Gpio.wiringPiSetup() == -1)
             Journal.addAnyNote(getName() + ": GPIO wiringPiSetup Failed!");
         //gpioPin = Devices.gpioController.provisionDigitalInputPin(pin);
-
+        return true;
     }
 
     public double getTemperature() {

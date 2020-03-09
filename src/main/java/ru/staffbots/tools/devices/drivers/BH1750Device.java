@@ -3,6 +3,7 @@ package ru.staffbots.tools.devices.drivers;
 import com.pi4j.io.gpio.PinState;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.devices.drivers.i2c.I2CBusDevice;
 import ru.staffbots.tools.values.DoubleValue;
 import ru.staffbots.tools.values.ValueMode;
@@ -44,6 +45,12 @@ public class BH1750Device extends I2CBusDevice {
         lightLevel = new DoubleValue(name, "Light level, lux", valueMode, 2, 0.11 , 100000.00 );
         values.add(lightLevel);
         maxSize = 2;
+    }
+
+    @Override
+    public boolean initPins() {
+        if (!Devices.USED) return false;
+        return true;
     }
 
     public double getLightIntensity() {

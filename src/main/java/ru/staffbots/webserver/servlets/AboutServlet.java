@@ -69,7 +69,7 @@ public class AboutServlet extends BaseServlet {
             pageVariables.put("device_description", device.getNote());
             NetworkDevice networkDevice = NetworkDevice.convertDevice(device);
             if (networkDevice != null) {
-                pageVariables.put("address_value", networkDevice.getAddress());
+                pageVariables.put("address_value", networkDevice.getAddressSettings().getAddress());
                 context += fillTemplate("html/about/controller.html", pageVariables);
                 continue;
             }
