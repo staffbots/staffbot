@@ -50,7 +50,7 @@ public class CoolingDevice extends Device {
 
     @Override
     public boolean initPins() {
-        if (!Devices.USED) return false;
+        if (!Devices.isRaspbian) return false;
         if (getPins().size() == 0) return false;
         gpioPin = Devices.gpioController.provisionDigitalOutputPin(getPins().get(0), getName(), PinState.HIGH);
         gpioPin.setShutdownOptions(true, PinState.LOW);
@@ -78,7 +78,7 @@ public class CoolingDevice extends Device {
                 System.out.println("Temperature = " + t );
                 temperature.setValue(t);
                 fanRelay.setValue(t > temperature.getDefaultValue());
-                if(!Devices.USED) continue;
+                if(!Devices.isRaspbian) continue;
                 if (fanRelay.getValue()) {
                     gpioPin.high();
                 } else {

@@ -6,20 +6,15 @@ import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.devices.drivers.i2c.I2CBusDevice;
 import ru.staffbots.tools.values.Value;
 
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
  * Устройства
  */
 public class Devices{
-
-    /*
-     * Парамер включения/отключения gpio-библиотек для контроллера Raspberry Pi:
-     * true - gpio-библиотеки включены, используется для боевой компиляции на контроллере
-     * false - gpio-библиотеки отключены, устанавливается автоматически, если операционная система отлична от Raspbian
-     * Значение можно выставить в файле staffbot.cfg параметром pi.used
-     */
-    public static Boolean USED = true;
 
     public static CoolingDevice coolingDevice = null;
     /**
@@ -66,13 +61,25 @@ public class Devices{
         return !overlap;
     }
 
+    public static final boolean isRaspbian = isRaspbian();
     /**
      * @return возвращает true в случае если программа запущена в операционной системе Raspbian
      * (то есть на контроллере Raspberry Pi), иначе - false
      */
-    public static boolean isRaspbian() {
-        String operatingSystem = System.getProperty("os.name").toLowerCase();
-        return operatingSystem.contains("linux");
+    private static boolean isRaspbian() {
+        String osType = System.getProperty("os.name").toLowerCase();
+        if (!osType.contains("linux")) return false;
+        String osName;
+        try {
+            FileInputStream fstream = new FileInputStream("/etc/issue");
+            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+            osName = br.readLine();
+            if (osName == null) return false;
+        }
+        catch(Exception exception){
+            return false;
+        }
+        return osName.toLowerCase().contains("raspbian");
     }
 
     public static GpioController gpioController = getController();
@@ -82,7 +89,7 @@ public class Devices{
             if (!isRaspbian()) throw new Exception("Need Raspbian - operation system for Raspberry Pi");
             return GpioFactory.getInstance();
         } catch (Exception e) {
-            Devices.USED = false;
+            //Devices.USED = false;
             return null;
         }
     }

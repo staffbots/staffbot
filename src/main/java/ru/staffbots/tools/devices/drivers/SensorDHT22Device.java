@@ -52,7 +52,7 @@ public class SensorDHT22Device extends Device {
 
     @Override
     public boolean initPins() {
-        if (!Devices.USED) return false;
+        if (!Devices.isRaspbian) return false;
         if (getPins().size() < 1) return false;
         if (Gpio.wiringPiSetup() == -1)
             Journal.addAnyNote(getName() + ": GPIO wiringPiSetup Failed!");

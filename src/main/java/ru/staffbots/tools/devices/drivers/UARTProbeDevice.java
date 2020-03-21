@@ -48,7 +48,7 @@ public abstract class UARTProbeDevice extends Device {
 
 //        if (!Devices.putDevice(this)) return;
 
-        if (!Devices.USED) return;
+        if (!Devices.isRaspbian) return;
 
         serial.addListener(new SerialDataEventListener() {
             @Override

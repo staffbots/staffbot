@@ -5,6 +5,8 @@ import org.eclipse.jetty.client.api.ContentResponse;
 import ru.staffbots.Staffbot;
 import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.devices.Device;
+import ru.staffbots.tools.values.BooleanValue;
+import ru.staffbots.tools.values.DoubleValue;
 import ru.staffbots.webserver.WebServer;
 
 public abstract class NetworkDevice extends Device {
@@ -43,7 +45,7 @@ public abstract class NetworkDevice extends Device {
         return addressSettings;
     }
 
-    public Double getAsDouble(String query, Double defaultValue){
+    public double getAsDouble(String query, double defaultValue){
         String stringValue = get(query);
         if ((stringValue == null) || stringValue.isEmpty())
             return defaultValue;
@@ -54,11 +56,22 @@ public abstract class NetworkDevice extends Device {
         }
     }
 
-    public String get(String query){
+    public boolean getAsBoolean(String query, boolean defaultValue){
+        String stringValue = get(query);
+        if ((stringValue == null) || stringValue.isEmpty())
+            return defaultValue;
+        if (stringValue.equalsIgnoreCase("on"))
+            return true;
+        if (stringValue.equalsIgnoreCase("off"))
+            return false;
+            return defaultValue;
+    }
+
+    private String get(String query){
         return send(true, query);
     }
 
-    public String post(String query){
+    private String post(String query){
         return send(false, query);
     }
 
@@ -104,5 +117,33 @@ public abstract class NetworkDevice extends Device {
         return "resource?ino/" + Staffbot.solutionName.toLowerCase() + "/" + shortClassName + ".ino"
                 + "&" + name;
     }
+
+    public void setBooleanValue(BooleanValue variable, boolean value){
+        if (post(variable.getName() + "=" + (value ? "on" : "off")) != null)
+            variable.setValue(value);
+    }
+
+    public boolean getBooleanValue(BooleanValue variable){
+        return getBooleanValue(variable, true);
+    }
+
+    public boolean getBooleanValue(BooleanValue variable, boolean withUpdate){
+        if (!withUpdate) return variable.getValue();
+        boolean value = getAsBoolean(variable.getName(), variable.getValue());
+        variable.setValue(value);
+        return value;
+    }
+
+    public double getDoubleValue(DoubleValue variable) {
+        return getDoubleValue(variable, true);
+    }
+
+    public double getDoubleValue(DoubleValue variable, boolean withUpdate){
+        if (!withUpdate) return variable.getValue();
+        double value = getAsDouble(variable.getName(), variable.getValue());
+        variable.setValue(value);
+        return value;
+    }
+
 
 }

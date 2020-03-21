@@ -21,9 +21,7 @@ public class Sample extends Staffbot {
 
     // Точка входа приложения
     public static void main(String[] args) {
-        solutionInit(
-                MethodHandles.lookup().lookupClass().getSimpleName(), // Имя текущего класса
-                ()->{
+        solutionInit(()->{
                     Levers.init(frequencyLever); // Инициализируем список элементов управления
                     Devices.init(ledDevice); // Инициализируем список устройств
                     Tasks.init(ledFlashingTask); // Инициализируем список заданий
@@ -33,6 +31,7 @@ public class Sample extends Staffbot {
 
     static {
         boardType = SystemInfo.BoardType.RaspberryPi_3B;
+        solutionName = MethodHandles.lookup().lookupClass().getSimpleName(); // current class name
     }
 
     /////////////////////////////////////////////////////////////

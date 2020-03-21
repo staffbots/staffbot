@@ -3,10 +3,9 @@ package ru.staffbots.database;
 import ru.staffbots.database.users.User;
 import ru.staffbots.tools.TemplateFillable;
 
-import java.sql.Connection;
-import java.sql.Driver;
-import java.sql.DriverManager;
-import java.util.Map;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.*;
+//import com.mysql.jdbc.Driver;
 import java.util.TimeZone;
 
 /*
@@ -16,6 +15,7 @@ import java.util.TimeZone;
 public enum DBMS  implements TemplateFillable {
 
     MySQL("com.mysql.cj.jdbc.Driver");
+//    MySQL("com.mysql.jdbc.Driver");
 
     private String driver;
 
@@ -28,24 +28,27 @@ public enum DBMS  implements TemplateFillable {
     }
 
     public Connection getConnection(String server, int port, User user) throws Exception {
-        return getConnection(server, port, user, null);
+        return getConnection(server, port, null, user);
     }
 
-    public Connection getConnection(String server, int port, User user, String database) throws Exception {
-        Connection connection;
-        switch (this) {
-            case MySQL:
-                DriverManager.registerDriver((Driver) Class.forName(driver).getDeclaredConstructor().newInstance());
-                String url = "jdbc:mysql://" + server + ":" + port + "/" +
-                        ((database == null) ? "?serverTimezone=UTC" : database);
-                //Невозможно сразу установить смещение от UTC
-                connection = DriverManager.getConnection(url, user.login, user.password);
-                if (database == null)
-                    connection.createStatement().execute(
-                        "SET GLOBAL time_zone='+" + (int) (TimeZone.getDefault().getRawOffset() / 36E5) + ":00'");
-                break;
-            default:
-                throw new Exception("No " + this + " driver");
+    public Connection getConnection(String server, int port, String database, User user) throws Exception {
+        StringBuilder url = new StringBuilder();
+        url.append("jdbc:" + name() + "://").
+            append(server + ":").
+            append(port + "/").
+            append(database == null ? "?serverTimezone=UTC" : database); //Невозможно сразу установить смещение от UTC
+        Connection connection = null;
+        try {
+            DriverManager.registerDriver((Driver) Class.forName(driver).getDeclaredConstructor().newInstance());
+            connection = DriverManager.getConnection(url.toString(), user.login, user.password);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        if (database == null) {
+            Statement statement = connection.createStatement();
+            statement.execute("SET GLOBAL time_zone='+" + (int) (TimeZone.getDefault().getRawOffset() / 36E5) + ":00'");
+            statement.close();
         }
         return connection;
     }

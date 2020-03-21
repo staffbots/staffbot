@@ -7,6 +7,7 @@ import ru.staffbots.tools.dates.DateAccuracy;
 import ru.staffbots.tools.dates.Period;
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.devices.drivers.network.AddressSettings;
+import ru.staffbots.tools.devices.drivers.network.grower.MainESP32Device;
 import ru.staffbots.tools.devices.drivers.network.grower.RegularESP32Device;
 import ru.staffbots.tools.tasks.Tasks;
 import ru.staffbots.tools.tasks.TasksStatus;
@@ -23,10 +24,12 @@ public class Tester extends Staffbot {
     // Точка входа при запуске приложения
     public static void main(String[] args) {
         solutionInit(
-                MethodHandles.lookup().lookupClass().getSimpleName(), // Имя текущего класса
+
 //                new Device[] {regularDevice, bh1750Device, distanceDevice, sensorDevice, buttonDevice}, // Инициализируем список устройств
 //                new Lever[] {buttonLever, distanceLever}, // Инициализируем список элементов управления
-                new Device[] {regularDevice}, // Инициализируем список устройств
+                new Device[] {mainDevice
+                       // , regularDevice
+                }, // Инициализируем список устройств
                 new Lever[] {buttonLever}, // Инициализируем список элементов управления
                 new Task[] {}
         );
@@ -34,6 +37,7 @@ public class Tester extends Staffbot {
 
     static {
         boardType = SystemInfo.BoardType.RaspberryPi_3B;
+        solutionName = MethodHandles.lookup().lookupClass().getSimpleName(); // current class name
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -56,22 +60,23 @@ public class Tester extends Staffbot {
            "Датчик температуры и влажности", RaspiPin.GPIO_04);
 */
     static RegularESP32Device regularDevice =
-        new RegularESP32Device(new AddressSettings("10.10.10.200"),"regularDevice", "First ESP32");
+        new RegularESP32Device(new AddressSettings("10.10.10.200"), "regularDevice", "First ESP32");
+
+    static MainESP32Device mainDevice =
+            new MainESP32Device(new AddressSettings("10.10.10.201"), "mainDevice", "Main ESP32");
 
     static Runnable buttonClickAction = () -> {
-        //ledDevice.set(!ledDevice.get());
-        //distanceLever.setValue(distanceDevice.getDistance());
-        //bh1750Device.getLightIntensity();
-
-        regularDevice.setValveRelay(!regularDevice.getValveRelay());
+        mainDevice.setEcPumpRelay(!mainDevice.getEcPumpRelay());
+        mainDevice.setPhUpPumpRelay(!mainDevice.getPhUpPumpRelay());
+        mainDevice.setPhDownPumpRelay(!mainDevice.getPhDownPumpRelay());
+        System.out.println("Aqua temperature: " + mainDevice.getAquaTemperature());
+        System.out.println("pH probe: " + mainDevice.getPhProbe());
+        System.out.println("EC probe: " + mainDevice.getEcProbe());
+//        regularDevice.setValveRelay(!regularDevice.getValveRelay());
         System.out.println(regularDevice.getLightLevel());
         System.out.println(regularDevice.getAirTemperature());
         System.out.println(regularDevice.getAirHumidity());
-        System.out.println(regularDevice.getSoilMoisture());
-        //System.out.println(esp32Device.getLightIntensity());
-        //System.out.println(esp32Device.post("esp32Device_led=23.2"));
-        //Journal.addAnyNote("!!! Temperature = " + sensor.getTemperature());
-        //Journal.addAnyNote("!!! Humidity = " + sensor.getHumidity());
+//        System.out.println(regularDevice.getSoilMoisture());
     };
 
     static ButtonLever buttonLever = new ButtonLever("buttonLever",
@@ -100,7 +105,7 @@ public class Tester extends Staffbot {
         },
         () -> { // Задание
 
-            if (!Devices.USED) return;
+            if (!Devices.isRaspbian) return;
             try {
                 for (Device device: Devices.list) {
                     device.dataRead();

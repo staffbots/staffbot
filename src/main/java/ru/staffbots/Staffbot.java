@@ -1,10 +1,7 @@
 package ru.staffbots;
 
-import com.pi4j.io.gpio.GpioPin;
-import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.system.SystemInfo;
-import com.pi4j.wiringpi.Gpio;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
@@ -27,16 +24,11 @@ import java.lang.invoke.MethodHandles;
 import java.util.Properties;
 
 /**
- * <b>Parent for all staffbots</b>
- * - абстрактный класс, на базе которого реализуются классы для конкретных решений.
- * Каждое такое решение (класс-наследник <b>{@code Pattern}</b>) представляет из себя <b>обслуживающего робота</b>
- * по автоматизации определённого процесса с определёнными переферийными устройствами и рычагами управления.
- * Упомянутая определённость (рычагов управления, переферийных устройств и методов их взаимодействия)
- * полностью описывается в одном единственном вышеупомянутом классе <b>обслуживающего робота</b>.
- * Таких наследников может быть сколько угодно и каждый из них будет самостоятельной системой автоматизации.
- * На практике же как правило решается только одна задача и для её решения достаточно одного <b>обслуживающего робота</b>.
- *
- * <br><br><b>Простейший пример с миганием светодиода на пине {@code GPIO_01}</b>
+ * Parent for all staffbots<br><br>
+ * an abstract class on the basis of which classes are implemented for specific solutions.<br>
+ * Each such solution (the class inheritor <b>{@code Staffbot}</b>) is a serving robot (<b>staff bot</b>)
+ * for automating a specific process with certain peripheral devices and control levers.<br>
+ * <br><b>The simple example of a blinking LED</b>
  *
  * <br><code>
  * <br>public class <b>{@link Sample}</b> extends Staffbot {
@@ -107,21 +99,15 @@ public abstract class Staffbot {
 
     public static SystemInfo.BoardType boardType = SystemInfo.BoardType.UNKNOWN;
 
-    /** Project name
-    * <br>Определяется параметром <b>name</b> в исходном файле ресурсов <b>properties</b> перед компиляцией проекта
-    * <br>Используется в имени БД, в заголовках веб-интерфейса и главного окна
-    */
-    public static String projectName = MethodHandles.lookup().lookupClass().getSimpleName(); // Имя текущего класса
+    /** <b>Project name</b><br>
+     * Value is current class name - {@code Staffbot}
+     **/
+    public static final String projectName = MethodHandles.lookup().lookupClass().getSimpleName();
 
-    /** Адрес веб-сайта проекта в www
-    * Определяется параметром website в файле ресурсов properties
-    * Используется при формировании ссылки на описание устройств
-    */
-    public static String projectWebsite = "http://www.staffbots.ru";
-
-    // Название решения,
-    // Совпадает с названием дочернего класса, в нём же и определяется
-    // Используется в имени БД, наименовании файлов .jar и .cfg, а так же в заголовках веб-интерфейса и главного окна
+    /** <b>Solution name</b><br>
+     * Value is name of inherited class, set by default is <em>Solution</em><br>
+     * Initialized in {@code solutionInit()}-method
+     **/
     public static String solutionName = "Solution";
 
     // Название версия проекта,
@@ -129,13 +115,26 @@ public abstract class Staffbot {
     // Используется в наименовании файлов .jar и .cfg и в заголовке главного окна
     public static String projectVersion = "0.00";
 
-    public static void solutionInit(String solutionName, Device[] devices, Lever[] levers, Task[] tasks) {
-        solutionInit(solutionName, devices, (Object[]) levers, tasks);
+    public static String getShortName(){
+        return projectName + "." + solutionName;
     }
 
-    public static void solutionInit(String solutionName, Device[] devices, Object[] levers, Task[] tasks) {
+    public static String getFullName(){
+        return getShortName() + "-" + projectVersion;
+    }
+
+    /** Адрес веб-сайта проекта в www
+     * Определяется параметром website в файле ресурсов properties
+     * Используется при формировании ссылки на описание устройств
+     */
+    public static String projectWebsite = "http://www.staffbots.ru";
+
+    public static void solutionInit(Device[] devices, Lever[] levers, Task[] tasks) {
+        solutionInit(devices, (Object[]) levers, tasks);
+    }
+
+    public static void solutionInit(Device[] devices, Object[] levers, Task[] tasks) {
         solutionInit(
-                solutionName, // Имя текущего класса
                 ()->{
                     Levers.init(levers); // Инициализируем список элементов управления
                     Devices.init(devices); // Инициализируем список устройств
@@ -144,15 +143,14 @@ public abstract class Staffbot {
         );
     }
 
-    public static void solutionInit(String solutionName, Runnable solutionInitAction){
+    public static void solutionInit(Runnable solutionInitAction){
         Staffbot.solutionName = solutionName;
         Translator.init(); // Инициализируем мультиязычность
         propertiesInit(); // Загружаем свойства из cfg-файла
         Database.init(); // Подключаемся к базе данных
         solutionInitAction.run(); // Инициализируем решение (Levers, Devices and Tasks)
         WebServer.init(); // Запускаем веб-сервер
-        String windowTitle = projectName + ":" + solutionName + "-" + projectVersion;
-        MainWindow.init(windowTitle); // Открываем главное окно приложения
+        MainWindow.init(getFullName()); // Открываем главное окно приложения
         Database.dropUnuseTable();
     }
 
@@ -173,7 +171,7 @@ public abstract class Staffbot {
         // Имя исходного файла конфигурации, лежащего внутри jar-пакета
         String projectCfgFileName = "pattern.cfg"; // внутри jar-пакета
         // Имя внешнего файла конфигурации, лежащего рядом с jar-пакетом
-        String solutionCfgFileName = projectName + "." + solutionName + "-" + projectVersion + ".cfg";
+        String solutionCfgFileName = getFullName() + ".cfg";
         try {
             // Извлекаем из jar-пакета файл конфигурации
             Resources.getAsFile(projectCfgFileName, solutionCfgFileName);
@@ -193,9 +191,10 @@ public abstract class Staffbot {
             Database.PASSWORD = property.getProperty("db.password", Database.PASSWORD).trim();
             Database.DROP = property.getBooleanProperty("db.drop", Database.DROP);
 
-            Devices.USED = Devices.isRaspbian() && property.getBooleanProperty("pi.used", Devices.USED);
-            Pin pin = RaspiPin.getPinByAddress(property.getIntegerProperty("pi.fanpin", -1));
-            Devices.coolingDevice = new CoolingDevice(pin, property.getDoubleProperty("pi.temperature", 50));
+            int fanPin = property.getIntegerProperty("pi.fan_pin", -1);
+            double cpuTemperature = property.getDoubleProperty("pi.cpu_temperature", 50);
+            Devices.coolingDevice = new CoolingDevice(RaspiPin.getPinByAddress(fanPin), cpuTemperature);
+
             MainWindow.frameUsed = property.getBooleanProperty("ui.frame_used", MainWindow.frameUsed);
 
             WebServer.defaultAdmin = property.getProperty("web.default_admin", WebServer.defaultAdmin);
@@ -219,9 +218,5 @@ public abstract class Staffbot {
             exception.printStackTrace();
         }
     }
-
-  //  protected static String getClassName(){
-  //      return MethodHandles.lookup().lookupClass().getSimpleName();
-  //  }
 
 }

@@ -63,7 +63,7 @@ public class SonarHCSR04Device extends Device {
 
     @Override
     public boolean initPins() {
-        if (!Devices.USED) return false;
+        if (!Devices.isRaspbian) return false;
         if (getPins().size() < 2) return false;
         gpioPinTRIG = Devices.gpioController.provisionDigitalOutputPin(getPins().get(0));
         gpioPinECHO = Devices.gpioController.provisionDigitalInputPin(getPins().get(1));

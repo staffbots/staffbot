@@ -30,10 +30,7 @@ public class EntryServlet extends BaseServlet {
             accountService.forgetSession(request.getSession());
 
         Map<String, Object> pageVariables = Translator.getSection(PageType.ENTRY.getName());
-        pageVariables.put("page_title",
-                Staffbot.projectName + ":" +
-                Staffbot.solutionName + " - " +
-                pageType.getCaption());
+        pageVariables.put("page_title", Staffbot.getShortName() + " - " + pageType.getCaption());
         pageVariables.put("website_link", Staffbot.projectWebsite);
         pageVariables.put("login_input", login);
 

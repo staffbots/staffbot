@@ -41,7 +41,7 @@ public class ButtonDevice extends Device {
 
     @Override
     public boolean initPins() {
-        if (!Devices.USED) return false;
+        if (!Devices.isRaspbian) return false;
         if (getPins().size() < 1) return false;
         gpioPin = Devices.gpioController.provisionDigitalInputPin(getPins().get(0), PinPullResistance.PULL_DOWN);
         //gpioPin.setShutdownOptions(true, PinState.LOW);

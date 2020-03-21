@@ -49,7 +49,7 @@ public class BH1750Device extends I2CBusDevice {
 
     @Override
     public boolean initPins() {
-        if (!Devices.USED) return false;
+        if (!Devices.isRaspbian) return false;
         return true;
     }
 

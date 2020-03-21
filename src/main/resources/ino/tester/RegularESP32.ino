@@ -27,6 +27,9 @@ const int soilMoisturePin = 32; // GPIO pin of capacitive soil moisture sensor v
 BH1750 lightMeter(0x23); //(0x5C) - if addr pin to 3.3V; SCL - GPIO22, SDA - GPIO21
 DHT dht(dhtPin, DHT11);
 
+const int pinCount = 39; // pin count
+boolean pinStatus[pinCount]; // pin status
+
 /************************************************************************************************/
 void setup() {   
     Serial.begin(9600);// иницилизируем монитор порта
@@ -41,6 +44,8 @@ void setup() {
     }
     Serial.println("Connected to the Wi-Fi network!");
     server.begin();
+    for (int i = 0; i < pinCount; i++)
+        pinStatus[i] = false;
     pinMode(valveRelayPin, OUTPUT);
     Wire.begin();
     lightMeter.begin();
@@ -86,10 +91,7 @@ void loop(){
         Serial.write(c);
         inputLine[charCount] = c;
         if (charCount < sizeof(inputLine) - 1) charCount++;
-
-        // на символ конца строки отправляем ответ
-        if (c == '\n' && currentLineIsBlank) {
-            // отправляем стандартный заголовок HTTP-ответа
+        if (c == '\n' && currentLineIsBlank) { // send request
             if (deviceName.isEmpty()){
                 client.println("HTTP/1.1 500 INTERNAL SERVER ERROR");
             } else if (requestValue.isEmpty()){
@@ -104,12 +106,12 @@ void loop(){
             break;
         }
         if (c == '\n') {
-            currentLineIsBlank = true;
-            char* value;
             if (isPostingValue("")){
                 setDeviceName(requestValue);
             }else if (isPostingValue("valveRelay")){
-                setValveRelay(requestValue);
+                setRelay(valveRelayPin, requestValue);
+            }else if (isGettingValue("valveRelay")){
+                requestValue = getRelay(valveRelayPin);
             }else if (isGettingValue("lightLevel")){
                 requestValue = getLightLevel();
             }else if (isGettingValue("airTemperature")){
@@ -119,17 +121,15 @@ void loop(){
             }else if (isGettingValue("soilMoisture")){
                 requestValue = getSoilMoisture();
             }
-
-            currentLineIsBlank = true; // начинаем новую строку
+            currentLineIsBlank = true; // new line begin
             memset(inputLine, 0, sizeof(inputLine));
             charCount = 0;
-        } else if (c != '\r') {
-            // в строке попался новый символ
+        } else if (c != '\r') {// в строке попался новый символ
             currentLineIsBlank = false;
         }
     }
-    delay(1);  // даем веб-браузеру время, чтобы получить данные
-    client.stop(); // закрываем соединение
+    delay(1);  // The time for web-browser to get data
+    client.stop(); //  Connect closing
     Serial.println("client disconnected");
 }
 /************************************************************************************************/
@@ -138,13 +138,21 @@ void setDeviceName(String value){
     Serial.println("Set device name is " + value);
 }
 /************************************************************************************************/
-void setValveRelay(String value){
-    if (value.equals("on")) {
-        digitalWrite(valveRelayPin, HIGH);
+void setRelay(int pin, String value){
+    pinStatus[pin] = value.equals("on");
+    if (pinStatus[pin]) {
+        digitalWrite(pin, HIGH);
     } else {
-        digitalWrite(valveRelayPin, LOW);
+        digitalWrite(pin, LOW);
     }
-    Serial.println("Set valve relay is " + value);
+}
+/************************************************************************************************/
+bool getRelay(int pin){
+    if (pinStatus[pin]) {
+        return "on";
+    } else {
+        return "off";
+    }
 }
 /************************************************************************************************/
 float getLightLevel(){

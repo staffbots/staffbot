@@ -103,10 +103,7 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
         String login = accountService.getUserLogin(request.getSession());
 
         Map<String, Object> pageVariables = Translator.getSection(PageType.BASE.getName());
-        pageVariables.put("page_title",
-            Staffbot.projectName + ":" +
-            Staffbot.solutionName + " - " +
-            pageType.getCaption());
+        pageVariables.put("page_title", Staffbot.getShortName() + " - " + pageType.getCaption());
         pageVariables.put("main_menu", getMenu(accountService.getUserAccessLevel(login)));
         pageVariables.put("page_content", content);
         pageVariables.put("login_value", login);
@@ -130,7 +127,7 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
 
     /**
      * Функция обрабатывает запросы вида get=name:value
-     */
+     **/
     protected boolean getResponse(HttpServletRequest request, HttpServletResponse response)throws IOException {
         String name = request.getParameter("get");
         if (!getParameters.containsKey(name)) return false;

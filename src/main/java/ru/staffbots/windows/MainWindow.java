@@ -65,7 +65,7 @@ public class MainWindow extends JFrame {
         addWindowListener(new MainWindowListener());
 
         // Подгружаем иконку из ресурсов
-        String iconName = "/img/logo.png";
+        String iconName = "/png/icon.png";
         try {
             setIconImage(new ImageIcon(ImageIO.read(
                     getClass().getResourceAsStream(iconName))).getImage());

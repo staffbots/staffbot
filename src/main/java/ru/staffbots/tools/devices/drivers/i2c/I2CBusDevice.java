@@ -47,7 +47,7 @@ public abstract class I2CBusDevice extends Device {
         for (int pinNumber = 0; pinNumber < 2; pinNumber++)
             putPin(getPin(busNumber, pinNumber),getPinNote(pinNumber));
 
-        if (!Devices.USED) return;
+        if (!Devices.isRaspbian) return;
 
         try {
 

@@ -15,7 +15,6 @@ public class Calibration extends Staffbot {
     // Точка входа приложения
     public static void main(String[] args) {
         solutionInit(
-                MethodHandles.lookup().lookupClass().getSimpleName(), // Имя текущего класса
                 new Device[] {probeDevice, ledDevice, probeDevice1}, // Инициализируем список устройств
                 new Lever[] {buttonLever}, // Инициализируем список элементов управления
                 null
@@ -24,6 +23,7 @@ public class Calibration extends Staffbot {
 
     static {
         boardType = SystemInfo.BoardType.RaspberryPi_3B;
+        solutionName = MethodHandles.lookup().lookupClass().getSimpleName(); // current class name
     }
 
     /////////////////////////////////////////////////////////////

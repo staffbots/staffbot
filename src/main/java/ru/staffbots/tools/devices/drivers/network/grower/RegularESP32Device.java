@@ -53,13 +53,11 @@ public class RegularESP32Device extends NetworkDevice {
     }
 
     public void setValveRelay(boolean value){
-
-        if (post(valveRelay.getName() + "=" + (value ? "on" : "off")) != null)
-            valveRelay.setValue(value);
+        setBooleanValue(valveRelay, value);
     }
 
     public boolean getValveRelay(){
-        return valveRelay.getValue();
+        return getBooleanValue(valveRelay);
     }
 
     public double getLightLevel() {
@@ -67,7 +65,7 @@ public class RegularESP32Device extends NetworkDevice {
     }
 
     public double getLightLevel(boolean withUpdate){
-        return getValue(lightLevel, true);
+        return getDoubleValue(lightLevel, true);
     }
 
     public double getAirTemperature() {
@@ -75,7 +73,7 @@ public class RegularESP32Device extends NetworkDevice {
     }
 
     public double getAirTemperature(boolean withUpdate) {
-        return getValue(airTemperature, true);
+        return getDoubleValue(airTemperature, true);
     }
 
     public double getAirHumidity() {
@@ -83,7 +81,7 @@ public class RegularESP32Device extends NetworkDevice {
     }
 
     public double getAirHumidity(boolean withUpdate) {
-        return getValue(airHumidity, true);
+        return getDoubleValue(airHumidity, true);
     }
 
     public double getSoilMoisture() {
@@ -91,14 +89,7 @@ public class RegularESP32Device extends NetworkDevice {
     }
 
     public double getSoilMoisture(boolean withUpdate) {
-        return getValue(soilMoisture, true);
-    }
-
-    private double getValue(DoubleValue variable, boolean withUpdate){
-        if (!withUpdate) return variable.getValue();
-        double value = getAsDouble(variable.getName(), variable.getValue());
-        variable.setValue(value);
-        return value;
+        return getDoubleValue(soilMoisture, true);
     }
 
     @Override

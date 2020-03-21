@@ -57,16 +57,14 @@ public abstract class DBTable {
     public boolean createTable(boolean drop){
         if (Database.disconnected()) return false;
         if (drop) dropTable();
-        if (!tableExists())
-            try {
-                getStatement("CREATE TABLE " + name + " (" + fields + ")").execute();
+        try {
+            if (new Executor<>().execUpdate("CREATE TABLE IF NOT EXISTS " + name + " (" + fields + ")") > 0)
                 Journal.add(NoteType.WARNING, "create_table", name, fields);
-            } catch (Exception exception) {
-                //connection = null;
-                Journal.add(NoteType.ERROR, "create_table", name, exception.getMessage());
-                return false;
-            }
-
+        } catch (Exception exception) {
+            //connection = null;
+            Journal.add(NoteType.ERROR, "create_table", name, exception.getMessage());
+            return false;
+        }
         return true;
     }
 

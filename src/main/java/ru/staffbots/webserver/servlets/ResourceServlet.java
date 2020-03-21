@@ -61,7 +61,7 @@ public class ResourceServlet extends BaseServlet {
                     pageVariables.put("page_color", pageColor);
                     pageVariables.put("main_color", mainColor);
                     pageVariables.put("dberror_display", Database.connected() ? "none" : "inline-table");
-                    pageVariables.put("piwarning_display", Devices.USED || Database.disconnected() ? "none" : "inline-table");
+                    pageVariables.put("piwarning_display", Devices.isRaspbian || Database.disconnected() ? "none" : "inline-table");
                     break;
                 case INO:
                     String deviceName = requests.length > 1 ? requests[1] : null;

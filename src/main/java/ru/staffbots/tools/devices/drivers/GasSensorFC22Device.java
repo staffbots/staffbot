@@ -11,7 +11,7 @@ GasSensorFC22Device extends Device {
 
     @Override
     public boolean initPins() {
-        if (!Devices.USED) return false;
+        if (!Devices.isRaspbian) return false;
         if (getPins().size() < 1) return false;
 //        gpioPin = Devices.gpioController.provisionDigitalOutputPin(getPins().get(0), getName(), PinState.LOW);
 //        gpioPin.setShutdownOptions(true, PinState.LOW);

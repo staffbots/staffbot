@@ -12,6 +12,7 @@ import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.levers.Lever;
 import ru.staffbots.tools.levers.Levers;
 import ru.staffbots.tools.values.Value;
+
 import java.sql.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -66,8 +67,8 @@ public class Database {
     public static boolean init(){
         try {
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD));
-            createDatabase(DROP);
-            connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD), NAME);
+            createDatabase(true);
+            connection = DBMSystem.getConnection(SERVER, PORT, NAME, new User(USER, PASSWORD));
             journal = new Journal();
             Journal.add(null);
             Journal.add("init_database", NAME);
@@ -89,29 +90,25 @@ public class Database {
         if(disconnected())return false;
         boolean result = false;
         DatabaseMetaData metaData = connection.getMetaData();
-        ResultSet rs = metaData.getCatalogs();
-        while (rs.next())
-            if (NAME.equals(rs.getString(1))) {
+        ResultSet resultSet = metaData.getCatalogs();
+        while (resultSet.next())
+            if (NAME.equals(resultSet.getString(1))) {
                 result = true;
                 break;
             }
-        rs.close();
+        resultSet.close();
         return result;
     }
 
     private static boolean createDatabase(boolean drop) throws Exception{
-        if(!connected())return false;
+        if(disconnected())return false;
         boolean exists = dbExists();
         if (exists && drop){
-            Statement statement = connection.createStatement();
-            statement.execute("DROP DATABASE " + NAME);
-            statement.close();
+            new Executor<>().execUpdate("DROP DATABASE " + NAME);
             Journal.add(NoteType.WARNING, "drop_database", NAME);
             exists = false;
         } if(!exists) {
-            Statement statement = connection.createStatement();
-            statement.execute("CREATE DATABASE " + NAME);
-            statement.close();
+            new Executor<>().execUpdate("CREATE DATABASE " + NAME);
             Journal.add(NoteType.WARNING, "create_database", NAME);
         }
         return true;
@@ -123,7 +120,7 @@ public class Database {
 
     public static Map<String, DBTable> getTableList(boolean useOnly){
         Map<String, DBTable> result = new HashMap(0);
-        if(!connected()) return result;
+        if(disconnected()) return result;
         result.put(journal.getTableName(), journal);
         result.put(configs.getTableName(), configs);
         result.put(settings.getTableName(), settings);
@@ -137,18 +134,23 @@ public class Database {
                     result.put(value.toValue().getTableName(), value.toValue());
         if (!useOnly)
         try {
-            Statement statement = connection.createStatement();
-            if(!statement.execute("SELECT table_name " +
-                    "FROM information_schema.TABLES " +
-                    "WHERE table_schema like '"+NAME+"'"))
-                return  result;
-            ResultSet resultSet = statement.getResultSet();
-            while (resultSet.next()) {
-                String tableName = resultSet.getString(1);
+            ArrayList<String> tablesNames =
+                    new Executor<ArrayList<String>>().execQuery(
+                    "SELECT table_name " +
+                            "FROM information_schema.TABLES " +
+                            "WHERE table_schema like '"+NAME+"'",
+                    (resultSet) -> {
+                        ArrayList<String> handleResult = new ArrayList();
+                        while (resultSet.next())
+                            handleResult.add(resultSet.getString(1));
+                        return handleResult;
+                    }
+            );
+            for (String tableName : tablesNames)
                 if (!result.containsKey(tableName))
                     result.put(tableName, null);
-            }
-        } catch (SQLException exception) {
+
+        } catch (Exception exception) {
             exception.printStackTrace();
         }
         return new TreeMap<String, DBTable>(result);
@@ -165,17 +167,15 @@ public class Database {
     }
 
     public static boolean dropTable(String tableName){
-        if(Database.disconnected())return false;
         try {
-            if (tableExists(tableName)){
-                getStatement("DROP TABLE " + tableName).execute();
+            if (new Executor<>().execUpdate("DROP TABLE IF EXISTS " + tableName) > 0) {
                 Journal.add(NoteType.WARNING, "drop_table", tableName);
+                return true;
             }
         } catch (Exception exception) {
             Journal.add(NoteType.ERROR, "drop_table", tableName, exception.getMessage());
-            return false;
         }
-        return true;
+        return false;
     }
 
     public static PreparedStatement getStatement(String query) throws Exception {
@@ -188,8 +188,10 @@ public class Database {
         if(disconnected())return false;
         try {
             DatabaseMetaData metaData = getConnection().getMetaData();
-            ResultSet tables = metaData.getTables(Database.NAME, null, tableName, null);
-            return (tables.next());
+            ResultSet resultSet = metaData.getTables(Database.NAME, null, tableName, null);
+            boolean result = resultSet.first();
+            resultSet.close();
+            return result;
         } catch (SQLException exception) {
             Journal.add(NoteType.ERROR, "table_exists", tableName, exception.getMessage());
             return false;
@@ -197,21 +199,16 @@ public class Database {
     }
 
     public static long getTableRows(String tableName){
-        long result = 0;
-        if(!connected()) return result;
         try {
-
-            Statement statement = connection.createStatement();
-            if(!statement.execute("SELECT COUNT(*) FROM " + tableName))
-                return  result;
-            ResultSet resultSet = statement.getResultSet();
-            if(resultSet.next())
-                return resultSet.getLong(1);
-
-        } catch (SQLException exception) {
-            exception.printStackTrace();
+            return new Executor<Long>().execQuery(
+                    "SELECT COUNT(*) FROM " + tableName,
+                    (resultSet)-> {
+                        return resultSet.first() ? resultSet.getLong(1) : 0;
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
         }
-        return result;
     }
 
 }
