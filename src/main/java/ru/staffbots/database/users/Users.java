@@ -1,7 +1,7 @@
 package ru.staffbots.database.users;
 
 import ru.staffbots.database.DBTable;
-import ru.staffbots.database.Database;
+import ru.staffbots.database.Executor;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.Translator;
@@ -9,7 +9,6 @@ import ru.staffbots.webserver.WebServer;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.sql.*;
 import java.util.ArrayList;
 
 public class Users extends DBTable {
@@ -23,41 +22,23 @@ public class Users extends DBTable {
     }
 
     public void delete(String login){
-        try {
-            PreparedStatement statement = Database.getConnection().prepareStatement(
-                    "DELETE FROM " + staticTableName + " WHERE (login = ?)");
-            statement.setString(1, login);
-            statement.executeUpdate();
-            Journal.add("delete_user", login);
-        } catch (SQLException e) {
-            Journal.add(NoteType.ERROR, "delete_user", e.getMessage());
-        }
+        Executor executor = new Executor("delete_user", login);
+        executor.execUpdate("DELETE FROM " + staticTableName + " WHERE (login = ?)", login);
     }
 
     public boolean setUser(User user){
         boolean newLogin = (getUserList(user.login).size() == 0);
-        try {
-            if (isAdmin(user.login)) {
-                Journal.add(NoteType.WARNING, "add_user", user.login.toLowerCase());
-                return false;
-            }
-            //newLogin = (getUserList(user.login).size() == 0);
-            PreparedStatement statement = Database.getConnection().prepareStatement(
-                newLogin ?
-                    "INSERT INTO " + staticTableName + " (role, password, login) VALUES (?, ?, ?)" :
-                    "UPDATE " + staticTableName + " SET role = ?, password = ? WHERE login = ?"
-            );
-            statement.setString(3, user.login);
-            statement.setString(2, cryptWithMD5(user.password));
-            statement.setInt(1, user.role.getAccessLevel());
-            statement.executeUpdate();
-            Journal.add(newLogin ? "add_user" : "change_user",
-                    user.login, user.role.getDescription());
-            return true;
-        } catch (SQLException e) {
-            Journal.add(NoteType.ERROR, newLogin ? "add_user" :"change_user", e.getMessage());
+        if (isAdmin(user.login)) {
+            Journal.add(NoteType.WARNING, "add_user", user.login);
             return false;
         }
+        Executor executor = new Executor(newLogin ? "add_user" :"change_user", user.login, user.role.getDescription());
+        return executor.execUpdate(newLogin ?
+                        "INSERT INTO " + staticTableName + " (role, password, login) VALUES (?, ?, ?)" :
+                        "UPDATE " + staticTableName + " SET role = ?, password = ? WHERE login = ?",
+                String.valueOf(user.role.getAccessLevel()),
+                cryptWithMD5(user.password),
+                user.login) > 0;
     }
 
     public static UserRole getRole(String login){
@@ -78,28 +59,25 @@ public class Users extends DBTable {
     }
 
     private static ArrayList<User> getUserList(String login){
-        ArrayList<User> userList = new ArrayList<>();
-        if (Database.disconnected()) return userList;
-        if (login != null)
+        ArrayList<String> parameters = new ArrayList(0);
+        if (login != null) {
             if (login.trim().equals(""))
-                return userList;
-        try {
-            PreparedStatement statement = Database.getConnection().prepareStatement(
-                    "SELECT login, password, role FROM "  + staticTableName
-                            + ((login == null) ? "" : " WHERE (login = ?)"));
-            if (login != null) statement.setString(1, login);
-            if(statement.execute()) {
-                ResultSet resultSet = statement.getResultSet();
-                while (resultSet.next())
-                    userList.add(new User(
-                            resultSet.getString(1),
-                            resultSet.getString(2),
-                            resultSet.getInt(3)));
-            }
-        } catch (SQLException e) {
-            Journal.add(NoteType.ERROR, "get_user", login, e.getMessage());
+                return new ArrayList(0);
+            parameters.add(login);
         }
-        return userList;
+        Executor<ArrayList<User>> executor = new Executor();
+        return executor.execQuery(
+                "SELECT login, password, role FROM "  + staticTableName + (login == null ? "" : " WHERE (login = ?)"),
+                (resultSet) -> {
+                    ArrayList<User> userList = new ArrayList(0);
+                    while (resultSet.next())
+                        userList.add(new User(
+                                resultSet.getString(1),
+                                resultSet.getString(2),
+                                resultSet.getInt(3)));
+                    return userList;
+                },
+                parameters.stream().toArray(String[]::new));
     }
 
     private static String cryptWithMD5(String password){

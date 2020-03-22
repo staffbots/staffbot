@@ -2,6 +2,7 @@ package ru.staffbots.database.journal;
 
 import ru.staffbots.database.DBTable;
 import ru.staffbots.database.Database;
+import ru.staffbots.database.Executor;
 import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.dates.Period;
@@ -19,6 +20,7 @@ import java.util.Date;
  */
 public class Journal extends DBTable {
 
+    public static final String defaultNoteName = "any_message";
     private static final String staticTableName = "sys_journal";
     private static final String staticTableFields =
             "moment TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3), " +
@@ -74,26 +76,14 @@ public class Journal extends DBTable {
     }
 
     private static boolean insertNote(Note note){
-        if(Database.disconnected())return false;
-        try {
-            PreparedStatement statement = Database.getConnection().prepareStatement(
-                    "INSERT INTO " + staticTableName + " (moment, noteType, noteName, noteVariables) VALUES (?, ?, ?, ?)" );
-            statement.setTimestamp(1, new Timestamp(note.getDate().getTime()));
-            statement.setInt(2, note.getType().getValue());
-            statement.setString(3, note.getName());
-            statement.setString(4, note.getVariables());
-
-            statement.executeUpdate();
-            statement.close();
-            return true;
-        } catch (Exception exception) {
-            //Journal.add("В журнал не добавлена запись: " + note.getValue(), NoteType.ERROR, exception, false);
-            return false;
-        }
-    }
-
-    public static boolean erase(){
-        return (new Journal()).eraseTable();
+        Executor executor = new Executor(null);
+        return executor.execUpdate(
+                "INSERT INTO " + staticTableName + " (moment, noteType, noteName, noteVariables) VALUES (?, ?, ?, ?)",
+                new Timestamp(note.getDate().getTime()).toString(),
+                String.valueOf(note.getType().getValue()),
+                note.getName(),
+                note.getVariables()
+                ) > 0;
     }
 
     public Period period = new Period(dateFormat);
@@ -127,53 +117,41 @@ public class Journal extends DBTable {
     }
 
     public ArrayList<Note> getJournal(Map<Integer, Boolean> noteTypes, String searchString){
-        ArrayList<Note> result = new ArrayList();
-        try {
-            String condition = "((noteName IS NULL)";
-            for (NoteType noteType : NoteType.values())
-                if (noteTypes.containsKey(noteType.getValue()))
-                    if (noteTypes.get(noteType.getValue()))
-                        condition += " OR (noteType = " + noteType.getValue() + ")";
-            condition += ")";
-            String fromCondition = (period.getFromDate() == null) ? "" : " AND (? <= moment)";
-            String toCondition = (period.getToDate() == null) ? "" : " AND (moment <= ?)";
-            String sql ="SELECT moment, noteType, noteName, noteVariables FROM " + getTableName()
-                    + " WHERE " + condition + fromCondition + toCondition
-                    + " ORDER BY moment DESC ";
-            PreparedStatement statement = Database.getConnection().prepareStatement(sql);
-
-            if (period.getFromDate() != null)
-                statement.setTimestamp(1,
-                    new Timestamp(period.getFromDate().getTime()));
-
-            if (period.getToDate() != null)
-                statement.setTimestamp((period.getFromDate() == null) ? 1 : 2,
-                    new Timestamp(period.getToDate().getTime()));
-
-            if(statement.execute()) {
-                ResultSet resultSet = statement.getResultSet();
-                while (resultSet.next() && (result.size() < getCount())) {
-                    Date date = new Date(resultSet.getTimestamp(1).getTime());
-                    Note note = new Note(
-                            date,
-                            NoteType.valueOf(resultSet.getInt(2)),
-                            resultSet.getString(3),
-                            resultSet.getString(4));
-                    if ((searchString == null) || searchString.trim().isEmpty())
-                        result.add(note);
-                    else
-                        if (note.toString().toLowerCase().indexOf(searchString.trim().toLowerCase()) > 0)
+        String condition = "((noteName IS NULL)";
+        for (NoteType noteType : NoteType.values())
+            if (noteTypes.containsKey(noteType.getValue()))
+                if (noteTypes.get(noteType.getValue()))
+                    condition += " OR (noteType = " + noteType.getValue() + ")";
+        condition += ")";
+        String fromCondition = (period.getFromDate() == null) ? "" : " AND (? <= moment)";
+        String toCondition = (period.getToDate() == null) ? "" : " AND (moment <= ?)";
+        String query ="SELECT moment, noteType, noteName, noteVariables FROM " + getTableName()
+                + " WHERE " + condition + fromCondition + toCondition
+                + " ORDER BY moment DESC ";
+        ArrayList<String> parameters = new ArrayList();
+        if (period.getFromDate() != null)
+            parameters.add(new Timestamp(period.getFromDate().getTime()).toString());
+        if (period.getToDate() != null)
+            parameters.add(new Timestamp(period.getToDate().getTime()).toString());
+        Executor<ArrayList<Note>> executor = new Executor(null);
+        return executor.execQuery(query,
+                (resultSet) -> {
+                    ArrayList<Note> result = new ArrayList();
+                    while (resultSet.next() && (result.size() < getCount())) {
+                        Date date = new Date(resultSet.getTimestamp(1).getTime());
+                        Note note = new Note(
+                                date,
+                                NoteType.valueOf(resultSet.getInt(2)),
+                                resultSet.getString(3),
+                                resultSet.getString(4));
+                        if ((searchString == null) || searchString.trim().isEmpty())
                             result.add(note);
-
-
-                }
-            }
-
-        } catch (SQLException exception) {
-            //Journal.add("Журнал не сформирован", NoteType.ERROR, exception);
-        }
-
-        return result;
+                        else if (note.toString().toLowerCase().indexOf(searchString.trim().toLowerCase()) > 0)
+                            result.add(note);
+                    }
+                    return result;
+                },
+                parameters.stream().toArray(String[]::new));
     }
 
 }

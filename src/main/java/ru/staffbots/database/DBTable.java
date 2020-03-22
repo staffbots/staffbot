@@ -58,7 +58,7 @@ public abstract class DBTable {
         if (Database.disconnected()) return false;
         if (drop) dropTable();
         try {
-            if (new Executor<>().execUpdate("CREATE TABLE IF NOT EXISTS " + name + " (" + fields + ")") > 0)
+            if (new Executor().execUpdate("CREATE TABLE IF NOT EXISTS " + name + " (" + fields + ")") > 0)
                 Journal.add(NoteType.WARNING, "create_table", name, fields);
         } catch (Exception exception) {
             //connection = null;
@@ -68,88 +68,31 @@ public abstract class DBTable {
         return true;
     }
 
-    public boolean eraseTable(){
-        if(Database.disconnected())return false;
-        try {
-            if (tableExists()) {
-                getStatement("DELETE FROM " + name).execute();
-                Journal.add(NoteType.WARNING, "erase_table", name);
-                return true;
-            }
-        } catch (Exception exception) {
-            Journal.add(NoteType.ERROR, "erase_table", name, exception.getMessage());
-        }
-        return false;
+    public void eraseTable(){
+        Executor executor = new Executor("erase_table", name);
+        executor.execUpdate("DELETE FROM " + name);
     }
 
     public boolean dropTable(){
         return Database.dropTable(name);
     }
 
-    protected PreparedStatement statement;
-
-    public PreparedStatement getStatement(String query) throws Exception {
-        return Database.getStatement(query);
-    }
-
-    public ResultSet getSelectResult(String fields, String condition){
-        if (Database.disconnected()) return null;
-        if (!tableExists()) return null;
-        String tableName = getTableName();
-        try {
-            PreparedStatement statement = getStatement(
-                "SELECT " + fields + " FROM " + tableName +
-                ((condition == null) ? "" : " WHERE " + condition));
-            statement.execute();
-            if (statement.execute())
-                return statement.getResultSet();
-        } catch (Exception exception) {
-            Journal.add(NoteType.ERROR, "read_table", tableName, exception.getMessage());
-        }
-        return null;
-    }
-
     public long deleteFromTableByCondition(String condition){
         return deleteFromTable("DELETE FROM " + getTableName() + " WHERE " + condition);
     }
 
-    public long deleteFromTable(PreparedStatement statement){
-        if (Database.disconnected()) return 0;
-        if (!tableExists()) return 0;
-        try {
-            long count = statement.executeUpdate();
-            if (count > 0)
-                Journal.add(NoteType.WARNING, "delete_table", getTableName(), Long.toString(count));
-            return count;
-        } catch (Exception exception) {
-            Journal.add(NoteType.ERROR, "delete_table", getTableName(), exception.getMessage());
-            return 0;
-        }
-
-    }
-
-    public long deleteFromTable(String query){
-        if (Database.disconnected()) return 0;
-        if (!tableExists()) return 0;
-        try {
-            return deleteFromTable(getStatement(query));
-        } catch (Exception exception) {
-            Journal.add(NoteType.ERROR, "delete_table", getTableName(), exception.getMessage());
-            return 0;
-        }
+    public long deleteFromTable(String update){
+        Executor executor = new Executor("delete_table", getTableName());
+        return executor.execUpdate(update);
     }
 
     public long getRows(){
-        ResultSet resultSet = getSelectResult("COUNT(1)", null);
-        if (resultSet == null) return 0;
-        try {
-            if (resultSet.next())
-                return resultSet.getLong(1);
-            else
-                return 0;
-        } catch (SQLException e) {
-            return 0;
-        }
+        Executor<Long> executor = new Executor();
+        return executor.execQuery(
+                "SELECT COUNT(1) FROM " + getTableName(),
+                (resultSet) -> {
+                    return resultSet.next() ? resultSet.getLong(1) : 0;
+                });
     }
 
 }

@@ -8,6 +8,7 @@
         <outputRelativeToContentRoot value="true" />
         <module name="staffbot" />
         <module name="Staffbot" />
+        <module name="Staffbot.Staffbot" />
         <module name="test" />
       </profile>
     </annotationProcessing>

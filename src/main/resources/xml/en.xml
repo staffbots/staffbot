@@ -202,7 +202,12 @@
             init_properties = Project properties loaded
             init_configs    = Project configuration loaded
             init_database   = Database %s% is ready to use
-            save_config     = Management parameter configuration %s% saved
+            save_settings   = Settings %s% saved (value is %s%)
+            load_settings   = Setting %s% loaded
+            delete_settings = Setting %s% deleted
+            save_config     = Management parameters configuration %s% saved
+            load_config     = Management parameters configuration %s% loaded
+            delete_config   = Management parameters configuration %s% deleted
             add_user        = User %s% with role %s% added
             change_user     = User %s% with role %s% changed
             delete_user     = User %s% deleted
@@ -224,8 +229,6 @@
             clean_database  = Base cleaning. Deleted %s% records
             turnon_clean    = Set up automatic database cleanup with a period %s% %s%, first start: %s%
             turnoff_clean   = Automatic database cleanup canceled
-            load_config     = Configuration %s% loaded
-            delete_config   = Configuration %s% deleted
             interrupte_task = %s%: task aborted
             start_tasks     = Tasks started
             pause_tasks     = Tasks paused
@@ -247,13 +250,14 @@
             erase_table     = Table %s% erase error. Message: %s%
             drop_table      = Table %s% drop error. Message: %s%
             read_table      = Error querying table %s%. Message: %s%
-            write_table     = Error writing to а table %s%. Message: %s%
             delete_table    = Error deleting in a table %s%. Message: %s%
             init_database   = Database %s% initialization error. Message: %s%
+            save_settings   = Settings updating error (%s% = %s%). Message: %s%
+            load_settings   = Setting loading error (%s%). Message: %s%
+            delete_settings = Setting deleting error (%s%). Message: %s%
             save_config     = Error saving a configuration %s%. Message: %s%
-            select_config   = Error loading configuration. Message: %s%
+            save_config     = Error loading a configuration %s%. Message: %s%
             delete_config   = Error deleting a configuration %s%. Message: %s%
-            value_config    = Error loading values from configuration %s%. Message: %s%
             delete_user     = Error deleting user. Message: %s%
             add_user        = User creation error. Message: %s%
             change_user     = User change error. Message: %s%

@@ -1,5 +1,6 @@
 package ru.staffbots.database.users;
 
+
 public class User {
 
     public String login;

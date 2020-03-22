@@ -2,6 +2,7 @@ package ru.staffbots.database.cleaner;
 
 import ru.staffbots.database.DBTable;
 import ru.staffbots.database.Database;
+import ru.staffbots.database.Executor;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.dates.DateAccuracy;
@@ -90,20 +91,17 @@ public class Cleaner {
         refresh();
         long count = 0;
         count += (journalMeasureIsRecord) ?
-                cleanByCount(new Journal(), journalValue) :
-                cleanByDate(new Journal(), journalValue);
-
+                cleanByCount(Database.journal, journalValue) :
+                cleanByDate(Database.journal, journalValue);
         for (Device device : Devices.list)
             for (Value value : device.getValues())
                 count += (tablesMeasureIsRecord) ?
                         cleanByCount(value, tablesValue) :
                         cleanByDate(value, tablesValue);
-
         for (Lever lever : Levers.list)
             count += (tablesMeasureIsRecord) ?
                     cleanByCount(lever.toValue().getTable(), tablesValue) :
                     cleanByDate(lever.toValue().getTable(), tablesValue);
-
         Journal.add(NoteType.WARNING, "clean_database", Long.toString(count));
     }
 
@@ -144,17 +142,10 @@ public class Cleaner {
     }
 
     private long cleanByDate(DBTable table, long days){
-        if (Database.disconnected()) return 0;
-        try {
-            PreparedStatement statement = Database.getConnection().prepareStatement(
-                    "DELETE FROM " + table.getTableName() + " WHERE moment < ?");
-            long lastTime = System.currentTimeMillis() - days * DateAccuracy.DAY.getMilliseconds();
-            statement.setTimestamp(1, new Timestamp(lastTime));
-            return table.deleteFromTable(statement);
-        } catch (Exception exception) {
-            return 0;
-        }
-
+        Executor executor = new Executor("delete_table", table.getTableName());
+        long lastTime = System.currentTimeMillis() - days * DateAccuracy.DAY.getMilliseconds();
+        return executor.execUpdate("DELETE FROM " + table.getTableName() + " WHERE moment < ?",
+                new Timestamp(lastTime).toString());
     }
 
 }

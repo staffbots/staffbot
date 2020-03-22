@@ -2,6 +2,7 @@ package ru.staffbots.tools.values;
 
 import ru.staffbots.database.DBTable;
 import ru.staffbots.database.DBValue;
+import ru.staffbots.database.Executor;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.dates.Period;
@@ -14,7 +15,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 
 /**
  * <b>Контейнер значения</b> содержит именованное значение типа {@code Double}.<br>
@@ -102,48 +105,36 @@ abstract public class Value extends DBTable {
     }
 
     public ArrayList<DBValue> getDataSet(Period period){
-        ArrayList<DBValue> dbValues = new ArrayList<>();
-        try {
-            String condition = (period.getFromDate() == null) ? null : " (? <= moment) ";
-            if (period.getToDate() != null)
-                condition = ((condition == null) ? "" : condition + "AND") + " (moment <= ?) ";
-            condition = ((condition == null) ? "" : " WHERE " + condition);
-
-            PreparedStatement statement = Database.getConnection().prepareStatement(
-                    "SELECT moment, value FROM " + getTableName()
-                            + condition + " ORDER BY moment ASC");
-
-            if (period.getFromDate() != null)
-                statement.setTimestamp(1,
-                    new Timestamp(period.getFromDate().getTime()));
-
-            if (period.getToDate() != null)
-                statement.setTimestamp((period.getFromDate() == null) ? 1 : 2,
-                    new Timestamp(period.getToDate().getTime()));
-
-            if(statement.execute()) {
-                ResultSet resultSet = statement.getResultSet();
-                String previousValue = null;
-                while (resultSet.next()) {
-                    if (getValueType() == ValueType.BOOLEAN)
-                        if (previousValue !=null)
-                            dbValues.add(new DBValue(
-                                    new Date(resultSet.getTimestamp(1).getTime()),
-                                    previousValue));
-                    previousValue = toValueString(resultSet.getBigDecimal(2).longValue());
-                    dbValues.add(new DBValue(
-                            new Date(resultSet.getTimestamp(1).getTime()),
-                            previousValue));
-                }
-            }
-
-        } catch (SQLException exception) {
-            Journal.add(NoteType.ERROR, "get_value", getName(), getNote(), exception.getMessage());
-        }
-
-
-
-        return dbValues;
+        String condition = (period.getFromDate() == null) ? null : " (? <= moment) ";
+        if (period.getToDate() != null)
+            condition = ((condition == null) ? "" : condition + "AND") + " (moment <= ?) ";
+        condition = ((condition == null) ? "" : " WHERE " + condition);
+        String query = "SELECT moment, value FROM " + getTableName() + condition + " ORDER BY moment ASC";
+        List<String> parameters = new ArrayList();
+        if (period.getFromDate() != null)
+            parameters.add(new Timestamp(period.getFromDate().getTime()).toString());
+        if (period.getToDate() != null)
+            parameters.add(new Timestamp(period.getToDate().getTime()).toString());
+        Executor<ArrayList<DBValue>> executor = new Executor();
+        return executor.execQuery(
+                query,
+                (resultSet) -> {
+                    ArrayList<DBValue> dbValues = new ArrayList<>();
+                    String previousValue = null;
+                    while (resultSet.next()) {
+                        if (getValueType() == ValueType.BOOLEAN)
+                            if (previousValue !=null)
+                                dbValues.add(new DBValue(
+                                        new Date(resultSet.getTimestamp(1).getTime()),
+                                        previousValue));
+                        previousValue = toValueString(resultSet.getBigDecimal(2).longValue());
+                        dbValues.add(new DBValue(
+                                new Date(resultSet.getTimestamp(1).getTime()),
+                                previousValue));
+                    }
+                    return dbValues;
+                },
+                parameters.stream().toArray(String[]::new));
     }
 
     // Возможено ли построение графика
@@ -216,57 +207,41 @@ abstract public class Value extends DBTable {
      * @return установленное значение
      */
     public long set(long newValue) {
-
-        boolean allow;
+        boolean alreadyRecorded;
         try {
-            allow = (newValue != tryGet(new Date()));
+            alreadyRecorded = (newValue == tryGet(new Date()));
         } catch (Exception exception) {
-            allow = true;
+            alreadyRecorded = false;
         }
-        boolean valueChanged = false;
-        if (isStorable() && allow)
-            try {
-                if (Database.disconnected()) throw new Exception("Нет подключения к базе данных");
-                PreparedStatement statement = Database.getConnection().prepareStatement(
-                        "INSERT INTO " + getTableName() +
-                                " (value) VALUES (?)");
-                statement.setLong(1, newValue);
-                statement.executeUpdate();
-                valueChanged = true;
-            } catch (Exception exception) {
-                Journal.add(NoteType.ERROR, "set_value", getName(), getNote(), exception.getMessage());
+        if (isStorable() && !alreadyRecorded) {
+            Executor executor = new Executor(null);
+            if (executor.execUpdate(
+                    "INSERT INTO " + getTableName() + " (value) VALUES (?)",
+                    String.valueOf(newValue)) > 0) {
+                value = newValue;
+                Journal.add(NoteType.INFORMATION, "set_value", getName(), getNote(), toViewString());
             }
-        value = newValue;
-        if (valueChanged)
-            Journal.add("set_value", getName(), getNote(), toValueString(value));
+        }
         return value;
     }
 
     public long set(Date moment, long newValue) {
-        boolean allow;
+        boolean alreadyRecorded;
         try {
-            allow = (newValue != tryGet(moment));
+            alreadyRecorded = (newValue == tryGet(moment));
         } catch (Exception exception) {
-            allow = true;
+            alreadyRecorded = false;
         }
-        boolean valueChanged = false;
-        if (isStorable() && allow)
-            try {
-                if (Database.disconnected()) throw new Exception("Нет подключения к базе данных");
-                PreparedStatement statement = Database.getConnection().prepareStatement(
-                        "INSERT INTO " + getTableName() +
-                                " (moment, value) VALUES (?, ?)");
-                statement.setTimestamp(1, new Timestamp(moment.getTime()));
-                statement.setLong(2, newValue);
-                statement.executeUpdate();
-                valueChanged = true;
-            } catch (Exception exception) {
-                Journal.add(NoteType.ERROR, "set_value", getName(), getNote(), exception.getMessage());
+        if (isStorable() && !alreadyRecorded) {
+            Executor executor = new Executor("set_value", getName(), getNote(), String.valueOf(newValue));
+            if (executor.execUpdate(
+                    "INSERT INTO " + getTableName() + " (moment, value) VALUES (?, ?)",
+                    new Timestamp(moment.getTime()).toString(),
+                    String.valueOf(newValue)) > 0) {
+                value = newValue;
+                Journal.add(NoteType.INFORMATION, "set_value", getName(), getNote(), toViewString());
             }
-        value = newValue;
-        if (valueChanged)
-            Journal.add("set_value", getName(), getNote(),
-                toValueString(value) + " (" + DateValue.toString(moment, Journal.dateFormat) + ")");
+        }
         return value;
     }
 
@@ -291,18 +266,16 @@ abstract public class Value extends DBTable {
      */
     private long tryGet(Date date) throws Exception{
         if(!isStorable()) return value;
-        if(Database.disconnected()) throw new Exception("Нет подключения к базе данных");
-        PreparedStatement ps = Database.getConnection().prepareStatement(
-                "SELECT value FROM " + getTableName() + " WHERE (moment <= ?) ORDER BY moment DESC LIMIT 1");
-        ps.setTimestamp(1, new Timestamp(date.getTime()));
-        if (ps.execute()) {
-            ResultSet rs = ps.getResultSet();
-            if (rs.next())
-                return rs.getBigDecimal(1).longValue();
-            else
-                throw new Exception("Таблица значений пуста, впрочем как и все феномены этой жизни...");
-        } else
-            throw new Exception("Значение не найдено в базе данных");
+        Executor<Long> executor = new Executor();
+        return executor.execQuery(
+                "SELECT value FROM " + getTableName() + " WHERE (moment <= ?) ORDER BY moment DESC LIMIT 1",
+                (resultSet) -> {
+                    if (resultSet.next())
+                        return resultSet.getBigDecimal(1).longValue();
+                    else
+                        throw new Exception("No value");
+                },
+                new Timestamp(date.getTime()).toString());
     }
 
     /**

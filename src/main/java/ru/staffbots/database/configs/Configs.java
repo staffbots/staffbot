@@ -1,6 +1,7 @@
 package ru.staffbots.database.configs;
 
 import ru.staffbots.database.DBTable;
+import ru.staffbots.database.Executor;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.Translator;
@@ -20,8 +21,7 @@ import java.util.*;
 public class Configs extends DBTable {
 
     private static final String staticTableName = "sys_configs";
-    private static final String staticTableFields =
-        "configname VARCHAR(100), configvalue VARCHAR(500)";
+    private static final String staticTableFields = "configname VARCHAR(100), configvalue VARCHAR(500)";
 
     public Configs(){
         super(staticTableName, Translator.getValue("database", "configs_table"), staticTableFields);
@@ -37,18 +37,11 @@ public class Configs extends DBTable {
 
     public void save(String name) {
         if (!checkName(name)) return;
-        try {
-            statement = getStatement( getValue(name) == null ?
-                "INSERT INTO " + getTableName() + " (configvalue, configname) VALUES (?, ?)" :
-                "UPDATE " + getTableName() + " SET configvalue = ?" + condition);
-            statement.setString(1, Levers.getNameValues().toString());
-            statement.setString(2, name);
-            statement.executeUpdate();
-            statement.close();
-            Journal.add("save_config", name);
-        } catch (Exception e) {
-            Journal.add(NoteType.ERROR, "save_config", name, e.getMessage());
-        }
+        Executor executor = new Executor("save_config", name);
+        String update = getValue(name) == null ?
+                    "INSERT INTO " + getTableName() + " (configvalue, configname) VALUES (?, ?)" :
+                    "UPDATE " + getTableName() + " SET configvalue = ?" + condition;
+        executor.execUpdate(update, Levers.getNameValues().toString(), name);
     }
 
     public void load(String name) {
@@ -68,47 +61,35 @@ public class Configs extends DBTable {
                         Long.parseLong(
                             properties.getProperty(
                                 lever.getName())));
-        Journal.add(NoteType.WARNING, "load_config", name);
+        Journal.add(NoteType.INFORMATION, "load_config", name);
     }
 
     public void delete(String name) {
         if (!checkName(name)) return;
-        try {
-            statement = getStatement("DELETE FROM " + getTableName() + condition);
-            statement.setString(1, name);
-            if (deleteFromTable(statement) > 0)
-                Journal.add(NoteType.WARNING, "delete_config", name);
-        } catch (Exception e) {
-            Journal.add(NoteType.ERROR, "delete_config", name, e.getMessage());
-        }
+        Executor executor = new Executor<>("delete_config", name);
+        executor.execUpdate("DELETE FROM " + getTableName() + condition, name);
     }
 
     public ArrayList<String> getList() {
-        ArrayList<String> result = new ArrayList<>(0);
-        try {
-            statement = getStatement("SELECT configname FROM " + getTableName());
-            if (statement.execute()) {
-                ResultSet resultSet = statement.getResultSet();
-                while (resultSet.next())
-                    result.add(resultSet.getString(1));
-            }
-        } catch (Exception e) {
-            Journal.add(NoteType.ERROR, "select_config", e.getMessage());
-        }
-        return result;
+        Executor<ArrayList<String>> executor = new Executor();
+        return executor.execQuery(
+                "SELECT configname FROM " + getTableName(),
+                (resultSet) -> {
+                    ArrayList<String> result = new ArrayList<>(0);
+                    while (resultSet.next())
+                        result.add(resultSet.getString(1));
+                    return result;
+                });
     }
 
     private String getValue(String name){
-        try {
-            statement = getStatement("SELECT configvalue FROM " + getTableName() + condition);
-            statement.setString(1, name);
-            if (statement.execute())
-                return statement.getResultSet().next() ?
-                    statement.getResultSet().getString(1) : null;
-        } catch (Exception e) {
-            Journal.add(NoteType.ERROR, "value_config", name, e.getMessage());
-        }
-        return null;
+        Executor<String> executor = new Executor();
+        return executor.execQuery(
+                "SELECT configvalue FROM " + getTableName() + condition,
+                (resultSet) -> {
+                    return resultSet.next() ? resultSet.getString(1) : null;
+                },
+                name);
     }
 
 }

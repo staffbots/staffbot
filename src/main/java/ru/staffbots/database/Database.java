@@ -15,8 +15,6 @@ import ru.staffbots.tools.values.Value;
 
 import java.sql.*;
 import java.util.*;
-import java.util.stream.Collectors;
-
 
 public class Database {
 
@@ -48,7 +46,7 @@ public class Database {
 
     private static Exception exception;
 
-    public static Connection getConnection () {
+    public static Connection getConnection1 () {
         return connection;
     }
 
@@ -67,7 +65,7 @@ public class Database {
     public static boolean init(){
         try {
             connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD));
-            createDatabase(true);
+            createDatabase(DROP);
             connection = DBMSystem.getConnection(SERVER, PORT, NAME, new User(USER, PASSWORD));
             journal = new Journal();
             Journal.add(null);
@@ -101,14 +99,15 @@ public class Database {
     }
 
     private static boolean createDatabase(boolean drop) throws Exception{
-        if(disconnected())return false;
+        if(disconnected()) throw getException();
         boolean exists = dbExists();
+        Executor executor = new Executor();
         if (exists && drop){
-            new Executor<>().execUpdate("DROP DATABASE " + NAME);
+            executor.execUpdate("DROP DATABASE " + NAME);
             Journal.add(NoteType.WARNING, "drop_database", NAME);
             exists = false;
         } if(!exists) {
-            new Executor<>().execUpdate("CREATE DATABASE " + NAME);
+            executor.execUpdate("CREATE DATABASE " + NAME);
             Journal.add(NoteType.WARNING, "create_database", NAME);
         }
         return true;
@@ -160,7 +159,7 @@ public class Database {
         int result = 0;
         Map<String, DBTable>tableList = getTableList(false);
         for (String tableName: tableList.keySet())
-            if (tableList.get(tableName)== null)
+            if (tableList.get(tableName) == null)
                 if (dropTable(tableName))
                     result++;
         return result;
@@ -168,31 +167,33 @@ public class Database {
 
     public static boolean dropTable(String tableName){
         try {
-            if (new Executor<>().execUpdate("DROP TABLE IF EXISTS " + tableName) > 0) {
+            Executor executor = new Executor();
+            if (executor.execUpdate("DROP TABLE IF EXISTS " + tableName) > 0) {
                 Journal.add(NoteType.WARNING, "drop_table", tableName);
                 return true;
             }
         } catch (Exception exception) {
+            exception.printStackTrace();
             Journal.add(NoteType.ERROR, "drop_table", tableName, exception.getMessage());
         }
         return false;
     }
 
     public static PreparedStatement getStatement(String query) throws Exception {
-        if (disconnected())
-            throw getException();
-        return getConnection().prepareStatement(query);
+        if (disconnected()) throw getException();
+        return getConnection1().prepareStatement(query);
     }
 
     public static boolean tableExists(String tableName){
         if(disconnected())return false;
         try {
-            DatabaseMetaData metaData = getConnection().getMetaData();
+            DatabaseMetaData metaData = getConnection1().getMetaData();
             ResultSet resultSet = metaData.getTables(Database.NAME, null, tableName, null);
             boolean result = resultSet.first();
             resultSet.close();
             return result;
         } catch (SQLException exception) {
+            exception.printStackTrace();
             Journal.add(NoteType.ERROR, "table_exists", tableName, exception.getMessage());
             return false;
         }
@@ -200,13 +201,14 @@ public class Database {
 
     public static long getTableRows(String tableName){
         try {
-            return new Executor<Long>().execQuery(
+            Executor<Long> executor = new Executor();
+            return executor.execQuery(
                     "SELECT COUNT(*) FROM " + tableName,
                     (resultSet)-> {
                         return resultSet.first() ? resultSet.getLong(1) : 0;
                     });
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            exception.printStackTrace();
             return 0;
         }
     }
