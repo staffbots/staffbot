@@ -3,9 +3,7 @@ package ru.staffbots.database;
 import ru.staffbots.database.users.User;
 import ru.staffbots.tools.TemplateFillable;
 
-import java.lang.reflect.InvocationTargetException;
 import java.sql.*;
-//import com.mysql.jdbc.Driver;
 import java.util.TimeZone;
 
 /*

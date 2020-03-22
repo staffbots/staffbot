@@ -1,21 +1,15 @@
 package ru.staffbots.tools.values;
 
 import ru.staffbots.database.DBTable;
-import ru.staffbots.database.DBValue;
+import ru.staffbots.database.ValueDataSet;
 import ru.staffbots.database.Executor;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.dates.Period;
 import ru.staffbots.tools.levers.LeverMode;
 import ru.staffbots.webserver.WebServer;
-import ru.staffbots.database.Database;
-
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -104,7 +98,7 @@ abstract public class Value extends DBTable {
         return this;
     }
 
-    public ArrayList<DBValue> getDataSet(Period period){
+    public ArrayList<ValueDataSet> getDataSet(Period period){
         String condition = (period.getFromDate() == null) ? null : " (? <= moment) ";
         if (period.getToDate() != null)
             condition = ((condition == null) ? "" : condition + "AND") + " (moment <= ?) ";
@@ -115,20 +109,20 @@ abstract public class Value extends DBTable {
             parameters.add(new Timestamp(period.getFromDate().getTime()).toString());
         if (period.getToDate() != null)
             parameters.add(new Timestamp(period.getToDate().getTime()).toString());
-        Executor<ArrayList<DBValue>> executor = new Executor();
+        Executor<ArrayList<ValueDataSet>> executor = new Executor();
         return executor.execQuery(
                 query,
                 (resultSet) -> {
-                    ArrayList<DBValue> dbValues = new ArrayList<>();
+                    ArrayList<ValueDataSet> dbValues = new ArrayList<>();
                     String previousValue = null;
                     while (resultSet.next()) {
                         if (getValueType() == ValueType.BOOLEAN)
                             if (previousValue !=null)
-                                dbValues.add(new DBValue(
+                                dbValues.add(new ValueDataSet(
                                         new Date(resultSet.getTimestamp(1).getTime()),
                                         previousValue));
                         previousValue = toValueString(resultSet.getBigDecimal(2).longValue());
-                        dbValues.add(new DBValue(
+                        dbValues.add(new ValueDataSet(
                                 new Date(resultSet.getTimestamp(1).getTime()),
                                 previousValue));
                     }

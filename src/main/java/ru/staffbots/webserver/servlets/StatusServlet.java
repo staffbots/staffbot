@@ -1,6 +1,6 @@
 package ru.staffbots.webserver.servlets;
 
-import ru.staffbots.database.DBValue;
+import ru.staffbots.database.ValueDataSet;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.dates.Period;
@@ -213,12 +213,12 @@ public class StatusServlet extends BaseServlet {
         context += "color: 'hsl(" + hue[numberOfValue] + ",80%,50%)',\n";
         context += "precision: " + precision + ",\n";
         context += "data:[";
-        ArrayList<DBValue> dbValues = value.getDataSet(period);
+        ArrayList<ValueDataSet> dbValues = value.getDataSet(period);
         boolean first = true;
-        for (DBValue dbValue : dbValues){
+        for (ValueDataSet valueDataSet : dbValues){
             context += (first ? "" : ",") + "['"
-                    + (dbValue.moment.getTime() / 1000) + "',"
-                    + dbValue.value + "]";
+                    + (valueDataSet.moment.getTime() / 1000) + "',"
+                    + valueDataSet.value + "]";
              first = false;
         }
         context += "],\n";

@@ -2,12 +2,12 @@ package ru.staffbots.database;
 
 import java.util.Date;
 
-public class DBValue {
+public class ValueDataSet {
 
     public Date moment;
     public String value;
 
-    public DBValue(Date moment, String value){
+    public ValueDataSet(Date moment, String value){
         this.moment = moment;
         this.value = value;
     }
