@@ -151,7 +151,7 @@ public abstract class Staffbot {
         solutionInitAction.run(); // Инициализируем решение (Levers, Devices and Tasks)
         WebServer.init(); // Запускаем веб-сервер
         MainWindow.init(getFullName()); // Открываем главное окно приложения
-        Database.dropUnuseTable();
+        Database.dropUnusingTables();
     }
 
     // Инициализация параметров

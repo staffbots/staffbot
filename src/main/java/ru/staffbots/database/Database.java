@@ -42,9 +42,11 @@ public class Database {
 
     public static Users users;
 
+    private static Map<String, DBTable> systemTableList = new HashMap(0);
+
     private static Connection connection = null;
 
-    private static Exception exception;
+    private static Exception exception = null;
 
     public static Connection getConnection1 () {
         return connection;
@@ -70,16 +72,18 @@ public class Database {
             journal = new Journal();
             Journal.add(null);
             Journal.add("init_database", NAME);
+            configs = new Configs();
+            settings = new Settings();
+            users = new Users();
+            systemTableList.put(journal.getTableName(), journal);
+            systemTableList.put(configs.getTableName(), configs);
+            systemTableList.put(settings.getTableName(), settings);
+            systemTableList.put(users.getTableName(), users);
+            cleaner = new Cleaner();
         } catch (Exception exception) {
             connection = null;
             Database.exception = exception;
             Journal.add(NoteType.ERROR, "init_database", NAME, exception.getMessage());
-        }
-        if (connected()) {
-            configs = new Configs();
-            settings = new Settings();
-            users = new Users();
-            cleaner = new Cleaner();
         }
         return connected();
     }
@@ -117,13 +121,15 @@ public class Database {
         return getTableList(true);
     }
 
-    public static Map<String, DBTable> getTableList(boolean useOnly){
+    public static Map<String, DBTable> getTableList(boolean withSystemTables){
+        return getTableList(true, withSystemTables);
+    }
+
+    private static Map<String, DBTable> getTableList(boolean withUnusingTables, boolean withSystemTables){
         Map<String, DBTable> result = new HashMap(0);
         if(disconnected()) return result;
-        result.put(journal.getTableName(), journal);
-        result.put(configs.getTableName(), configs);
-        result.put(settings.getTableName(), settings);
-        result.put(users.getTableName(), users);
+        if (withSystemTables)
+            result.putAll(systemTableList);
         for (Lever lever : Levers.list)
             if (lever.isStorable())
                 result.put(lever.getTableName(), lever.toValue());
@@ -131,8 +137,7 @@ public class Database {
             for (Value value : device.getValues())
                 if (value.isStorable())
                     result.put(value.toValue().getTableName(), value.toValue());
-        if (!useOnly)
-        try {
+        if (withUnusingTables) {
             ArrayList<String> tablesNames =
                     new Executor<ArrayList<String>>().execQuery(
                     "SELECT table_name " +
@@ -146,71 +151,21 @@ public class Database {
                     }
             );
             for (String tableName : tablesNames)
-                if (!result.containsKey(tableName))
-                    result.put(tableName, null);
-
-        } catch (Exception exception) {
-            exception.printStackTrace();
+                if (!systemTableList.containsKey(tableName))
+                    if (!result.containsKey(tableName))
+                        result.put(tableName, null);
         }
         return new TreeMap<String, DBTable>(result);
     }
 
-    public static int dropUnuseTable(){
+    public static int dropUnusingTables(){
         int result = 0;
-        Map<String, DBTable>tableList = getTableList(false);
+        Map<String, DBTable> tableList = getTableList(true, false);
         for (String tableName: tableList.keySet())
             if (tableList.get(tableName) == null)
-                if (dropTable(tableName))
+                if (tableList.get(tableName).dropTable())
                     result++;
         return result;
-    }
-
-    public static boolean dropTable(String tableName){
-        try {
-            Executor executor = new Executor();
-            if (executor.execUpdate("DROP TABLE IF EXISTS " + tableName) > 0) {
-                Journal.add(NoteType.WARNING, "drop_table", tableName);
-                return true;
-            }
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            Journal.add(NoteType.ERROR, "drop_table", tableName, exception.getMessage());
-        }
-        return false;
-    }
-
-    public static PreparedStatement getStatement(String query) throws Exception {
-        if (disconnected()) throw getException();
-        return getConnection1().prepareStatement(query);
-    }
-
-    public static boolean tableExists(String tableName){
-        if(disconnected())return false;
-        try {
-            DatabaseMetaData metaData = getConnection1().getMetaData();
-            ResultSet resultSet = metaData.getTables(Database.NAME, null, tableName, null);
-            boolean result = resultSet.first();
-            resultSet.close();
-            return result;
-        } catch (SQLException exception) {
-            exception.printStackTrace();
-            Journal.add(NoteType.ERROR, "table_exists", tableName, exception.getMessage());
-            return false;
-        }
-    }
-
-    public static long getTableRows(String tableName){
-        try {
-            Executor<Long> executor = new Executor();
-            return executor.execQuery(
-                    "SELECT COUNT(*) FROM " + tableName,
-                    (resultSet)-> {
-                        return resultSet.first() ? resultSet.getLong(1) : 0;
-                    });
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            return 0;
-        }
     }
 
 }

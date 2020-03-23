@@ -212,10 +212,10 @@ abstract public class Value extends DBTable {
             if (executor.execUpdate(
                     "INSERT INTO " + getTableName() + " (value) VALUES (?)",
                     String.valueOf(newValue)) > 0) {
-                value = newValue;
                 Journal.add(NoteType.INFORMATION, "set_value", getName(), getNote(), toViewString());
             }
         }
+        value = newValue;
         return value;
     }
 
@@ -232,10 +232,10 @@ abstract public class Value extends DBTable {
                     "INSERT INTO " + getTableName() + " (moment, value) VALUES (?, ?)",
                     new Timestamp(moment.getTime()).toString(),
                     String.valueOf(newValue)) > 0) {
-                value = newValue;
                 Journal.add(NoteType.INFORMATION, "set_value", getName(), getNote(), toViewString());
             }
         }
+        value = newValue;
         return value;
     }
 
@@ -260,7 +260,7 @@ abstract public class Value extends DBTable {
      */
     private long tryGet(Date date) throws Exception{
         if(!isStorable()) return value;
-        Executor<Long> executor = new Executor();
+        Executor<Long> executor = new Executor(null);
         return executor.execQuery(
                 "SELECT value FROM " + getTableName() + " WHERE (moment <= ?) ORDER BY moment DESC LIMIT 1",
                 (resultSet) -> {

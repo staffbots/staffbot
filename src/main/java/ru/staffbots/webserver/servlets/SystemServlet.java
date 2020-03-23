@@ -138,7 +138,7 @@ public class SystemServlet extends BaseServlet {
             pageVariables.put("name_value", tableName);
             DBTable dbTable = tableList.get(tableName);
             pageVariables.put("note_value", dbTable == null ? pageVariables.get("table_unuse") : dbTable.getNote());
-            pageVariables.put("rows_value", dbTable == null ? Database.getTableRows(tableName) : dbTable.getRows());
+            pageVariables.put("rows_value", dbTable == null ? dbTable.getRows() : dbTable.getRows());
             context += fillTemplate("html/system/table.html",pageVariables);
         }
         return context;

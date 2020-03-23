@@ -26,7 +26,12 @@ public class Executor<T> {
     public T execQuery(String query, ResultHandler<T> handler, String... parameters) {
         T result = null;
         try {
-            if(Database.disconnected()) throw Database.getException();
+            if(Database.disconnected()) {
+                if (Database.getException() == null)
+                    return result;
+                else
+                    throw Database.getException();
+            }
             if (parameters.length == 0) {
                 Statement statement = Database.getConnection1().createStatement();
                 ResultSet resultSet = statement.executeQuery(query);
@@ -46,8 +51,8 @@ public class Executor<T> {
                 if (!noteName.equals(Journal.defaultNoteName) || noteParameters.length > 0)
                     Journal.add(NoteType.INFORMATION, noteName, noteParameters);
         } catch (Exception exception) {
-            exception.printStackTrace();
             if (noteName != null) {
+                exception.printStackTrace();
                 List<String> noteParametersList = new ArrayList<String>(Arrays.asList(noteParameters));
                 noteParametersList.add(exception.getMessage());
                 Journal.add(NoteType.ERROR, noteName, noteParametersList.stream().toArray(String[]::new));
@@ -59,7 +64,12 @@ public class Executor<T> {
     public int execUpdate(String update, String... parameters) {
         int result = 0;
         try {
-            if(Database.disconnected()) throw Database.getException();
+            if(Database.disconnected()) {
+                if (Database.getException() == null)
+                    return 0;
+                else
+                    throw Database.getException();
+            }
             if (parameters.length == 0) {
                 Statement statement = Database.getConnection1().createStatement();
                 result = statement.executeUpdate(update);
@@ -75,8 +85,8 @@ public class Executor<T> {
                 if (!noteName.equals(Journal.defaultNoteName) || noteParameters.length > 0)
                     Journal.add(NoteType.INFORMATION, noteName, noteParameters);
         } catch (Exception exception) {
-            exception.printStackTrace();
             if (noteName != null) {
+                exception.printStackTrace();
                 List<String> noteParametersList = new ArrayList<String>(Arrays.asList(noteParameters));
                 noteParametersList.add(exception.getMessage());
                 Journal.add(NoteType.ERROR, noteName, noteParametersList.stream().toArray(String[]::new));

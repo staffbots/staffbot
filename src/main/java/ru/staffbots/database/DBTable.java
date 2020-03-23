@@ -17,6 +17,7 @@ public abstract class DBTable {
      * <b>Описание</b>,
      */
     protected String note;
+
     private String fields;
 
     public String getTableName(){
@@ -30,7 +31,6 @@ public abstract class DBTable {
     public String getNote(){
         return note;
     }
-
 
     public DBTable(String name, String note, String fields){
         this.name = name;
@@ -46,26 +46,14 @@ public abstract class DBTable {
         if (isStorable) createTable();
     }
 
-    public boolean tableExists(){
-        return Database.tableExists(name);
-    }
-
     public boolean createTable(){
         return createTable(false);
     }
 
     public boolean createTable(boolean drop){
-        if (Database.disconnected()) return false;
         if (drop) dropTable();
-        try {
-            if (new Executor().execUpdate("CREATE TABLE IF NOT EXISTS " + name + " (" + fields + ")") > 0)
-                Journal.add(NoteType.WARNING, "create_table", name, fields);
-        } catch (Exception exception) {
-            //connection = null;
-            Journal.add(NoteType.ERROR, "create_table", name, exception.getMessage());
-            return false;
-        }
-        return true;
+        Executor executor = new Executor("create_table", name);
+        return (executor.execUpdate("CREATE TABLE IF NOT EXISTS " + name + " (" + fields + ")") > 0);
     }
 
     public void eraseTable(){
@@ -74,16 +62,8 @@ public abstract class DBTable {
     }
 
     public boolean dropTable(){
-        return Database.dropTable(name);
-    }
-
-    public long deleteFromTableByCondition(String condition){
-        return deleteFromTable("DELETE FROM " + getTableName() + " WHERE " + condition);
-    }
-
-    public long deleteFromTable(String update){
-        Executor executor = new Executor("delete_table", getTableName());
-        return executor.execUpdate(update);
+        Executor executor = new Executor("drop_table", name);
+        return  (executor.execUpdate("DROP TABLE IF EXISTS " + name) > 0);
     }
 
     public long getRows(){

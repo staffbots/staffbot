@@ -17,6 +17,7 @@ import ru.staffbots.tools.values.Value;
 import java.sql.PreparedStatement;
 import java.sql.Timestamp;
 import java.util.Date;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -93,15 +94,11 @@ public class Cleaner {
         count += (journalMeasureIsRecord) ?
                 cleanByCount(Database.journal, journalValue) :
                 cleanByDate(Database.journal, journalValue);
-        for (Device device : Devices.list)
-            for (Value value : device.getValues())
-                count += (tablesMeasureIsRecord) ?
-                        cleanByCount(value, tablesValue) :
-                        cleanByDate(value, tablesValue);
-        for (Lever lever : Levers.list)
+        Map<String, DBTable> tableList = Database.getTableList(false);
+        for (String tableName: tableList.keySet())
             count += (tablesMeasureIsRecord) ?
-                    cleanByCount(lever.toValue().getTable(), tablesValue) :
-                    cleanByDate(lever.toValue().getTable(), tablesValue);
+                    cleanByCount(tableList.get(tableName), tablesValue) :
+                    cleanByDate(tableList.get(tableName), tablesValue);
         Journal.add(NoteType.WARNING, "clean_database", Long.toString(count));
     }
 
@@ -136,9 +133,9 @@ public class Cleaner {
         if (recordsCount <= count) return 0;
         if (table.getTableName().equalsIgnoreCase(Database.journal.getTableName()))
             count -= 2;
-        String query = "DELETE FROM " + table.getTableName() +
-                " ORDER BY moment ASC LIMIT " + (recordsCount - count);
-        return table.deleteFromTable(query);
+        Executor executor = new Executor("delete_table", table.getTableName());
+        return executor.execUpdate("DELETE  IF EXISTS FROM " + table.getTableName() +
+                " ORDER BY moment ASC LIMIT " + (recordsCount - count));
     }
 
     private long cleanByDate(DBTable table, long days){
