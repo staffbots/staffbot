@@ -202,6 +202,8 @@
             init_properties = Project properties loaded
             init_configs    = Project configuration loaded
             init_database   = Database %s% is ready to use
+            erase_table     = Table %s% erased
+            delete_table    = Deletion in table %s%
             save_settings   = Settings %s% saved (value is %s%)
             load_settings   = Setting %s% loaded
             delete_settings = Setting %s% deleted
@@ -221,9 +223,7 @@
         <warning>
             any_message     = %s%
             create_table    = Table %s% created
-            erase_table     = Table %s% erased
             drop_table      = Table %s% droped
-            delete_table    = Deletion in table %s%. %s% records deleted
             drop_database   = Database %s% deleted!
             create_database = Database %s% created
             clean_database  = Base cleaning. Deleted %s% records

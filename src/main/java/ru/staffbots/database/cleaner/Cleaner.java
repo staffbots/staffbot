@@ -91,14 +91,14 @@ public class Cleaner {
     public void clean(){
         refresh();
         long count = 0;
-        count += (journalMeasureIsRecord) ?
-                cleanByCount(Database.journal, journalValue) :
-                cleanByDate(Database.journal, journalValue);
         Map<String, DBTable> tableList = Database.getTableList(false);
         for (String tableName: tableList.keySet())
             count += (tablesMeasureIsRecord) ?
                     cleanByCount(tableList.get(tableName), tablesValue) :
                     cleanByDate(tableList.get(tableName), tablesValue);
+        count += (journalMeasureIsRecord) ?
+                cleanByCount(Database.journal, journalValue) :
+                cleanByDate(Database.journal, journalValue);
         Journal.add(NoteType.WARNING, "clean_database", Long.toString(count));
     }
 
@@ -131,10 +131,10 @@ public class Cleaner {
     private long cleanByCount(DBTable table, long count){
         long recordsCount = table.getRows();
         if (recordsCount <= count) return 0;
-        if (table.getTableName().equalsIgnoreCase(Database.journal.getTableName()))
+        if (table.getTableName().equals(Database.journal.getTableName()))
             count -= 2;
         Executor executor = new Executor("delete_table", table.getTableName());
-        return executor.execUpdate("DELETE  IF EXISTS FROM " + table.getTableName() +
+        return executor.execUpdate("DELETE FROM " + table.getTableName() +
                 " ORDER BY moment ASC LIMIT " + (recordsCount - count));
     }
 
