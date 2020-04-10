@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  *
  */
-public class Levers{
+public class Levers extends ArrayList<Lever>{
 
     /**
      * <b>Список рычагов управления</b>, тех что отображаются на закладке "Управление"

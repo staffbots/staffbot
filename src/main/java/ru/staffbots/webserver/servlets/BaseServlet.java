@@ -1,14 +1,10 @@
 package ru.staffbots.webserver.servlets;
 
-import freemarker.template.Configuration;
-import freemarker.template.Template;
 import ru.staffbots.Staffbot;
 import ru.staffbots.database.Database;
-import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.users.Users;
 import ru.staffbots.tools.TemplateFillable;
 import ru.staffbots.tools.Translator;
-import ru.staffbots.tools.resources.Resources;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
 import ru.staffbots.webserver.WebServer;
@@ -17,8 +13,6 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
@@ -151,4 +145,7 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
         return false;
     }
 
+    protected String getContent(Map<String, Object> pageVariables) {
+        return fillTemplate("html/" + pageType.getName()+".html", pageVariables);
+    }
 }

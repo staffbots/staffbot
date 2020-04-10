@@ -48,11 +48,7 @@ public class Sample extends Staffbot {
     static LedDevice ledDevice = new LedDevice("led",
             "Светодиод", RaspiPin.GPIO_01, false);
 
-    static void devicesInit() {
-        Devices.init(ledDevice);
-    }
-
-    /////////////////////////////////////////////////////////////
+   /////////////////////////////////////////////////////////////
     // Задания автоматизации
     /////////////////////////////////////////////////////////////
 

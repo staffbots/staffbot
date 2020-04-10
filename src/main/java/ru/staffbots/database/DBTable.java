@@ -1,10 +1,5 @@
 package ru.staffbots.database;
 
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
-
-import java.sql.*;
-
 /*
  * Таблица БД,
  * Предоставляет интерфейс общий для всех таблиц БД,
@@ -13,6 +8,7 @@ import java.sql.*;
 public abstract class DBTable {
 
     private String name;
+
     /**
      * <b>Описание</b>,
      */
@@ -46,12 +42,18 @@ public abstract class DBTable {
         if (isStorable) createTable();
     }
 
+    public boolean tableExists(){
+        return (Database.findTable(name).size() > 0);
+    }
+
     public boolean createTable(){
         return createTable(false);
     }
 
     public boolean createTable(boolean drop){
         if (drop) dropTable();
+        if (!drop && tableExists())
+            return true;
         Executor executor = new Executor("create_table", name);
         return (executor.execUpdate("CREATE TABLE IF NOT EXISTS " + name + " (" + fields + ")") > 0);
     }

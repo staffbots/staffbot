@@ -13,7 +13,6 @@ import java.util.TimeZone;
 public enum DBMS  implements TemplateFillable {
 
     MySQL("com.mysql.cj.jdbc.Driver");
-//    MySQL("com.mysql.jdbc.Driver");
 
     private String driver;
 
@@ -36,13 +35,8 @@ public enum DBMS  implements TemplateFillable {
             append(port + "/").
             append(database == null ? "?serverTimezone=UTC" : database); //Невозможно сразу установить смещение от UTC
         Connection connection = null;
-        try {
-            DriverManager.registerDriver((Driver) Class.forName(driver).getDeclaredConstructor().newInstance());
-            connection = DriverManager.getConnection(url.toString(), user.login, user.password);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
-        }
+        DriverManager.registerDriver((Driver) Class.forName(driver).getDeclaredConstructor().newInstance());
+        connection = DriverManager.getConnection(url.toString(), user.login, user.password);
         if (database == null) {
             Statement statement = connection.createStatement();
             statement.execute("SET GLOBAL time_zone='+" + (int) (TimeZone.getDefault().getRawOffset() / 36E5) + ":00'");

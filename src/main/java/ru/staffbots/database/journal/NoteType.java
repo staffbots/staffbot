@@ -10,12 +10,12 @@ import java.util.Map;
  */
 public enum NoteType {
 
-    // ! Изменения могут привести к сбоям на закладке "Журнал" (см. JournalServlet)
     INFORMATION(0),
     WARNING(1),
     ERROR(2);
 
     private int value;
+
     private static Map map = new HashMap<>();
 
     NoteType(int value) {
@@ -31,6 +31,7 @@ public enum NoteType {
             map.put(pageType.value, pageType);
         }
     }
+
     public static NoteType valueOf(int noteType) {
         return (NoteType) map.get(noteType);
     }

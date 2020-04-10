@@ -9,7 +9,7 @@
 #include <DallasTemperature.h>  // library for work with DS18B20 sensor
 
 const char* WIFI_SSID = "RT-WiFi_5B84";
-const char* WIFI_PASSWORD = "23834659";
+const char* WIFI_PASSWORD = "13213455";
 IPAddress address(${device_address}); //unique static ip address
 IPAddress gateway(${device_gateway}); //gateway and dns servers
 IPAddress subnetMask(${device_subnetMask}); //subnet mask
@@ -22,7 +22,7 @@ int charCount = 0; // count of input buffer
 String requestValue;
 
 const int phSensorPin = 25; // GPIO pin of analog pH sensor
-const int ecSensorPin = 26; // GPIO pin of analog pH sensor
+const int ecSensorPin = 26; // GPIO pin of analog EC sensor
 const int aquaTemperaturePin = 32; // GPIO pin of DS18B20 sensor
 const int ecPumpRelayPin = 21; // GPIO pin of EC pump relay
 const int phUpPumpRelayPin = 22; // GPIO pin of Ph+ pump relay

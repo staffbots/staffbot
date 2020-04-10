@@ -7,19 +7,13 @@ import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.dates.DateAccuracy;
 import ru.staffbots.tools.dates.DateFormat;
-import ru.staffbots.tools.devices.Device;
-import ru.staffbots.tools.devices.Devices;
-import ru.staffbots.tools.levers.Lever;
-import ru.staffbots.tools.levers.Levers;
 import ru.staffbots.tools.values.DateValue;
-import ru.staffbots.tools.values.Value;
 
-import java.sql.PreparedStatement;
-import java.sql.Timestamp;
 import java.util.Date;
 import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.sql.Timestamp;
 
 /*
  * Чистильщик БД,
@@ -90,16 +84,16 @@ public class Cleaner {
 
     public void clean(){
         refresh();
-        long count = 0;
+        long valueRecords = 0;
         Map<String, DBTable> tableList = Database.getTableList(false);
         for (String tableName: tableList.keySet())
-            count += (tablesMeasureIsRecord) ?
+            valueRecords += (tablesMeasureIsRecord) ?
                     cleanByCount(tableList.get(tableName), tablesValue) :
                     cleanByDate(tableList.get(tableName), tablesValue);
-        count += (journalMeasureIsRecord) ?
-                cleanByCount(Database.journal, journalValue) :
+        long journalNotes = (journalMeasureIsRecord) ?
+                cleanByCount(Database.journal, journalValue - 1) :
                 cleanByDate(Database.journal, journalValue);
-        Journal.add(NoteType.WARNING, "clean_database", Long.toString(count));
+        Journal.add(NoteType.WARNING, "clean_database", Long.toString(valueRecords), Long.toString(journalNotes));
     }
 
     private void loadSettings(){
@@ -131,15 +125,13 @@ public class Cleaner {
     private long cleanByCount(DBTable table, long count){
         long recordsCount = table.getRows();
         if (recordsCount <= count) return 0;
-        if (table.getTableName().equals(Database.journal.getTableName()))
-            count -= 2;
-        Executor executor = new Executor("delete_table", table.getTableName());
+        Executor executor = new Executor(null);
         return executor.execUpdate("DELETE FROM " + table.getTableName() +
                 " ORDER BY moment ASC LIMIT " + (recordsCount - count));
     }
 
     private long cleanByDate(DBTable table, long days){
-        Executor executor = new Executor("delete_table", table.getTableName());
+        Executor executor = new Executor(null);
         long lastTime = System.currentTimeMillis() - days * DateAccuracy.DAY.getMilliseconds();
         return executor.execUpdate("DELETE FROM " + table.getTableName() + " WHERE moment < ?",
                 new Timestamp(lastTime).toString());

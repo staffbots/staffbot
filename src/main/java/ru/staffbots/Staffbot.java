@@ -96,24 +96,34 @@ import java.util.Properties;
  */
 public abstract class Staffbot {
 
-
     public static SystemInfo.BoardType boardType = SystemInfo.BoardType.UNKNOWN;
 
-    /** <b>Project name</b><br>
+    /**
+     * <b>Project name</b><br>
      * Value is current class name - {@code Staffbot}
      **/
     public static final String projectName = MethodHandles.lookup().lookupClass().getSimpleName();
 
-    /** <b>Solution name</b><br>
+    /**
+     * <b>Solution name</b><br>
      * Value is name of inherited class, set by default is <em>Solution</em><br>
      * Initialized in {@code solutionInit()}-method
      **/
     public static String solutionName = "Solution";
 
-    // Название версия проекта,
-    // Определяется параметром version в файле ресурсов properties
-    // Используется в наименовании файлов .jar и .cfg и в заголовке главного окна
+    /**
+     * Название версия проекта,
+     * Определяется параметром version в файле ресурсов properties
+     * Используется в наименовании файлов .jar и .cfg и в заголовке главного окна
+     */
     public static String projectVersion = "0.00";
+
+    /**
+     * Адрес веб-сайта проекта в www
+     * Определяется параметром website в файле ресурсов properties
+     * Используется при формировании ссылки на описание устройств
+     */
+    public static String projectWebsite = "http://www.staffbots.ru";
 
     public static String getShortName(){
         return projectName + "." + solutionName;
@@ -122,12 +132,6 @@ public abstract class Staffbot {
     public static String getFullName(){
         return getShortName() + "-" + projectVersion;
     }
-
-    /** Адрес веб-сайта проекта в www
-     * Определяется параметром website в файле ресурсов properties
-     * Используется при формировании ссылки на описание устройств
-     */
-    public static String projectWebsite = "http://www.staffbots.ru";
 
     public static void solutionInit(Device[] devices, Lever[] levers, Task[] tasks) {
         solutionInit(devices, (Object[]) levers, tasks);
@@ -149,13 +153,15 @@ public abstract class Staffbot {
         propertiesInit(); // Загружаем свойства из cfg-файла
         Database.init(); // Подключаемся к базе данных
         solutionInitAction.run(); // Инициализируем решение (Levers, Devices and Tasks)
+        Database.dropUnusingTables();
         WebServer.init(); // Запускаем веб-сервер
         MainWindow.init(getFullName()); // Открываем главное окно приложения
-        Database.dropUnusingTables();
     }
 
-    // Инициализация параметров
-    // Вызывается при запуске приложения в определённом порядке с прочими инициализациями
+    /**
+     * Инициализация параметров
+     * Вызывается при запуске приложения в определённом порядке с прочими инициализациями
+     */
     private static void propertiesInit(){
         // Читаем свойства проекта
         try {

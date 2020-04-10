@@ -48,7 +48,7 @@ public class Database {
 
     private static Exception exception = null;
 
-    public static Connection getConnection1 () {
+    public static Connection getConnection () {
         return connection;
     }
 
@@ -80,15 +80,16 @@ public class Database {
             systemTableList.put(settings.getTableName(), settings);
             systemTableList.put(users.getTableName(), users);
             cleaner = new Cleaner();
-        } catch (Exception exception) {
+        } catch (Exception e) {
             connection = null;
-            Database.exception = exception;
+            exception = e;
             Journal.add(NoteType.ERROR, "init_database", NAME, exception.getMessage());
+            exception.printStackTrace();
         }
         return connected();
     }
 
-    private static boolean dbExists() throws Exception{
+    private static boolean databaseExists() throws Exception{
         if(disconnected())return false;
         boolean result = false;
         DatabaseMetaData metaData = connection.getMetaData();
@@ -104,7 +105,7 @@ public class Database {
 
     private static boolean createDatabase(boolean drop) throws Exception{
         if(disconnected()) throw getException();
-        boolean exists = dbExists();
+        boolean exists = databaseExists();
         Executor executor = new Executor();
         if (exists && drop){
             executor.execUpdate("DROP DATABASE " + NAME);
@@ -115,6 +116,22 @@ public class Database {
             Journal.add(NoteType.WARNING, "create_database", NAME);
         }
         return true;
+    }
+
+    public static ArrayList<String> findTable(String pattern){
+        ArrayList<String> result = new ArrayList();
+        if(Database.disconnected())
+            return result;
+        try {
+            DatabaseMetaData metaData = Database.getConnection().getMetaData();
+            ResultSet resultSet = metaData.getTables(Database.NAME, null, pattern, null);
+            while(resultSet.next())
+                result.add(resultSet.getString("TABLE_NAME"));
+            resultSet.close();
+        } catch (SQLException exception) {
+            Journal.add(NoteType.ERROR, "table_exists", pattern, exception.getMessage());
+        }
+        return result;
     }
 
     public static Map<String, DBTable> getTableList(){
@@ -137,24 +154,11 @@ public class Database {
             for (Value value : device.getValues())
                 if (value.isStorable())
                     result.put(value.toValue().getTableName(), value.toValue());
-        if (withUnusingTables) {
-            ArrayList<String> tablesNames =
-                    new Executor<ArrayList<String>>().execQuery(
-                    "SELECT table_name " +
-                            "FROM information_schema.TABLES " +
-                            "WHERE table_schema like '"+NAME+"'",
-                    (resultSet) -> {
-                        ArrayList<String> handleResult = new ArrayList();
-                        while (resultSet.next())
-                            handleResult.add(resultSet.getString(1));
-                        return handleResult;
-                    }
-            );
-            for (String tableName : tablesNames)
+        if (withUnusingTables)
+            for (String tableName : findTable(null)) // All tables list
                 if (!systemTableList.containsKey(tableName))
                     if (!result.containsKey(tableName))
                         result.put(tableName, null);
-        }
         return new TreeMap<String, DBTable>(result);
     }
 
@@ -162,9 +166,11 @@ public class Database {
         int result = 0;
         Map<String, DBTable> tableList = getTableList(true, false);
         for (String tableName: tableList.keySet())
-            if (tableList.get(tableName) == null)
-                if (tableList.get(tableName).dropTable())
+            if (tableList.get(tableName) == null) {
+                Executor executor = new Executor("drop_table", tableName);
+                if (executor.execUpdate("DROP TABLE IF EXISTS " + tableName) > 0)
                     result++;
+            }
         return result;
     }
 

@@ -1,5 +1,11 @@
 package ru.staffbots.tools.resources;
 
+import ru.staffbots.database.journal.Journal;
+import ru.staffbots.database.journal.NoteType;
+
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.jar.JarEntry;
@@ -72,6 +78,19 @@ public class Resources {
             return buffer.toByteArray();
         } catch (IOException exception) {
             return new byte[0];
+        }
+    }
+
+    public static Image getAsImage(String resourceName) {
+        try {
+            return new ImageIcon(
+                    ImageIO.read(
+                            getAsStream(resourceName)
+                    )
+            ).getImage();
+        } catch (Exception exception) {
+            //Journal.add(NoteType.ERROR, "?get_resource", resourceName, exception.getMessage());
+            return null;
         }
     }
 

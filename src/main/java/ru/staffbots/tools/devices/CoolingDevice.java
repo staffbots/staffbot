@@ -58,7 +58,7 @@ public class CoolingDevice extends Device {
         return true;
     }
 
-    private double getTemperature(){
+    public static double getTemperature(double defaultValue){
         try {
             FileInputStream fstream = new FileInputStream("/sys/class/thermal/thermal_zone0/temp");
             BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
@@ -66,7 +66,7 @@ public class CoolingDevice extends Device {
         }
         catch(Exception exception){
             exception.printStackTrace();
-            return temperature.getValue();
+            return defaultValue;
         }
     }
 
@@ -74,7 +74,7 @@ public class CoolingDevice extends Device {
         while (true) {
             try {
                 Thread.sleep(10000);
-                double t = getTemperature();
+                double t = getTemperature(temperature.getValue());
                 System.out.println("Temperature = " + t );
                 temperature.setValue(t);
                 fanRelay.setValue(t > temperature.getDefaultValue());

@@ -7,11 +7,11 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
-import ru.staffbots.database.users.UserRole;
 import ru.staffbots.tools.resources.Resources;
 import ru.staffbots.webserver.servlets.*;
 import ru.staffbots.windows.MainWindow;
 
+import java.io.IOException;
 import java.net.*;
 
 public class WebServer {
@@ -42,46 +42,56 @@ public class WebServer {
      */
     private static Server server = null;
 
-    private static ServerConnector getHttpConnector(){
-        // HTTP connector
+    private static void checkPort(int port) {
+        try {
+            Socket socket = new Socket("localhost", port);
+            if (socket.isConnected()) {
+                Journal.add(NoteType.ERROR, "busy_port", String.valueOf(port));
+                System.exit(0);
+            }
+        } catch (IOException e) {
+            // No actions
+        }
+    }
+
+    private static ServerConnector getHttpConnector() {
+        checkPort(httpPort);
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(httpPort);
         return connector;
     }
 
-    private static ServerConnector getHttpsConnector(){
+    private static ServerConnector getHttpsConnector() {
+        checkPort(httpsPort);
         String keyStorePath = Resources.getAsFile(keyStore).getPath();
-
         // HTTPS configuration
         HttpConfiguration https = new HttpConfiguration();
         https.addCustomizer(new SecureRequestCustomizer());            // Configuring SSL
         SslContextFactory sslContextFactory = new SslContextFactory();
         //SslContextFactory sslContextFactory = new JettySslContextFactory(configuration.getSslProviders());
-
         // Defining keystore path and passwords
         sslContextFactory.setKeyStorePath(keyStorePath);
         sslContextFactory.setKeyStorePassword(storePassword);
         sslContextFactory.setKeyManagerPassword(managerPassword);
-
         // Configuring the connector
         ServerConnector connector = new ServerConnector(server,
                 new SslConnectionFactory(sslContextFactory, "http/1.1"),
                 new HttpConnectionFactory(https));
         connector.setPort(httpsPort);
-
-        // HTTPS connectors
-//        server.setConnectors(new Connector[]{connector});
-//        server.setConnectors(new Connector[]{sslConnector});
         return connector;
     }
 
+    private static Connector[] getConnectors() {
+        return httpUsed ?
+               new Connector[] {getHttpsConnector(), getHttpConnector()} :
+               new Connector[] {getHttpsConnector()};
+    }
+
     /**
-     * <b>Запуск</b> веб-сервера<br>
-     * @return удачность
+     *
      */
     public static void init() {
-        // Если сервер уже запущен, то останавливаем его
-        if (server != null) {
+        if (server != null) { // If server already run
             try {
                 server.stop();
                 server.join();
@@ -89,20 +99,8 @@ public class WebServer {
                 e.printStackTrace();
             }
         }
-        // Если порт занят, то сервер запустить не получится
-        if(hostIsBusy()){
-            Journal.add(NoteType.ERROR, "busy_host");
-            System.exit(0);
-        }
-
         server = new Server();
-
-        server.setConnectors(new Connector[]{getHttpsConnector()});
-        if (httpUsed)
-            server.addConnector(getHttpConnector());
-            //server.setConnectors(new Connector[]{getHttpConnector()});
-        //else
-
+        server.setConnectors(getConnectors());
         AccountService accountService = new AccountService();
         ServletContextHandler context = new ServletContextHandler(ServletContextHandler.SESSIONS);
         ServletHolder entryServletHolder = new ServletHolder(new EntryServlet(accountService));
@@ -115,10 +113,8 @@ public class WebServer {
         context.addServlet(new ServletHolder(new SystemServlet(accountService)),"/system");
         context.addServlet(new ServletHolder(new AboutServlet(accountService)),"/about");
         context.addServlet(new ServletHolder(new ResourceServlet(accountService)),"/resource");
-
         HandlerList handlers = new HandlerList();
         handlers.addHandler(context);
-
         server.setHandler(handlers);
         try {
             server.start();
@@ -131,21 +127,7 @@ public class WebServer {
         }
     }
 
-    public static boolean hostIsBusy(){
-        try {
-            HttpURLConnection urlConnect = (HttpURLConnection) getURL().openConnection();
-            urlConnect.getContent();
-        } catch (Exception exception) {
-            return false;
-        }
-        return true;
-    }
-
-    public static URL getURL(){
-        return getURL(false);
-    }
-
-    public static URL getURL(boolean SSL){
+    public static URL getLocalURL(boolean SSL){
         try {
             return SSL ?
                 new URL("https://localhost:" + httpsPort) :

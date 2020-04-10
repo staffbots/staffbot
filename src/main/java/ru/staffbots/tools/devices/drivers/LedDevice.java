@@ -28,14 +28,11 @@ public class LedDevice extends Device {
     }
 
     private void init(String name, String note, ValueMode valueMode, Pin pin, Boolean value) {
-
         this.model = "Светодиод"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
         this.note = note; // Описание устройства (например, "Сонар для измерения уровня воды")
         this.name = name; // Уникальное имя устройства, используется для именования таблиц в БД (например, "WaterSonar")
         this.value = new BooleanValue(name, note, valueMode, value);
-
         values.add(this.value);
-
         putPin(pin, "");
     }
 

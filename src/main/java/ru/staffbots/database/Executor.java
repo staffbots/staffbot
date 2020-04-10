@@ -10,6 +10,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+/**
+ * Database statement executor. Statement may be query or update
+ * @param <T> type of return value as query answer
+ */
 public class Executor<T> {
 
     private String noteName = Journal.defaultNoteName;
@@ -33,13 +37,13 @@ public class Executor<T> {
                     throw Database.getException();
             }
             if (parameters.length == 0) {
-                Statement statement = Database.getConnection1().createStatement();
+                Statement statement = Database.getConnection().createStatement();
                 ResultSet resultSet = statement.executeQuery(query);
                 result = handler.handle(resultSet);
                 resultSet.close();
                 statement.close();
             } else {
-                PreparedStatement prepareStatement = Database.getConnection1().prepareStatement(query);
+                PreparedStatement prepareStatement = Database.getConnection().prepareStatement(query);
                 for(int i = 0; i < parameters.length; i++)
                     prepareStatement.setString(i + 1, parameters[i]);
                 ResultSet resultSet = prepareStatement.executeQuery();
@@ -49,11 +53,11 @@ public class Executor<T> {
             }
             if (noteName != null)
                 if (!noteName.equals(Journal.defaultNoteName) || noteParameters.length > 0)
-                    Journal.add(NoteType.INFORMATION, noteName, noteParameters);
+                    Journal.add(noteName, noteParameters);
         } catch (Exception exception) {
             if (noteName != null) {
-                exception.printStackTrace();
-                List<String> noteParametersList = new ArrayList<String>(Arrays.asList(noteParameters));
+                //exception.printStackTrace();
+                List<String> noteParametersList = new ArrayList(Arrays.asList(noteParameters));
                 noteParametersList.add(exception.getMessage());
                 Journal.add(NoteType.ERROR, noteName, noteParametersList.stream().toArray(String[]::new));
             }
@@ -70,24 +74,23 @@ public class Executor<T> {
                 else
                     throw Database.getException();
             }
-            if (parameters.length == 0) {
-                Statement statement = Database.getConnection1().createStatement();
-                result = statement.executeUpdate(update);
-                statement.close();
-            } else {
-                PreparedStatement prepareStatement = Database.getConnection1().prepareStatement(update);
-                for(int i = 0; i < parameters.length; i++)
-                    prepareStatement.setString(i + 1, parameters[i]);
-                result = prepareStatement.executeUpdate();
-                prepareStatement.close();
+            PreparedStatement prepareStatement = Database.getConnection().prepareStatement(update);
+            for(int i = 0; i < parameters.length; i++)
+                prepareStatement.setString(i + 1, parameters[i]);
+            result = prepareStatement.executeUpdate();
+            if (result == 0) {
+                String prefix = update.toUpperCase().trim();
+                if (prefix.startsWith("DROP") || prefix.startsWith("CREATE"))
+                    result = 1;
             }
+            prepareStatement.close();
             if (noteName != null && result > 0)
                 if (!noteName.equals(Journal.defaultNoteName) || noteParameters.length > 0)
-                    Journal.add(NoteType.INFORMATION, noteName, noteParameters);
+                    Journal.add(noteName, noteParameters);
         } catch (Exception exception) {
             if (noteName != null) {
-                exception.printStackTrace();
-                List<String> noteParametersList = new ArrayList<String>(Arrays.asList(noteParameters));
+                //exception.printStackTrace();
+                List<String> noteParametersList = new ArrayList(Arrays.asList(noteParameters));
                 noteParametersList.add(exception.getMessage());
                 Journal.add(NoteType.ERROR, noteName, noteParametersList.stream().toArray(String[]::new));
             }

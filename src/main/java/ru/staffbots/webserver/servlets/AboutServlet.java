@@ -45,13 +45,7 @@ public class AboutServlet extends BaseServlet {
         pageVariables.put("website_link", Staffbot.projectWebsite);
         pageVariables.put("device_list", getDeviceList());
         pageVariables.put("dberror_message", Database.connected() ? "" : Database.getException().getMessage());
-        String trace = "";
-        if (Database.disconnected())
-            for (StackTraceElement traceElement: Database.getException().getStackTrace())
-                trace += traceElement.toString() + "<br>";
-        pageVariables.put("dberror_trace", trace);
-        String content = fillTemplate("html/" + pageType.getName()+".html", pageVariables);
-        super.doGet(request, response, content);
+        super.doGet(request, response, getContent(pageVariables));
     }
 
     // Вызывается при отправке страницы на сервер
@@ -62,6 +56,8 @@ public class AboutServlet extends BaseServlet {
     private String getDeviceList() {
         String context = "";
         Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
+        if (Devices.list.size() > 0)
+            context += fillTemplate("html/about/header.html", pageVariables);
         String templateFileName = "html/about/device.html";
         for (Device device : Devices.list){
             pageVariables.put("device_url", device.getLink());

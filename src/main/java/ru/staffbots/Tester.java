@@ -24,11 +24,10 @@ public class Tester extends Staffbot {
     // Точка входа при запуске приложения
     public static void main(String[] args) {
         solutionInit(
-
 //                new Device[] {regularDevice, bh1750Device, distanceDevice, sensorDevice, buttonDevice}, // Инициализируем список устройств
 //                new Lever[] {buttonLever, distanceLever}, // Инициализируем список элементов управления
                 new Device[] {mainDevice
-                       // , regularDevice
+                        , regularDevice
                 }, // Инициализируем список устройств
                 new Lever[] {buttonLever}, // Инициализируем список элементов управления
                 new Task[] {}

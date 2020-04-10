@@ -67,39 +67,12 @@
         <td>
             <!-- Устройства -->
             <table cellpadding='5' border='0' cellspacing='0'>
-                <tr class='table tr title'>
-                    <td>${device_title}</td>
-                    <td>${device_description}</td>
-                    <td colspan='3'>${device_pins}</td>
-                </tr>
                 ${device_list}
             </table>
         </td>
     </tr>
 </table>
-
-<p>
-<table class='table parent piwarning'>
-    <tr>
-        <td>
-            <table class='table child'>
-                <tr>
-                    <td>
-                        <img src='resource?png/warning.png'/>
-                        <b>${piwarning_title}</b>
-                    </td>
-                    <td align="right">
-                        <a href='${website_link}/help' target='_blank'>
-                            <small>${detail_title}</small>
-                        </a>
-                    </td>
-                </tr>
-            </table>
-        </td>
-    </tr>
-</table>
-</p>
-
+<br>
 <table class='table parent dberror'>
     <tr>
         <td>
@@ -119,16 +92,11 @@
                     <td colspan='2'>
                         ${message_title}:<br>
                         <em>${dberror_message}</em>
-                        <p>
-                        <small>
-                            ${trace_title}:<br>
-                            <em>${dberror_trace}</em>
-                        </small>
-                        </p>
                     </td>
                 </tr>
             </table>
         </td>
     </tr>
 </table>
+
 

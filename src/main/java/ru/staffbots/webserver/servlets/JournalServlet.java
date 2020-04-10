@@ -10,20 +10,17 @@ import ru.staffbots.tools.values.DateValue;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.*;
 
 public class JournalServlet extends BaseServlet {
 
-    private ArrayList<String> checkboxes = new ArrayList<>();;
+    private ArrayList<String> checkboxes = new ArrayList();;
 
     public JournalServlet(AccountService accountService) {
         super(PageType.JOURNAL, accountService);
-        //checkboxes = new ArrayList<>(Arrays.asList("journal_fromdate_checkbox", "journal_todate_checkbox"));
         checkboxes.add("journal_fromdate_checkbox");
         checkboxes.add("journal_todate_checkbox");
         for (NoteType pageType : NoteType.values())

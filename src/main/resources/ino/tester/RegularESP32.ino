@@ -8,7 +8,7 @@
 #include <DHT.h>
 
 const char* WIFI_SSID = "RT-WiFi_5B84";
-const char* WIFI_PASSWORD = "23834659";
+const char* WIFI_PASSWORD = "13213455";
 IPAddress address(${device_address}); //unique static ip address
 IPAddress gateway(${device_gateway});   //gateway and dns servers
 IPAddress subnetMask(${device_subnetMask}); //subnet mask
@@ -32,7 +32,7 @@ boolean pinStatus[pinCount]; // pin status
 
 /************************************************************************************************/
 void setup() {   
-    Serial.begin(9600);// иницилизируем монитор порта
+    Serial.begin(9600); // иницилизируем монитор порта
     delay(2000); // запас времени на открытие монитора порта — 2 секунды
     if (!WiFi.config(address, gateway, subnetMask, gateway, gateway)){
         Serial.println("Address configure failed");
