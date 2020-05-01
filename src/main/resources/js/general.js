@@ -21,8 +21,8 @@ function updateTime(){
         var dt = Math.round((currenttime - starttime) / 1000);
         var sec = dt%60;                        sec = (sec > 9) ? sec : '0' + sec;
         var min = Math.trunc(dt/60)%60;         min = (min > 9) ? min : '0' + min;
-        var hou = Math.trunc(dt/(60*60))%60;    hou = (hou > 9) ? hou : '0' + hou;
-        var day = Math.trunc(dt/(60*60*24))%24;
+        var hou = Math.trunc(dt/(60*60))%24;    hou = (hou > 9) ? hou : '0' + hou;
+        var day = Math.trunc(dt/(60*60*24));
         var str = '-';
         element('process_time').innerHTML =
         ((day > 0) ? (day + ' ' + str + ' ') : '') + hou + ':'+ min + ':'+ sec;

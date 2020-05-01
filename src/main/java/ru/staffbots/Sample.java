@@ -54,7 +54,7 @@ public class Sample extends Staffbot {
 
     static Task ledFlashingTask = new Task( "Мигание светодиода",
             () -> {// Расчёт задержки перед следующим запуском задания в миллисекундах
-                return Math.round(500/frequencyLever.getValue());
+                return Math.round(500 / frequencyLever.getValue());
             },
             () -> {// Команды выполнения задания
                 ledDevice.set(true); // Включаем светодиод

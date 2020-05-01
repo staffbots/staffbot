@@ -7,23 +7,19 @@ import java.util.Map;
 
 public enum PageType {
 
-    ENTRY   (0, -1, false),
-    BASE    (0, -1, false),
-    CONTROL (1, 1 , true ),
-    STATUS  (2, 0 , true ),
-    JOURNAL (3, 0 , true ),
-    USERS   (4, 2 , true ),
-    SYSTEM  (5, 2 , true ),
-    ABOUT   (6, 0 , false);
+    ENTRY   (-1, false),
+    BASE    (-1, false),
+    CONTROL ( 1, true ),
+    STATUS  ( 0, true ),
+    JOURNAL ( 0, true ),
+    USERS   ( 2, true ),
+    SYSTEM  ( 2, true ),
+    ABOUT   ( 0, false);
 
-    private int value;
     private int accessLevel;
     private boolean databaseDepend;
 
-    private static Map map = new HashMap<>();
-
-    PageType(int value, int accessLevel, boolean databaseDepend) {
-        this.value = value;
+    PageType(int accessLevel, boolean databaseDepend) {
         this.accessLevel = accessLevel;
         this.databaseDepend = databaseDepend;
     }
@@ -38,20 +34,6 @@ public enum PageType {
 
     public boolean getDatabaseDepend(){
         return databaseDepend;
-    }
-
-    static {
-        for (PageType pageType : PageType.values()) {
-            map.put(pageType.value, pageType);
-        }
-    }
-
-    public static PageType valueOf(int pageType) {
-        return (PageType) map.get(pageType);
-    }
-
-    public int getValue() {
-        return value;
     }
 
     public String getName() {
