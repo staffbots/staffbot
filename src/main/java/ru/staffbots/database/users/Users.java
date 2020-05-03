@@ -4,7 +4,8 @@ import ru.staffbots.database.DBTable;
 import ru.staffbots.database.Executor;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
-import ru.staffbots.tools.Translator;
+import ru.staffbots.tools.languages.Language;
+import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.webserver.WebServer;
 
 import java.security.MessageDigest;
@@ -15,10 +16,10 @@ public class Users extends DBTable {
 
     private static final String staticTableName = "sys_users";
     private static final String staticTableFields =
-            "login VARCHAR(16), password VARCHAR(32), role INT";
+            "login VARCHAR(16), password VARCHAR(32), role INT, language VARCHAR(2)";
 
     public Users(){
-        super(staticTableName, Translator.getValue("database", "users_table"), staticTableFields);
+        super(staticTableName, staticTableFields);
     }
 
     public void delete(String login){
@@ -32,11 +33,12 @@ public class Users extends DBTable {
             Journal.add(NoteType.WARNING, "add_user", user.login);
             return false;
         }
-        Executor executor = new Executor(newLogin ? "add_user" :"change_user", user.login, user.role.getDescription());
+        Executor executor = new Executor(newLogin ? "add_user" :"change_user", user.login, user.role.getDescription(user.language.getCode()));
         return executor.execUpdate(newLogin ?
-                        "INSERT INTO " + staticTableName + " (role, password, login) VALUES (?, ?, ?)" :
-                        "UPDATE " + staticTableName + " SET role = ?, password = ? WHERE login = ?",
+                        "INSERT INTO " + staticTableName + " (role, language, password, login) VALUES (?, ?, ?, ?)" :
+                        "UPDATE " + staticTableName + " SET role = ?, language = ?, password = ? WHERE login = ?",
                 String.valueOf(user.role.getAccessLevel()),
+                user.language.getCode(),
                 cryptWithMD5(user.password),
                 user.login) > 0;
     }
@@ -46,6 +48,15 @@ public class Users extends DBTable {
             return UserRole.ADMIN;
         User user = getUser(login);
         return (user == null) ? UserRole.INSPECTOR : user.role;
+    }
+
+    public static Language getLanguage(String login){
+        if (isAdmin(login))
+            return Languages.get();
+        User user = getUser(login);
+        if (user != null)
+            return user.language;
+        return Languages.get();
     }
 
     public static User getUser(String login){
@@ -67,14 +78,15 @@ public class Users extends DBTable {
         }
         Executor<ArrayList<User>> executor = new Executor();
         return executor.execQuery(
-                "SELECT login, password, role FROM "  + staticTableName + (login == null ? "" : " WHERE (login = ?)"),
+                "SELECT login, password, language, role FROM "  + staticTableName + (login == null ? "" : " WHERE (login = ?)"),
                 (resultSet) -> {
                     ArrayList<User> userList = new ArrayList(0);
                     while (resultSet.next())
                         userList.add(new User(
                                 resultSet.getString(1),
                                 resultSet.getString(2),
-                                resultSet.getInt(3)));
+                                resultSet.getString(3),
+                                resultSet.getInt(4)));
                     return userList;
                 },
                 parameters.stream().toArray(String[]::new));

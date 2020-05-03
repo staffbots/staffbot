@@ -4,6 +4,8 @@ import ru.staffbots.database.Database;
 import ru.staffbots.database.users.User;
 import ru.staffbots.database.users.Users;
 import ru.staffbots.database.users.UserRole;
+import ru.staffbots.tools.languages.Language;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
@@ -45,6 +47,14 @@ public class AccountService {
     public int getUserAccessLevel(String login){
         UserRole role = Users.isAdmin(login) ? UserRole.ADMIN : Database.users.getRole(login);
         return (role == null) ? -1 : role.getAccessLevel();
+    }
+
+    public Language getUserLanguage(String login){
+        return Database.users.getLanguage(login);
+    }
+
+    public String getUserLanguageCode(String login){
+        return getUserLanguage(login).getCode();
     }
 
     public int getUserAccessLevel(HttpServletRequest request){

@@ -53,18 +53,18 @@
 
     <pages>
         <base>
-            login_caption = Логин
-            role_caption  = Роль
-            exit_link     = Выйти
+            login_caption = 用戶名
+            role_caption  = 角色
+            exit_link     = 外出
         </base>
         <entry>
-            page_title       = Авторизация
-            login_caption    = Логин
-            password_caption = Пароль
-            entry_button     = Войти
+            page_title       = 登入
+            login_caption    = 用戶名
+            password_caption = 密碼
+            entry_button     = 登入
         </entry>
         <control>
-            page_title    = Управление
+            page_title    = 管理學
             page_hint     = Управление параметрами
             start_button  = Пуск
             start_hint    = Запустить выполнение процесса
@@ -85,7 +85,7 @@
             delete_hint   = Удалить из БД конфигурацию с указанным именем
         </control>
         <status>
-            page_title        = Состояние
+            page_title        = 條件
             page_hint         = Состояние системы
             process_status    = Состояние процесса:
             process_time      = Время после запуска
@@ -102,7 +102,7 @@
             variable_name     = Имя переменной
         </status>
         <journal>
-            page_title        = Журнал
+            page_title        = 雜誌雜誌
             page_hint         = Журнал событий
             period_title      = Период:
             from_title        = с
@@ -122,7 +122,7 @@
             total_title       = Всего:
         </journal>
         <users>
-            page_title       = Пользователи
+            page_title       = 用戶數
             page_hint        = Список пользователей
             new_login        = Новый пользователь
             select_login     = Выбранный пользователь
@@ -135,7 +135,7 @@
             apply_hint       = Создать/изменить пользователя
         </users>
         <system>
-            page_title        = Система
+            page_title        = 系統
             page_hint         = Системные настройки
             dbclean_title     = Очистка базы данных
             journal_title     = В журнале событий оставлять последние
@@ -165,7 +165,7 @@
             reboot_hint       = Перезагрузка операционной системы
         </system>
         <about>
-            page_title         = Сведения
+            page_title         = 詳細資料
             page_hint          = Сведения о системе
             board_title        = Тип платы
             osname_title       = Операционная система

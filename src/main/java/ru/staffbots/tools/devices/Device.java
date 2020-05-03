@@ -87,7 +87,7 @@ public abstract class Device{
     protected String note;
 
     // Возвращает описание устройства, используется в интерфейсе
-    public String getNote(){
+    public String getNote(String languageCode){
         return note;
     }
 

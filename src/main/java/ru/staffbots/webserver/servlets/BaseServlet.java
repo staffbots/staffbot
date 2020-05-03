@@ -4,7 +4,8 @@ import ru.staffbots.Staffbot;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.users.Users;
 import ru.staffbots.tools.TemplateFillable;
-import ru.staffbots.tools.Translator;
+import ru.staffbots.tools.languages.Language;
+import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
 import ru.staffbots.webserver.WebServer;
@@ -32,6 +33,7 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
     public BaseServlet(PageType pageType, AccountService accountService){
         this.accountService = accountService;
         this.pageType = pageType;
+        setParameters.put("language_code", (HttpServletRequest request) -> changeLanguageCode(request));
     }
 
     public boolean isAccessDenied(HttpServletRequest request)throws IOException {
@@ -73,7 +75,7 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
         return pageEnabled(pageType);
     }
 
-    private String getMenu(int userAccessLevel) {
+    private String getMenu(int userAccessLevel, String languageCode) {
         String menu = "";
         Map<String, Object> menuVariables = new HashMap();
         for (PageType pageType: PageType.values()){
@@ -81,11 +83,11 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
                 int pageAccessLevel = pageType.getAccessLevel();
                 if (pageAccessLevel < 0) continue;
                 if (pageAccessLevel > userAccessLevel) continue;
-                String caption = pageType.getCaption();
+                String caption = pageType.getCaption(languageCode);
                 boolean isCurrentPage = (pageType == this.pageType);
                 if (isCurrentPage) caption = "<b>" + caption + "</b>";
                 menuVariables.put("menu_caption", caption);
-                menuVariables.put("menu_hint", pageType.getDescription());
+                menuVariables.put("menu_hint", pageType.getDescription(languageCode));
                 menuVariables.put("menu_link", isCurrentPage ? "" : "href=\"" + pageType.getName() + "\"");
                 menu += fillTemplate("html/base/menu.html", menuVariables);
             }
@@ -95,14 +97,16 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
 
     public void doGet(HttpServletRequest request, HttpServletResponse response, String content)throws IOException {
         String login = accountService.getUserLogin(request.getSession());
+        String languageCode = accountService.getUserLanguageCode(login);
 
-        Map<String, Object> pageVariables = Translator.getSection(PageType.BASE.getName());
-        pageVariables.put("page_title", Staffbot.getShortName() + " - " + pageType.getCaption());
-        pageVariables.put("main_menu", getMenu(accountService.getUserAccessLevel(login)));
+        Map<String, Object> pageVariables = accountService.getUserLanguage(login).getSection(PageType.BASE.getName());
+        pageVariables.put("page_title", Staffbot.getShortName() + " - " + pageType.getCaption(languageCode));
+        pageVariables.put("main_menu", getMenu(accountService.getUserAccessLevel(login), languageCode));
         pageVariables.put("page_content", content);
         pageVariables.put("login_value", login);
-        pageVariables.put("role_value", Users.getRole(login).getDescription());
+        pageVariables.put("role_value", Users.getRole(login).getDescription(languageCode));
         pageVariables.put("update_delay", WebServer.updateDelay.toString());
+        pageVariables.put("language_select", getLanguageList(languageCode));
 
         String result = fillTemplate("html/base.html", pageVariables);
 
@@ -111,7 +115,6 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
         response.setContentType("text/html; charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_OK );
     }
-
 
     /**
      * Карта хранит параметризированные функции, по которым расчитываются значения переменных
@@ -148,4 +151,33 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
     protected String getContent(Map<String, Object> pageVariables) {
         return fillTemplate("html/" + pageType.getName()+".html", pageVariables);
     }
+
+    private String getLanguageList(String selectedLanguageCode) {
+        if(Languages.getAllCodes().length < 2)
+            return "";
+        String languageList = "";
+        for (String languageCode : Languages.getAllCodes())
+            languageList += getLanguage(Languages.get(languageCode), languageCode.equalsIgnoreCase(selectedLanguageCode));
+        Map<String, Object> pageVariables = new HashMap();
+        pageVariables.put("language_list", languageList);
+        return fillTemplate("html/base/languagelist.html", pageVariables);
+    }
+
+    private String getLanguage(Language language, boolean selected) {
+        Map<String, Object> pageVariables = new HashMap();
+        pageVariables.put("language_selected", selected ? "selected" : "");
+        pageVariables.put("language_code", language.getCode());
+        pageVariables.put("language_title", language.getTitle());
+        return fillTemplate("html/base/language.html", pageVariables);
+    }
+
+    private boolean changeLanguageCode(HttpServletRequest request) {
+        //String languageCode = accountService.getAttribute(request, "language_code");
+        String languageCode = request.getParameter("language_code");
+        Languages.defaultCode = languageCode;
+        //Database.users.delete(login);
+        //System.out.println("Смена языка на " + languageCode );
+        return true;
+    }
+
 }

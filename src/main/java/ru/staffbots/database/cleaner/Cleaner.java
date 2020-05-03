@@ -7,6 +7,7 @@ import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.dates.DateAccuracy;
 import ru.staffbots.tools.dates.DateFormat;
+import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.tools.values.DateValue;
 
 import java.util.Date;
@@ -75,7 +76,7 @@ public class Cleaner {
                     new Date(autoStart.getTime() + period * (long) Math.ceil((double) dt/period));
             timer.scheduleAtFixedRate(cleanTask, delay, period);
             timerIsRuning = true;
-            Journal.add(NoteType.WARNING, "turnon_clean", Long.toString(autoValue), autoMeasure.getDescription(), DateValue.toString(delay, DATE_FORMAT));
+            Journal.add(NoteType.WARNING, "turnon_clean", Long.toString(autoValue), autoMeasure.getDescription(Languages.getDefaultCode()), DateValue.toString(delay, DATE_FORMAT));
         } else {
             timerIsRuning = false;
             Journal.add(NoteType.WARNING, "turnoff_clean");

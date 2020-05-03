@@ -5,7 +5,7 @@ import ru.staffbots.database.Database;
 import ru.staffbots.database.cleaner.Cleaner;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
-import ru.staffbots.tools.Translator;
+import ru.staffbots.tools.languages.Language;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
 
@@ -42,7 +42,10 @@ public class SystemServlet extends BaseServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (isAccessDenied(request, response)) return;
-        Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
+        String login = accountService.getAttribute(request, "users_login");
+        Language language = accountService.getUserLanguage(login);
+
+        Map<String, Object> pageVariables = language.getSection(pageType.getName());
 
         Database.cleaner.refresh();
 
@@ -66,7 +69,7 @@ public class SystemServlet extends BaseServlet {
                     (value.equalsIgnoreCase(Database.settings.load(variable)) ? "checked" : ""));
 
         pageVariables.put("date_format", Cleaner.DATE_FORMAT.getFormat());
-        pageVariables.put("table_list", getTableList());
+        pageVariables.put("table_list", getTableList(language));
 
         String content = fillTemplate("html/" + pageType.getName() + ".html", pageVariables);
         super.doGet(request, response, content);
@@ -130,14 +133,15 @@ public class SystemServlet extends BaseServlet {
         return true;
     }
 
-    private String getTableList() {
+    private String getTableList(Language language) {
         String context = "";
-        Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
+        Map<String, Object> pageVariables = language.getSection(pageType.getName());
         Map<String, DBTable> tableList = Database.getTableList();
         for (String tableName: tableList.keySet()){
             pageVariables.put("name_value", tableName);
             DBTable dbTable = tableList.get(tableName);
-            pageVariables.put("note_value", dbTable == null ? pageVariables.get("table_unuse") : dbTable.getNote());
+            pageVariables.put("note_value", dbTable == null ? pageVariables.get("table_unuse") :
+                    language.getValue("database", dbTable.getTableName()));
             pageVariables.put("rows_value", dbTable == null ? dbTable.getRows() : dbTable.getRows());
             context += fillTemplate("html/system/table.html",pageVariables);
         }

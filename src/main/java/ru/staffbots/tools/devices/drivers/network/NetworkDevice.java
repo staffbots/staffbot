@@ -3,8 +3,8 @@ package ru.staffbots.tools.devices.drivers.network;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.api.ContentResponse;
 import ru.staffbots.Staffbot;
-import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.devices.Device;
+import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.tools.values.BooleanValue;
 import ru.staffbots.tools.values.DoubleValue;
 import ru.staffbots.webserver.WebServer;
@@ -97,9 +97,9 @@ public abstract class NetworkDevice extends Device {
     }
 
     @Override
-    public String getNote(){
-        return super.getNote() + (connected(true) ? "" :
-            " (" + Translator.getValue("device_disconnect") + ")");
+    public String getNote(String languageCode){
+        return super.getNote(languageCode) + (connected(true) ? "" :
+            " (" + Languages.get(languageCode).getValue("device_disconnect") + ")");
     }
 
     static public NetworkDevice convertDevice(Device device){

@@ -24,11 +24,11 @@ public enum DBMS  implements TemplateFillable {
         return driver;
     }
 
-    public Connection getConnection(String server, int port, User user) throws Exception {
-        return getConnection(server, port, null, user);
+    public Connection getConnection(String server, int port, String login, String password) throws Exception {
+        return getConnection(server, port, null, login, password);
     }
 
-    public Connection getConnection(String server, int port, String database, User user) throws Exception {
+    public Connection getConnection(String server, int port, String database, String login, String password) throws Exception {
         StringBuilder url = new StringBuilder();
         url.append("jdbc:" + name() + "://").
             append(server + ":").
@@ -36,7 +36,7 @@ public enum DBMS  implements TemplateFillable {
             append(database == null ? "?serverTimezone=UTC" : database); //Невозможно сразу установить смещение от UTC
         Connection connection = null;
         DriverManager.registerDriver((Driver) Class.forName(driver).getDeclaredConstructor().newInstance());
-        connection = DriverManager.getConnection(url.toString(), user.login, user.password);
+        connection = DriverManager.getConnection(url.toString(), login, password);
         if (database == null) {
             Statement statement = connection.createStatement();
             statement.execute("SET GLOBAL time_zone='+" + (int) (TimeZone.getDefault().getRawOffset() / 36E5) + ":00'");

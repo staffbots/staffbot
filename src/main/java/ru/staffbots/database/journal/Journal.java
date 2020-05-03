@@ -1,12 +1,10 @@
 package ru.staffbots.database.journal;
 
 import ru.staffbots.database.DBTable;
-import ru.staffbots.database.Database;
 import ru.staffbots.database.Executor;
-import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.dates.Period;
-import ru.staffbots.tools.values.DateValue;
+import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.tools.values.LongValue;
 import ru.staffbots.tools.values.ValueMode;
 
@@ -29,16 +27,16 @@ public class Journal extends DBTable {
             "noteVariables VARCHAR(500) CHARACTER SET utf8";
 
     public Journal(){
-        super(staticTableName, Translator.getValue("database", "journal_table"), staticTableFields);
+        super(staticTableName, staticTableFields);
     }
 
     public Journal(String fromDate, String toDate){
-        super(staticTableName, Translator.getValue("database", "journal_table"), staticTableFields);
+        super(staticTableName, staticTableFields);
         period.set(fromDate, toDate);
     }
 
     public Journal(Date fromDate, Date toDate){
-        super(staticTableName, Translator.getValue("database", "journal_table"), staticTableFields);
+        super(staticTableName, staticTableFields);
         period.set(fromDate, toDate);
     }
 
@@ -71,7 +69,7 @@ public class Journal extends DBTable {
     public static void add(NoteType noteType, boolean isStorable, String noteName, String... noteVariables){
         Date noteDate = new Date();
         Note note = new Note(noteDate, noteType, noteName, noteVariables);
-        System.out.println(note.getMessage(false));
+        System.out.println(note.getMessage(false, Languages.getDefaultCode()));
         if (isStorable) insertNote(note);
     }
 

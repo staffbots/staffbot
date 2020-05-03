@@ -1,8 +1,7 @@
 package ru.staffbots.webserver.servlets;
 
 import ru.staffbots.database.Database;
-import ru.staffbots.database.users.User;
-import ru.staffbots.tools.Translator;
+import ru.staffbots.tools.languages.Language;
 import ru.staffbots.tools.tasks.Tasks;
 import ru.staffbots.tools.tasks.TasksStatus;
 import ru.staffbots.tools.levers.ButtonLever;
@@ -47,8 +46,10 @@ public class ControlServlet extends BaseServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (getResponse(request, response)) return;
         if (isAccessDenied(request, response)) return;
+        String login = accountService.getAttribute(request, "users_login");
+        Language language = accountService.getUserLanguage(login);
 
-        Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
+        Map<String, Object> pageVariables = language.getSection(pageType.getName());
 
         for (TasksStatus status : TasksStatus.values()) {
             String variable = status.getName() + "_visible";

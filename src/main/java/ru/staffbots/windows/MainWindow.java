@@ -9,7 +9,7 @@ import javax.swing.JCheckBox;
 
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
-import ru.staffbots.tools.Translator;
+import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.tools.resources.Resources;
 import ru.staffbots.webserver.WebServer;
 
@@ -59,11 +59,11 @@ public class MainWindow extends JFrame {
         setIconImage(Resources.getAsImage("png/icon.png"));
         Container container = getContentPane();
         container.setLayout(new FlowLayout(FlowLayout.CENTER, 0, 25));
-        JCheckBox сheckBox = new JCheckBox(Translator.getValue("frame", "checkbox_caption"));
-        сheckBox.setToolTipText(Translator.getValue("frame", "checkbox_hint"));
+        JCheckBox сheckBox = new JCheckBox(Languages.get().getValue("frame", "checkbox_caption"));
+        сheckBox.setToolTipText(Languages.get().getValue("frame", "checkbox_hint"));
         сheckBox.setSelected(true);
-        JButton button = new JButton(Translator.getValue("frame", "button_caption"));
-        button.setToolTipText(Translator.getValue("frame", "button_hint"));
+        JButton button = new JButton(Languages.get().getValue("frame", "button_caption"));
+        button.setToolTipText(Languages.get().getValue("frame", "button_hint"));
         button.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {

@@ -1,8 +1,6 @@
-package ru.staffbots.tools;
+package ru.staffbots.tools.languages;
 
 import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.resources.Resources;
 import ru.staffbots.webserver.PageType;
@@ -10,10 +8,8 @@ import ru.staffbots.webserver.PageType;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.HashMap;
@@ -21,45 +17,32 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Обеспечивает мультиязычность приложения
+ * Language, init by xml-file
  */
-public class Translator {
+public class Language {
 
-    public static String languageCode = "ru";
+    private static final String defaultSection = "general";
 
-    private static String defaultSection = "general";
-    /**
-     * Переводы,
-     * languageCode -> xmlDocument
-     */
-    private static Document xmlDocument;
+    private String code;
 
-    /**
-     * Значения,
-     * заполняется при первом обращении, нужны для ускорения
-     * Map<noteType:noteName,     noteData    >   (for journal)
-     * Map<pageName:variableName, variableData>   (for pages)
-     *
-     * Map<dataName,              dataValue   >   (in common case)
-     */
-    private static Map<String, Map<String, Object>> data = new HashMap();
+    private String title;
 
-    private static XPath xPath;
+    private Map<String, Map<String, Object>> data = new HashMap();
 
-    /**
-     * Инициализация
-     **/
-    public static void init(){
+    private Document xmlDocument;
+
+    private XPath xPath;
+
+    public Language(String code){
         try {
-            Properties property = new Properties();
-            property.load(Resources.getAsStream("properties"));
-            Translator.languageCode = property.getProperty("staffbot.language", Translator.languageCode);
+            this.code = code;
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             XPathFactory xPathFactory = XPathFactory.newInstance();
             xPath = xPathFactory.newXPath();
-            InputStream inputStream = Resources.getAsStream("xml/" + languageCode + ".xml");
+            InputStream inputStream = Resources.getAsStream("xml/" + code + ".xml");
             xmlDocument = builder.parse(inputStream);
+            title = xmlDocument.getDocumentElement().getAttribute("title");
 
             for (PageType pageType : PageType.values())
                 readData("pages", pageType.getName());
@@ -78,7 +61,7 @@ public class Translator {
         }
     }
 
-    private static void readData(String path, String section) {
+    private void readData(String path, String section) {
         String text = get("/language/" + path + "/" + section, null);
         if (text == null) return;
         Properties properties = new Properties();
@@ -96,7 +79,7 @@ public class Translator {
         data.put(section, sectionData);
     }
 
-    private static String get(String path, String defaultValue){
+    private String get(String path, String defaultValue){
         try {
             return xPath.evaluate(path, xmlDocument).trim();
         } catch (XPathExpressionException e) {
@@ -104,17 +87,25 @@ public class Translator {
         }
     }
 
-    public static String getValue(String key){
+    public String getCode(){
+        return code;
+    }
+
+    public String getTitle(){
+        return title;
+    }
+
+    public String getValue(String key){
         return getValue(defaultSection, key);
     }
 
-    public static String getValue(String section, String key){
+    public String getValue(String section, String key){
         if (!data.containsKey(section)) return key;
         if (!data.get(section).containsKey(key)) return key;
         return data.get(section).get(key).toString();
     }
 
-    public static Map<String, Object> getSection(String section){
+    public Map<String, Object> getSection(String section){
         return new HashMap(data.get(section));
     }
 

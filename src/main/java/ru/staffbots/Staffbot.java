@@ -6,10 +6,10 @@ import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.ParsableProperties;
-import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.devices.CoolingDevice;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
+import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.tools.levers.Lever;
 import ru.staffbots.tools.levers.Levers;
 import ru.staffbots.tools.resources.Resources;
@@ -21,6 +21,8 @@ import ru.staffbots.windows.MainWindow;
 
 import java.io.FileInputStream;
 import java.lang.invoke.MethodHandles;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -96,6 +98,8 @@ import java.util.Properties;
  */
 public abstract class Staffbot {
 
+
+
     public static SystemInfo.BoardType boardType = SystemInfo.BoardType.UNKNOWN;
 
     /**
@@ -149,7 +153,6 @@ public abstract class Staffbot {
 
     public static void solutionInit(Runnable solutionInitAction){
         Staffbot.solutionName = solutionName;
-        Translator.init(); // Инициализируем мультиязычность
         propertiesInit(); // Загружаем свойства из cfg-файла
         Database.init(); // Подключаемся к базе данных
         solutionInitAction.run(); // Инициализируем решение (Levers, Devices and Tasks)
@@ -169,6 +172,9 @@ public abstract class Staffbot {
             property.load(Resources.getAsStream("properties"));
             projectVersion = property.getProperty("staffbot.version", "");
             projectWebsite = property.getProperty("staffbot.website", "");
+            String[] languageCodes = property.getProperty("staffbot.languages", "").split(",");
+            for (String code: languageCodes)
+                Languages.put(code);
             Journal.add(false, "init_properties");
         } catch (Exception exception) {
             Journal.add(NoteType.ERROR, false, "init_properties");

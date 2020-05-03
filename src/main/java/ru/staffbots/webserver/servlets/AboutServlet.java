@@ -3,12 +3,12 @@ package ru.staffbots.webserver.servlets;
 import com.pi4j.io.gpio.Pin;
 import ru.staffbots.Staffbot;
 import ru.staffbots.database.Database;
-import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.devices.drivers.i2c.I2CBusDevice;
 import ru.staffbots.tools.devices.drivers.network.NetworkDevice;
 import ru.staffbots.tools.devices.drivers.spi.SpiBusDevice;
+import ru.staffbots.tools.languages.Language;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
 
@@ -30,7 +30,9 @@ public class AboutServlet extends BaseServlet {
     // Вызывается при запросе странице с сервера
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (isAccessDenied(request, response)) return;
-        Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
+        String login = accountService.getAttribute(request, "users_login");
+        Language language = accountService.getUserLanguage(login);
+        Map<String, Object> pageVariables = language.getSection(pageType.getName());
         pageVariables.put("board_value", Staffbot.boardType);
         pageVariables.put("board_link", Staffbot.projectWebsite + "/" + Staffbot.boardType);
         pageVariables.put("osname_value",System.getProperty("os.name"));
@@ -43,26 +45,27 @@ public class AboutServlet extends BaseServlet {
         pageVariables.put("project_value", Staffbot.projectName);
         pageVariables.put("solution_value", Staffbot.solutionName + "-" + Staffbot.projectVersion);
         pageVariables.put("website_link", Staffbot.projectWebsite);
-        pageVariables.put("device_list", getDeviceList());
+        pageVariables.put("device_list", getDeviceList(language));
         pageVariables.put("dberror_message", Database.connected() ? "" : Database.getException().getMessage());
         super.doGet(request, response, getContent(pageVariables));
     }
 
     // Вызывается при отправке страницы на сервер
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        doGet(request, response);
+        if (setRequest(request))
+            doGet(request, response);
     }
 
-    private String getDeviceList() {
+    private String getDeviceList(Language language) {
         String context = "";
-        Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
+        Map<String, Object> pageVariables = language.getSection(pageType.getName());
         if (Devices.list.size() > 0)
             context += fillTemplate("html/about/header.html", pageVariables);
         String templateFileName = "html/about/device.html";
         for (Device device : Devices.list){
             pageVariables.put("device_url", device.getLink());
             pageVariables.put("device_model", device.getModel());
-            pageVariables.put("device_description", device.getNote());
+            pageVariables.put("device_description", device.getNote(language.getCode()));
             NetworkDevice networkDevice = NetworkDevice.convertDevice(device);
             if (networkDevice != null) {
                 pageVariables.put("address_value", networkDevice.getAddressSettings().getAddress());
@@ -86,12 +89,12 @@ public class AboutServlet extends BaseServlet {
                     SpiBusDevice spiBusDevice = SpiBusDevice.convertDevice(device);
                     if (spiBusDevice != null) {
                         bus = String.valueOf(spiBusDevice.getBusChannel());
-                        hint = Translator.getValue(pageType.getName(), "buschannel_hint");
+                        hint = language.getValue(pageType.getName(), "buschannel_hint");
                     }
                     I2CBusDevice i2CBusDevice = I2CBusDevice.convertDevice(device);
                     if (i2CBusDevice != null) {
                         bus = String.valueOf(i2CBusDevice.getBusAddress());
-                        hint = Translator.getValue(pageType.getName(), "busaddress_hint");
+                        hint = language.getValue(pageType.getName(), "busaddress_hint");
                     }
                     pageVariables.put("bus_hint", hint);
                     pageVariables.put("bus_pin", bus);

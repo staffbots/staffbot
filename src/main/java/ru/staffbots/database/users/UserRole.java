@@ -1,6 +1,6 @@
 package ru.staffbots.database.users;
 
-import ru.staffbots.tools.Translator;
+import ru.staffbots.tools.languages.Languages;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -25,8 +25,8 @@ public enum UserRole {
         this.accessLevel = accessLevel;
     }
 
-    public String getDescription(){
-        return Translator.getValue("userrole", getName());
+    public String getDescription(String languageCode){
+        return Languages.get(languageCode).getValue("userrole", getName());
     }
 
     static {
@@ -44,13 +44,6 @@ public enum UserRole {
         if (name == null) return defaultRole;
         name = (name).toLowerCase();
         return nameMap.containsKey(name) ? nameMap.get(name) : defaultRole;
-    }
-
-    public static UserRole valueByDescription(String description) {
-        if (descriptionMap.size() == 0)
-            for (UserRole userRole : UserRole.values())
-                descriptionMap.put(userRole.getDescription(), userRole);
-        return descriptionMap.containsKey(description) ? (UserRole) descriptionMap.get(description) : defaultRole;
     }
 
     public int getAccessLevel() {

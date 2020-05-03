@@ -66,9 +66,9 @@ public class Database {
  
     public static boolean init(){
         try {
-            connection = DBMSystem.getConnection(SERVER, PORT, new User(USER, PASSWORD));
+            connection = DBMSystem.getConnection(SERVER, PORT, USER, PASSWORD);
             createDatabase(DROP);
-            connection = DBMSystem.getConnection(SERVER, PORT, NAME, new User(USER, PASSWORD));
+            connection = DBMSystem.getConnection(SERVER, PORT, NAME, USER, PASSWORD);
             journal = new Journal();
             Journal.add(null);
             Journal.add("init_database", NAME);

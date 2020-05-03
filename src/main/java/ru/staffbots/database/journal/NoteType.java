@@ -1,7 +1,6 @@
 package ru.staffbots.database.journal;
 
-import ru.staffbots.tools.Translator;
-
+import ru.staffbots.tools.languages.Languages;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -22,8 +21,8 @@ public enum NoteType {
         this.value = value;
     }
 
-    public String getDescription(){
-        return Translator.getValue("notetype", getName());
+    public String getDescription(String languageCode){
+        return Languages.get(languageCode).getValue("notetype", getName());
     }
 
     static {

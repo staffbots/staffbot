@@ -4,8 +4,8 @@ import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.Note;
 import ru.staffbots.database.journal.NoteType;
-import ru.staffbots.tools.Translator;
 import ru.staffbots.tools.dates.DateFormat;
+import ru.staffbots.tools.languages.Language;
 import ru.staffbots.tools.values.DateValue;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
@@ -31,7 +31,9 @@ public class JournalServlet extends BaseServlet {
     // Вызывается при запросе странице с сервера
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (isAccessDenied(request, response)) return;
-        Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
+        String login = accountService.getAttribute(request, "users_login");
+        Language language = accountService.getUserLanguage(login);
+        Map<String, Object> pageVariables = language.getSection(pageType.getName());
 
         Database.journal.setCount(accountService.getAttribute(request,"journal_count"));
         String toDateStr = accountService.getAttribute(request,"journal_todate");
@@ -63,7 +65,7 @@ public class JournalServlet extends BaseServlet {
         pageVariables.put("journal_todate", Database.journal.period.getToDateAsString());
         pageVariables.put("journal_datesize", Database.journal.dateFormat.get().length());
         pageVariables.put("journal_count", Database.journal.getCount());
-        pageVariables.put("journal_page", getJournalPage(typesForShow, searchString));
+        pageVariables.put("journal_page", getJournalPage(typesForShow, searchString, language));
         String content = fillTemplate("html/" + pageType.getName() + ".html", pageVariables);
         super.doGet(request, response, content);
     }
@@ -88,9 +90,9 @@ public class JournalServlet extends BaseServlet {
         return true;
     }
 
-    private String getJournalPage(Map<Integer, Boolean> typesForShow, String searchString) {
+    private String getJournalPage(Map<Integer, Boolean> typesForShow, String searchString, Language language) {
         ArrayList<Note> journalList = Database.journal.getJournal(typesForShow, searchString);
-        Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
+        Map<String, Object> pageVariables = language.getSection(pageType.getName());
         String htmlPath = "html/journal/";
         String htmlCode = fillTemplate(htmlPath + "empty.html",pageVariables);
         if(!journalList.isEmpty()) {
@@ -100,8 +102,8 @@ public class JournalServlet extends BaseServlet {
                 pageVariables.put("note_fulldate", DateValue.toString(note.getDate(), DateFormat.FULLTIMEDATE));
                 pageVariables.put("note_type", line ? "init" : note.getType().getName());
                 pageVariables.put("note_date", DateValue.toString(note.getDate(), DateFormat.CUTSHORTDATETIME));
-                pageVariables.put("note_value", line ? "<hr>" : note.getMessage());
-                pageVariables.put("type_description", line ? pageVariables.get("start_title") : note.getType().getDescription());
+                pageVariables.put("note_value", line ? "<hr>" : note.getMessage(language.getCode()));
+                pageVariables.put("type_description", line ? pageVariables.get("start_title") : note.getType().getDescription(language.getCode()));
                 htmlCode += fillTemplate(htmlPath + "note.html", pageVariables);
             }
             pageVariables.put("total_size", journalList.size());

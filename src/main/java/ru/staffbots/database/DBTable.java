@@ -9,10 +9,7 @@ public abstract class DBTable {
 
     private String name;
 
-    /**
-     * <b>Описание</b>,
-     */
-    protected String note;
+    private String note;
 
     private String fields;
 
@@ -20,24 +17,14 @@ public abstract class DBTable {
         return name;
     }
 
-    /**
-     * <b>Получить описание</b><br>
-     * @return описание
-     */
-    public String getNote(){
-        return note;
-    }
-
-    public DBTable(String name, String note, String fields){
+    public DBTable(String name, String fields){
         this.name = name;
-        this.note = (note == null ? "" : note);
         this.fields = fields;
         createTable();
     }
 
-    public DBTable(String name, String note, String fields, boolean isStorable){
+    public DBTable(String name, String fields, boolean isStorable){
         this.name = name;
-        this.note = (note == null ? "" : note);
         this.fields = fields;
         if (isStorable) createTable();
     }

@@ -3,6 +3,7 @@ package ru.staffbots.tools.tasks;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.dates.DateFormat;
+import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.tools.values.DateValue;
 
 import java.util.Date;
@@ -73,7 +74,7 @@ public class Task extends Thread implements DelayFunction {
             if (!silenceMode) {
                 status = TaskStatus.WAITING;
                 String runTime = DateValue.toString(new Date(System.currentTimeMillis() + delay), DateFormat.DATETIME);
-                statusString = status.getDescription() + " (" + runTime + ")";
+                statusString = status.getDescription(Languages.getDefaultCode()) + " (" + runTime + ")";
                 Journal.add(note + ": " + statusString);
             }
             // Ожидаем запуск
@@ -86,7 +87,7 @@ public class Task extends Thread implements DelayFunction {
 
         if (!isInterrupted()) {
             status = TaskStatus.EXECUTION;
-            statusString = status.getDescription();
+            statusString = status.getDescription(Languages.getDefaultCode());
             // Выполняем задачу
             action.run();
 

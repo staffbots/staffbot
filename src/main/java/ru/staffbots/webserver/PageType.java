@@ -1,9 +1,6 @@
 package ru.staffbots.webserver;
 
-import ru.staffbots.tools.Translator;
-
-import java.util.HashMap;
-import java.util.Map;
+import ru.staffbots.tools.languages.Languages;
 
 public enum PageType {
 
@@ -24,12 +21,12 @@ public enum PageType {
         this.databaseDepend = databaseDepend;
     }
 
-    public String getDescription(){
-        return Translator.getValue(getName(), "page_hint");
+    public String getDescription(String languageCode){
+        return Languages.get(languageCode).getValue(getName(), "page_hint");
     }
 
-    public String getCaption(){
-        return Translator.getValue(getName(), "page_title");
+    public String getCaption(String languageCode){
+        return Languages.get(languageCode).getValue(getName(), "page_title");
     }
 
     public boolean getDatabaseDepend(){

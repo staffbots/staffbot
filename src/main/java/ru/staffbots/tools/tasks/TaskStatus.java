@@ -1,6 +1,6 @@
 package ru.staffbots.tools.tasks;
 
-import ru.staffbots.tools.Translator;
+import ru.staffbots.tools.languages.Languages;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -20,8 +20,8 @@ public enum TaskStatus {
     }
 
 
-    public String getDescription(){
-        return Translator.getValue("taskstatus", getName());
+    public String getDescription(String languageCode){
+        return Languages.get(languageCode).getValue("taskstatus", getName());
     }
 
     static {

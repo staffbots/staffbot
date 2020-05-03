@@ -1,6 +1,6 @@
 package ru.staffbots.tools.dates;
 
-import ru.staffbots.tools.Translator;
+import ru.staffbots.tools.languages.Languages;
 
 public enum DateAccuracy {
 
@@ -17,8 +17,8 @@ public enum DateAccuracy {
         this.milliseconds = milliseconds;
     }
 
-    public String getDescription(){
-        return Translator.getValue("dateaccuracy", getName());
+    public String getDescription(String languageCode){
+        return Languages.get(languageCode).getValue("dateaccuracy", getName());
     }
 
     public long getMilliseconds() {

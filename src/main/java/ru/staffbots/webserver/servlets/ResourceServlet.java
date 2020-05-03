@@ -33,7 +33,6 @@ public class ResourceServlet extends BaseServlet {
             "keystore"
     );
 
-
     public ResourceServlet(AccountService accountService) {
         super(null, accountService);
     }
@@ -89,11 +88,6 @@ public class ResourceServlet extends BaseServlet {
             response.setStatus(HttpServletResponse.SC_NO_CONTENT);
         }
 
-    }
-
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) {
-        doGet(request, response);
     }
 
 }

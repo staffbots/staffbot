@@ -1,9 +1,6 @@
 package ru.staffbots.tools.tasks;
 
-import ru.staffbots.tools.Translator;
-
-import java.util.HashMap;
-import java.util.Map;
+import ru.staffbots.tools.languages.Languages;
 
 public enum TasksStatus {
 
@@ -11,8 +8,8 @@ public enum TasksStatus {
     PAUSE,
     STOP;
 
-    public String getDescription(){
-        return Translator.getValue("tasksstatus", getName());
+    public String getDescription(String languageCode){
+        return Languages.get(languageCode).getValue("tasksstatus", getName());
     }
 
     public String getName() {

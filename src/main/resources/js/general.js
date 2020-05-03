@@ -2,6 +2,10 @@
 // Base
 //////////////////////////////////////////////////////////////////////////////////////
 
+$(document).ready(function(){
+    $('select[name=language_select]').ImageSelect();
+});
+
 var updateDelay = 10000;
 
 function setUpdateDelay(){

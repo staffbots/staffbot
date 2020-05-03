@@ -3,7 +3,7 @@ package ru.staffbots.webserver.servlets;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.users.User;
 import ru.staffbots.database.users.UserRole;
-import ru.staffbots.tools.Translator;
+import ru.staffbots.tools.languages.Language;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
 
@@ -34,10 +34,12 @@ public class UsersServlet extends BaseServlet {
         if (getResponse(request, response)) return;
         if (isAccessDenied(request, response)) return;
 
-        Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
+        String login = accountService.getAttribute(request, "users_login");
+        Language language = accountService.getUserLanguage(login);
+
+        Map<String, Object> pageVariables = language.getSection(pageType.getName());
         ArrayList<User> userList = Database.users.getUserList();
 
-        String login = accountService.getAttribute(request, "users_login");
 
         pageVariables.put("login_list", getLoginList(userList, login));
 
@@ -49,8 +51,10 @@ public class UsersServlet extends BaseServlet {
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
         if (isAccessDenied(request, response)) return;
         String radiobox = request.getParameter("users_radiobox");
-        String login = request.getParameter(radiobox.equals("new") ? "new_login" : "select_login");
-        accountService.setAttribute(request, "users_login", login);
+        if (radiobox != null) {
+            String login = request.getParameter(radiobox.equals("new") ? "new_login" : "select_login");
+            accountService.setAttribute(request, "users_login", login);
+        }
         setRequest(request);
         doGet(request, response);
     }
@@ -59,8 +63,9 @@ public class UsersServlet extends BaseServlet {
         String role = request.getParameter("users_role");
         String login = accountService.getAttribute(request, "users_login");
         String password = request.getParameter("users_password");
+        String language = accountService.getUserLanguageCode(login);
         if (!login.equals(""))
-            Database.users.setUser(new User(login, password, role));
+            Database.users.setUser(new User(login, password, language, role));
         return true;
     }
 
@@ -88,19 +93,20 @@ public class UsersServlet extends BaseServlet {
     private String getRoleList(HttpServletRequest request) {
         String login = request.getParameter("login_name");
         UserRole selectedRole = Database.users.getRole(login);
+        Language language = accountService.getUserLanguage(login);
         String roles = "";
         for (UserRole role : UserRole.values())
-            roles += getRole(role, selectedRole == role);
-        Map<String, Object> pageVariables = Translator.getSection(pageType.getName());
+            roles += getRole(language.getCode(), role, selectedRole == role);
+        Map<String, Object> pageVariables = language.getSection(pageType.getName());
         pageVariables.put("role_list", roles);
         return fillTemplate("html/users/rolelist.html", pageVariables);
     }
 
-    private String getRole(UserRole role, boolean selected) {
+    private String getRole(String languageCode, UserRole role, boolean selected) {
         Map<String, Object> pageVariables = new HashMap();
         pageVariables.put("role_name", role.getName());
         pageVariables.put("role_selected", selected ? "selected" : "");
-        pageVariables.put("role_description", role.getDescription());
+        pageVariables.put("role_description", role.getDescription(languageCode));
         return fillTemplate("html/users/role.html", pageVariables);
     }
 

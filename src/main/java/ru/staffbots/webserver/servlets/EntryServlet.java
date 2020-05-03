@@ -1,7 +1,6 @@
 package ru.staffbots.webserver.servlets;
 
 import ru.staffbots.Staffbot;
-import ru.staffbots.tools.Translator;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
 
@@ -25,12 +24,13 @@ public class EntryServlet extends BaseServlet {
     // Вызывается при запросе странице с сервера (Обновление страницы)
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
         String login = accountService.getUserLogin(request.getSession());
+        String languageCode = accountService.getUserLanguageCode(login);
 
         if (login == null) login = "";
             accountService.forgetSession(request.getSession());
 
-        Map<String, Object> pageVariables = Translator.getSection(PageType.ENTRY.getName());
-        pageVariables.put("page_title", Staffbot.getShortName() + " - " + pageType.getCaption());
+        Map<String, Object> pageVariables = accountService.getUserLanguage(login).getSection(PageType.ENTRY.getName());
+        pageVariables.put("page_title", Staffbot.getShortName() + " - " + pageType.getCaption(languageCode));
         pageVariables.put("website_link", Staffbot.projectWebsite);
         pageVariables.put("login_input", login);
 
