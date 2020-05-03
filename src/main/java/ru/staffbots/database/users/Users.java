@@ -59,6 +59,22 @@ public class Users extends DBTable {
         return Languages.get();
     }
 
+    public static boolean setLanguage(String login, Language language){
+        if (isAdmin(login))
+            return Languages.setDefaultCode(language.getCode());
+        User user = getUser(login);
+        if (user == null)
+            return false;
+        if (user.language.getCode().equals(language.getCode()))
+            return false;
+        user.language = language;
+        Executor executor = new Executor();
+        return executor.execUpdate(
+            "UPDATE " + staticTableName + " SET language = ? WHERE login = ?",
+                user.language.getCode(),
+                user.login) > 0;
+    }
+
     public static User getUser(String login){
         if (login == null) return null;
         ArrayList<User> userList = getUserList(login);

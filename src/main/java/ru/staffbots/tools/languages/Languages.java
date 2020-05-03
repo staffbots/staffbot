@@ -1,11 +1,13 @@
 package ru.staffbots.tools.languages;
 
+import ru.staffbots.database.Database;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class Languages {
 
-    public static String defaultCode = null;
+    private static String defaultCode = null;
 
     private static Map<String, Language> list = new HashMap();
 
@@ -35,6 +37,20 @@ public class Languages {
 
     public static String getDefaultCode() {
         return  defaultCode;
+    }
+
+    public static void loadDefaultCode() {
+        setDefaultCode(Database.settings.loadAsString("default_language_code", defaultCode));
+    }
+
+    public static boolean setDefaultCode(String languageCode) {
+        languageCode = languageCode.toLowerCase().trim();
+        if(defaultCode.equals(languageCode))
+            return true;
+        if (list.containsKey(languageCode))
+            defaultCode = languageCode;
+        Database.settings.save("default_language_code", defaultCode);
+        return true;
     }
 
 }

@@ -172,11 +172,9 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
     }
 
     private boolean changeLanguageCode(HttpServletRequest request) {
-        //String languageCode = accountService.getAttribute(request, "language_code");
+        String login = accountService.getUserLogin(request.getSession());
         String languageCode = request.getParameter("language_code");
-        Languages.defaultCode = languageCode;
-        //Database.users.delete(login);
-        //System.out.println("Смена языка на " + languageCode );
+        accountService.setUserLanguage(login, Languages.get(languageCode));
         return true;
     }
 

@@ -1,6 +1,5 @@
 package ru.staffbots.database.users;
 
-
 import ru.staffbots.tools.languages.Language;
 import ru.staffbots.tools.languages.Languages;
 
@@ -11,32 +10,27 @@ public class User {
     public UserRole role;
     public Language language;
 
-    public User(String login, String password, String languageCode, UserRole role) {
+    private void init(String login, String password, String languageCode, UserRole role){
         this.login = login;
         this.password = password;
         this.language = Languages.get(languageCode);
         this.role = role;
     }
 
+    public User(String login, String password, String languageCode, UserRole role) {
+        init(login, password, languageCode, role);
+    }
+
     public User(String login, String password, String languageCode, int accessLevel) {
-        this.login = login;
-        this.password = password;
-        this.language = Languages.get(languageCode);
-        this.role = UserRole.valueOf(accessLevel);
+        init(login, password, languageCode, UserRole.valueOf(accessLevel));
     }
 
     public User(String login, String password, String languageCode, String roleName) {
-        this.login = login;
-        this.password = password;
-        this.language = Languages.get(languageCode);
-        this.role = UserRole.valueByName(roleName);
+        init(login, password, languageCode, UserRole.valueByName(roleName));
     }
 
     public User(String login, String password, String languageCode) {
-        this.login = login;
-        this.password = password;
-        this.language = Languages.get(languageCode);
-        this.role = UserRole.INSPECTOR;
+        init(login, password, languageCode, UserRole.INSPECTOR);
     }
 
     @Override

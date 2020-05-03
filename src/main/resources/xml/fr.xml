@@ -1,275 +1,274 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<language title="Русский">
+<language title="English">
 
     <application>
         <general>
-            device_disconnect  = не подключён
+            device_disconnect  = disconnected
         </general>
         <frame>
-            button_caption   = Управление
-            button_hint      = Перейти к управлению через web-браузер
+            button_caption   = Management
+            button_hint      = Go to web-browser control
             checkbox_caption = SSL
-            checkbox_hint    = Использовать SSL-протокол
+            checkbox_hint    = Use SSL-protocol
         </frame>
         <database>
-            sys_configs    = Конфигурации
-            sys_journal    = Журнал
-            sys_settings   = Настройки системы
-            sys_users      = Пользователи
+            sys_configs    = Configurations
+            sys_journal    = Journal
+            sys_settings   = System settings
+            sys_users      = Users
         </database>
     </application>
 
     <enums>
         <dateaccuracy>
-            millisecond = Миллисекунда
-            second      = Секунда
-            minute      = Минута
-            hour        = Час
-            day         = Сутки
-            week        = Неделя
+            millisecond = Millisecond
+            second      = Second
+            minute      = Minute
+            hour        = Hour
+            day         = Day
+            week        = Week
         </dateaccuracy>
         <notetype>
-            information = Информация
-            warning     = Предупреждение
-            error       = Ошибка
+            information = Information
+            warning     = Warning
+            error       = Error
         </notetype>
         <userrole>
-            inspector   = Инспектор
-            manager     = Управляющий
-            admin       = Администратор
+            inspector   = Inspector
+            manager     = Manager
+            admin       = Admin
         </userrole>
         <tasksstatus>
-            start       = Пуск
-            pause       = Пауза
-            stop        = Стоп
+            start       = Start
+            pause       = Pause
+            stop        = Stop
         </tasksstatus>
         <taskstatus>
             new       =
-            waiting   = Ожидание
-            execution = Выполнение
+            waiting   = Waiting
+            execution = Execution
             old       =
         </taskstatus>
     </enums>
 
     <pages>
         <base>
-            login_caption = Логин
-            role_caption  = Роль
-            exit_link     = Выйти
+            login_caption = Login
+            role_caption  = Role
+            exit_link     = Exit
         </base>
         <entry>
-            page_title       = Авторизация
-            login_caption    = Логин
-            password_caption = Пароль
-            entry_button     = Войти
+            page_title       = Authorization
+            login_caption    = Login
+            password_caption = Password
+            entry_button     = Entry
         </entry>
         <control>
-            page_title    = Управление
-            page_hint     = Управление параметрами
-            start_button  = Пуск
-            start_hint    = Запустить выполнение процесса
-            pause_button  = Пауза
-            pause_hint    = Приостановить выполнение процесса
-            stop_button   = Стоп
-            stop_hint     = Закончить выполнение процесса
-            time_hint     = Время после запуска
-            tasks_hint    = Текущие задания
-            apply_button  = Применить
-            apply_hint    = Применить введённые параметры
-            config_hint   = Имя конфигурации
-            save_button   = Сохранить
-            save_hint     = Сохранить конфигурацию в БД под указанным именем
-            load_button   = Загрузить
-            load_hint     = Загрузить из БД конфигурацию с указанным именем
-            delete_button = Удалить
-            delete_hint   = Удалить из БД конфигурацию с указанным именем
+            page_title    = Contrôle
+            page_hint     = Control levers
+            start_button  = Start
+            start_hint    = Run process
+            pause_button  = Pause
+            pause_hint    = Pause process
+            stop_button   = Stop
+            stop_hint     = Finish process
+            time_hint     = Time after launch
+            tasks_hint    = Current tasks
+            apply_button  = Apply
+            apply_hint    = Apply entered parameters
+            config_hint   = Configuration name
+            save_button   = Save
+            save_hint     = Save the configuration in the database
+            load_button   = Load
+            load_hint     = Load the configuration from the database
+            delete_button = Delete
+            delete_hint   = Delete configuration from the database
         </control>
         <status>
-            page_title        = Состояние
-            page_hint         = Состояние системы
-            process_status    = Состояние процесса:
-            process_time      = Время после запуска
-            task_list         = Текущие задания
-            lever_title       = Параметр управления
-            device_title      = Устройство
-            description_title = Описание
-            value_title       = Значение
-            plot_title        = График
-            plot_hint         = Показать график
-            period_title      = Период:
-            apply_button      = Применить
-            apply_hint        = Применить введённые параметры
-            variable_name     = Имя переменной
+            page_title        = Statut
+            page_hint         = System status
+            process_status    = Process status:
+            process_time      = Time after launch
+            task_list         = Current tasks
+            lever_title       = Control lever
+            device_title      = Device
+            description_title = Description
+            value_title       = Value
+            plot_title        = Plot
+            plot_hint         = Show plot
+            period_title      = Period:
+            apply_button      = Apply
+            apply_hint        = Apply entered parameters
+            variable_name     = Variable name
         </status>
         <journal>
-            page_title        = Журнал
-            page_hint         = Журнал событий
-            period_title      = Период:
-            from_title        = с
-            to_title          = по
-            information_title = Информация
-            warning_title     = Предупреждения
-            error_title       = Ошибки
-            placeholder_word  = Поиск...
-            count_hint        = Максимальное количество записей для отображения
-            count_title       = последних записей
-            apply_button      = Применить
-            apply_hint        = Применить фильтр
-            empty_journal     = По указанному фильтру записей нет
-            date_title        = Дата
-            note_title        = Сообщение
-            start_title       = Запуск приложения
-            total_title       = Всего:
+            page_title        = Journal
+            page_hint         = Event journal
+            period_title      = Period:
+            from_title        = from
+            to_title          = to
+            information_title = Information
+            warning_title     = Warnings
+            error_title       = Errors
+            placeholder_word  = Search...
+            count_hint        = Maximum count of notes to display
+            count_title       = recent entries
+            apply_button      = Apply
+            apply_hint        = Apply filter
+            empty_journal     = There are no records for the specified filter
+            date_title        = Date
+            note_title        = Note
+            start_title       = Start application
+            total_title       = Total:
         </journal>
         <users>
-            page_title       = Пользователи
-            page_hint        = Список пользователей
-            new_login        = Новый пользователь
-            select_login     = Выбранный пользователь
-            delete_button    = Удалить
-            delete_hint      = Удалить пользователя
-            role_caption     = Роль
-            role_hint        = Роль пользователя
-            password_caption = Пароль
-            apply_button     = Применить
-            apply_hint       = Создать/изменить пользователя
+            page_title       = Utilisateurs
+            page_hint        = Users list
+            new_login        = New user
+            select_login     = Select user
+            delete_button    = Delete
+            delete_hint      = Delete user
+            role_caption     = Role
+            role_hint        = User role
+            password_caption = Password
+            apply_button     = Apply
+            apply_hint       = Create/modify user
         </users>
         <system>
-            page_title        = Система
-            page_hint         = Системные настройки
-            dbclean_title     = Очистка базы данных
-            journal_title     = В журнале событий оставлять последние
-            tables_title      = В таблицах значений оставлять последние
-            clean_button      = Очистить
-            clean_hint        = Очистить сейчас
-            autoclean_off     = Отключить автоматическую очистку
-            autoclean_on      = Запускать автоматическую очистку каждые
-            record_measure    = записей
-            minute_measure    = минут
-            hour_measure      = часов
-            day_measure       = суток
-            start_from        = начиная с
-            apply_button      = Применить
-            apply_hint        = Применить введённые параметры
-            table_name        = Таблица
-            name_hint         = Имя таблицы в базе данных
-            table_rows        = Размер
-            rows_hint         = Количество записей в таблице
-            table_note        = Описание
-            table_unuse       = Таблица неиспользуется
-            shutdown_button   = Выключить систему
-            shutdown_hint     = Завершение работы операционной системы
-            exit_button       = Закрыть приложение
-            exit_hint         = Завершение работы приложения
-            reboot_button     = Перезагрузить систему
-            reboot_hint       = Перезагрузка операционной системы
+            page_title        = Système
+            page_hint         = System settings
+            dbclean_title     = Database cleanup
+            journal_title     = Leave the last in the event journal
+            tables_title      = Leave the last in the value tables
+            clean_button      = Clean
+            clean_hint        = Clean now
+            autoclean_off     = Turn off automatic cleaning
+            autoclean_on      = Turn on automatic cleaning every
+            record_measure    = records
+            minute_measure    = minutes
+            hour_measure      = hour
+            day_measure       = days
+            start_from        = starting
+            apply_button      = Apply
+            apply_hint        = Apply entered parameters
+            table_name        = Table
+            name_hint         = Table name in database
+            table_rows        = Rows
+            rows_hint         = Records count in table
+            table_note        = Description
+            table_unuse       = Table unuse
+            shutdown_button   = Shutdown
+            shutdown_hint     = Shutdown the operating system
+            exit_button       = Exit
+            exit_hint         = Application close
+            reboot_button     = Reboot
+            reboot_hint       = Reboot the operating system
         </system>
         <about>
-            page_title         = Сведения
-            page_hint          = Сведения о системе
-            board_title        = Тип платы
-            osname_title       = Операционная система
-            osversion_title    = Версия ОС
-            osarch_title       = Архитектура
-            javaversion_title  = Версия java
-            dbserver_title     = Сервер баз данных
-            dbmsystem_title    = СУБД
-            dbmsystem_hint     = Система Управления Базами Данных
-            dbname_title       = База данных
-            project_title      = Проект
-            solution_title     = Решение
-            website_title      = Сайт проекта
-            device_title       = Устройство
-            device_description = Описание
-            description_hint   = Описание устройства
-            device_pins        = Пины
-            device_hint        = Пин устройства
-            controller_hint    = Пин контроллера
-            address_hint       = Адресс удалённого контроллера
-            busaddress_hint    = Адресс I2C-шины
-            buschannel_hint    = Канал SPI-шины
-            dberror_title      = Нет подключнения к базе данных
-            message_title      = Сообщение
-            trace_title        = Последовательность вызовов
-            detail_title       = Подробно
-            piwarning_title    = Работа с устройствами отключена
+            page_title         = Détails
+            page_hint          = System Information
+            board_title        = Board type
+            osname_title       = Operating system
+            osversion_title    = OS version
+            osarch_title       = Architecture
+            javaversion_title  = Java version
+            dbserver_title     = Database server
+            dbmsystem_title    = DBMS
+            dbmsystem_hint     = Database Management System
+            dbname_title       = Database
+            project_title      = Project
+            solution_title     = Solution
+            website_title      = Project site
+            device_title       = Device
+            device_description = Description
+            description_hint   = Device description
+            device_pins        = Pins
+            device_hint        = Device pin
+            controller_hint    = Controller pin
+            address_hint       = Remote controller address
+            busaddress_hint    = I2C bus address
+            buschannel_hint    = SPI bus channel
+            dberror_title      = No database connect
+            message_title      = Message
+            trace_title        = Stack trace
+            detail_title       = Detail
         </about>
     </pages>
 
     <journal>
         <information>
             any_message     = %s%
-            init_properties = Свойства проекта загружены
-            init_configs    = Конфигурация проекта загружена
-            init_database   = База данных %s% готова к использованию
-            create_table    = Таблица %s% создана
-            erase_table     = Таблица %s% очищена
-            drop_table      = Таблица %s% удалена
-            delete_table    = Удаление в таблице %s%
-            save_settings   = Настроека %s% сохранена (значение = %s%)
-            load_settings   = Настроека %s% загружена
-            delete_settings = Настроека %s% удалена
-            save_config     = Конфигурация параметров управления %s% сохранена
-            load_config     = Конфигурация параметров управления %s% загружена
-            delete_config   = Конфигурация параметров управления %s% удалена
-            add_user        = Добавлен пользователь %s% с ролью %s%
-            change_user     = Пользователь %s% с ролью %s% изменён
-            delete_user     = Пользователь %s% удалён
-            init_device     = Устройства успешно проинициализированы
-            complite_task   = %s%: Задание выполнено
-            init_tasks      = Задания проинициализированы
-            set_value       = Для переменной %s% (%s%) установлено значение: %s%
-            init_window     = Главное окно приложения открыто
-            start_server    = Веб-сервер запустился
+            init_properties = Project properties loaded
+            init_configs    = Project configuration loaded
+            init_database   = Database %s% is ready to use
+            create_table    = Table %s% created
+            erase_table     = Table %s% erased
+            drop_table      = Table %s% deleted
+            delete_table    = Deletion in table %s%
+            save_settings   = Settings %s% saved (value is %s%)
+            load_settings   = Setting %s% loaded
+            delete_settings = Setting %s% deleted
+            save_config     = Management parameters configuration %s% saved
+            load_config     = Management parameters configuration %s% loaded
+            delete_config   = Management parameters configuration %s% deleted
+            add_user        = User %s% with role %s% added
+            change_user     = User %s% with role %s% changed
+            delete_user     = User %s% deleted
+            init_device     = Devices successfully initialized
+            complite_task   = %s%: task complited
+            init_tasks      = Tasks initialized
+            set_value       = The variable %s% (%s%) is set to: %s%
+            init_window     = The main application window is open
+            start_server    = Web server started
         </information>
         <warning>
             any_message     = %s%
-            drop_database   = База данных %s% удалена!
-            create_database = Создана база данных %s%
-            clean_database  = База данных очищена. Удалено %s% записей значений и %s% сообщений журнала
-            turnon_clean    = Настроена автоматическая очистка базы данных с периодом %s% %s%, первый запуск: %s%
-            turnoff_clean   = Автоматическая очистка базы данных отключена
-            interrupte_task = %s%: Задание прервано
-            start_tasks     = Выполнен пуск заданий
-            pause_tasks     = Произведена приостановка заданий
-            stop_tasks      = Произведена остановка заданий
-            set_random      = Для переменной %s% (%s%) добавлено %s% случайных значений
-            init_window     = Приложение работает без запуска главного окна
-            close_window    = Закрытие приложения из главного окна на сервере
-            add_user        = Добавить пользователя с именем %s% нельзя!
-            shutdown_system = Выключение системы из веб-интерфейса (пользователь: %s%, адрес: %s%)
-            exit_program    = Закрытие приложения из веб-интерфейса (пользователь: %s%, адрес: %s%)
-            reboot_system   = Перезагрузка системы из веб-интерфейса (пользователь: %s%, адрес: %s%)
+            drop_database   = Database %s% deleted!
+            create_database = Database %s% created
+            clean_database  = Database cleaned. %s% value records and %s% journal notes deleted
+            turnon_clean    = Set up automatic database cleanup with a period %s% %s%, first start: %s%
+            turnoff_clean   = Automatic database cleanup canceled
+            interrupte_task = %s%: task aborted
+            start_tasks     = Tasks started
+            pause_tasks     = Tasks paused
+            stop_tasks      = Tasks stoped
+            set_random      = Variable %s% (%s%). %s% random values added
+            init_window     = The application works without launching the main window
+            close_window    = Closing the application from the main window on the server
+            add_user        = You cannot add a user %s%!
+            shutdown_system = Shutdown the system from the web interface (user: %s%, address: %s%)
+            exit_program    = Close application from the web interface (user: %s%, address: %s%)
+            reboot_system   = Reboot the system from the web interface (user: %s%, address: %s%))
         </warning>
         <error>
             any_message     = %s%
-            init_properties = Ошибка загрузки свойств проекта
-            init_configs    = Ошибка загрузки конфигурации проекта
-            table_exists    = Ошибка поиска таблицы %s%. Сообщение: %s%
-            create_table    = Ошибка создания таблицы %s%. Сообщение: %s%
-            erase_table     = Ошибка очистки таблицы %s%. Сообщение: %s%
-            drop_table      = Ошибка удаления таблицы %s%. Сообщение: %s%
-            read_table      = Ошибка запроса к таблице %s%. Сообщение: %s%
-            delete_table    = Ошибка удаления записей в таблице %s%. Сообщение: %s%
-            init_database   = Ошибка инициализации базы данных %s%: %s%
-            save_settings   = Ошибка сохранения настройки (%s% = %s%). Сообщение: %s%
-            load_settings   = Ошибка загрузки настройки %s%: %s%
-            delete_settings = Ошибка удаления настройки %s%: %s%
-            save_config     = Ошибка сохранения конфигурации %s%: %s%
-            load_config     = Ошибка загрузки конфигурации %s%: %s%
-            delete_config   = Ошибка удаления конфигурации %s%: %s%
-            delete_user     = Ошибка удаления пользователя. Сообщение: %s%
-            add_user        = Ошибка создания пользователя. Сообщение: %s%
-            change_user     = Ошибка изменения пользователя. Сообщение: %s%
-            get_user        = Ошибка получения пользователя %s%. Сообщение: %s%
-            crypt_password  = Ошибка шифрования. Сообщение: %s%
-            set_value       = Неудачная попытка присвоить %s% (%s%) значение %s%: %s%
-            get_value       = Ошибка получения значения для %s% (%s%). Сообщение: %s%
-            open_browser    = Неудачная попытка открыть браузер. Сообщение: %s%
-            busy_port       = Порт %s% занят
-            start_server    = Ошибка запуска веб-сервера. Сообщение: %s%
-            shutdown_error  = Ошибка выполнения команды %s%: %s%)
-            overlap_pin     = Повторное использование пина в устройстве %s%
+            init_properties = Error loading project properties. Message: %s%
+            init_configs    = Error loading project configuration. Message: %s%
+            table_exists    = Table %s% search error. Message: %s%
+            create_table    = Table %s% create error. Message: %s%
+            drop_table      = Table %s% drop error. Message: %s%
+            erase_table     = Table %s% erase error. Message: %s%
+            read_table      = Error querying table %s%. Message: %s%
+            delete_table    = Error deleting in a table %s%. Message: %s%
+            init_database   = Database %s% initialization error. Message: %s%
+            save_settings   = Settings updating error (%s% = %s%). Message: %s%
+            load_settings   = Setting loading error (%s%). Message: %s%
+            delete_settings = Setting deleting error (%s%). Message: %s%
+            save_config     = Error saving a configuration %s%. Message: %s%
+            save_config     = Error loading a configuration %s%. Message: %s%
+            delete_config   = Error deleting a configuration %s%. Message: %s%
+            delete_user     = Error deleting user. Message: %s%
+            add_user        = User creation error. Message: %s%
+            change_user     = User change error. Message: %s%
+            get_user        = Error getting user %s%. Message: %s%
+            crypt_password  = Encryption error. Message: %s%
+            set_value       = Failed to set %s% (%s%) to %s%. Message: %s%
+            get_value       = Error getting value for %s% (%s%). Message: %s%
+            open_browser    = Unsuccessful attempt to open a browser. Message: %s%
+            busy_port       = Port %s% is busy
+            start_server    = Error starting web server. Message: %s%
+            shutdown_error  = Command %s% execution error. Message: %s%
+            overlap_pin     = Overlap pin in device %s%
         </error>
     </journal>
 

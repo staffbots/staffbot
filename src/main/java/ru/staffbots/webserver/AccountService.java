@@ -49,6 +49,10 @@ public class AccountService {
         return (role == null) ? -1 : role.getAccessLevel();
     }
 
+    public boolean setUserLanguage(String login, Language language){
+        return Database.users.setLanguage(login, language);
+    }
+
     public Language getUserLanguage(String login){
         return Database.users.getLanguage(login);
     }

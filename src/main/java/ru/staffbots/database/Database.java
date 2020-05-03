@@ -9,6 +9,8 @@ import ru.staffbots.database.users.User;
 import ru.staffbots.database.users.Users;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
+import ru.staffbots.tools.languages.Language;
+import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.tools.levers.Lever;
 import ru.staffbots.tools.levers.Levers;
 import ru.staffbots.tools.values.Value;
@@ -74,6 +76,7 @@ public class Database {
             Journal.add("init_database", NAME);
             configs = new Configs();
             settings = new Settings();
+            Languages.loadDefaultCode();
             users = new Users();
             systemTableList.put(journal.getTableName(), journal);
             systemTableList.put(configs.getTableName(), configs);
