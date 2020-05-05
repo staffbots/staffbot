@@ -34,8 +34,8 @@ public class UsersServlet extends BaseServlet {
         if (getResponse(request, response)) return;
         if (isAccessDenied(request, response)) return;
 
-        String login = accountService.getAttribute(request, "users_login");
-        Language language = accountService.getUserLanguage(login);
+        String login = accountService.getUserLogin(request);
+        Language language = accountService.getUserLanguage(request);
 
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
         ArrayList<User> userList = Database.users.getUserList();
@@ -63,9 +63,9 @@ public class UsersServlet extends BaseServlet {
         String role = request.getParameter("users_role");
         String login = accountService.getAttribute(request, "users_login");
         String password = request.getParameter("users_password");
-        String language = accountService.getUserLanguageCode(login);
+        String languageCode = accountService.getUserLanguage(request).getCode();
         if (!login.equals(""))
-            Database.users.setUser(new User(login, password, language, role));
+            Database.users.setUser(new User(login, password, languageCode, role));
         return true;
     }
 
@@ -93,7 +93,7 @@ public class UsersServlet extends BaseServlet {
     private String getRoleList(HttpServletRequest request) {
         String login = request.getParameter("login_name");
         UserRole selectedRole = Database.users.getRole(login);
-        Language language = accountService.getUserLanguage(login);
+        Language language = accountService.getUserLanguage(request);
         String roles = "";
         for (UserRole role : UserRole.values())
             roles += getRole(language.getCode(), role, selectedRole == role);

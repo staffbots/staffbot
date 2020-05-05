@@ -46,9 +46,9 @@ public class ControlServlet extends BaseServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (getResponse(request, response)) return;
         if (isAccessDenied(request, response)) return;
-        String login = accountService.getAttribute(request, "users_login");
-        Language language = accountService.getUserLanguage(login);
-
+        //String login = accountService.getUserLogin(request);
+        Language language = accountService.getUserLanguage(request);
+        //System.out.println(login + " - " + language);
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
 
         for (TasksStatus status : TasksStatus.values()) {

@@ -50,7 +50,6 @@
             header.append('<img style="width:' + (options.width-75) + 'px" />');
           }
           
-
           var $options = $('option',element);
 
           $options.each(function(i,el){
@@ -58,22 +57,15 @@
                 dropdown.append('<img style="width:100%" onclick="jQuery(\'select[name=' + selectName + ']\').val(\''+ $(el).val() + '\').ImageSelect(\'close\').ImageSelect(\'update\',{src:\''+ $(el).text() + '\'});" src="' + $(el).text() + '"/>');
           });
 
-
           imageSelect.append(header);
           imageSelect.append(dropdown);
-
-          
-
-
 
           element.after(imageSelect);
           element.hide();
 
-
           header.attr('linkedselect',selectName);
           header.children().attr('linkedselect',selectName);
           header.click(function(){$('select[name=' + $(this).attr('linkedselect') + ']').ImageSelect('open');});
-          //header.children().click(function(){$('select[name=' + $(this).attr('linkedselect') + ']').ImageSelect('open');});
 
           var w = 0;
 
@@ -87,21 +79,6 @@
 
           dropdown.css('max-height',options.dropdownHeight + 'px');
             
-          /*
-          if(w < options.dropdownWidth){
-              dropdown.css('height',options.height + 'px');
-          }else{
-             var mod = (w % options.dropdownWidth);
-             var rows = ((w - mod)/options.dropdownWidth) + 1;
-             var h = (options.height * rows);
-             if(h > options.dropdownHeight){
-                dropdown.css('height',options.dropdownHeight + 'px');
-                
-             }else{
-                dropdown.css('height',h + 'px'); 
-             }
-          }*/
-
           element.ImageSelect('update',{src:selectedImage});
 
       },
@@ -159,8 +136,9 @@
 
              $('#'+id + ' .jqis_header img').animate({opacity:1});
 
-
           }
+
+          $.post($(location).attr('href') + '?language_code='+element.attr('value'));
 
       },
       open: function(){
@@ -194,7 +172,6 @@
 
                 mh = (ih < mh && ih > 0) ? ih : mh;
 
-                $('#'+id + ' .jqis_dropdown').height(mh);
             }
               
           }
@@ -204,14 +181,12 @@
           var selectName = element.attr('name');
           var id = 'jq_imageselect_' + selectName;
 
+          if($('#'+id).length == 1){
+            $('#'+id + ' .jqis_dropdown').slideUp().hide();
+          }
+
           $.post($(location).attr('href') + '?language_code='+element.attr('value'));
           location.reload(true);
-
-          if($('#'+id).length == 1){
-
-            $('#'+id + ' .jqis_dropdown').slideUp().hide();
-
-          }
       },
       remove: function(){
           if(!/select/i.test(this.tagName)){return false;}

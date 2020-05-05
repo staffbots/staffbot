@@ -1,6 +1,8 @@
 package ru.staffbots.webserver.servlets;
 
 import ru.staffbots.Staffbot;
+import ru.staffbots.database.Database;
+import ru.staffbots.tools.languages.Language;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
 
@@ -8,8 +10,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -23,14 +23,14 @@ public class EntryServlet extends BaseServlet {
 
     // Вызывается при запросе странице с сервера (Обновление страницы)
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-        String login = accountService.getUserLogin(request.getSession());
-        String languageCode = accountService.getUserLanguageCode(login);
-
+        String login = accountService.getUserLogin(request);
         if (login == null) login = "";
             accountService.forgetSession(request.getSession());
 
-        Map<String, Object> pageVariables = accountService.getUserLanguage(login).getSection(PageType.ENTRY.getName());
-        pageVariables.put("page_title", Staffbot.getShortName() + " - " + pageType.getCaption(languageCode));
+        Language language = accountService.getUserLanguage(request);
+
+        Map<String, Object> pageVariables = language.getSection(PageType.ENTRY.getName());
+        pageVariables.put("page_title", Staffbot.getShortName() + " - " + pageType.getCaption(language.getCode()));
         pageVariables.put("website_link", Staffbot.projectWebsite);
         pageVariables.put("login_input", login);
 
@@ -47,6 +47,7 @@ public class EntryServlet extends BaseServlet {
         String password = request.getParameter("password_input");
         if (accountService.verifyUser(login, password) > -1) {
             accountService.addSession(request.getSession(), login);
+            accountService.setUserLanguage(request, Database.users.getLanguage(login));
             response.sendRedirect("/control");
         } else doGet(request, response);
     }

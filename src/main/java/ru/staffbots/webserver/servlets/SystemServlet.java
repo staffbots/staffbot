@@ -42,8 +42,7 @@ public class SystemServlet extends BaseServlet {
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (isAccessDenied(request, response)) return;
-        String login = accountService.getAttribute(request, "users_login");
-        Language language = accountService.getUserLanguage(login);
+        Language language = accountService.getUserLanguage(request);
 
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
 

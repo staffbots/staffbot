@@ -4,6 +4,7 @@ import ru.staffbots.database.DBTable;
 import ru.staffbots.database.Executor;
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.dates.Period;
+import ru.staffbots.tools.languages.Language;
 import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.tools.values.LongValue;
 import ru.staffbots.tools.values.ValueMode;
@@ -69,7 +70,7 @@ public class Journal extends DBTable {
     public static void add(NoteType noteType, boolean isStorable, String noteName, String... noteVariables){
         Date noteDate = new Date();
         Note note = new Note(noteDate, noteType, noteName, noteVariables);
-        System.out.println(note.getMessage(false, Languages.getDefaultCode()));
+        System.out.println(note.getMessage(false, Languages.get()));
         if (isStorable) insertNote(note);
     }
 
@@ -104,17 +105,17 @@ public class Journal extends DBTable {
         return noteCount.getValue();
     }
 
-    public ArrayList<Note> getJournal(Date fromDate, Date toDate, Map<Integer, Boolean> noteTypes, String searchString){
+    public ArrayList<Note> getJournal(Date fromDate, Date toDate, Map<Integer, Boolean> noteTypes, String searchString, Language language){
         period.set(fromDate, toDate);
-        return getJournal(noteTypes, searchString);
+        return getJournal(noteTypes, searchString, language);
     }
 
-    public ArrayList<Note> getJournal(String fromDate, String toDate, Map<Integer, Boolean> noteTypes, String searchString){
+    public ArrayList<Note> getJournal(String fromDate, String toDate, Map<Integer, Boolean> noteTypes, String searchString, Language language){
         period.set(fromDate, toDate);
-        return getJournal(noteTypes, searchString);
+        return getJournal(noteTypes, searchString, language);
     }
 
-    public ArrayList<Note> getJournal(Map<Integer, Boolean> noteTypes, String searchString){
+    public ArrayList<Note> getJournal(Map<Integer, Boolean> noteTypes, String searchString, Language language){
         String condition = "((noteName IS NULL)";
         for (NoteType noteType : NoteType.values())
             if (noteTypes.containsKey(noteType.getValue()))
@@ -144,7 +145,7 @@ public class Journal extends DBTable {
                                 resultSet.getString(4));
                         if ((searchString == null) || searchString.trim().isEmpty())
                             result.add(note);
-                        else if (note.toString().toLowerCase().indexOf(searchString.trim().toLowerCase()) > 0)
+                        else if (note.toString(language).toLowerCase().indexOf(searchString.trim().toLowerCase()) > -1)
                             result.add(note);
                     }
                     return result;

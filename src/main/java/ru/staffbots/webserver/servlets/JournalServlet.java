@@ -31,8 +31,7 @@ public class JournalServlet extends BaseServlet {
     // Вызывается при запросе странице с сервера
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (isAccessDenied(request, response)) return;
-        String login = accountService.getAttribute(request, "users_login");
-        Language language = accountService.getUserLanguage(login);
+        Language language = accountService.getUserLanguage(request);
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
 
         Database.journal.setCount(accountService.getAttribute(request,"journal_count"));
@@ -73,13 +72,8 @@ public class JournalServlet extends BaseServlet {
     // Вызывается при отправке страницы на сервер
     public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (isAccessDenied(request, response)) return;
-        setRequest(request);
-        for (String checkboxName : checkboxes){
-            String checkboxValueStr = request.getParameter(checkboxName); // Читаем со страницы
-            checkboxValueStr = (checkboxValueStr == null) ? "false" : "true";
-            accountService.setAttribute(request, checkboxName, checkboxValueStr);
-        }
-        doGet(request, response);
+        if (setRequest(request))
+            doGet(request, response);
     }
 
     private boolean buttonApplyClick(HttpServletRequest request){
@@ -87,11 +81,16 @@ public class JournalServlet extends BaseServlet {
         accountService.setAttribute(request,"journal_count");
         accountService.setAttribute(request,"journal_fromdate");
         accountService.setAttribute(request,"journal_todate");
+        for (String checkboxName : checkboxes){
+            String checkboxValueStr = request.getParameter(checkboxName); // Читаем со страницы
+            checkboxValueStr = (checkboxValueStr == null) ? "false" : "true";
+            accountService.setAttribute(request, checkboxName, checkboxValueStr);
+        }
         return true;
     }
 
     private String getJournalPage(Map<Integer, Boolean> typesForShow, String searchString, Language language) {
-        ArrayList<Note> journalList = Database.journal.getJournal(typesForShow, searchString);
+        ArrayList<Note> journalList = Database.journal.getJournal(typesForShow, searchString, language);
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
         String htmlPath = "html/journal/";
         String htmlCode = fillTemplate(htmlPath + "empty.html",pageVariables);
@@ -102,7 +101,7 @@ public class JournalServlet extends BaseServlet {
                 pageVariables.put("note_fulldate", DateValue.toString(note.getDate(), DateFormat.FULLTIMEDATE));
                 pageVariables.put("note_type", line ? "init" : note.getType().getName());
                 pageVariables.put("note_date", DateValue.toString(note.getDate(), DateFormat.CUTSHORTDATETIME));
-                pageVariables.put("note_value", line ? "<hr>" : note.getMessage(language.getCode()));
+                pageVariables.put("note_value", line ? "<hr>" : note.getMessage(language));
                 pageVariables.put("type_description", line ? pageVariables.get("start_title") : note.getType().getDescription(language.getCode()));
                 htmlCode += fillTemplate(htmlPath + "note.html", pageVariables);
             }

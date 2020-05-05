@@ -9,7 +9,6 @@ import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
 import ru.staffbots.webserver.WebServer;
-
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -96,10 +95,11 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
     }
 
     public void doGet(HttpServletRequest request, HttpServletResponse response, String content)throws IOException {
-        String login = accountService.getUserLogin(request.getSession());
-        String languageCode = accountService.getUserLanguageCode(login);
+        String login = accountService.getUserLogin(request);
+        Language language = accountService.getUserLanguage(request);
+        String languageCode = language.getCode();
 
-        Map<String, Object> pageVariables = accountService.getUserLanguage(login).getSection(PageType.BASE.getName());
+        Map<String, Object> pageVariables = language.getSection(PageType.BASE.getName());
         pageVariables.put("page_title", Staffbot.getShortName() + " - " + pageType.getCaption(languageCode));
         pageVariables.put("main_menu", getMenu(accountService.getUserAccessLevel(login), languageCode));
         pageVariables.put("page_content", content);
@@ -172,9 +172,9 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
     }
 
     private boolean changeLanguageCode(HttpServletRequest request) {
-        String login = accountService.getUserLogin(request.getSession());
+        //String login = accountService.getUserLogin(request.getSession());
         String languageCode = request.getParameter("language_code");
-        accountService.setUserLanguage(login, Languages.get(languageCode));
+        accountService.setUserLanguage(request, Languages.get(languageCode));
         return true;
     }
 

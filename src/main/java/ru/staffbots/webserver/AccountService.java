@@ -5,6 +5,7 @@ import ru.staffbots.database.users.User;
 import ru.staffbots.database.users.Users;
 import ru.staffbots.database.users.UserRole;
 import ru.staffbots.tools.languages.Language;
+import ru.staffbots.tools.languages.Languages;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -39,6 +40,10 @@ public class AccountService {
         }
     }
 
+    public String getUserLogin(HttpServletRequest request) {
+        return getUserLogin(request.getSession());
+    }
+
     public String getUserLogin(HttpSession session){
         String sessionId = session.getId();
         return sessions.containsKey(sessionId) ? sessions.get(sessionId) : null;
@@ -49,16 +54,14 @@ public class AccountService {
         return (role == null) ? -1 : role.getAccessLevel();
     }
 
-    public boolean setUserLanguage(String login, Language language){
-        return Database.users.setLanguage(login, language);
+    public void setUserLanguage(HttpServletRequest request, Language language){
+        setAttribute(request, "language_code", language.getCode());
+        Database.users.setLanguage(getUserLogin(request), language);
     }
 
-    public Language getUserLanguage(String login){
-        return Database.users.getLanguage(login);
-    }
-
-    public String getUserLanguageCode(String login){
-        return getUserLanguage(login).getCode();
+    public Language getUserLanguage(HttpServletRequest request){
+        String languageCode = getAttribute(request, "language_code");
+        return Languages.get(languageCode);
     }
 
     public int getUserAccessLevel(HttpServletRequest request){

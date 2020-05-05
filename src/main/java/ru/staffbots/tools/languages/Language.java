@@ -109,4 +109,8 @@ public class Language {
         return new HashMap(data.get(section));
     }
 
+    @Override
+    public String toString() {
+        return getCode();
+    }
 }

@@ -56,8 +56,7 @@ public class StatusServlet extends BaseServlet {
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
         if (getResponse(request, response)) return;
         if (isAccessDenied(request, response)) return;
-        String login = accountService.getAttribute(request, "users_login");
-        Language language = accountService.getUserLanguage(login);
+        Language language = accountService.getUserLanguage(request);
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
         Period period = new Period(Journal.dateFormat);
         String toDateStr = accountService.getAttribute(request,"plot_todate");
@@ -244,7 +243,7 @@ public class StatusServlet extends BaseServlet {
 
     private String getTasksStatus(HttpServletRequest request) {
         String login = accountService.getAttribute(request, "users_login");
-        return Tasks.getStatus().getDescription(accountService.getUserLanguageCode(login));
+        return Tasks.getStatus().getDescription(accountService.getUserLanguage(request).getCode());
     }
 
 

@@ -1,6 +1,7 @@
 package ru.staffbots.database.journal;
 
 import ru.staffbots.tools.dates.DateFormat;
+import ru.staffbots.tools.languages.Language;
 import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.tools.values.DateValue;
 
@@ -23,13 +24,13 @@ public class Note {
         this.date = date;
     }
 
-    public String toString(String languageCode) {
-        return toString(true, languageCode);
+    public String toString(Language language) {
+        return toString(true, language);
     }
 
-    public String toString(boolean htmlFormat, String languageCode) {
+    public String toString(boolean htmlFormat, Language language) {
         if (name == null) return "";
-        String note = Languages.get(languageCode).getValue(type.getName(), name);
+        String note = language.getValue(type.getName(), name);
         if (variables != null) {
             String[] variables = getVariables().split(variableSeparator);
             for (int i = 0; i < variables.length; i++)
@@ -38,7 +39,7 @@ public class Note {
         }
         if (!htmlFormat)
         note = DateValue.toString(getDate(), DateFormat.DATETIME) +
-               " | " + getType().getDescription(languageCode) +
+               " | " + getType().getDescription(language.getCode()) +
                ": " + note;
         return note;
     }
@@ -55,12 +56,12 @@ public class Note {
         return type;
     }
 
-    public String getMessage(String languageCode) {
-        return toString(languageCode);
+    public String getMessage(Language language) {
+        return toString(language);
     }
 
-    public String getMessage(boolean htmlFormat, String languageCode) {
-        return toString(htmlFormat, languageCode);
+    public String getMessage(boolean htmlFormat, Language language) {
+        return toString(htmlFormat, language);
     }
 
     public String getVariables() {
