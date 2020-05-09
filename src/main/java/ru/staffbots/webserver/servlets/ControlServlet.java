@@ -17,9 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 /**
  *
@@ -28,7 +26,6 @@ public class ControlServlet extends BaseServlet {
 
     public ControlServlet(AccountService accountService) {
         super(PageType.CONTROL, accountService);
-        //getParameters.put("lever_list", (String nullValue) -> getLeverList());
         setParameters.put("apply_button", (HttpServletRequest request) -> buttonApplyClick(request));
         setParameters.put("save_button", (HttpServletRequest request) -> buttonSaveClick(request));
         setParameters.put("load_button", (HttpServletRequest request) -> buttonLoadClick(request));
@@ -39,11 +36,12 @@ public class ControlServlet extends BaseServlet {
         for (ButtonLever buttonLever: Levers.getButtonList())
             setParameters.put(buttonLever.getName().toLowerCase() + "_lever",
                     (HttpServletRequest request) -> buttonLeverClick(request));
+        doGet = (HttpServletRequest request, HttpServletResponse response) -> doGet(request, response);
     }
 
     // Вызывается при запросе страницы с сервера
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) {
         if (getResponse(request, response)) return;
         if (isAccessDenied(request, response)) return;
         //String login = accountService.getUserLogin(request);
@@ -72,21 +70,22 @@ public class ControlServlet extends BaseServlet {
     }
 
     // Вызывается при отправке страницы на сервер
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (isAccessDenied(request, response)) return;
+//    @Override
+//    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+//        if (isAccessDenied(request, response)) return;
+ //       if (setRequest(request)) doGet(request, response);
+  //  }
+
+    private boolean buttonApplyClick(HttpServletRequest request){
         setLeverList(request);
         accountService.setAttribute(request,"config_name", "");
         Tasks.reScheduleAll();
-        setRequest(request);
-        doGet(request, response);
-    }
-
-    private boolean buttonApplyClick(HttpServletRequest request){
         return true;
     }
 
     // Обработка кнопок для работы с конфигурацией (сохранить)
     private boolean buttonSaveClick(HttpServletRequest request) {
+        buttonApplyClick(request);
         String configName = accountService.setAttribute(request,"config_name");
         Database.configs.save(configName);
         return true;
@@ -94,6 +93,7 @@ public class ControlServlet extends BaseServlet {
 
     // Обработка кнопок для работы с конфигурацией (загрузить)
     private boolean buttonLoadClick(HttpServletRequest request) {
+        buttonApplyClick(request);
         String configName = accountService.setAttribute(request,"config_name");
         Database.configs.load(configName);
         return true;
@@ -101,6 +101,7 @@ public class ControlServlet extends BaseServlet {
 
     // Обработка кнопок для работы с конфигурацией (удалить)
     private boolean buttonDeleteClick(HttpServletRequest request) {
+        buttonApplyClick(request);
         String configName = request.getParameter("config_name");
         Database.configs.delete(configName);
         accountService.setAttribute(request,"config_name", "");
@@ -109,18 +110,21 @@ public class ControlServlet extends BaseServlet {
 
     // Обработка управляющих кнопок (пуск)
     private boolean buttonStartClick(HttpServletRequest request){
+        buttonApplyClick(request);
         Tasks.setStatus(TasksStatus.START);
         return true;
     }
 
     // Обработка управляющих кнопок (пауза)
     private boolean buttonPauseClick(HttpServletRequest request){
+        buttonApplyClick(request);
         Tasks.setStatus(TasksStatus.PAUSE);
         return true;
     }
 
     // Обработка управляющих кнопок (стоп)
     private boolean buttonStopClick(HttpServletRequest request){
+        buttonApplyClick(request);
         Tasks.setStatus(TasksStatus.STOP);
         return true;
     }
@@ -138,6 +142,7 @@ public class ControlServlet extends BaseServlet {
 
     private Boolean setLeverList(HttpServletRequest request) {
         for (Lever lever : Levers.list) {
+            if (!lever.isChangeable()) continue;
             Value value = lever.toValue();
             if (value.getValueType() == ValueType.VOID) continue;
             String leverName = value.getName().toLowerCase() + "_lever";

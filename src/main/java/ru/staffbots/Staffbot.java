@@ -21,8 +21,6 @@ import ru.staffbots.windows.MainWindow;
 
 import java.io.FileInputStream;
 import java.lang.invoke.MethodHandles;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -209,7 +207,7 @@ public abstract class Staffbot {
 
             MainWindow.frameUsed = property.getBooleanProperty("ui.frame_used", MainWindow.frameUsed);
 
-            WebServer.defaultAdmin = property.getProperty("web.default_admin", WebServer.defaultAdmin);
+            WebServer.adminLogin = property.getProperty("web.admin_login", WebServer.adminLogin);
             WebServer.adminPassword = property.getProperty("web.admin_password", WebServer.adminPassword);
             WebServer.httpPort = property.getIntegerProperty("web.http_port", WebServer.httpPort);
             WebServer.httpUsed = property.getBooleanProperty("web.http_used", WebServer.httpUsed);

@@ -3,6 +3,7 @@ package ru.staffbots.webserver.servlets;
 import com.pi4j.io.gpio.Pin;
 import ru.staffbots.Staffbot;
 import ru.staffbots.database.Database;
+import ru.staffbots.tools.devices.CoolingDevice;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.devices.drivers.i2c.I2CBusDevice;
@@ -14,7 +15,6 @@ import ru.staffbots.webserver.PageType;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -28,12 +28,12 @@ public class AboutServlet extends BaseServlet {
     }
 
     // Вызывается при запросе странице с сервера
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) {
         if (isAccessDenied(request, response)) return;
         Language language = accountService.getUserLanguage(request);
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
-        pageVariables.put("board_value", Staffbot.boardType);
-        pageVariables.put("board_link", Staffbot.projectWebsite + "/" + Staffbot.boardType);
+        pageVariables.put("board_info", getBoardInfo(language));
         pageVariables.put("osname_value",System.getProperty("os.name"));
         pageVariables.put("osversion_value",System.getProperty("os.version"));
         pageVariables.put("osarch_value",System.getProperty("os.arch"));
@@ -47,12 +47,6 @@ public class AboutServlet extends BaseServlet {
         pageVariables.put("device_list", getDeviceList(language));
         pageVariables.put("dberror_message", Database.connected() ? "" : Database.getException().getMessage());
         super.doGet(request, response, getContent(pageVariables));
-    }
-
-    // Вызывается при отправке страницы на сервер
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (setRequest(request))
-            doGet(request, response);
     }
 
     private String getDeviceList(Language language) {
@@ -102,6 +96,16 @@ public class AboutServlet extends BaseServlet {
                 }
         }
         return context;
+    }
+
+    private String getBoardInfo(Language language){
+        if (!Devices.isRaspbian)
+            return "";
+        Map<String, Object> pageVariables = language.getSection(pageType.getName());
+        pageVariables.put("board_value", Staffbot.boardType);
+        pageVariables.put("board_link", Staffbot.projectWebsite + "/" + Staffbot.boardType);
+        pageVariables.put("temperature_value", CoolingDevice.getTemperature(0));
+        return fillTemplate("html/about/board.html", pageVariables);
     }
 
 }

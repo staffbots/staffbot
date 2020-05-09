@@ -59,8 +59,8 @@ public class CoolingDevice extends Device {
     }
 
     public static double getTemperature(double defaultValue){
-        try {
-            FileInputStream fstream = new FileInputStream("/sys/class/thermal/thermal_zone0/temp");
+        if (!Devices.isRaspbian) return defaultValue;
+        try (FileInputStream fstream = new FileInputStream("/sys/class/thermal/thermal_zone0/temp")) {
             BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
             return Integer.parseInt(br.readLine())/1000d;
         }

@@ -36,11 +36,12 @@ public class SystemServlet extends BaseServlet {
         setParameters.put("shutdown_button", (HttpServletRequest request) -> buttonShutdownClick(request));
         setParameters.put("reboot_button", (HttpServletRequest request) -> buttonRebootClick(request));
         setParameters.put("exit_button", (HttpServletRequest request) -> buttonExitClick(request));
+        doGet = (HttpServletRequest request, HttpServletResponse response) -> doGet(request, response);
     }
 
     // Вызывается при запросе странице с сервера
     @Override
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response) {
         if (isAccessDenied(request, response)) return;
         Language language = accountService.getUserLanguage(request);
 
@@ -72,14 +73,6 @@ public class SystemServlet extends BaseServlet {
 
         String content = fillTemplate("html/" + pageType.getName() + ".html", pageVariables);
         super.doGet(request, response, content);
-    }
-
-    // Вызывается при отправке страницы на сервер
-    @Override
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (isAccessDenied(request, response)) return;
-        if (setRequest(request))
-        doGet(request, response);
     }
 
     private boolean buttonApplyClick(HttpServletRequest request){

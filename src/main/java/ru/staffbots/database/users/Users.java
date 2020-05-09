@@ -126,7 +126,7 @@ public class Users extends DBTable {
     }
 
     public static boolean isAdmin(String login){
-        return WebServer.defaultAdmin.equalsIgnoreCase(login);
+        return WebServer.adminLogin.equalsIgnoreCase(login);
     }
 
     public static int verify(String login, String password){

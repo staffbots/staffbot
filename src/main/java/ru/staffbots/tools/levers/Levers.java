@@ -1,17 +1,18 @@
 package ru.staffbots.tools.levers;
 
-import ru.staffbots.database.journal.Journal;
 import ru.staffbots.tools.values.Value;
-import ru.staffbots.tools.values.ValueType;
 
+import java.io.Serializable;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Properties;
 
 /**
  *
  */
-public class Levers extends ArrayList<Lever>{
+public class Levers extends ArrayList<Lever> {
 
     /**
      * <b>Список рычагов управления</b>, тех что отображаются на закладке "Управление"
@@ -60,16 +61,6 @@ public class Levers extends ArrayList<Lever>{
         return maxSize;
     }
 
-    public static Map<String, String> getNameValues(){
-        Map<String, String> nameValues = new HashMap<>();
-        for (Lever lever : list)
-            if (!lever.isGroup())
-                nameValues.put(
-                    lever.toValue().getName(),
-                    Long.toString(lever.toValue().get()));
-        return nameValues;
-    }
-
     public static ArrayList<ButtonLever> getButtonList(){
         ArrayList<ButtonLever> result = new ArrayList();
         for (Lever lever: Levers.list)
@@ -83,5 +74,42 @@ public class Levers extends ArrayList<Lever>{
         return result;
     }
 
+    public static String toConfigValue(){
+        Map<String, String> nameValues = new HashMap<>();
+        for (Lever lever : list)
+            if (!lever.isGroup())
+                nameValues.put(
+                        lever.toValue().getName(),
+                        Long.toString(lever.toValue().get()));
+        String rawConfigValue = nameValues.toString();
+        return rawConfigValue.substring(1, rawConfigValue.length() - 1).replace(", ", "\n");
+    }
+
+    public static boolean fromConfigValue(String configValue){
+        if (configValue == null) return false;
+        Properties properties = new Properties();
+        try {
+            properties.load(
+                    new StringReader(
+                            configValue));
+        } catch (Exception e) {
+            return false;
+        }
+        for (Lever lever : Levers.list)
+            if (!lever.isGroup())
+                if (properties.containsKey(lever.getName()))
+                    lever.set(
+                            Long.parseLong(
+                                    properties.getProperty(
+                                            lever.getName())));
+        return true;
+    }
+
+    public static Lever getLeverByName(String leverName){
+        for (Lever lever : Levers.list)
+            if (lever.getName().equalsIgnoreCase(leverName))
+                return lever;
+        return null;
+    }
 
 }

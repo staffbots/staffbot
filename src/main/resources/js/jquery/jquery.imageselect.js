@@ -186,7 +186,7 @@
           }
 
           $.post($(location).attr('href') + '?language_code='+element.attr('value'));
-          location.reload(true);
+          location.reload();
       },
       remove: function(){
           if(!/select/i.test(this.tagName)){return false;}

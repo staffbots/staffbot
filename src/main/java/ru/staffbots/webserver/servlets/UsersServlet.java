@@ -27,10 +27,12 @@ public class UsersServlet extends BaseServlet {
         getParameters.put("role_list", (HttpServletRequest request) -> getRoleList(request));
         setParameters.put("apply_button", (HttpServletRequest request) -> buttonApplyClick(request));
         setParameters.put("delete_button", (HttpServletRequest request) -> buttonDeleteClick(request));
+        doGet = (HttpServletRequest request, HttpServletResponse response) -> doGet(request, response);
     }
 
     // Вызывается при запросе странице с сервера
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) {
         if (getResponse(request, response)) return;
         if (isAccessDenied(request, response)) return;
 
@@ -47,21 +49,19 @@ public class UsersServlet extends BaseServlet {
         super.doGet(request, response, content);
     }
 
-    // Вызывается при отправке страницы на сервер
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
-        if (isAccessDenied(request, response)) return;
+    private String getLoginFromRequest(HttpServletRequest request){
         String radiobox = request.getParameter("users_radiobox");
         if (radiobox != null) {
             String login = request.getParameter(radiobox.equals("new") ? "new_login" : "select_login");
             accountService.setAttribute(request, "users_login", login);
         }
-        setRequest(request);
-        doGet(request, response);
+        return accountService.getAttribute(request, "users_login");
     }
 
+
     private boolean buttonApplyClick(HttpServletRequest request){
+        String login = getLoginFromRequest(request);
         String role = request.getParameter("users_role");
-        String login = accountService.getAttribute(request, "users_login");
         String password = request.getParameter("users_password");
         String languageCode = accountService.getUserLanguage(request).getCode();
         if (!login.equals(""))
@@ -71,7 +71,7 @@ public class UsersServlet extends BaseServlet {
 
     // Обработка кнопок для работы с конфигурацией (удалить)
     private boolean buttonDeleteClick(HttpServletRequest request) {
-        String login = accountService.getAttribute(request, "users_login");
+        String login = getLoginFromRequest(request);
         Database.users.delete(login);
         return true;
     }

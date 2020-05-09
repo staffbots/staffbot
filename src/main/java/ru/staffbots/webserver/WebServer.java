@@ -20,7 +20,7 @@ public class WebServer {
 
     public static Integer httpsPort = 443;
 
-    public static String defaultAdmin = "admin";
+    public static String adminLogin = "admin";
 
     public static String adminPassword = "";
 

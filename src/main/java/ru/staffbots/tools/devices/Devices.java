@@ -4,7 +4,6 @@ import com.pi4j.io.gpio.*;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.devices.drivers.i2c.I2CBusDevice;
-import ru.staffbots.tools.values.Value;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -17,6 +16,7 @@ import java.util.ArrayList;
 public class Devices{
 
     public static CoolingDevice coolingDevice = null;
+
     /**
      * <b>Список устройств</b>,
      * используется для групповой обработки в StatusServlet
@@ -70,8 +70,7 @@ public class Devices{
         String osType = System.getProperty("os.name").toLowerCase();
         if (!osType.contains("linux")) return false;
         String osName;
-        try {
-            FileInputStream fstream = new FileInputStream("/etc/issue");
+        try (FileInputStream fstream = new FileInputStream("/etc/issue")){
             BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
             osName = br.readLine();
             if (osName == null) return false;

@@ -3,6 +3,8 @@ package ru.staffbots.tools.levers;
 import ru.staffbots.tools.values.Value;
 import ru.staffbots.tools.values.ValueType;
 
+import java.io.Serializable;
+
 /**
  * <b>Рычаг управления</b><br>
  * должен уметь возвращать html-код визуального компонента

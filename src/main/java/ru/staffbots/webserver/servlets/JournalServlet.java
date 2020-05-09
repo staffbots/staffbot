@@ -26,10 +26,12 @@ public class JournalServlet extends BaseServlet {
         for (NoteType pageType : NoteType.values())
             checkboxes.add("journal_" + pageType.name().toLowerCase() + "_checkbox");
         setParameters.put("apply_button", (HttpServletRequest request) -> buttonApplyClick(request));
+        doGet = (HttpServletRequest request, HttpServletResponse response) -> doGet(request, response);
     }
 
     // Вызывается при запросе странице с сервера
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) {
         if (isAccessDenied(request, response)) return;
         Language language = accountService.getUserLanguage(request);
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
@@ -67,13 +69,6 @@ public class JournalServlet extends BaseServlet {
         pageVariables.put("journal_page", getJournalPage(typesForShow, searchString, language));
         String content = fillTemplate("html/" + pageType.getName() + ".html", pageVariables);
         super.doGet(request, response, content);
-    }
-
-    // Вызывается при отправке страницы на сервер
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        if (isAccessDenied(request, response)) return;
-        if (setRequest(request))
-            doGet(request, response);
     }
 
     private boolean buttonApplyClick(HttpServletRequest request){

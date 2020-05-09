@@ -22,7 +22,8 @@ public class EntryServlet extends BaseServlet {
     }
 
     // Вызывается при запросе странице с сервера (Обновление страницы)
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException{
         String login = accountService.getUserLogin(request);
         if (login == null) login = "";
             accountService.forgetSession(request.getSession());
@@ -42,7 +43,8 @@ public class EntryServlet extends BaseServlet {
     }
 
     // Вызывается при отправке страницы
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException{
         String login = request.getParameter("login_input");
         String password = request.getParameter("password_input");
         if (accountService.verifyUser(login, password) > -1) {

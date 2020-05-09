@@ -4,10 +4,8 @@ import ru.staffbots.database.DBTable;
 import ru.staffbots.database.Executor;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
-import ru.staffbots.tools.levers.Lever;
 import ru.staffbots.tools.levers.Levers;
 
-import java.io.StringReader;
 import java.util.*;
 
 /*
@@ -19,7 +17,7 @@ import java.util.*;
 public class Configs extends DBTable {
 
     private static final String staticTableName = "sys_configs";
-    private static final String staticTableFields = "configname VARCHAR(100), configvalue VARCHAR(500)";
+    private static final String staticTableFields = "configname VARCHAR(50), configvalue TEXT";
 
     public Configs(){
         super(staticTableName, staticTableFields);
@@ -33,33 +31,19 @@ public class Configs extends DBTable {
         return true;
     }
 
-    public void save(String name) {
-        if (!checkName(name)) return;
-        Executor executor = new Executor("save_config", name);
-        String update = getValue(name) == null ?
+    public void save(String configName) {
+        if (!checkName(configName)) return;
+        Executor executor = new Executor("save_config", configName);
+        String update = getConfigValue(configName) == null ?
                     "INSERT INTO " + getTableName() + " (configvalue, configname) VALUES (?, ?)" :
                     "UPDATE " + getTableName() + " SET configvalue = ?" + condition;
-        executor.execUpdate(update, Levers.getNameValues().toString(), name);
+        executor.execUpdate(update, Levers.toConfigValue(), configName);
     }
 
-    public void load(String name) {
-        if (!checkName(name)) return;
-        String value = getValue(name);
-        if (value == null) return;
-        Properties properties = new Properties();
-        try {
-            properties.load(new StringReader(value.substring(1, value.length() - 1).replace(", ", "\n")));
-        } catch (Exception e) {
-            return;
-        }
-        for (Lever lever : Levers.list)
-            if (!lever.isGroup())
-                if (properties.containsKey(lever.getName()))
-                    lever.set(
-                        Long.parseLong(
-                            properties.getProperty(
-                                lever.getName())));
-        Journal.add(NoteType.INFORMATION, "load_config", name);
+    public void load(String configName) {
+        if (!checkName(configName)) return;
+        if (Levers.fromConfigValue(getConfigValue(configName)))
+            Journal.add(NoteType.INFORMATION, "load_config", configName);
     }
 
     public void delete(String name) {
@@ -80,14 +64,15 @@ public class Configs extends DBTable {
                 });
     }
 
-    private String getValue(String name){
+    private String getConfigValue(String configName){
         Executor<String> executor = new Executor();
         return executor.execQuery(
                 "SELECT configvalue FROM " + getTableName() + condition,
                 (resultSet) -> {
                     return resultSet.next() ? resultSet.getString(1) : null;
                 },
-                name);
+                configName);
     }
+
 
 }

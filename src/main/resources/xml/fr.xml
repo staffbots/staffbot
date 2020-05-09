@@ -168,6 +168,7 @@
             page_title         = Détails
             page_hint          = System Information
             board_title        = Board type
+            temperature_title  = CPU temperature
             osname_title       = Operating system
             osversion_title    = OS version
             osarch_title       = Architecture

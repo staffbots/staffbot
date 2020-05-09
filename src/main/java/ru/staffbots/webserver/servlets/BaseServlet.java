@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Function;
 
 public abstract class BaseServlet extends HttpServlet implements TemplateFillable {
@@ -29,21 +30,23 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
 
     protected PageType pageType;
 
+    protected BiConsumer<HttpServletRequest, HttpServletResponse> doGet;
+
     public BaseServlet(PageType pageType, AccountService accountService){
         this.accountService = accountService;
         this.pageType = pageType;
         setParameters.put("language_code", (HttpServletRequest request) -> changeLanguageCode(request));
     }
 
-    public boolean isAccessDenied(HttpServletRequest request)throws IOException {
+    public boolean isAccessDenied(HttpServletRequest request) {
         return isAccessDenied(request, null);
     }
 
-    public boolean isAccessDenied(HttpServletRequest request, HttpServletResponse response)throws IOException {
+    public boolean isAccessDenied(HttpServletRequest request, HttpServletResponse response) {
         return  isAccessDenied(request, response, true);
     }
 
-    public boolean isAccessDenied(HttpServletRequest request, HttpServletResponse response, boolean redirecting)throws IOException {
+    public boolean isAccessDenied(HttpServletRequest request, HttpServletResponse response, boolean redirecting) {
         int userAccessLevel = accountService.getUserAccessLevel(request);
         int pageAccessLevel = pageType.getAccessLevel();
         boolean accessDenied = (userAccessLevel < pageAccessLevel);
@@ -61,7 +64,11 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
         };
 
         if (redirecting && (redirectLink != null) && (response != null))
-            response.sendRedirect(redirectLink);
+            try {
+                response.sendRedirect(redirectLink);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
 
         return accessDenied;
     }
@@ -94,7 +101,7 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
         return menu;
     }
 
-    public void doGet(HttpServletRequest request, HttpServletResponse response, String content)throws IOException {
+    public void doGet(HttpServletRequest request, HttpServletResponse response, String content) {
         String login = accountService.getUserLogin(request);
         Language language = accountService.getUserLanguage(request);
         String languageCode = language.getCode();
@@ -110,12 +117,23 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
 
         String result = fillTemplate("html/base.html", pageVariables);
 
-        response.getOutputStream().write( result.getBytes("UTF-8") );
+        try {
+            response.getOutputStream().write( result.getBytes("UTF-8") );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         response.setContentType("text/html; charset=UTF-8");
         response.setStatus(HttpServletResponse.SC_OK );
     }
 
+    @Override
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        if (isAccessDenied(request, response)) return;
+        if (setRequest(request))
+            if (doGet != null)
+                doGet.accept(request, response);
+    }
     /**
      * Карта хранит параметризированные функции, по которым расчитываются значения переменных
      * Map<Name, Function<Parametr, Value>>
@@ -125,13 +143,17 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
     /**
      * Функция обрабатывает запросы вида get=name:value
      **/
-    protected boolean getResponse(HttpServletRequest request, HttpServletResponse response)throws IOException {
+    protected boolean getResponse(HttpServletRequest request, HttpServletResponse response) {
         String name = request.getParameter("get");
         if (!getParameters.containsKey(name)) return false;
         if (isAccessDenied(request, response, false)) return true;
-        response.getOutputStream().write(getParameters.get(name).apply(request).getBytes("UTF-8"));
-        response.setContentType("text/html; charset=utf-8");
-        response.setStatus(HttpServletResponse.SC_OK);
+        try {
+            response.getOutputStream().write(getParameters.get(name).apply(request).getBytes("UTF-8"));
+            response.setContentType("text/html; charset=utf-8");
+            response.setStatus(HttpServletResponse.SC_OK);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         return true;
     }
 
@@ -174,6 +196,8 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
     private boolean changeLanguageCode(HttpServletRequest request) {
         //String login = accountService.getUserLogin(request.getSession());
         String languageCode = request.getParameter("language_code");
+        if (accountService.getUserLanguage(request).getCode().equalsIgnoreCase(languageCode))
+            return false;
         accountService.setUserLanguage(request, Languages.get(languageCode));
         return true;
     }

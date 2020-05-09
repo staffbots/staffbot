@@ -49,11 +49,12 @@ public class StatusServlet extends BaseServlet {
         for (Device device : Devices.list)
             for (Value value : device.getValues())
                 getParameters.put(value.getName(), (HttpServletRequest request) -> value.toViewString());
+        doGet = (HttpServletRequest request, HttpServletResponse response) -> doGet(request, response);
     }
 
-
     // Вызывается при запросе странице с сервера
-    public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException {
+    @Override
+    public void doGet(HttpServletRequest request, HttpServletResponse response) {
         if (getResponse(request, response)) return;
         if (isAccessDenied(request, response)) return;
         Language language = accountService.getUserLanguage(request);
@@ -94,13 +95,6 @@ public class StatusServlet extends BaseServlet {
         pageVariables.put("datasets_value", getDataSets(period));
         String content = fillTemplate("html/" + pageType.getName()+".html", pageVariables);
         super.doGet(request, response, content);
-    }
-
-    // Вызывается при отправке страницы на сервер
-    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException{
-        if (isAccessDenied(request, response)) return;
-        setRequest(request);
-        doGet(request, response);
     }
 
     private boolean buttonApplyClick(HttpServletRequest request){

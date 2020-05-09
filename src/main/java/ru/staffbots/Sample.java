@@ -46,7 +46,7 @@ public class Sample extends Staffbot {
     /////////////////////////////////////////////////////////////
 
     static LedDevice ledDevice = new LedDevice("led",
-            "Светодиод", RaspiPin.GPIO_01, false);
+            "Светодиод",ValueMode.TEMPORARY, RaspiPin.GPIO_27, false);
 
    /////////////////////////////////////////////////////////////
     // Задания автоматизации

@@ -168,6 +168,7 @@
             page_title         = Сведения
             page_hint          = Сведения о системе
             board_title        = Тип платы
+            temperature_title  = Температура процессора
             osname_title       = Операционная система
             osversion_title    = Версия ОС
             osarch_title       = Архитектура
