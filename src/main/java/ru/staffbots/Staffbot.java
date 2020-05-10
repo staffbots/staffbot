@@ -5,6 +5,7 @@ import com.pi4j.system.SystemInfo;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.tools.colors.ColorSchema;
 import ru.staffbots.tools.ParsableProperties;
 import ru.staffbots.tools.devices.CoolingDevice;
 import ru.staffbots.tools.devices.Device;
@@ -16,7 +17,6 @@ import ru.staffbots.tools.resources.Resources;
 import ru.staffbots.tools.tasks.Task;
 import ru.staffbots.tools.tasks.Tasks;
 import ru.staffbots.webserver.WebServer;
-import ru.staffbots.webserver.servlets.BaseServlet;
 import ru.staffbots.windows.MainWindow;
 
 import java.io.FileInputStream;
@@ -216,10 +216,9 @@ public abstract class Staffbot {
             WebServer.storePassword = property.getProperty("web.store_password", WebServer.storePassword);
             WebServer.managerPassword = property.getProperty("web.manager_password", WebServer.managerPassword);
             WebServer.updateDelay = property.getIntegerProperty("web.update_delay", WebServer.updateDelay);
+            WebServer.сolorSchema = new ColorSchema(property.getProperty("web.main_color", ""));
+            WebServer.fontFamily = property.getProperty("web.font-family", WebServer.fontFamily);
 
-            BaseServlet.siteColor = property.getProperty("web.site_color", BaseServlet.siteColor);
-            BaseServlet.mainColor = property.getProperty("web.main_color", BaseServlet.mainColor);
-            BaseServlet.pageColor = property.getProperty("web.page_color", BaseServlet.pageColor);
 
             Journal.add(false, "init_configs");
 

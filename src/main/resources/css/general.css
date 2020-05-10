@@ -1,9 +1,10 @@
 ﻿:root { /* Global content */
-    --border-radius: 5px;
-    --site_color: #${site_color};
-    --main_color: #${main_color};
-    --page_color: #${page_color};
-    --text_color: #222222;
+    --site_color: ${site_color};
+    --main_color: ${main_color};
+    --deep_color: ${deep_color};
+    --text_color: ${text_color};
+    --font_family: ${font_family};
+    --border_radius: 5px;
     --dberror_display: ${dberror_display};
     --piwarning_display: ${piwarning_display};
 }
@@ -11,28 +12,31 @@
 body { /* Page content */
   background-color: var(--site_color);
   text-align:left;
-  /*
-  font-family: Gill Sans, sans-serif;
-  font-family: Marker Felt, fantasy;
-  font-family: Arial, sans-serif;
-  */
-  font-family: Gill Sans, sans-serif;
+  color: var(--text_color);
+  font-family: var(--font_family);
+  font-size: 100%;
 }
 
-input, textarea, select {
-    font-family:inherit;
+input, textarea, select, button, checkbox  {
+    font:inherit;
+    color:inherit;
+    background-color:var(--site_color);
+}
+
+input::placeholder {
+    color:var(--main_color);
 }
 
 
 .table { /* All tables */
     border: 0px;
-    border-radius: var(--border-radius);
+    border-radius: var(--border_radius);
     border-spacing: 0px;
 
 }
 
 .table.parent { /* Tables with a frame */
-    background-color: var(--page_color);
+    background-color: var(--deep_color);
     border-spacing: 5px;
     margin: 5px;
 }
@@ -77,14 +81,14 @@ input, textarea, select {
 }
 
 .table.menu td { /* Элемент меню */
-    border-radius: var(--border-radius);
+    border-radius: var(--border_radius);
     padding: 10px;
 }
 
 .table.tr.title { /* Строка таблицы с заголовком */
-    border-radius: var(--border-radius);
+    border-radius: var(--border_radius);
     font-weight: bold;
-    background-color: var(--page_color);
+    background-color: var(--deep_color);
 }
 
 select { /* Элементы с выпадаюшим списком */
@@ -92,7 +96,7 @@ select { /* Элементы с выпадаюшим списком */
 }
 
 button { /* Кнопки */
-    border-radius: var(--border-radius);
+    border-radius: var(--border_radius);
     background-color: var(--main_color);
     border: 1px solid var(--text_color);
     padding: 5px 13px 5px 13px;
@@ -104,7 +108,7 @@ button img{
 }
 
 button:hover, button:focus {
-    background-color: var(--page_color);
+    background-color: var(--deep_color);
 }
 
 
@@ -117,3 +121,13 @@ button:hover, button:focus {
     cursor:pointer;
     float:left;
 }
+
+a { /* link */
+  text-decoration: none;
+  color: var(--text_color);
+}
+
+a:hover {/* mouse over link */
+  color: var(--deep_color);
+}
+

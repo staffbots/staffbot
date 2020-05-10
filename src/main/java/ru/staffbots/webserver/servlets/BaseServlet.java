@@ -20,12 +20,6 @@ import java.util.function.Function;
 
 public abstract class BaseServlet extends HttpServlet implements TemplateFillable {
 
-    public static String siteColor = "fdfdfd";
-
-    public static String mainColor = "dddddd";
-
-    public static String pageColor = "bbbbbb";
-
     protected AccountService accountService;
 
     protected PageType pageType;
@@ -93,9 +87,10 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
                 boolean isCurrentPage = (pageType == this.pageType);
                 if (isCurrentPage) caption = "<b>" + caption + "</b>";
                 menuVariables.put("menu_caption", caption);
+                menuVariables.put("deep_color", WebServer.сolorSchema.getDeepColor());
                 menuVariables.put("menu_hint", pageType.getDescription(languageCode));
-                menuVariables.put("menu_link", isCurrentPage ? "" : "href=\"" + pageType.getName() + "\"");
-                menu += fillTemplate("html/base/menu.html", menuVariables);
+                menuVariables.put("menu_link", "href=\"" + pageType.getName() + "\"");
+                menu += fillTemplate("html/base/" + (isCurrentPage ? "selected" : "") + "menu.html", menuVariables);
             }
         }
         return menu;

@@ -15,6 +15,7 @@ import ru.staffbots.tools.values.Value;
 import ru.staffbots.tools.values.ValueType;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
+import ru.staffbots.webserver.WebServer;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -90,8 +91,8 @@ public class StatusServlet extends BaseServlet {
         pageVariables.put("plot_todate", period.getToDateAsString());
         pageVariables.put("device_list", getDeviceList(request, language));
         pageVariables.put("lever_list", getLeverList(request, language));
-        pageVariables.put("page_color", pageColor);
-        pageVariables.put("site_color", siteColor);
+        pageVariables.put("deep_color", WebServer.сolorSchema.getDeepColor());
+        pageVariables.put("site_color", WebServer.сolorSchema.getSiteColor());
         pageVariables.put("datasets_value", getDataSets(period));
         String content = fillTemplate("html/" + pageType.getName()+".html", pageVariables);
         super.doGet(request, response, content);
@@ -110,7 +111,7 @@ public class StatusServlet extends BaseServlet {
     private String getDeviceList(HttpServletRequest request, Language language) {
         String context = "";
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
-        pageVariables.put("page_color", pageColor);
+        pageVariables.put("deep_color", WebServer.сolorSchema.getDeepColor());
         String htmlPath = "html/status/device/";
         String deviceNote;
         String valueNote;
@@ -153,7 +154,7 @@ public class StatusServlet extends BaseServlet {
     private String getLeverList(HttpServletRequest request, Language language) {
         String context = "";
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
-        pageVariables.put("page_color", pageColor);
+        pageVariables.put("deep_color", WebServer.сolorSchema.getDeepColor());
         String htmlPath = "html/status/lever/";
         for (Lever lever : Levers.list){
             if (lever.isButton()) continue;
@@ -163,10 +164,6 @@ public class StatusServlet extends BaseServlet {
             pageVariables.put("check_display", (value.isPlotPossible() ? "inline" : "none"));
             String checkValue =  !checkboxes.contains(checkName) ? "" :
                 accountService.getAttribute(request,checkName,"false"); // Читаем из сессии
-//            if (checkValue.equals("")) {
-//                checkValue = "false"; // Значение при первой загрузке
-//                accountService.setAttribute(session, checkName, checkValue);
-//            }
             pageVariables.put("check_value", Boolean.parseBoolean(checkValue) ? "checked" : "");
             pageVariables.put("check_name", checkName);
 
@@ -236,7 +233,6 @@ public class StatusServlet extends BaseServlet {
     }
 
     private String getTasksStatus(HttpServletRequest request) {
-        String login = accountService.getAttribute(request, "users_login");
         return Tasks.getStatus().getDescription(accountService.getUserLanguage(request).getCode());
     }
 

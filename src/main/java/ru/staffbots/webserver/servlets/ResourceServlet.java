@@ -1,5 +1,6 @@
 package ru.staffbots.webserver.servlets;
 
+import ru.staffbots.Staffbot;
 import ru.staffbots.database.Database;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
@@ -56,9 +57,11 @@ public class ResourceServlet extends BaseServlet {
             Map<String, Object> pageVariables = new HashMap(0);
             switch (ResourceType.getByName(resourceName)){
                 case CSS:
-                    pageVariables.put("site_color", siteColor);
-                    pageVariables.put("page_color", pageColor);
-                    pageVariables.put("main_color", mainColor);
+                    pageVariables.put("site_color", WebServer.сolorSchema.getSiteColor());
+                    pageVariables.put("deep_color", WebServer.сolorSchema.getDeepColor());
+                    pageVariables.put("main_color", WebServer.сolorSchema.getMainColor());
+                    pageVariables.put("text_color", WebServer.сolorSchema.getTextColor());
+                    pageVariables.put("font_family", WebServer.fontFamily);
                     pageVariables.put("dberror_display", Database.connected() ? "none" : "inline-table");
                     pageVariables.put("piwarning_display", Devices.isRaspbian || Database.disconnected() ? "none" : "inline-table");
                     break;

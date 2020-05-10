@@ -7,6 +7,7 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.tools.colors.ColorSchema;
 import ru.staffbots.tools.resources.Resources;
 import ru.staffbots.webserver.servlets.*;
 import ru.staffbots.windows.MainWindow;
@@ -31,6 +32,10 @@ public class WebServer {
     public static String storePassword = "staffbots";
 
     public static String managerPassword = "staffbots";
+
+    public static ColorSchema сolorSchema;
+
+    public static String fontFamily = "sans-serif";
 
     /**
      * Задержка между запросами на обновление данных на страницах, милисек.
