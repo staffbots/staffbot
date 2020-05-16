@@ -1,6 +1,12 @@
 //////////////////////////////////////////////////////////////////////////////////////
 // Control
 //////////////////////////////////////////////////////////////////////////////////////
+var site_color = '${site_color}';
+var main_color = '${main_color}';
+var deep_color = '${deep_color}';
+var text_color = '${text_color}';
+var font_family = '${font_family}';
+
 
 dateClick('plot_fromdate_checkbox', 'plot_fromdate');
 dateClick('plot_todate_checkbox', 'plot_todate');
@@ -16,32 +22,37 @@ $.each(datasets, function(key, val) {
 checkboxClick();
 
 function checkboxClick(){
-			var data = [];
+		var data = [];
 
-			$.each(datasets, function(key, val) {
-				if ($('#' + key + '_checkbox').is(':checked'))
-					data.push(datasets[key]);
-			});
+        $.each(datasets, function(key, val) {
+		    if ($('#' + key + '_checkbox').is(':checked'))
+			    data.push(datasets[key]);
+        });
 
-
-		var plot = $.plot('#placeholder', data, {
+        var options = {
 			grid: {
 				hoverable: true,
-				clickable: true
+				clickable: true,
+                color: text_color,
+                borderColor: text_color,
+                backgroundColor: site_color
 			},
 			xaxis: {
-				mode: 'time',
+   				mode: 'time',
 				timezone: 'browser',
-				timeformat: '%H:%M:%S'
+				timeformat: '%H:%M:%S',
 			}
-		});
+        };
+
+		var plot = $.plot('#placeholder', data, options);
 
 		$('<div id="tooltip"></div>').css({
 			position: 'absolute',
 			display: 'none',
-			border: '1px solid #fdd',
+			border: '1px solid ' + main_color,
 			padding: '2px',
-			'background-color': '#fee',
+			'background-color': deep_color,
+			color: text_color,
 			opacity: 0.80
 		}).appendTo('body');
 

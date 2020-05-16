@@ -57,10 +57,12 @@ public class ResourceServlet extends BaseServlet {
             Map<String, Object> pageVariables = new HashMap(0);
             switch (ResourceType.getByName(resourceName)){
                 case CSS:
+                case JS:
                     pageVariables.put("site_color", WebServer.сolorSchema.getSiteColor());
                     pageVariables.put("deep_color", WebServer.сolorSchema.getDeepColor());
                     pageVariables.put("main_color", WebServer.сolorSchema.getMainColor());
                     pageVariables.put("text_color", WebServer.сolorSchema.getTextColor());
+                    pageVariables.put("half_color", WebServer.сolorSchema.getHalfColor());
                     pageVariables.put("font_family", WebServer.fontFamily);
                     pageVariables.put("dberror_display", Database.connected() ? "none" : "inline-table");
                     pageVariables.put("piwarning_display", Devices.isRaspbian || Database.disconnected() ? "none" : "inline-table");

@@ -25,12 +25,12 @@ public class Resources {
         return Resources.class.getResourceAsStream("/" + resourceName);
     }
 
-    private static File getAsFile(String resourceName, String targetName, boolean isDir){
+    public static File getAsFile(String resourceName, String targetName, boolean replace){
         try {
             // Полный путь до внешнего файла
             File targetFile = new File(getJarDirName() + targetName);
-            // Если таковой файл ещё не существует,
-            if (!targetFile.exists()) {
+            // Если таковой файл ещё не существует или его нужно перезаписать,
+            if (!targetFile.exists() || replace) {
                 // то копируем его из ресурсов, заархивированных внутри jar-файла
                 FileOutputStream outputStream = new FileOutputStream(targetFile.getPath());
                 outputStream.write(getAsBytes(resourceName));
@@ -46,6 +46,7 @@ public class Resources {
     public static File getAsFile(String resourceName, String targetName) {
         return getAsFile(resourceName, targetName, false);
     }
+
 
     // Извлекает ресурс resourceName из jar-пакета в тот же каталог, где находится сам пакет
     // Взвращает полный путь до извлечённого файла, или null если что-то пошло не так

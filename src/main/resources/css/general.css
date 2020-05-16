@@ -3,6 +3,7 @@
     --main_color: ${main_color};
     --deep_color: ${deep_color};
     --text_color: ${text_color};
+    --half_color: ${half_color};
     --font_family: ${font_family};
     --border_radius: 5px;
     --dberror_display: ${dberror_display};
@@ -24,15 +25,22 @@ input, textarea, select, button, checkbox  {
 }
 
 input::placeholder {
-    color:var(--main_color);
+    color:var(--half_color);
 }
 
+select { /* Элементы с выпадаюшим списком */
+    width: 100%;
+}
+
+input:disabled, input[disabled], select:disabled, select[disabled]{
+    color: var(--half_color);
+    background-color: var(--deep_color);
+}
 
 .table { /* All tables */
     border: 0px;
     border-radius: var(--border_radius);
     border-spacing: 0px;
-
 }
 
 .table.parent { /* Tables with a frame */
@@ -47,7 +55,6 @@ input::placeholder {
 
 .table.parent.dberror { /* Таблица с описанием ощибки БД */
     display: var(--dberror_display);
-
 }
 
 .table.parent.piwarning { /* Таблица с описанием ощибки контролера */
@@ -60,6 +67,16 @@ input::placeholder {
     border-spacing: 5px;
     padding: 0px;
     width: 100%;
+}
+
+.table.child.flot { /* Таблицы в рамке */
+    background-color: var(--half_color);
+    border: 1px solid var(--site_color);
+    box-shadow:
+       1px  1px 2px var(--site_color),
+       1px -1px 2px var(--site_color),
+      -1px -1px 2px var(--site_color),
+      -1px  1px 2px var(--site_color);
 }
 
 .table.menu { /* Главное меню и строка состояния */
@@ -91,16 +108,15 @@ input::placeholder {
     background-color: var(--deep_color);
 }
 
-select { /* Элементы с выпадаюшим списком */
-    width: 100%;
-}
-
 button { /* Кнопки */
+    font-weight: normal;
     border-radius: var(--border_radius);
-    background-color: var(--main_color);
-    border: 1px solid var(--text_color);
+    background-color: var(--deep_color);
+    /*border: 1px solid var(--text_color);*/
+    border: 0px solid var(--text_color);
     padding: 5px 13px 5px 13px;
     vertical-align: middle;
+    box-shadow: 0px  0px 2px var(--text_color);
 }
 
 button img{
@@ -108,9 +124,30 @@ button img{
 }
 
 button:hover, button:focus {
-    background-color: var(--deep_color);
+    /*background-color: var(--main_color);*/
+    box-shadow:
+       1px  1px 1px var(--text_color),
+       -1px  1px 1px var(--text_color),
+       1px  -1px 1px var(--text_color),
+       -1px  -1px 1px var(--text_color);
+  color: var(--deep_color);
+  text-shadow:
+   1px  1px 2px var(--text_color),
+   1px -1px 2px var(--text_color),
+  -1px -1px 2px var(--text_color),
+  -1px  1px 2px var(--text_color);
 }
 
+button:disabled, button[disabled] {
+    color: var(--half_color);
+    text-shadow: var(--half_color) 0px 0px 0px;
+    box-shadow: 0px  0px 2px var(--text_color);
+}
+
+button:disabled img, button[disabled] img {
+    filter: grayscale(80%);
+    opacity: 0.2;
+}
 
 .jqis_dropdown{ /* language image select */
     position:absolute;
@@ -129,5 +166,10 @@ a { /* link */
 
 a:hover {/* mouse over link */
   color: var(--deep_color);
+  text-shadow:
+   1px  1px 3px var(--text_color),
+   1px -1px 3px var(--text_color),
+  -1px -1px 3px var(--text_color),
+  -1px  1px 3px var(--text_color);
 }
 

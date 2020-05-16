@@ -71,7 +71,7 @@ function updateStatus(){
             $('#process_status').html(data);
         }
     ).fail(function() {
-                 location.reload();
+        location.reload();
     });
     setTimeout(updateStatus, updateDelay);
 }

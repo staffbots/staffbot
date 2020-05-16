@@ -237,10 +237,7 @@ public class StatusServlet extends BaseServlet {
     }
 
 
-    static int plotValueCount = getPlotValueCount();
-
-    // Насыщенности
-    static double[] hue = getRandomHue(plotValueCount);
+    //static int plotValueCount = getPlotValueCount();
 
     // Расчёт количества значенийй, по которым возможно построить график
     static private int getPlotValueCount(){
@@ -255,21 +252,21 @@ public class StatusServlet extends BaseServlet {
         return count;
     }
 
-    // Возращает масиив размером length с перемешанными в нём случайными значениями (насыщенности) от 0 до 360
-    static private double[] getRandomHue(int length) {
-        int plotValueCount = getPlotValueCount();
+    static private double[] hue = getRandomHue(getPlotValueCount());
+
+    static private double[] getRandomHue(int count) {
         ArrayList<Integer> random = new ArrayList<>();
         ArrayList<Integer> resource = new ArrayList<>();
-        for (int i = 0; i < length; i++)
+        for (int i = 0; i < count; i++)
             resource.add(i);
-        for (int i = 0; i < length; i++){
-            int k = (int) Math.floor(Math.random() * (length - i));
+        for (int i = 0; i < count; i++){
+            int k = (int) Math.floor(Math.random() * (count - i));
             random.add(resource.get(k));
             resource.remove(k);
         }
-        double[] result = new double[length];
-        for (int i = 0; i < length; i++)
-            result[i] = 360 * random.get(i) / plotValueCount;
+        double[] result = new double[count];
+        for (int i = 0; i < count; i++)
+            result[i] = 360 * random.get(i) / count;
         return result;
     }
 

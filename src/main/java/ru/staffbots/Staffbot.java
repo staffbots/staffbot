@@ -184,15 +184,23 @@ public abstract class Staffbot {
         String solutionCfgFileName = getFullName() + ".cfg";
         try {
             // Извлекаем из jar-пакета файл конфигурации
-            Resources.getAsFile(projectCfgFileName, solutionCfgFileName);
+            Resources.getAsFile(projectCfgFileName, solutionCfgFileName, false);
             // Читаем свойства из извлечённого файла
             FileInputStream inputStream = new FileInputStream(Resources.getJarDirName() + solutionCfgFileName);
 
             ParsableProperties property = new ParsableProperties();
             property.load(inputStream);
             inputStream.close();
-
             // Применяем конфигурацию
+            WebServer.adminLogin = property.getProperty("web.admin_login", WebServer.adminLogin);
+            WebServer.adminPassword = property.getProperty("web.admin_password", WebServer.adminPassword);
+            WebServer.httpPort = property.getIntegerProperty("web.http_port", WebServer.httpPort);
+            WebServer.httpUsed = property.getBooleanProperty("web.http_used", WebServer.httpUsed);
+            WebServer.httpsPort = property.getIntegerProperty("web.https_port", WebServer.httpsPort);
+            WebServer.keyStore = property.getProperty("web.key_store", WebServer.keyStore);
+            WebServer.storePassword = property.getProperty("web.store_password", WebServer.storePassword);
+            WebServer.managerPassword = property.getProperty("web.manager_password", WebServer.managerPassword);
+            WebServer.updateDelay = property.getIntegerProperty("web.update_delay", WebServer.updateDelay);
 
             Database.SERVER = property.getProperty("db.server", Database.SERVER);
             Database.PORT = property.getIntegerProperty("db.port", Database.PORT);
@@ -206,19 +214,8 @@ public abstract class Staffbot {
             Devices.coolingDevice = new CoolingDevice(RaspiPin.getPinByAddress(fanPin), cpuTemperature);
 
             MainWindow.frameUsed = property.getBooleanProperty("ui.frame_used", MainWindow.frameUsed);
-
-            WebServer.adminLogin = property.getProperty("web.admin_login", WebServer.adminLogin);
-            WebServer.adminPassword = property.getProperty("web.admin_password", WebServer.adminPassword);
-            WebServer.httpPort = property.getIntegerProperty("web.http_port", WebServer.httpPort);
-            WebServer.httpUsed = property.getBooleanProperty("web.http_used", WebServer.httpUsed);
-            WebServer.httpsPort = property.getIntegerProperty("web.https_port", WebServer.httpsPort);
-            WebServer.keyStore = property.getProperty("web.key_store", WebServer.keyStore);
-            WebServer.storePassword = property.getProperty("web.store_password", WebServer.storePassword);
-            WebServer.managerPassword = property.getProperty("web.manager_password", WebServer.managerPassword);
-            WebServer.updateDelay = property.getIntegerProperty("web.update_delay", WebServer.updateDelay);
-            WebServer.сolorSchema = new ColorSchema(property.getProperty("web.main_color", ""));
-            WebServer.fontFamily = property.getProperty("web.font-family", WebServer.fontFamily);
-
+            WebServer.сolorSchema = new ColorSchema(property.getProperty("ui.main_color", ""));
+            WebServer.fontFamily = property.getProperty("ui.font-family", WebServer.fontFamily);
 
             Journal.add(false, "init_configs");
 

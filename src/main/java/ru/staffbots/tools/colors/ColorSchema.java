@@ -53,4 +53,8 @@ public class ColorSchema {
         return new HSLColor(mainColor.adjustLuminance(luminance)).toHex();
     }
 
+    public String getHalfColor() {
+        return new HSLColor(mainColor.adjustLuminance(50f)).toHex();
+    }
+
 }
