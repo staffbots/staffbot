@@ -126,12 +126,12 @@ public class Users extends DBTable {
     }
 
     public static boolean isAdmin(String login){
-        return WebServer.adminLogin.equalsIgnoreCase(login);
+        return WebServer.getAdminLogin().equalsIgnoreCase(login);
     }
 
     public static int verify(String login, String password){
         if (isAdmin(login))
-            return WebServer.adminPassword.equals(password) ? UserRole.ADMIN.getAccessLevel() : -1;
+            return WebServer.getAdminPassword().equals(password) ? UserRole.ADMIN.getAccessLevel() : -1;
         User user = getUser(login);
         return (user == null) ? -1 : user.password.equals(cryptWithMD5(password)) ? user.role.getAccessLevel() : -1;
     }

@@ -80,7 +80,7 @@ public abstract class NetworkDevice extends Device {
         if (disconnected())
             if (!connect())
                 return badResult;
-        String uri = "http://" + addressSettings.getAddress() + ":" + WebServer.httpPort + "/" + query;
+        String uri = "http://" + addressSettings.getAddress() + ":" + WebServer.getHttpPort() + "/" + query;
         ContentResponse response;
         try {
             httpClient.start();

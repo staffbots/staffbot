@@ -27,7 +27,16 @@ public class MainWindow extends JFrame {
      * false - disable
      * The value can be set by ui.frame_used in cfg-file
      */
-    public static Boolean frameUsed = true;
+    private static boolean frameUsed = true;
+
+    public static boolean getFrameUsed() {
+        return frameUsed;
+    }
+
+    public static void setFrameUsed(Boolean value) {
+        if (value == null) return;
+        frameUsed = value;
+    }
 
     /*
      * The single instance of the class
@@ -74,7 +83,7 @@ public class MainWindow extends JFrame {
             }
         });
         container.add(button);
-        if (WebServer.httpUsed)
+        if (WebServer.getHttpUsed())
             container.add(сheckBox);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = 350;

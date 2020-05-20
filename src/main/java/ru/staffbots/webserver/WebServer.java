@@ -11,32 +11,88 @@ import ru.staffbots.tools.colors.ColorSchema;
 import ru.staffbots.tools.resources.Resources;
 import ru.staffbots.webserver.servlets.*;
 import ru.staffbots.windows.MainWindow;
-
 import java.io.IOException;
 import java.net.*;
 
 public class WebServer {
 
-    public static Integer httpPort = 80;
+    ////////////////////////////////////////////////////////////////
+    private static String adminLogin = "admin";
 
-    public static Integer httpsPort = 443;
+    public static String getAdminLogin() {
+        return adminLogin;
+    }
 
-    public static String adminLogin = "admin";
+    public static void setAdminLogin(String value) {
+        if (value == null) return;
+        if (value.trim().isEmpty()) return;
+        adminLogin = value;
+    }
 
-    public static String adminPassword = "";
+    ////////////////////////////////////////////////////////////////
+    private static String adminPassword = "";
 
-    public static Boolean httpUsed = false;
+    public static String getAdminPassword() {
+        return adminPassword;
+    }
 
-    public static String keyStore = "keystore";
+    public static void setAdminPassword(String value) {
+        if (value == null) return;
+        adminPassword = value;
+    }
 
-    public static String storePassword = "staffbots";
+    ////////////////////////////////////////////////////////////////
+    private static int httpPort = 80;
 
-    public static String managerPassword = "staffbots";
+    public static int getHttpPort() {
+        return httpPort;
+    }
 
+    public static void setHttpPort(Integer value) {
+        if (value == null) return;
+        httpPort = value;
+    }
+
+    ////////////////////////////////////////////////////////////////
+    private static int httpsPort = 443;
+
+    public static int getHttpsPort() {
+        return httpsPort;
+    }
+
+    public static void setHttpsPort(Integer value) {
+        if (value == null) return;
+        httpsPort = value;
+    }
+
+    ////////////////////////////////////////////////////////////////
+    private static boolean httpUsed = false;
+
+    public static boolean getHttpUsed() {
+        return httpUsed;
+    }
+
+    public static void setHttpUsed(Boolean value) {
+        if (value == null) return;
+        httpUsed = value;
+    }
+
+    ////////////////////////////////////////////////////////////////
     public static ColorSchema сolorSchema;
 
+    ////////////////////////////////////////////////////////////////
     public static String fontFamily = "sans-serif";
 
+    ////////////////////////////////////////////////////////////////
+    public static String keyStore = "keystore";
+
+    ////////////////////////////////////////////////////////////////
+    public static String storePassword = "staffbots";
+
+    ////////////////////////////////////////////////////////////////
+    public static String managerPassword = "staffbots";
+
+    ////////////////////////////////////////////////////////////////
     /**
      * Задержка между запросами на обновление данных на страницах, милисек.
      */
@@ -124,7 +180,7 @@ public class WebServer {
         try {
             server.start();
             Journal.add("start_server");
-            if (!MainWindow.frameUsed)
+            if (!MainWindow.getFrameUsed())
                 server.join();
         } catch (Exception e){
             Journal.add(NoteType.ERROR, "start_server", e.getMessage());

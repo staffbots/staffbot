@@ -7,8 +7,11 @@ import java.util.Properties;
  */
 public class ParsableProperties extends Properties {
 
-    public double getDoubleProperty(String key, double defaultValue){
-        String stringValue = getProperty(key, String.valueOf(defaultValue));
+    public Double getDoubleProperty(String key, Double defaultValue){
+        String defaultStringValue = (defaultValue == null) ? null : String.valueOf(defaultValue);
+        String stringValue = getProperty(key, defaultStringValue);
+        if (stringValue == null)
+            return defaultValue;
         try {
             return Double.parseDouble(stringValue);
         } catch (NumberFormatException e) {
@@ -16,8 +19,19 @@ public class ParsableProperties extends Properties {
         }
     }
 
-    public int getIntegerProperty(String key, int defaultValue){
-        String stringValue = getProperty(key, String.valueOf(defaultValue));
+    public Double getDoubleProperty(String key){
+        return getDoubleProperty(key, null);
+    }
+
+    public Double getDoubleProperty(String key, double defaultValue){
+        return getDoubleProperty(key, new Double(defaultValue));
+    }
+
+    public Integer getIntegerProperty(String key, Integer defaultValue){
+        String defaultStringValue = (defaultValue == null) ? null : String.valueOf(defaultValue);
+        String stringValue = getProperty(key, defaultStringValue);
+        if (stringValue == null)
+            return defaultValue;
         try {
             return Integer.parseInt(stringValue);
         } catch (NumberFormatException e) {
@@ -25,21 +39,45 @@ public class ParsableProperties extends Properties {
         }
     }
 
+    public Integer getIntegerProperty(String key){
+        return getIntegerProperty(key, null);
+    }
+
+    public Integer getIntegerProperty(String key, int defaultValue){
+        return getIntegerProperty(key, new Integer(defaultValue));
+    }
+
     public Boolean getBooleanProperty(String key, Boolean defaultValue){
         String trueString = "true";
         String falseString = "false";
-        String stringValue = getProperty(key, defaultValue.toString());
+        String defaulStringValue = (defaultValue == null) ? null : (defaultValue ? trueString : falseString);
+        String stringValue = getProperty(key, defaulStringValue);
+        if (stringValue == null)
+            return defaultValue;
         if(stringValue.equalsIgnoreCase(trueString))
             return true;
-        else
-            if(stringValue.equalsIgnoreCase(falseString))
-                return false;
-            else
-                return defaultValue;
+        if(stringValue.equalsIgnoreCase(falseString))
+            return false;
+        return defaultValue;
     }
 
+    public Boolean getBooleanProperty(String key){
+        return getBooleanProperty(key, null);
+    }
+
+    public Boolean getBooleanProperty(String key, boolean defaultValue){
+        return getBooleanProperty(key, new Boolean(defaultValue));
+    }
+
+    @Override
+    public String getProperty(String key){
+        return getProperty(key, null);
+    }
+
+    @Override
     public String getProperty(String key, String defaultValue){
-        return super.getProperty(key, defaultValue).trim();
+        String property = (defaultValue == null) ? super.getProperty(key) : super.getProperty(key, defaultValue);
+        return (property == null) ? null : property.trim();
     }
 
 }

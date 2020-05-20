@@ -79,7 +79,7 @@ public class ResourceServlet extends BaseServlet {
                     pageVariables.put("device_address", networkDevice.getAddressSettings().getAddress(true));
                     pageVariables.put("device_gateway", networkDevice.getAddressSettings().getGateway(true));
                     pageVariables.put("device_subnetMask", networkDevice.getAddressSettings().getSubnetMask(true));
-                    pageVariables.put("http_port", WebServer.httpPort);
+                    pageVariables.put("http_port", WebServer.getHttpPort());
                     break;
                 default:
             }

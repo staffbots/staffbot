@@ -164,11 +164,11 @@ public abstract class Staffbot {
     private static void propertiesInit(){
         // Читаем свойства проекта
         try {
-            Properties property = new Properties();
-            property.load(Resources.getAsStream("properties"));
-            projectVersion = property.getProperty("staffbot.version", "");
-            projectWebsite = property.getProperty("staffbot.website", "");
-            String[] languageCodes = property.getProperty("staffbot.languages", "").split(",");
+            Properties properties = new Properties();
+            properties.load(Resources.getAsStream("properties"));
+            projectVersion = properties.getProperty("staffbot.version", projectVersion);
+            projectWebsite = properties.getProperty("staffbot.website", projectWebsite);
+            String[] languageCodes = properties.getProperty("staffbot.languages", "").split(",");
             for (String code: languageCodes)
                 Languages.put(code);
             Journal.add(false, "init_properties");
@@ -186,34 +186,33 @@ public abstract class Staffbot {
             // Читаем свойства из извлечённого файла
             FileInputStream inputStream = new FileInputStream(Resources.getJarDirName() + solutionCfgFileName);
 
-            ParsableProperties property = new ParsableProperties();
-            property.load(inputStream);
-            inputStream.close();
+            ParsableProperties properties = new ParsableProperties();
+            properties.load(inputStream);
             // Применяем конфигурацию
-            WebServer.adminLogin = property.getProperty("web.admin_login", WebServer.adminLogin);
-            WebServer.adminPassword = property.getProperty("web.admin_password", WebServer.adminPassword);
-            WebServer.httpPort = property.getIntegerProperty("web.http_port", WebServer.httpPort);
-            WebServer.httpUsed = property.getBooleanProperty("web.http_used", WebServer.httpUsed);
-            WebServer.httpsPort = property.getIntegerProperty("web.https_port", WebServer.httpsPort);
-            WebServer.keyStore = property.getProperty("web.key_store", WebServer.keyStore);
-            WebServer.storePassword = property.getProperty("web.store_password", WebServer.storePassword);
-            WebServer.managerPassword = property.getProperty("web.manager_password", WebServer.managerPassword);
-            WebServer.updateDelay = property.getIntegerProperty("web.update_delay", WebServer.updateDelay);
+            WebServer.setAdminLogin(properties.getProperty("web.admin_login"));
+            WebServer.setAdminPassword(properties.getProperty("web.admin_password"));
+            WebServer.setHttpPort(properties.getIntegerProperty("web.http_port"));
+            WebServer.setHttpsPort(properties.getIntegerProperty("web.https_port"));
+            WebServer.setHttpUsed(properties.getBooleanProperty("web.http_used"));
+            WebServer.keyStore = properties.getProperty("web.key_store", WebServer.keyStore);
+            WebServer.storePassword = properties.getProperty("web.store_password", WebServer.storePassword);
+            WebServer.managerPassword = properties.getProperty("web.manager_password", WebServer.managerPassword);
+            WebServer.updateDelay = properties.getIntegerProperty("web.update_delay", WebServer.updateDelay);
 
-            Database.SERVER = property.getProperty("db.server", Database.SERVER);
-            Database.PORT = property.getIntegerProperty("db.port", Database.PORT);
-            Database.NAME = property.getProperty("db.name", (projectName + "_" + solutionName).toLowerCase());
-            Database.USER = property.getProperty("db.user", Database.USER);
-            Database.PASSWORD = property.getProperty("db.password", Database.PASSWORD).trim();
-            Database.DROP = property.getBooleanProperty("db.drop", Database.DROP);
+            Database.SERVER = properties.getProperty("db.server", Database.SERVER);
+            Database.PORT = properties.getIntegerProperty("db.port", Database.PORT);
+            Database.NAME = properties.getProperty("db.name", (projectName + "_" + solutionName).toLowerCase());
+            Database.USER = properties.getProperty("db.user", Database.USER);
+            Database.PASSWORD = properties.getProperty("db.password", Database.PASSWORD).trim();
+            Database.DROP = properties.getBooleanProperty("db.drop", Database.DROP);
 
-            int fanPin = property.getIntegerProperty("pi.fan_pin", -1);
-            double cpuTemperature = property.getDoubleProperty("pi.cpu_temperature", 50);
+            int fanPin = properties.getIntegerProperty("pi.fan_pin", -1);
+            double cpuTemperature = properties.getDoubleProperty("pi.cpu_temperature", 50);
             Devices.coolingDevice = new CoolingDevice(RaspiPin.getPinByAddress(fanPin), cpuTemperature);
 
-            MainWindow.frameUsed = property.getBooleanProperty("ui.frame_used", MainWindow.frameUsed);
-            WebServer.сolorSchema = new ColorSchema(property.getProperty("ui.main_color", ""));
-            WebServer.fontFamily = property.getProperty("ui.font-family", WebServer.fontFamily);
+            MainWindow.setFrameUsed(properties.getBooleanProperty("ui.frame_used"));
+            WebServer.сolorSchema = new ColorSchema(properties.getProperty("ui.main_color"));
+            WebServer.fontFamily = properties.getProperty("ui.font-family", WebServer.fontFamily);
 
             Journal.add(false, "init_configs");
 
