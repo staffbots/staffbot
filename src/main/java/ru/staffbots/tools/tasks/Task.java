@@ -7,11 +7,12 @@ import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.tools.values.DateValue;
 
 import java.util.Date;
+import java.util.function.Supplier;
 
 /**
  *
  */
-public class Task extends Thread implements DelayFunction {
+public class Task extends Thread {
 
     public boolean isNew(){
         return (status == TaskStatus.NEW);
@@ -29,7 +30,11 @@ public class Task extends Thread implements DelayFunction {
         return (status == TaskStatus.OLD);
     }
 
-    public TaskStatus status = TaskStatus.NEW;
+    private TaskStatus status = TaskStatus.NEW;
+
+    public TaskStatus getStatus() {
+        return status;
+    }
 
     private String statusString = null;
 
@@ -37,34 +42,53 @@ public class Task extends Thread implements DelayFunction {
         return statusString;
     }
 
-    public String note;
+    private String note;
 
-    public DelayFunction delay;
-
-    public long getDelay(){
-        return delay.getDelay();
+    public String getNote() {
+        return note;
     }
 
-    protected Runnable action;
+    private Supplier<Long> delaySupplier;
+
+    public  Supplier<Long> getDelaySupplier() {
+        return delaySupplier;
+    }
+
+    private Runnable action;
+
+    public Runnable getAction() {
+        return action;
+    }
 
     private boolean silenceMode = false;
 
-    public Task(String note, DelayFunction delay, Runnable action){
+    public boolean getSilenceMode() {
+        return silenceMode;
+    }
+
+    public Task(Task patternTask){
+        this.note = patternTask.getNote();
+        this.silenceMode = patternTask.getSilenceMode();
+        this.delaySupplier = patternTask.getDelaySupplier();
+        this.action = patternTask.getAction();
+    }
+
+    public Task(String note, Supplier<Long> delaySupplier, Runnable action){
         this.note = note;
-        this.delay = delay;
+        this.delaySupplier = delaySupplier;
         this.action = action;
     }
 
-    public Task(String note, boolean silenceMode, DelayFunction delay, Runnable action){
-        this.silenceMode = silenceMode;
+    public Task(String note, boolean silenceMode, Supplier<Long> delaySupplier, Runnable action){
         this.note = note;
-        this.delay = delay;
+        this.silenceMode = silenceMode;
+        this.delaySupplier  = delaySupplier;
         this.action = action;
     }
 
     @Override
     public void run() {
-        long delay = getDelay();
+        long delay = delaySupplier.get();
         if (delay < 0) {
             status = TaskStatus.OLD;
             statusString = null;
@@ -90,7 +114,6 @@ public class Task extends Thread implements DelayFunction {
             statusString = status.getDescription(Languages.getDefaultCode());
             // Выполняем задачу
             action.run();
-
             if (!silenceMode) {
                 Journal.add("complite_task", note);
             }
@@ -102,4 +125,5 @@ public class Task extends Thread implements DelayFunction {
         //if (!isInterrupted())
         Tasks.reSchedule(this);
     }
+
 }

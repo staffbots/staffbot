@@ -96,8 +96,6 @@ import java.util.Properties;
  */
 public abstract class Staffbot {
 
-
-
     public static SystemInfo.BoardType boardType = SystemInfo.BoardType.UNKNOWN;
 
     /**

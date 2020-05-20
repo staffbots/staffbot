@@ -225,7 +225,7 @@ public class StatusServlet extends BaseServlet {
             Task task = Tasks.list.get(index);
             String status = task.getStatusString();
             if (status == null) continue;
-            pageVariables.put("task_note", task.note);
+            pageVariables.put("task_note", task.getNote());
             pageVariables.put("task_status", status);
             context += fillTemplate("html/status/task.html",pageVariables);
         }

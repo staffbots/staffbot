@@ -4,12 +4,11 @@ import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.system.SystemInfo;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.levers.DoubleLever;
+import ru.staffbots.tools.levers.Lever;
 import ru.staffbots.tools.tasks.Task;
-import ru.staffbots.tools.tasks.Tasks;
-import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.devices.drivers.LedDevice;
-import ru.staffbots.tools.levers.Levers;
 import ru.staffbots.tools.values.ValueMode;
 
 import java.lang.invoke.MethodHandles;
@@ -21,12 +20,10 @@ public class Sample extends Staffbot {
 
     // Точка входа приложения
     public static void main(String[] args) {
-        solutionInit(()->{
-                    Levers.init(frequencyLever); // Инициализируем список элементов управления
-                    Devices.init(ledDevice); // Инициализируем список устройств
-                    Tasks.init(ledFlashingTask); // Инициализируем список заданий
-                }
-        );
+        Device[] devices = {ledDevice}; // Инициализируем список устройств
+        Lever[] levers = {frequencyLever}; // Инициализируем список элементов управления
+        Task[] tasks = {ledFlashingTask}; // Инициализируем список заданий
+        solutionInit(devices, levers, tasks);
     }
 
     static {

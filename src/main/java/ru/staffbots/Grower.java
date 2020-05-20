@@ -128,7 +128,7 @@ public class Grower extends Staffbot {
     static Task ventingTask = new Task(
         ventingTaskNote,
         () -> { // Расчёт задержки перед следующим запуском
-            if (!funUsedLever.getValue()) return -1;
+            if (!funUsedLever.getValue()) return new Long(-1);
             Date funriseDate = new Date(sunriseLever.getValue().getTime() - funDelayLever.getValue() * DateAccuracy.MINUTE.getMilliseconds());
             long funriseTime = DateValue.getNearFuture(funriseDate).getTime();
             Date funsetDate = new Date(sunsetLever.getValue().getTime() + funDelayLever.getValue() * DateAccuracy.MINUTE.getMilliseconds());
@@ -163,7 +163,7 @@ public class Grower extends Staffbot {
     static Task irrigationTask = new Task(
         irrigationTaskNote,
         ()->{// Расчёт задержки перед следующим запуском
-            return 900000;
+                return new Long(900000);
             },
         () -> {// Метод самой
             try {

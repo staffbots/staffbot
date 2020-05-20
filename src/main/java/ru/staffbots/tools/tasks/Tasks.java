@@ -47,7 +47,7 @@ public class Tasks {
         } else if (task.isOld()) {
             int index = list.indexOf(task);
             list.remove(task);
-            task = new Task(task.note, task.delay, task.action);
+            task = new Task(task);
             list.add(index, task);
             if (status == TasksStatus.START)
                 task.start();
