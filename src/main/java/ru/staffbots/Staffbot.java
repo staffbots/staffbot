@@ -194,12 +194,12 @@ public abstract class Staffbot {
             WebServer.setHttpPort(properties.getIntegerProperty("web.http_port"));
             WebServer.setHttpsPort(properties.getIntegerProperty("web.https_port"));
             WebServer.setHttpUsed(properties.getBooleanProperty("web.http_used"));
-            WebServer.keyStore = properties.getProperty("web.key_store", WebServer.keyStore);
-            WebServer.storePassword = properties.getProperty("web.store_password", WebServer.storePassword);
-            WebServer.managerPassword = properties.getProperty("web.manager_password", WebServer.managerPassword);
-            WebServer.updateDelay = properties.getIntegerProperty("web.update_delay", WebServer.updateDelay);
+            WebServer.setKeyStore(properties.getProperty("web.key_store"));
+            WebServer.setStorePassword(properties.getProperty("web.store_password"));
+            WebServer.setManagerPassword(properties.getProperty("web.manager_password"));
+            WebServer.setUpdateDelay(properties.getIntegerProperty("web.update_delay"));
 
-            Database.SERVER = properties.getProperty("db.server", Database.SERVER);
+            Database.setServer(properties.getProperty("db.server"));
             Database.PORT = properties.getIntegerProperty("db.port", Database.PORT);
             Database.NAME = properties.getProperty("db.name", (projectName + "_" + solutionName).toLowerCase());
             Database.USER = properties.getProperty("db.user", Database.USER);
@@ -211,8 +211,8 @@ public abstract class Staffbot {
             Devices.coolingDevice = new CoolingDevice(RaspiPin.getPinByAddress(fanPin), cpuTemperature);
 
             MainWindow.setFrameUsed(properties.getBooleanProperty("ui.frame_used"));
-            WebServer.сolorSchema = new ColorSchema(properties.getProperty("ui.main_color"));
-            WebServer.fontFamily = properties.getProperty("ui.font-family", WebServer.fontFamily);
+            WebServer.setColorSchema(properties.getProperty("ui.main_color"));
+            WebServer.setFontFamily(properties.getProperty("ui.font-family"));
 
             Journal.add(false, "init_configs");
 

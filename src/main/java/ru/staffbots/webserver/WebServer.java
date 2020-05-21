@@ -56,10 +56,6 @@ public class WebServer {
     ////////////////////////////////////////////////////////////////
     private static int httpsPort = 443;
 
-    public static int getHttpsPort() {
-        return httpsPort;
-    }
-
     public static void setHttpsPort(Integer value) {
         if (value == null) return;
         httpsPort = value;
@@ -78,26 +74,68 @@ public class WebServer {
     }
 
     ////////////////////////////////////////////////////////////////
-    public static ColorSchema сolorSchema;
+    private static String keyStore = "keystore";
+
+    public static void setKeyStore(String value) {
+        if (value == null) return;
+        keyStore = value;
+    }
 
     ////////////////////////////////////////////////////////////////
-    public static String fontFamily = "sans-serif";
+    private static String storePassword = "staffbots";
+
+    public static void setStorePassword(String value) {
+        if (value == null) return;
+        storePassword = value;
+    }
 
     ////////////////////////////////////////////////////////////////
-    public static String keyStore = "keystore";
+    private static String managerPassword = "staffbots";
 
-    ////////////////////////////////////////////////////////////////
-    public static String storePassword = "staffbots";
-
-    ////////////////////////////////////////////////////////////////
-    public static String managerPassword = "staffbots";
+    public static void setManagerPassword(String value) {
+        if (value == null) return;
+        managerPassword = value;
+    }
 
     ////////////////////////////////////////////////////////////////
     /**
      * Задержка между запросами на обновление данных на страницах, милисек.
      */
-    public static Integer updateDelay = 10000;
+    private static int updateDelay = 10000;
 
+    public static int getUpdateDelay() {
+        return updateDelay;
+    }
+
+    public static void setUpdateDelay(Integer value) {
+        if (value == null) return;
+        updateDelay = value;
+    }
+
+    ////////////////////////////////////////////////////////////////
+    private static ColorSchema сolorSchema;
+
+    public static void setColorSchema(String mainColor) {
+        сolorSchema = new ColorSchema(mainColor);
+    }
+
+    public static ColorSchema getColorSchema() {
+        return сolorSchema;
+    }
+
+    ////////////////////////////////////////////////////////////////
+    private static String fontFamily = "sans-serif";
+
+    public static String getFontFamily() {
+        return fontFamily;
+    }
+
+    public static void setFontFamily(String value) {
+        if (value == null) return;
+        fontFamily = value;
+    }
+
+    ////////////////////////////////////////////////////////////////
     /**
      *
      */

@@ -91,8 +91,8 @@ public class StatusServlet extends BaseServlet {
         pageVariables.put("plot_todate", period.getToDateAsString());
         pageVariables.put("device_list", getDeviceList(request, language));
         pageVariables.put("lever_list", getLeverList(request, language));
-        pageVariables.put("deep_color", WebServer.сolorSchema.getDeepColor());
-        pageVariables.put("site_color", WebServer.сolorSchema.getSiteColor());
+        pageVariables.put("deep_color", WebServer.getColorSchema().getDeepColor());
+        pageVariables.put("site_color", WebServer.getColorSchema().getSiteColor());
         pageVariables.put("datasets_value", getDataSets(period));
         String content = fillTemplate("html/" + pageType.getName()+".html", pageVariables);
         super.doGet(request, response, content);
@@ -111,7 +111,7 @@ public class StatusServlet extends BaseServlet {
     private String getDeviceList(HttpServletRequest request, Language language) {
         String context = "";
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
-        pageVariables.put("deep_color", WebServer.сolorSchema.getDeepColor());
+        pageVariables.put("deep_color", WebServer.getColorSchema().getDeepColor());
         String htmlPath = "html/status/device/";
         String deviceNote;
         String valueNote;
@@ -154,7 +154,7 @@ public class StatusServlet extends BaseServlet {
     private String getLeverList(HttpServletRequest request, Language language) {
         String context = "";
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
-        pageVariables.put("deep_color", WebServer.сolorSchema.getDeepColor());
+        pageVariables.put("deep_color", WebServer.getColorSchema().getDeepColor());
         String htmlPath = "html/status/lever/";
         for (Lever lever : Levers.list){
             if (lever.isButton()) continue;

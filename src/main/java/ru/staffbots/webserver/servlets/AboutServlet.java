@@ -38,8 +38,8 @@ public class AboutServlet extends BaseServlet {
         pageVariables.put("osversion_value",System.getProperty("os.version"));
         pageVariables.put("osarch_value",System.getProperty("os.arch"));
         pageVariables.put("javaversion_value",System.getProperty("java.version"));
-        pageVariables.put("dbserver_value",Database.SERVER);
-        pageVariables.put("dbmsystem_value",Database.DBMSystem);
+        pageVariables.put("dbserver_value",Database.getServer());
+        pageVariables.put("dbmsystem_value",Database.getDBMSystem());
         pageVariables.put("dbname_value",Database.NAME);
         pageVariables.put("project_value", Staffbot.projectName);
         pageVariables.put("solution_value", Staffbot.solutionName + "-" + Staffbot.projectVersion);

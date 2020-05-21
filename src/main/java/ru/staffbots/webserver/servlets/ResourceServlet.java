@@ -58,12 +58,12 @@ public class ResourceServlet extends BaseServlet {
             switch (ResourceType.getByName(resourceName)){
                 case CSS:
                 case JS:
-                    pageVariables.put("site_color", WebServer.сolorSchema.getSiteColor());
-                    pageVariables.put("deep_color", WebServer.сolorSchema.getDeepColor());
-                    pageVariables.put("main_color", WebServer.сolorSchema.getMainColor());
-                    pageVariables.put("text_color", WebServer.сolorSchema.getTextColor());
-                    pageVariables.put("half_color", WebServer.сolorSchema.getHalfColor());
-                    pageVariables.put("font_family", WebServer.fontFamily);
+                    pageVariables.put("site_color", WebServer.getColorSchema().getSiteColor());
+                    pageVariables.put("deep_color", WebServer.getColorSchema().getDeepColor());
+                    pageVariables.put("main_color", WebServer.getColorSchema().getMainColor());
+                    pageVariables.put("text_color", WebServer.getColorSchema().getTextColor());
+                    pageVariables.put("half_color", WebServer.getColorSchema().getHalfColor());
+                    pageVariables.put("font_family", WebServer.getFontFamily());
                     pageVariables.put("dberror_display", Database.connected() ? "none" : "inline-table");
                     pageVariables.put("piwarning_display", Devices.isRaspbian || Database.disconnected() ? "none" : "inline-table");
                     break;

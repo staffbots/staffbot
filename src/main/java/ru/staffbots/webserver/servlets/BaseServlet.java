@@ -87,7 +87,7 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
                 boolean isCurrentPage = (pageType == this.pageType);
                 if (isCurrentPage) caption = "<b>" + caption + "</b>";
                 menuVariables.put("menu_caption", caption);
-                menuVariables.put("deep_color", WebServer.сolorSchema.getDeepColor());
+                menuVariables.put("deep_color", WebServer.getColorSchema().getDeepColor());
                 menuVariables.put("menu_hint", pageType.getDescription(languageCode));
                 menuVariables.put("menu_link", "href=\"" + pageType.getName() + "\"");
                 menu += fillTemplate("html/base/" + (isCurrentPage ? "selected" : "") + "menu.html", menuVariables);
@@ -107,7 +107,7 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
         pageVariables.put("page_content", content);
         pageVariables.put("login_value", login);
         pageVariables.put("role_value", Users.getRole(login).getDescription(languageCode));
-        pageVariables.put("update_delay", WebServer.updateDelay.toString());
+        pageVariables.put("update_delay", WebServer.getUpdateDelay());
         pageVariables.put("language_select", getLanguageList(languageCode));
 
         String result = fillTemplate("html/base.html", pageVariables);

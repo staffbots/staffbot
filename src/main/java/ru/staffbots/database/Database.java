@@ -5,11 +5,9 @@ import ru.staffbots.database.configs.Configs;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.database.settings.Settings;
-import ru.staffbots.database.users.User;
 import ru.staffbots.database.users.Users;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
-import ru.staffbots.tools.languages.Language;
 import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.tools.levers.Lever;
 import ru.staffbots.tools.levers.Levers;
@@ -20,10 +18,29 @@ import java.util.*;
 
 public class Database {
 
-    public static DBMS DBMSystem = DBMS.MySQL;
 
-    public static String SERVER = "localhost";
 
+    ////////////////////////////////////////////////////////////////
+    private static DBMS DBMSystem = DBMS.MySQL;
+
+    public static DBMS getDBMSystem() {
+        return DBMSystem;
+    }
+
+    ////////////////////////////////////////////////////////////////
+    private static String server = "localhost";
+
+    public static String getServer() {
+        return server;
+    }
+
+    public static void setServer(String value) {
+        if (value == null) return;
+        if (value.trim().isEmpty()) return;
+        server = value;
+    }
+
+    ////////////////////////////////////////////////////////////////
     public static Integer PORT = 3306;
 
     public static String NAME = "staffbot";
@@ -68,9 +85,9 @@ public class Database {
  
     public static boolean init(){
         try {
-            connection = DBMSystem.getConnection(SERVER, PORT, USER, PASSWORD);
+            connection = DBMSystem.getConnection(server, PORT, USER, PASSWORD);
             createDatabase(DROP);
-            connection = DBMSystem.getConnection(SERVER, PORT, NAME, USER, PASSWORD);
+            connection = DBMSystem.getConnection(server, PORT, NAME, USER, PASSWORD);
             journal = new Journal();
             Journal.add(null);
             Journal.add("init_database", NAME);
