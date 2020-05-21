@@ -2,6 +2,7 @@ package ru.staffbots.webserver.servlets;
 
 import ru.staffbots.Staffbot;
 import ru.staffbots.database.Database;
+import ru.staffbots.tools.colors.ColorSchema;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.devices.drivers.network.NetworkDevice;
@@ -58,12 +59,13 @@ public class ResourceServlet extends BaseServlet {
             switch (ResourceType.getByName(resourceName)){
                 case CSS:
                 case JS:
-                    pageVariables.put("site_color", WebServer.getColorSchema().getSiteColor());
-                    pageVariables.put("deep_color", WebServer.getColorSchema().getDeepColor());
-                    pageVariables.put("main_color", WebServer.getColorSchema().getMainColor());
-                    pageVariables.put("text_color", WebServer.getColorSchema().getTextColor());
-                    pageVariables.put("half_color", WebServer.getColorSchema().getHalfColor());
-                    pageVariables.put("font_family", WebServer.getFontFamily());
+                    ColorSchema colorSchema = WebServer.getInstance().getColorSchema();
+                    pageVariables.put("site_color", colorSchema.getSiteColor());
+                    pageVariables.put("deep_color", colorSchema.getDeepColor());
+                    pageVariables.put("main_color", colorSchema.getMainColor());
+                    pageVariables.put("text_color", colorSchema.getTextColor());
+                    pageVariables.put("half_color", colorSchema.getHalfColor());
+                    pageVariables.put("font_family", WebServer.getInstance().getFontFamily());
                     pageVariables.put("dberror_display", Database.connected() ? "none" : "inline-table");
                     pageVariables.put("piwarning_display", Devices.isRaspbian || Database.disconnected() ? "none" : "inline-table");
                     break;
@@ -79,7 +81,7 @@ public class ResourceServlet extends BaseServlet {
                     pageVariables.put("device_address", networkDevice.getAddressSettings().getAddress(true));
                     pageVariables.put("device_gateway", networkDevice.getAddressSettings().getGateway(true));
                     pageVariables.put("device_subnetMask", networkDevice.getAddressSettings().getSubnetMask(true));
-                    pageVariables.put("http_port", WebServer.getHttpPort());
+                    pageVariables.put("http_port", WebServer.getInstance().getHttpPort());
                     break;
                 default:
             }

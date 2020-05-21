@@ -41,16 +41,20 @@ public class MainWindow extends JFrame {
     /*
      * The single instance of the class
      */
-    private static MainWindow mainWindow = null;
+    private static MainWindow instance = null;
+
+    public static MainWindow getInstance() {
+        return instance;
+    }
 
     /*
      * Initializing a single instance of a class - {@code mainWindow}
      */
-    public static void init(String windowTilte) {
-        if (mainWindow != null)
+    synchronized public static void init(String windowTilte) {
+        if (instance != null)
             return;
         if (frameUsed) {
-            mainWindow = new MainWindow(windowTilte);
+            instance = new MainWindow(windowTilte);
             Journal.add("init_window");
         } else {
             Journal.add(NoteType.WARNING, "init_window");
@@ -76,14 +80,14 @@ public class MainWindow extends JFrame {
         button.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    Desktop.getDesktop().browse(WebServer.getLocalURL(сheckBox.isSelected()).toURI());
+                    Desktop.getDesktop().browse(WebServer.getInstance().getLocalURL(сheckBox.isSelected()).toURI());
                 } catch (Exception exception) {
                     Journal.add(NoteType.ERROR, "open_browser", exception.getMessage());
                 }
             }
         });
         container.add(button);
-        if (WebServer.getHttpUsed())
+        if (WebServer.getInstance().getHttpUsed())
             container.add(сheckBox);
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = 350;

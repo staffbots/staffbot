@@ -153,7 +153,7 @@ public abstract class Staffbot {
         Database.init(); // Подключаемся к базе данных
         solutionInitAction.run(); // Инициализируем решение (Levers, Devices and Tasks)
         Database.dropUnusingTables();
-        WebServer.init(); // Запускаем веб-сервер
+        WebServer.getInstance().init(); // Запускаем веб-сервер
         MainWindow.init(getFullName()); // Открываем главное окно приложения
     }
 
@@ -189,15 +189,16 @@ public abstract class Staffbot {
             ParsableProperties properties = new ParsableProperties();
             properties.load(inputStream);
             // Применяем конфигурацию
-            WebServer.setAdminLogin(properties.getProperty("web.admin_login"));
-            WebServer.setAdminPassword(properties.getProperty("web.admin_password"));
-            WebServer.setHttpPort(properties.getIntegerProperty("web.http_port"));
-            WebServer.setHttpsPort(properties.getIntegerProperty("web.https_port"));
-            WebServer.setHttpUsed(properties.getBooleanProperty("web.http_used"));
-            WebServer.setKeyStore(properties.getProperty("web.key_store"));
-            WebServer.setStorePassword(properties.getProperty("web.store_password"));
-            WebServer.setManagerPassword(properties.getProperty("web.manager_password"));
-            WebServer.setUpdateDelay(properties.getIntegerProperty("web.update_delay"));
+            WebServer webServer = WebServer.getInstance();
+            webServer.setAdminLogin(properties.getProperty("web.admin_login"));
+            webServer.setAdminPassword(properties.getProperty("web.admin_password"));
+            webServer.setHttpPort(properties.getIntegerProperty("web.http_port"));
+            webServer.setHttpsPort(properties.getIntegerProperty("web.https_port"));
+            webServer.setHttpUsed(properties.getBooleanProperty("web.http_used"));
+            webServer.setKeyStore(properties.getProperty("web.key_store"));
+            webServer.setStorePassword(properties.getProperty("web.store_password"));
+            webServer.setManagerPassword(properties.getProperty("web.manager_password"));
+            webServer.setUpdateDelay(properties.getIntegerProperty("web.update_delay"));
 
             Database.setServer(properties.getProperty("db.server"));
             Database.PORT = properties.getIntegerProperty("db.port", Database.PORT);
@@ -211,8 +212,8 @@ public abstract class Staffbot {
             Devices.coolingDevice = new CoolingDevice(RaspiPin.getPinByAddress(fanPin), cpuTemperature);
 
             MainWindow.setFrameUsed(properties.getBooleanProperty("ui.frame_used"));
-            WebServer.setColorSchema(properties.getProperty("ui.main_color"));
-            WebServer.setFontFamily(properties.getProperty("ui.font-family"));
+            webServer.setColorSchema(properties.getProperty("ui.main_color"));
+            webServer.setFontFamily(properties.getProperty("ui.font-family"));
 
             Journal.add(false, "init_configs");
 

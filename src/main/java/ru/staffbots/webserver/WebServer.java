@@ -5,6 +5,7 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
+import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.colors.ColorSchema;
@@ -16,83 +17,91 @@ import java.net.*;
 
 public class WebServer {
 
-    ////////////////////////////////////////////////////////////////
-    private static String adminLogin = "admin";
+    private WebServer() {}
 
-    public static String getAdminLogin() {
+    private static final WebServer instance = new WebServer();
+
+    public static WebServer getInstance() {
+        return instance;
+    }
+
+    ////////////////////////////////////////////////////////////////
+    private String adminLogin = "admin";
+
+    public String getAdminLogin() {
         return adminLogin;
     }
 
-    public static void setAdminLogin(String value) {
+    public void setAdminLogin(String value) {
         if (value == null) return;
         if (value.trim().isEmpty()) return;
         adminLogin = value;
     }
 
     ////////////////////////////////////////////////////////////////
-    private static String adminPassword = "";
+    private String adminPassword = "";
 
-    public static String getAdminPassword() {
+    public String getAdminPassword() {
         return adminPassword;
     }
 
-    public static void setAdminPassword(String value) {
+    public void setAdminPassword(String value) {
         if (value == null) return;
         adminPassword = value;
     }
 
     ////////////////////////////////////////////////////////////////
-    private static int httpPort = 80;
+    private int httpPort = 80;
 
-    public static int getHttpPort() {
+    public int getHttpPort() {
         return httpPort;
     }
 
-    public static void setHttpPort(Integer value) {
+    public void setHttpPort(Integer value) {
         if (value == null) return;
         httpPort = value;
     }
 
     ////////////////////////////////////////////////////////////////
-    private static int httpsPort = 443;
+    private int httpsPort = 443;
 
-    public static void setHttpsPort(Integer value) {
+    public void setHttpsPort(Integer value) {
         if (value == null) return;
         httpsPort = value;
     }
 
     ////////////////////////////////////////////////////////////////
-    private static boolean httpUsed = false;
+    private boolean httpUsed = false;
 
-    public static boolean getHttpUsed() {
+    public boolean getHttpUsed() {
         return httpUsed;
     }
 
-    public static void setHttpUsed(Boolean value) {
+    public void setHttpUsed(Boolean value) {
         if (value == null) return;
         httpUsed = value;
     }
 
     ////////////////////////////////////////////////////////////////
-    private static String keyStore = "keystore";
+    private String keyStore = "keystore";
 
-    public static void setKeyStore(String value) {
+    public void setKeyStore(String value) {
         if (value == null) return;
         keyStore = value;
     }
 
     ////////////////////////////////////////////////////////////////
-    private static String storePassword = "staffbots";
+    private String storePassword = "staffbots";
 
-    public static void setStorePassword(String value) {
+    public void setStorePassword(String value) {
         if (value == null) return;
         storePassword = value;
     }
 
     ////////////////////////////////////////////////////////////////
-    private static String managerPassword = "staffbots";
+    private String managerPassword = "staffbots";
 
-    public static void setManagerPassword(String value) {
+    public void setManagerPassword(String value) {
         if (value == null) return;
         managerPassword = value;
     }
@@ -101,36 +110,36 @@ public class WebServer {
     /**
      * Задержка между запросами на обновление данных на страницах, милисек.
      */
-    private static int updateDelay = 10000;
+    private int updateDelay = 10000;
 
-    public static int getUpdateDelay() {
+    public int getUpdateDelay() {
         return updateDelay;
     }
 
-    public static void setUpdateDelay(Integer value) {
+    public void setUpdateDelay(Integer value) {
         if (value == null) return;
         updateDelay = value;
     }
 
     ////////////////////////////////////////////////////////////////
-    private static ColorSchema сolorSchema;
+    private ColorSchema сolorSchema;
 
-    public static void setColorSchema(String mainColor) {
+    public void setColorSchema(String mainColor) {
         сolorSchema = new ColorSchema(mainColor);
     }
 
-    public static ColorSchema getColorSchema() {
+    public ColorSchema getColorSchema() {
         return сolorSchema;
     }
 
     ////////////////////////////////////////////////////////////////
-    private static String fontFamily = "sans-serif";
+    private String fontFamily = "sans-serif";
 
-    public static String getFontFamily() {
+    public String getFontFamily() {
         return fontFamily;
     }
 
-    public static void setFontFamily(String value) {
+    public void setFontFamily(String value) {
         if (value == null) return;
         fontFamily = value;
     }
@@ -139,9 +148,9 @@ public class WebServer {
     /**
      *
      */
-    private static Server server = null;
+    private Server server = null;
 
-    private static void checkPort(int port) {
+    private void checkPort(int port) {
         try {
             Socket socket = new Socket("localhost", port);
             if (socket.isConnected()) {
@@ -153,14 +162,14 @@ public class WebServer {
         }
     }
 
-    private static ServerConnector getHttpConnector() {
+    private ServerConnector getHttpConnector() {
         checkPort(httpPort);
         ServerConnector connector = new ServerConnector(server);
         connector.setPort(httpPort);
         return connector;
     }
 
-    private static ServerConnector getHttpsConnector() {
+    private ServerConnector getHttpsConnector() {
         checkPort(httpsPort);
         String keyStorePath = Resources.getAsFile(keyStore).getPath();
         // HTTPS configuration
@@ -180,7 +189,7 @@ public class WebServer {
         return connector;
     }
 
-    private static Connector[] getConnectors() {
+    private Connector[] getConnectors() {
         return httpUsed ?
                new Connector[] {getHttpsConnector(), getHttpConnector()} :
                new Connector[] {getHttpsConnector()};
@@ -189,7 +198,7 @@ public class WebServer {
     /**
      *
      */
-    public static void init() {
+    public void init() {
         if (server != null) { // If server already run
             try {
                 server.stop();
@@ -226,7 +235,7 @@ public class WebServer {
         }
     }
 
-    public static URL getLocalURL(boolean SSL){
+    public URL getLocalURL(boolean SSL){
         try {
             return SSL ?
                 new URL("https://localhost:" + httpsPort) :

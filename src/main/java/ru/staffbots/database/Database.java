@@ -18,8 +18,6 @@ import java.util.*;
 
 public class Database {
 
-
-
     ////////////////////////////////////////////////////////////////
     private static DBMS DBMSystem = DBMS.MySQL;
 
@@ -51,14 +49,6 @@ public class Database {
 
     public static Boolean DROP = false;
 
-    public static Cleaner cleaner;
-
-    public static Journal journal;
-
-    public static Settings settings;
-
-    public static Configs configs;
-
     public static Users users;
 
     private static Map<String, DBTable> systemTableList = new HashMap(0);
@@ -88,18 +78,15 @@ public class Database {
             connection = DBMSystem.getConnection(server, PORT, USER, PASSWORD);
             createDatabase(DROP);
             connection = DBMSystem.getConnection(server, PORT, NAME, USER, PASSWORD);
-            journal = new Journal();
             Journal.add(null);
             Journal.add("init_database", NAME);
-            configs = new Configs();
-            settings = new Settings();
             Languages.loadDefaultCode();
             users = new Users();
-            systemTableList.put(journal.getTableName(), journal);
-            systemTableList.put(configs.getTableName(), configs);
-            systemTableList.put(settings.getTableName(), settings);
+            systemTableList.put(Journal.getInstance().getTableName(), Journal.getInstance());
+            systemTableList.put(Configs.getInstance().getTableName(), Configs.getInstance());
+            systemTableList.put(Settings.getInstance().getTableName(), Settings.getInstance());
             systemTableList.put(users.getTableName(), users);
-            cleaner = new Cleaner();
+            Cleaner.getInstance().update();
         } catch (Exception e) {
             connection = null;
             exception = e;

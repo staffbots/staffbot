@@ -3,6 +3,7 @@ package ru.staffbots.tools.tasks;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.database.settings.Settings;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -103,8 +104,7 @@ public class Tasks {
     }
 
     public static long getStartTime(){
-        String startTimeString = (Database.settings == null) ? null :
-                Database.settings.load("control_start_time");
+        String startTimeString = Settings.getInstance().load("control_start_time");
         if (startTimeString == null) return startTime;
         try {
             startTime = Long.parseLong(startTimeString);
@@ -116,10 +116,10 @@ public class Tasks {
 
     private static void setStartTime(long time){
         if ((time == 0) && (startTime != 0))
-            Database.settings.delete("control_start_time");
+            Settings.getInstance().delete("control_start_time");
         startTime = time;
         if (startTime != 0)
-            Database.settings.save("control_start_time", Long.toString(startTime));
+            Settings.getInstance().save("control_start_time", Long.toString(startTime));
     }
 
 }

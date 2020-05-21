@@ -2,6 +2,7 @@ package ru.staffbots.database.configs;
 
 import ru.staffbots.database.DBTable;
 import ru.staffbots.database.Executor;
+import ru.staffbots.database.cleaner.Cleaner;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.levers.Levers;
@@ -19,8 +20,14 @@ public class Configs extends DBTable {
     private static final String staticTableName = "sys_configs";
     private static final String staticTableFields = "configname VARCHAR(50), configvalue TEXT";
 
-    public Configs(){
+    private Configs(){
         super(staticTableName, staticTableFields);
+    }
+
+    private static final Configs instance = new Configs();
+
+    public static Configs getInstance() {
+        return instance;
     }
 
     private static final String condition = " WHERE LOWER(configname) LIKE LOWER(?)";

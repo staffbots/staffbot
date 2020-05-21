@@ -36,10 +36,11 @@ public class JournalServlet extends BaseServlet {
         Language language = accountService.getUserLanguage(request);
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
 
-        Database.journal.setCount(accountService.getAttribute(request,"journal_count"));
+        Journal journal = Journal.getInstance();
+        journal.setCount(accountService.getAttribute(request,"journal_count"));
         String toDateStr = accountService.getAttribute(request,"journal_todate");
         String fromDateStr = accountService.getAttribute(request,"journal_fromdate");
-        Database.journal.period.set(fromDateStr, toDateStr);
+        journal.period.set(fromDateStr, toDateStr);
 
         Map<Integer, Boolean> typesForShow = new HashMap<>();
 
@@ -52,20 +53,20 @@ public class JournalServlet extends BaseServlet {
                 if (checkboxName.equalsIgnoreCase("journal_" + pageType.name() + "_checkbox"))
                     typesForShow.put(pageType.getValue(), checkboxValue);
 
-            if (checkboxName.equals("journal_fromdate_checkbox") && checkboxValue && (Database.journal.period.getFromDate() == null))
-                Database.journal.period.initFromDate();
+            if (checkboxName.equals("journal_fromdate_checkbox") && checkboxValue && (journal.period.getFromDate() == null))
+                journal.period.initFromDate();
 
-            if (checkboxName.equals("journal_todate_checkbox") && checkboxValue && (Database.journal.period.getToDate() == null))
-                Database.journal.period.initToDate();
+            if (checkboxName.equals("journal_todate_checkbox") && checkboxValue && (journal.period.getToDate() == null))
+                journal.period.initToDate();
         }
 
         String searchString = accountService.getAttribute(request,"journal_search");
         pageVariables.put("journal_search", searchString);
         pageVariables.put("dateformat", Journal.dateFormat.getFormat());
-        pageVariables.put("journal_fromdate", Database.journal.period.getFromDateAsString());
-        pageVariables.put("journal_todate", Database.journal.period.getToDateAsString());
-        pageVariables.put("journal_datesize", Database.journal.dateFormat.get().length());
-        pageVariables.put("journal_count", Database.journal.getCount());
+        pageVariables.put("journal_fromdate", journal.period.getFromDateAsString());
+        pageVariables.put("journal_todate", journal.period.getToDateAsString());
+        pageVariables.put("journal_datesize", journal.dateFormat.get().length());
+        pageVariables.put("journal_count", journal.getCount());
         pageVariables.put("journal_page", getJournalPage(typesForShow, searchString, language));
         String content = fillTemplate("html/" + pageType.getName() + ".html", pageVariables);
         super.doGet(request, response, content);
@@ -85,7 +86,7 @@ public class JournalServlet extends BaseServlet {
     }
 
     private String getJournalPage(Map<Integer, Boolean> typesForShow, String searchString, Language language) {
-        ArrayList<Note> journalList = Database.journal.getJournal(typesForShow, searchString, language);
+        ArrayList<Note> journalList = Journal.getInstance().getJournal(typesForShow, searchString, language);
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
         String htmlPath = "html/journal/";
         String htmlCode = fillTemplate(htmlPath + "empty.html",pageVariables);

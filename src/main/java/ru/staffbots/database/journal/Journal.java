@@ -27,8 +27,16 @@ public class Journal extends DBTable {
             "noteName VARCHAR(50) CHARACTER SET utf8, " +
             "noteVariables VARCHAR(500) CHARACTER SET utf8";
 
-    public Journal(){
+    private Journal(){
         super(staticTableName, staticTableFields);
+    }
+
+    public static Journal getInstance() {
+        return JournalHolder.HOLDER_INSTANCE;
+    }
+
+    private static class JournalHolder {
+        private static final Journal HOLDER_INSTANCE = new Journal();
     }
 
     public Journal(String fromDate, String toDate){

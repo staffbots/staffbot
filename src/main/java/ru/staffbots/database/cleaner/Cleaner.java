@@ -5,10 +5,12 @@ import ru.staffbots.database.Database;
 import ru.staffbots.database.Executor;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.database.settings.Settings;
 import ru.staffbots.tools.dates.DateAccuracy;
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.tools.values.DateValue;
+import ru.staffbots.webserver.WebServer;
 
 import java.util.Date;
 import java.util.Map;
@@ -22,6 +24,14 @@ import java.sql.Timestamp;
  * Экземпляр описан как статическое поле в классе Database
  */
 public class Cleaner {
+
+    private Cleaner() { }
+
+    private static final Cleaner instance = new Cleaner();
+
+    public static Cleaner getInstance() {
+        return instance;
+    }
 
     // Количество (записей или суток) оставляемых в журнале
     private long journalValue;
@@ -45,10 +55,6 @@ public class Cleaner {
     private boolean timerIsRuning = false;
     private Timer timer;
 
-    public Cleaner() {
-        update();
-    }
-
     public void refresh(){
         if(Database.disconnected())
             return;
@@ -68,7 +74,7 @@ public class Cleaner {
             TimerTask cleanTask = new TimerTask() {
                 @Override
                 public void run() {
-                    Database.cleaner.clean();
+                    Cleaner.getInstance().clean();
                 }
             };
             long dt = System.currentTimeMillis() - autoStart.getTime();
@@ -92,35 +98,37 @@ public class Cleaner {
                     cleanByCount(tableList.get(tableName), tablesValue) :
                     cleanByDate(tableList.get(tableName), tablesValue);
         long journalNotes = (journalMeasureIsRecord) ?
-                cleanByCount(Database.journal, journalValue - 1) :
-                cleanByDate(Database.journal, journalValue);
+                cleanByCount(Journal.getInstance(), journalValue - 1) :
+                cleanByDate(Journal.getInstance(), journalValue);
         Journal.add(NoteType.WARNING, "clean_database", Long.toString(valueRecords), Long.toString(journalNotes));
     }
 
     private void loadSettings(){
-        journalValue = Database.settings.loadAsLong("dbclean_journal_value",99);
-        journalMeasureIsRecord = Database.settings.loadAsBollean("dbclean_journal_measure","record", true);
-        tablesValue = Database.settings.loadAsLong("dbclean_tables_value",30);
-        tablesMeasureIsRecord = Database.settings.loadAsBollean("dbclean_tables_measure", "record", false);
-        autoCleaning = Database.settings.loadAsBollean("dbclean_auto_cleaning", "on", false);
-        autoValue = Database.settings.loadAsLong("dbclean_auto_value",1);
+        Settings settings = Settings.getInstance();
+        journalValue = settings.loadAsLong("dbclean_journal_value",99);
+        journalMeasureIsRecord = settings.loadAsBollean("dbclean_journal_measure","record", true);
+        tablesValue = settings.loadAsLong("dbclean_tables_value",30);
+        tablesMeasureIsRecord = settings.loadAsBollean("dbclean_tables_measure", "record", false);
+        autoCleaning = settings.loadAsBollean("dbclean_auto_cleaning", "on", false);
+        autoValue = settings.loadAsLong("dbclean_auto_value",1);
         try {
-            autoMeasure = DateAccuracy.valueOf(Database.settings.load("dbclean_auto_measure").toUpperCase());
+            autoMeasure = DateAccuracy.valueOf(settings.load("dbclean_auto_measure").toUpperCase());
         } catch (Exception exception) {
             autoMeasure = DateAccuracy.DAY;
         }
-        autoStart = DateValue.fromString(Database.settings.load("dbclean_auto_start"), DATE_FORMAT, autoStart);
+        autoStart = DateValue.fromString(settings.load("dbclean_auto_start"), DATE_FORMAT, autoStart);
     }
 
     private void saveSettings(){
-        Database.settings.save("dbclean_journal_value", Long.toString(journalValue));
-        Database.settings.save("dbclean_journal_measure", journalMeasureIsRecord ? "record" : "day");
-        Database.settings.save("dbclean_tables_value", Long.toString(tablesValue));
-        Database.settings.save("dbclean_tables_measure", tablesMeasureIsRecord ? "record" : "day");
-        Database.settings.save("dbclean_auto_cleaning", autoCleaning ? "on" : "off");
-        Database.settings.save("dbclean_auto_value", Long.toString(autoValue));
-        Database.settings.save("dbclean_auto_measure", autoMeasure.toString().toLowerCase());
-        Database.settings.save("dbclean_auto_start", DateValue.toString(autoStart, DATE_FORMAT));
+        Settings settings = Settings.getInstance();
+        settings.save("dbclean_journal_value", Long.toString(journalValue));
+        settings.save("dbclean_journal_measure", journalMeasureIsRecord ? "record" : "day");
+        settings.save("dbclean_tables_value", Long.toString(tablesValue));
+        settings.save("dbclean_tables_measure", tablesMeasureIsRecord ? "record" : "day");
+        settings.save("dbclean_auto_cleaning", autoCleaning ? "on" : "off");
+        settings.save("dbclean_auto_value", Long.toString(autoValue));
+        settings.save("dbclean_auto_measure", autoMeasure.toString().toLowerCase());
+        settings.save("dbclean_auto_start", DateValue.toString(autoStart, DATE_FORMAT));
     }
 
     private long cleanByCount(DBTable table, long count){

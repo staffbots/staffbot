@@ -1,6 +1,7 @@
 package ru.staffbots.webserver.servlets;
 
 import ru.staffbots.database.Database;
+import ru.staffbots.database.configs.Configs;
 import ru.staffbots.tools.languages.Language;
 import ru.staffbots.tools.tasks.Tasks;
 import ru.staffbots.tools.tasks.TasksStatus;
@@ -87,7 +88,7 @@ public class ControlServlet extends BaseServlet {
     private boolean buttonSaveClick(HttpServletRequest request) {
         buttonApplyClick(request);
         String configName = accountService.setAttribute(request,"config_name");
-        Database.configs.save(configName);
+        Configs.getInstance().save(configName);
         return true;
     }
 
@@ -95,7 +96,7 @@ public class ControlServlet extends BaseServlet {
     private boolean buttonLoadClick(HttpServletRequest request) {
         buttonApplyClick(request);
         String configName = accountService.setAttribute(request,"config_name");
-        Database.configs.load(configName);
+        Configs.getInstance().load(configName);
         return true;
     }
 
@@ -103,7 +104,7 @@ public class ControlServlet extends BaseServlet {
     private boolean buttonDeleteClick(HttpServletRequest request) {
         buttonApplyClick(request);
         String configName = request.getParameter("config_name");
-        Database.configs.delete(configName);
+        Configs.getInstance().delete(configName);
         accountService.setAttribute(request,"config_name", "");
         return true;
     }
@@ -173,7 +174,7 @@ public class ControlServlet extends BaseServlet {
 
     private String getConfigList() {
         String context = "";
-        for (String configName : Database.configs.getList())
+        for (String configName : Configs.getInstance().getList())
             context += getConfig(configName);
         return context;
     }

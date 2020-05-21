@@ -2,6 +2,7 @@ package ru.staffbots.database.settings;
 
 import ru.staffbots.database.DBTable;
 import ru.staffbots.database.Executor;
+import ru.staffbots.database.journal.Journal;
 
 /*
  * Настройки,
@@ -11,10 +12,19 @@ import ru.staffbots.database.Executor;
 public class Settings extends DBTable {
 
     private static final String staticTableName = "sys_settings";
+
     private static final String staticTableFields = "settingname VARCHAR(50), settingvalue VARCHAR(100)";
 
-    public Settings(){
+    private Settings(){
         super(staticTableName, staticTableFields);
+    }
+
+    public static Settings getInstance() {
+        return SettingsHolder.HOLDER_INSTANCE;
+    }
+
+    private static class SettingsHolder {
+        private static final Settings HOLDER_INSTANCE = new Settings();
     }
 
     public void save(String settingName, String settingValue){
