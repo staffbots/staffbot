@@ -11,38 +11,18 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
- * Устройства
+ * Devices set, singleton class
  */
-public class Devices{
+public class Devices extends ArrayList<Device> {
 
-    public static CoolingDevice coolingDevice = null;
-
-    /**
-     * <b>Список устройств</b>,
-     * используется для групповой обработки в StatusServlet
-     */
-    public static ArrayList<Device> list = new ArrayList();
-
-    public static ArrayList<Pin> getPins(){
-        ArrayList<Pin> result = new ArrayList(0);
-        for (Device device: list)
-            result.addAll(device.getPins());
-        return result;
+    private Devices() {
+        super(0);
+        add(CoolingDevice.getInstance());
     }
 
-    public static int getI2CBusAddress(Pin pin) {
-        for (Device device: list)
-            if (device.getPins().contains(pin)) {
-                I2CBusDevice busDevice = I2CBusDevice.convertDevice(device);
-                if (busDevice != null)
-                    return busDevice.getBusAddress();
-            }
-        return -1;
-    }
-
-    public static boolean putDevice(Device device) {
+    private static boolean addDevice(Device device) {
         if (device == null) return false;
-        if (list.contains(device)) return false;
+        if (instance.contains(device)) return false;
         boolean overlap = device.overlap;
         if (!overlap)
             for (Pin pin: getPins())
@@ -55,17 +35,14 @@ public class Devices{
             Journal.add(NoteType.ERROR, "overlap_pin", device.getName());
         else {
             if (!device.initPins()) return false;
-            device.initValues();
-            list.add(device);
+            device.dbInit();
+            instance.add(device);
         }
         return !overlap;
     }
 
-    public static final boolean isRaspbian = isRaspbian();
-    /**
-     * @return возвращает true в случае если программа запущена в операционной системе Raspbian
-     * (то есть на контроллере Raspberry Pi), иначе - false
-     */
+    private static final Devices instance = new Devices();
+
     private static boolean isRaspbian() {
         String osType = System.getProperty("os.name").toLowerCase();
         if (!osType.contains("linux")) return false;
@@ -81,8 +58,6 @@ public class Devices{
         return osName.toLowerCase().contains("raspbian");
     }
 
-    public static GpioController gpioController = getController();
-
     private static GpioController getController(){
         try {
             if (!isRaspbian()) throw new Exception("Need Raspbian - operation system for Raspberry Pi");
@@ -93,18 +68,42 @@ public class Devices{
         }
     }
 
-    public static void init(Device... devices) {
-        list.clear();
-        if (devices == null) devices = new Device[0];
+    public static final boolean isRaspbian = isRaspbian();
+
+    public static GpioController gpioController = getController();
+
+    public static ArrayList<Device> getList() {
+        return instance;
+    }
+
+    public static ArrayList<Pin> getPins(){
+        ArrayList<Pin> result = new ArrayList(0);
+        for (Device device: instance)
+            result.addAll(device.getPins());
+        return result;
+    }
+
+    public static int getI2CBusAddress(Pin pin) {
+        for (Device device: instance)
+            if (device.getPins().contains(pin)) {
+                I2CBusDevice busDevice = I2CBusDevice.convertDevice(device);
+                if (busDevice != null)
+                    return busDevice.getBusAddress();
+            }
+        return -1;
+    }
+
+    public static void addDevices(Device... devices) {
+        if (devices == null)
+            return;
         for (Device device: devices)
-            putDevice(device);
-        putDevice(coolingDevice);
+            instance.addDevice(device);
         if (devices.length > 0)
             Journal.add("init_device");
     }
 
     public static void reset(){
-        for (Device device: Devices.list)
+        for (Device device: instance)
             device.reset();
     }
 

@@ -1,6 +1,7 @@
 package ru.staffbots.database.users;
 
 import ru.staffbots.database.DBTable;
+import ru.staffbots.database.Database;
 import ru.staffbots.database.Executor;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
@@ -14,29 +15,39 @@ import java.util.ArrayList;
 
 public class Users extends DBTable {
 
-    private static final String staticTableName = "sys_users";
-    private static final String staticTableFields =
-            "login VARCHAR(16), password VARCHAR(32), role INT, language VARCHAR(2)";
-
-    public Users(){
-        super(staticTableName, staticTableFields);
+    private Users(){
+        super("sys_users", "login VARCHAR(16), password VARCHAR(32), role INT, language VARCHAR(2)");
     }
 
-    public void delete(String login){
+    private static Users instance = null;
+
+    public static Users getInstance() {
+        if (instance == null)
+            if (Database.connected())
+                synchronized (Users.class) {
+                    if (instance == null)
+                        instance = new Users();
+                }
+        return instance;
+    }
+
+    public static void delete(String login){
+        if (instance == null) return;
         Executor executor = new Executor("delete_user", login);
-        executor.execUpdate("DELETE FROM " + staticTableName + " WHERE (login = ?)", login);
+        executor.execUpdate("DELETE FROM " + instance.getTableName() + " WHERE (login = ?)", login);
     }
 
-    public boolean setUser(User user){
+    public static boolean setUser(User user){
         boolean newLogin = (getUserList(user.login).size() == 0);
         if (isAdmin(user.login)) {
             Journal.add(NoteType.WARNING, "add_user", user.login);
             return false;
         }
+        if (instance == null) return false;
         Executor executor = new Executor(newLogin ? "add_user" :"change_user", user.login, user.role.getDescription(user.language.getCode()));
         return executor.execUpdate(newLogin ?
-                        "INSERT INTO " + staticTableName + " (role, language, password, login) VALUES (?, ?, ?, ?)" :
-                        "UPDATE " + staticTableName + " SET role = ?, language = ?, password = ? WHERE login = ?",
+                        "INSERT INTO " + instance.getTableName() + " (role, language, password, login) VALUES (?, ?, ?, ?)" :
+                        "UPDATE " + instance.getTableName() + " SET role = ?, language = ?, password = ? WHERE login = ?",
                 String.valueOf(user.role.getAccessLevel()),
                 user.language.getCode(),
                 cryptWithMD5(user.password),
@@ -68,9 +79,10 @@ public class Users extends DBTable {
         if (user.language.getCode().equals(language.getCode()))
             return false;
         user.language = language;
+        if (instance == null) return false;
         Executor executor = new Executor();
         return executor.execUpdate(
-            "UPDATE " + staticTableName + " SET language = ? WHERE login = ?",
+            "UPDATE " + instance.getTableName() + " SET language = ? WHERE login = ?",
                 user.language.getCode(),
                 user.login) > 0;
     }
@@ -92,9 +104,10 @@ public class Users extends DBTable {
                 return new ArrayList(0);
             parameters.add(login);
         }
+        if (instance == null) return new ArrayList(0);
         Executor<ArrayList<User>> executor = new Executor();
         return executor.execQuery(
-                "SELECT login, password, language, role FROM "  + staticTableName + (login == null ? "" : " WHERE (login = ?)"),
+                "SELECT login, password, language, role FROM "  + instance.getTableName() + (login == null ? "" : " WHERE (login = ?)"),
                 (resultSet) -> {
                     ArrayList<User> userList = new ArrayList(0);
                     while (resultSet.next())

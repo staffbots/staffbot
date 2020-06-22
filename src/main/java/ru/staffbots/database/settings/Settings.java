@@ -1,6 +1,7 @@
 package ru.staffbots.database.settings;
 
 import ru.staffbots.database.DBTable;
+import ru.staffbots.database.Database;
 import ru.staffbots.database.Executor;
 import ru.staffbots.database.journal.Journal;
 
@@ -11,55 +12,57 @@ import ru.staffbots.database.journal.Journal;
  */
 public class Settings extends DBTable {
 
-    private static final String staticTableName = "sys_settings";
-
-    private static final String staticTableFields = "settingname VARCHAR(50), settingvalue VARCHAR(100)";
-
     private Settings(){
-        super(staticTableName, staticTableFields);
+        super("sys_settings", "settingname VARCHAR(50), settingvalue VARCHAR(100)");
     }
+
+    private static Settings instance = null;
 
     public static Settings getInstance() {
-        return SettingsHolder.HOLDER_INSTANCE;
+        if (instance == null)
+            if (Database.connected())
+                synchronized (Settings.class) {
+                    if (instance == null)
+                        instance = new Settings();
+                }
+        return instance;
     }
 
-    private static class SettingsHolder {
-        private static final Settings HOLDER_INSTANCE = new Settings();
-    }
-
-    public void save(String settingName, String settingValue){
+    public static void save(String settingName, String settingValue){
         if (settingValue == null) settingValue = "";
+        if (instance == null) return;
         Executor executor = new Executor("save_settings", settingName, settingValue);
         String currentValue = load(settingName);
         if (settingValue.equals(currentValue)) return;
         String update = (currentValue == null) ?
-                "INSERT INTO " + getTableName() + " (settingvalue, settingname) VALUES (?, ?)" :
-                "UPDATE " + getTableName() + " SET settingvalue = ? WHERE LOWER(settingname) LIKE LOWER(?)";
+                "INSERT INTO " + instance.getTableName() + " (settingvalue, settingname) VALUES (?, ?)" :
+                "UPDATE " + instance.getTableName() + " SET settingvalue = ? WHERE LOWER(settingname) LIKE LOWER(?)";
         executor.execUpdate(update, settingValue, settingName);
     }
 
-    public String load(String settingName){
+    public static String load(String settingName){
+        if (instance == null) return null;
         //  Executor<String> executor = new Executor("load_settings", settingName);
         Executor<String> executor = new Executor(null);
         return executor.execQuery(
-                "SELECT settingvalue FROM " + getTableName() + " WHERE  LOWER(settingname) LIKE LOWER(?)",
+                "SELECT settingvalue FROM " + instance.getTableName() + " WHERE  LOWER(settingname) LIKE LOWER(?)",
                 (resultSet) -> {
                     return (resultSet.next()) ? resultSet.getString(1) : null;
                 }, settingName);
     }
 
-    public String loadAsString(String name, String defaultValue){
+    public static String loadAsString(String name, String defaultValue){
         String stringValue = load(name);
         return (stringValue == null) ? defaultValue : stringValue;
     }
 
-    public boolean loadAsBollean(String name, String trueValue, boolean defaultValue){
+    public static boolean loadAsBollean(String name, String trueValue, boolean defaultValue){
         String stringValue = load(name);
         if(stringValue == null) return defaultValue;
         return stringValue.equalsIgnoreCase(trueValue);
     }
 
-    public long loadAsLong(String name, long defaultValue){
+    public static long loadAsLong(String name, long defaultValue){
         String stringValue = load(name);
         if(stringValue == null) return defaultValue;
         try {
@@ -69,10 +72,11 @@ public class Settings extends DBTable {
         }
     }
 
-    public int delete(String settingName){
+    public static int delete(String settingName){
+        if (instance == null) return 0;
         Executor executor = new Executor("delete_settings", settingName);
         return executor.execUpdate(
-                "DELETE FROM " + getTableName() + " WHERE  LOWER(settingname) LIKE LOWER(?)",
+                "DELETE FROM " + instance.getTableName() + " WHERE  LOWER(settingname) LIKE LOWER(?)",
                 settingName);
     }
 

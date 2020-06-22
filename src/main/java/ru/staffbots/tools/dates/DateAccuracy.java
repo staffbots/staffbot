@@ -29,4 +29,13 @@ public enum DateAccuracy {
         return name().toLowerCase();
     }
 
+    public static DateAccuracy fromString(String value, DateAccuracy defaultValue) {
+        if (value == null) return defaultValue;
+        try {
+            return DateAccuracy.valueOf(value.toUpperCase());
+        } catch (Exception exception) {
+            return defaultValue;
+        }
+    }
+
 }

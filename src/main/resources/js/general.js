@@ -9,7 +9,7 @@ $(document).ready(function(){
 var updateDelay = 10000;
 
 function setUpdateDelay(){
-    updateDelay = Number(element('update_delay').value);
+    // updateDelay = Number(element('update_delay').value);
 }
 
 //Возвращает (первый) элемент с указанным именем

@@ -72,6 +72,13 @@ abstract public class Value extends DBTable {
         this.valueType = valueType;
     }
 
+    public void dbInit() {
+        if (isStorable()) {
+            createTable();
+            set(get());
+        }
+    }
+
     /**
      * @param name название
      * @param note описание

@@ -50,8 +50,8 @@ public class MainESP32Device extends NetworkDevice {
     }
 
     @Override
-    public void initValues() {
-        super.initValues();
+    public void dbInit() {
+        super.dbInit();
         getPhProbe();
         getEcProbe();
         getAquaTemperature();

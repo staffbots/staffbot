@@ -73,7 +73,7 @@ public class ResourceServlet extends BaseServlet {
                     String deviceName = requests.length > 1 ? requests[1] : null;
                     if (resourceName == null) break;
                     NetworkDevice networkDevice = null;
-                    for (Device device: Devices.list)
+                    for (Device device: Devices.getList())
                         if (device.getName().equals(deviceName))
                             networkDevice = NetworkDevice.convertDevice(device);
                     if (networkDevice == null) break;

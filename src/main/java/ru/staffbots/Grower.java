@@ -30,18 +30,18 @@ public class Grower extends Staffbot {
     // Точка входа при запуске приложения
     public static void main(String[] args) {
         solutionInit(()->{
-                    Levers.initGroup("Освещение и вентиляция", sunriseLever, sunsetLever, funUsedLever, funDelayLever);
-                    Levers.initGroup("Подготовка раствора", phLever, ecLever, soluteLever, volumeLever);
-                    Levers.initGroup("Орошение", dayRateLever, nightRateLever, durationLever);
-                    Devices.init(sensor, sonar, sunRelay, funRelay); // Инициализируем список устройств
+                    Levers.addGroup("Освещение и вентиляция", sunriseLever, sunsetLever, funUsedLever, funDelayLever);
+                    Levers.addGroup("Подготовка раствора", phLever, ecLever, soluteLever, volumeLever);
+                    Levers.addGroup("Орошение", dayRateLever, nightRateLever, durationLever);
+                    Devices.addDevices(sensor, sonar, sunRelay, funRelay); // Инициализируем список устройств
                     Tasks.init(testTask, lightTask, ventingTask, irrigationTask);
                 }
         );
     }
 
     static {
-        boardType = SystemInfo.BoardType.RaspberryPi_3B;
-        solutionName = MethodHandles.lookup().lookupClass().getSimpleName(); // current class name
+        setBoardType(SystemInfo.BoardType.RaspberryPi_3B);
+        setSolutionName(MethodHandles.lookup().lookupClass().getSimpleName()); // current class name
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -202,10 +202,10 @@ public class Grower extends Staffbot {
             () -> { // Задание без повторений
                 long timePeriod = DateAccuracy.WEEK.getMilliseconds();
                 Period period = new Period(DateFormat.DATE, new Date(System.currentTimeMillis() - timePeriod), new Date());
-                for (Device device : Devices.list)
+                for (Device device : Devices.getList())
                     for (Value value : device.getValues())
                         value.setRandom(period);
-                for (Lever lever : Levers.list)
+                for (Lever lever : Levers.getList())
                     lever.toValue().setRandom(period);
                 Tasks.setStatus(TasksStatus.STOP);
                 Journal.addAnyNote(testTaskNote + ": Задание выполнено");

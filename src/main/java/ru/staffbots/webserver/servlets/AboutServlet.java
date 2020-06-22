@@ -34,16 +34,16 @@ public class AboutServlet extends BaseServlet {
         Language language = accountService.getUserLanguage(request);
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
         pageVariables.put("board_info", getBoardInfo(language));
-        pageVariables.put("osname_value",System.getProperty("os.name"));
-        pageVariables.put("osversion_value",System.getProperty("os.version"));
-        pageVariables.put("osarch_value",System.getProperty("os.arch"));
-        pageVariables.put("javaversion_value",System.getProperty("java.version"));
-        pageVariables.put("dbserver_value",Database.getServer());
-        pageVariables.put("dbmsystem_value",Database.getDBMSystem());
-        pageVariables.put("dbname_value",Database.NAME);
-        pageVariables.put("project_value", Staffbot.projectName);
-        pageVariables.put("solution_value", Staffbot.solutionName + "-" + Staffbot.projectVersion);
-        pageVariables.put("website_link", Staffbot.projectWebsite);
+        pageVariables.put("osname_value", System.getProperty("os.name"));
+        pageVariables.put("osversion_value", System.getProperty("os.version"));
+        pageVariables.put("osarch_value", System.getProperty("os.arch"));
+        pageVariables.put("javaversion_value", System.getProperty("java.version"));
+        pageVariables.put("dbserver_value", Database.getServer());
+        pageVariables.put("dbmsystem_value", Database.getDBMSystem());
+        pageVariables.put("dbname_value", Database.getName());
+        pageVariables.put("project_value", Staffbot.getProjectName());
+        pageVariables.put("solution_value", Staffbot.getSolutionName());
+        pageVariables.put("website_link", Staffbot.getProjectWebsite());
         pageVariables.put("device_list", getDeviceList(language));
         pageVariables.put("dberror_message", Database.connected() ? "" : Database.getException().getMessage());
         super.doGet(request, response, getContent(pageVariables));
@@ -52,10 +52,10 @@ public class AboutServlet extends BaseServlet {
     private String getDeviceList(Language language) {
         String context = "";
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
-        if (Devices.list.size() > 0)
+        if (Devices.getList().size() > 0)
             context += fillTemplate("html/about/header.html", pageVariables);
         String templateFileName = "html/about/device.html";
-        for (Device device : Devices.list){
+        for (Device device : Devices.getList()){
             pageVariables.put("device_url", device.getLink());
             pageVariables.put("device_model", device.getModel());
             pageVariables.put("device_description", device.getNote(language.getCode()));
@@ -102,8 +102,8 @@ public class AboutServlet extends BaseServlet {
         if (!Devices.isRaspbian)
             return "";
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
-        pageVariables.put("board_value", Staffbot.boardType);
-        pageVariables.put("board_link", Staffbot.projectWebsite + "/" + Staffbot.boardType);
+        pageVariables.put("board_value", Staffbot.getBoardType());
+        pageVariables.put("board_link", Staffbot.getProjectWebsite() + "/" + Staffbot.getBoardType());
         pageVariables.put("temperature_value", CoolingDevice.getTemperature(0));
         return fillTemplate("html/about/board.html", pageVariables);
     }

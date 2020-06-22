@@ -50,13 +50,13 @@ public class AccountService {
     }
 
     public int getUserAccessLevel(String login){
-        UserRole role = Users.isAdmin(login) ? UserRole.ADMIN : Database.users.getRole(login);
+        UserRole role = Users.isAdmin(login) ? UserRole.ADMIN : Users.getRole(login);
         return (role == null) ? -1 : role.getAccessLevel();
     }
 
     public void setUserLanguage(HttpServletRequest request, Language language){
         setAttribute(request, "language_code", language.getCode());
-        Database.users.setLanguage(getUserLogin(request), language);
+        Users.setLanguage(getUserLogin(request), language);
     }
 
     public Language getUserLanguage(HttpServletRequest request){

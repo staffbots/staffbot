@@ -20,7 +20,7 @@ import java.util.*;
  */
 public class SystemServlet extends BaseServlet {
 
-    private List<String> dbcleanVariables = Arrays.asList(
+    private static final List<String> dbcleanVariables = Arrays.asList(
             "dbclean_journal_value",
             "dbclean_journal_measure",
             "dbclean_tables_value",
@@ -48,12 +48,11 @@ public class SystemServlet extends BaseServlet {
 
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
 
-        Cleaner.getInstance().refresh();
-        Settings settings = Settings.getInstance();
+        Cleaner.reload();
 
         for (String variable : dbcleanVariables)
             if (!variable.contains("_measure") && !variable.contains("_cleaning"))
-                pageVariables.put(variable, "" + settings.load(variable));
+                pageVariables.put(variable, "" + Settings.load(variable));
 
         for (String variable : dbcleanVariables)
             if (variable.contains("_measure")){
@@ -61,16 +60,16 @@ public class SystemServlet extends BaseServlet {
                         Arrays.asList("minute", "hour", "day") : Arrays.asList("record", "day");
                 for (String value : values)
                     pageVariables.put(variable + "_" + value,
-                            value.equalsIgnoreCase(settings.load(variable)) ? "selected" : "");
+                            value.equalsIgnoreCase(Settings.load(variable)) ? "selected" : "");
             }
         //dbclean_journal_value
         String variable = "dbclean_auto_cleaning";
         List<String> values = Arrays.asList("on", "off");
         for (String value : values)
             pageVariables.put(variable + "_" + value,
-                    (value.equalsIgnoreCase(settings.load(variable)) ? "checked" : ""));
+                    (value.equalsIgnoreCase(Settings.load(variable)) ? "checked" : ""));
 
-        pageVariables.put("date_format", Cleaner.DATE_FORMAT.getFormat());
+        pageVariables.put("date_format", Cleaner.getFormat());
         pageVariables.put("table_list", getTableList(language));
 
         String content = fillTemplate("html/" + pageType.getName() + ".html", pageVariables);
@@ -79,16 +78,16 @@ public class SystemServlet extends BaseServlet {
 
     private boolean buttonApplyClick(HttpServletRequest request){
         for (String variable : dbcleanVariables)
-            Settings.getInstance().save(variable, request.getParameter(variable));
-        Cleaner.getInstance().update();
+            Settings.save(variable, request.getParameter(variable));
+        Cleaner.restart();
         return true;
     }
 
     private boolean buttonCleanClick(HttpServletRequest request) {
         for (String variable : dbcleanVariables)
             if (!variable.contains("_auto_"))
-                Settings.getInstance().save(variable, request.getParameter(variable));
-        Cleaner.getInstance().clean();
+                Settings.save(variable, request.getParameter(variable));
+        Cleaner.clean();
         return true;
     }
 

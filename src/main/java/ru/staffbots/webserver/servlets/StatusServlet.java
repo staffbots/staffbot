@@ -34,20 +34,20 @@ public class StatusServlet extends BaseServlet {
         super(PageType.STATUS, accountService);
         checkboxes.add("plot_fromdate_checkbox");
         checkboxes.add("plot_todate_checkbox");
-        for (Device device : Devices.list)
+        for (Device device : Devices.getList())
             for (Value value : device.getValues())
                 if (value.isPlotPossible())
                     checkboxes.add(value.getName() + "_checkbox");
-        for (Lever lever : Levers.list)
+        for (Lever lever : Levers.getList())
             if (lever.toValue().isPlotPossible())
                 checkboxes.add(lever.toValue().getName() + "_checkbox");
         setParameters.put("apply_button", (HttpServletRequest request) -> buttonApplyClick(request));
         getParameters.put("tasklist", (HttpServletRequest request) -> getTaskList());
         getParameters.put("processstatus", (HttpServletRequest request) -> getTasksStatus(request));
-        for (Lever lever : Levers.list)
+        for (Lever lever : Levers.getList())
             if (!lever.isGroup())
                 getParameters.put(lever.toValue().getName(), (HttpServletRequest request) -> lever.toValue().toViewString());
-        for (Device device : Devices.list)
+        for (Device device : Devices.getList())
             for (Value value : device.getValues())
                 getParameters.put(value.getName(), (HttpServletRequest request) -> value.toViewString());
         doGet = (HttpServletRequest request, HttpServletResponse response) -> doGet(request, response);
@@ -68,7 +68,7 @@ public class StatusServlet extends BaseServlet {
             String checkboxValueStr = accountService.getAttribute(request, checkboxName); // Читаем из сессии
             if (checkboxValueStr.equals("")) {
                 checkboxValueStr = "true"; // Значение при первой загрузке
-                for (Lever lever : Levers.list)
+                for (Lever lever : Levers.getList())
                     if (lever.toValue().isPlotPossible())
                         if (checkboxName.equals(lever.toValue().getName() + "_checkbox")){
                             checkboxValueStr = "false"; // Значение при первой загрузке для lever
@@ -115,7 +115,7 @@ public class StatusServlet extends BaseServlet {
         String htmlPath = "html/status/device/";
         String deviceNote;
         String valueNote;
-        for (Device device : Devices.list){
+        for (Device device : Devices.getList()){
             pageVariables.put("device_url", device.getLink());
             pageVariables.put("device_model", device.getModel());
             deviceNote = device.getNote(language.getCode());
@@ -156,7 +156,7 @@ public class StatusServlet extends BaseServlet {
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
         pageVariables.put("deep_color", WebServer.getInstance().getColorSchema().getDeepColor());
         String htmlPath = "html/status/lever/";
-        for (Lever lever : Levers.list){
+        for (Lever lever : Levers.getList()){
             if (lever.isButton()) continue;
             Value value = lever.toValue();
             String checkName = value.getName() + "_checkbox";
@@ -184,10 +184,10 @@ public class StatusServlet extends BaseServlet {
     private String getDataSets(Period period){
         String context = "";
         int numberOfValue = 0;
-        for (Lever lever : Levers.list)
+        for (Lever lever : Levers.getList())
             if (lever.toValue().isPlotPossible())
                 context +=(context.equals("") ? "" : ",") + "\n" + getDataSet((Value)lever, period, numberOfValue++);
-        for (Device device : Devices.list)
+        for (Device device : Devices.getList())
             for (Value value : device.getValues())
                 if (value.isPlotPossible())
                     context +=(context.equals("") ? "" : ",") + "\n" + getDataSet(value, period, numberOfValue++);
@@ -242,11 +242,11 @@ public class StatusServlet extends BaseServlet {
     // Расчёт количества значенийй, по которым возможно построить график
     static private int getPlotValueCount(){
         int count = 0;
-        for (Device device : Devices.list)
+        for (Device device : Devices.getList())
             for (Value value : device.getValues())
                 if (value.isPlotPossible())
                     count++;
-        for (Lever lever : Levers.list)
+        for (Lever lever : Levers.getList())
             if (lever.toValue().isPlotPossible())
                 count++;
         return count;

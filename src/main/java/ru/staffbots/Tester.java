@@ -26,17 +26,15 @@ public class Tester extends Staffbot {
         solutionInit(
 //                new Device[] {regularDevice, bh1750Device, distanceDevice, sensorDevice, buttonDevice}, // Инициализируем список устройств
 //                new Lever[] {buttonLever, distanceLever}, // Инициализируем список элементов управления
-                new Device[] {mainDevice
-                        , regularDevice
-                }, // Инициализируем список устройств
+                new Device[] {mainDevice, regularDevice}, // Инициализируем список устройств
                 new Lever[] {buttonLever}, // Инициализируем список элементов управления
                 new Task[] {}
         );
     }
 
     static {
-        boardType = SystemInfo.BoardType.RaspberryPi_3B;
-        solutionName = MethodHandles.lookup().lookupClass().getSimpleName(); // current class name
+        setBoardType(SystemInfo.BoardType.RaspberryPi_3B);
+        setSolutionName(MethodHandles.lookup().lookupClass().getSimpleName()); // current class name
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -106,7 +104,7 @@ public class Tester extends Staffbot {
 
             if (!Devices.isRaspbian) return;
             try {
-                for (Device device: Devices.list) {
+                for (Device device: Devices.getList()) {
                     device.dataRead();
                     Thread.sleep(1);
                 }
@@ -129,10 +127,10 @@ public class Tester extends Staffbot {
         () -> { // Задание без повторений
             long timePeriod = DateAccuracy.DAY.getMilliseconds();
             Period period = new Period(DateFormat.DATE, new Date(System.currentTimeMillis() - timePeriod), new Date());
-            for (Device device : Devices.list)
+            for (Device device : Devices.getList())
                 for (Value value : device.getValues())
                     value.setRandom(period);
-            for (Lever lever : Levers.list)
+            for (Lever lever : Levers.getList())
                 lever.toValue().setRandom(period);
             Tasks.setStatus(TasksStatus.STOP);
         }

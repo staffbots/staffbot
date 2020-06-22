@@ -6,7 +6,6 @@ import ru.staffbots.Staffbot;
 import ru.staffbots.tools.values.Value;
 import ru.staffbots.webserver.servlets.*;
 
-import java.net.URL;
 import java.util.*;
 
 /**
@@ -31,7 +30,7 @@ public abstract class Device{
     }
 
     public boolean putPin(Pin pin, String name){
-        List<Pin> boardPins = Arrays.asList(RaspiPin.allPins(Staffbot.boardType));
+        List<Pin> boardPins = Arrays.asList(RaspiPin.allPins(Staffbot.getBoardType()));
         if (!boardPins.contains(pin))
             return false;
         if (pins.containsKey(pin)){
@@ -129,13 +128,12 @@ public abstract class Device{
 
     //
     public String getLink(){
-        return Staffbot.projectWebsite + "/technology/devices/" + getModel(true);
+        return Staffbot.getProjectWebsite() + "/technology/devices/" + getModel(true);
     }
 
-    public void initValues(){
+    public void dbInit(){
         for (Value value : getValues())
-            if (value.isStorable())
-                value.createTable();
+            value.dbInit();
     }
 
 }

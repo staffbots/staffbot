@@ -104,7 +104,7 @@ public class Tasks {
     }
 
     public static long getStartTime(){
-        String startTimeString = Settings.getInstance().load("control_start_time");
+        String startTimeString = Settings.load("control_start_time");
         if (startTimeString == null) return startTime;
         try {
             startTime = Long.parseLong(startTimeString);
@@ -116,10 +116,10 @@ public class Tasks {
 
     private static void setStartTime(long time){
         if ((time == 0) && (startTime != 0))
-            Settings.getInstance().delete("control_start_time");
+            Settings.delete("control_start_time");
         startTime = time;
         if (startTime != 0)
-            Settings.getInstance().save("control_start_time", Long.toString(startTime));
+            Settings.save("control_start_time", Long.toString(startTime));
     }
 
 }

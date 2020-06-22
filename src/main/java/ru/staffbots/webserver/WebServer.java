@@ -5,7 +5,6 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.colors.ColorSchema;
@@ -145,11 +144,6 @@ public class WebServer {
     }
 
     ////////////////////////////////////////////////////////////////
-    /**
-     *
-     */
-    private Server server = null;
-
     private void checkPort(int port) {
         try {
             Socket socket = new Socket("localhost", port);
@@ -195,9 +189,18 @@ public class WebServer {
                new Connector[] {getHttpsConnector()};
     }
 
-    /**
-     *
-     */
+    public URL getLocalURL(boolean SSL){
+        try {
+            return SSL ?
+                new URL("https://localhost:" + httpsPort) :
+                new URL("http://localhost:" + httpPort);
+        } catch (MalformedURLException exception) {
+            return null;
+        }
+    }
+
+    private Server server = null;
+
     public void init() {
         if (server != null) { // If server already run
             try {
@@ -232,16 +235,6 @@ public class WebServer {
         } catch (Exception e){
             Journal.add(NoteType.ERROR, "start_server", e.getMessage());
             System.exit(0);
-        }
-    }
-
-    public URL getLocalURL(boolean SSL){
-        try {
-            return SSL ?
-                new URL("https://localhost:" + httpsPort) :
-                new URL("http://localhost:" + httpPort);
-        } catch (MalformedURLException exception) {
-            return null;
         }
     }
 

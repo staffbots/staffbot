@@ -16,7 +16,7 @@ import ru.staffbots.tools.values.Value;
 import java.sql.*;
 import java.util.*;
 
-public class Database {
+public abstract class Database {
 
     ////////////////////////////////////////////////////////////////
     private static DBMS DBMSystem = DBMS.MySQL;
@@ -35,27 +35,111 @@ public class Database {
     public static void setServer(String value) {
         if (value == null) return;
         if (value.trim().isEmpty()) return;
-        server = value;
+        server = value.trim();
     }
 
     ////////////////////////////////////////////////////////////////
-    public static Integer PORT = 3306;
+    private static int port = 3306;
 
-    public static String NAME = "staffbot";
+    public static int getPort() {
+        return port;
+    }
 
-    public static String USER = "pi";
+    public static void setPort(Integer value) {
+        if (value == null) return;
+        port = value;
+    }
 
-    public static String PASSWORD = "pi";
+    ////////////////////////////////////////////////////////////////
+    private static String name = "staffbot";
 
-    public static Boolean DROP = false;
+    public static String getName() {
+        return name;
+    }
 
-    public static Users users;
+    public static void setName(String value) {
+        if (value == null) return;
+        if (value.trim().isEmpty()) return;
+        name = value.trim();
+    }
 
+    ////////////////////////////////////////////////////////////////
+    private static String user = "pi";
+
+    public static String getUser() {
+        return user;
+    }
+
+    public static void setUser(String value) {
+        if (value == null) return;
+        if (value.trim().isEmpty()) return;
+        user = value.trim();
+    }
+
+    ////////////////////////////////////////////////////////////////
+    private static String password = "pi";
+
+    public static String getPassword() {
+        return password;
+    }
+
+    public static void setPassword(String value) {
+        if (value == null) return;
+        password = value.trim();
+    }
+
+    ////////////////////////////////////////////////////////////////
+    private static boolean drop = false;
+
+    public static boolean isDrop() {
+        return drop;
+    }
+
+    public static void setDrop(Boolean value) {
+        if (value == null) return;
+        drop = value;
+    }
+
+    ////////////////////////////////////////////////////////////////
     private static Map<String, DBTable> systemTableList = new HashMap(0);
+
+    private static void addSystemTable(DBTable table) {
+        systemTableList.put(table.getTableName(), table);
+    }
 
     private static Connection connection = null;
 
     private static Exception exception = null;
+
+    private static boolean databaseExists() throws Exception{
+        if(disconnected())return false;
+        boolean result = false;
+        DatabaseMetaData metaData = connection.getMetaData();
+        ResultSet resultSet = metaData.getCatalogs();
+        while (resultSet.next())
+            if (name.equals(resultSet.getString(1))) {
+                result = true;
+                break;
+            }
+        resultSet.close();
+        return result;
+    }
+
+    private static boolean createDatabase(boolean drop) throws Exception{
+        if(disconnected()) throw getException();
+        boolean exists = databaseExists();
+        Executor executor = new Executor();
+        if (exists && drop){
+            executor.execUpdate("DROP DATABASE " + name);
+            Journal.add(NoteType.WARNING, "drop_database", name);
+            exists = false;
+        }
+        if(!exists) {
+            executor.execUpdate("CREATE DATABASE " + name);
+            Journal.add(NoteType.WARNING, "create_database", name);
+        }
+        return true;
+    }
 
     public static Connection getConnection () {
         return connection;
@@ -73,65 +157,35 @@ public class Database {
         return (connection == null);
     }
  
-    public static boolean init(){
+    public static boolean connect(){
         try {
-            connection = DBMSystem.getConnection(server, PORT, USER, PASSWORD);
-            createDatabase(DROP);
-            connection = DBMSystem.getConnection(server, PORT, NAME, USER, PASSWORD);
+            connection = DBMSystem.getConnection(server, port, user, password);
+            createDatabase(drop);
+            connection = DBMSystem.getConnection(server, port, name, user, password);
+            addSystemTable(Journal.getInstance());
             Journal.add(null);
-            Journal.add("init_database", NAME);
+            Journal.add("init_database", name);
+            addSystemTable(Configs.getInstance());
+            addSystemTable(Settings.getInstance());
+            addSystemTable(Users.getInstance());
             Languages.loadDefaultCode();
-            users = new Users();
-            systemTableList.put(Journal.getInstance().getTableName(), Journal.getInstance());
-            systemTableList.put(Configs.getInstance().getTableName(), Configs.getInstance());
-            systemTableList.put(Settings.getInstance().getTableName(), Settings.getInstance());
-            systemTableList.put(users.getTableName(), users);
-            Cleaner.getInstance().update();
+            Cleaner.restart();
         } catch (Exception e) {
             connection = null;
             exception = e;
-            Journal.add(NoteType.ERROR, "init_database", NAME, exception.getMessage());
+            Journal.add(NoteType.ERROR, "init_database", name, exception.getMessage());
             exception.printStackTrace();
         }
         return connected();
     }
 
-    private static boolean databaseExists() throws Exception{
-        if(disconnected())return false;
-        boolean result = false;
-        DatabaseMetaData metaData = connection.getMetaData();
-        ResultSet resultSet = metaData.getCatalogs();
-        while (resultSet.next())
-            if (NAME.equals(resultSet.getString(1))) {
-                result = true;
-                break;
-            }
-        resultSet.close();
-        return result;
-    }
-
-    private static boolean createDatabase(boolean drop) throws Exception{
-        if(disconnected()) throw getException();
-        boolean exists = databaseExists();
-        Executor executor = new Executor();
-        if (exists && drop){
-            executor.execUpdate("DROP DATABASE " + NAME);
-            Journal.add(NoteType.WARNING, "drop_database", NAME);
-            exists = false;
-        } if(!exists) {
-            executor.execUpdate("CREATE DATABASE " + NAME);
-            Journal.add(NoteType.WARNING, "create_database", NAME);
-        }
-        return true;
-    }
-
     public static ArrayList<String> findTable(String pattern){
         ArrayList<String> result = new ArrayList();
-        if(Database.disconnected())
+        if(disconnected())
             return result;
         try {
-            DatabaseMetaData metaData = Database.getConnection().getMetaData();
-            ResultSet resultSet = metaData.getTables(Database.NAME, null, pattern, null);
+            DatabaseMetaData metaData = getConnection().getMetaData();
+            ResultSet resultSet = metaData.getTables(name, null, pattern, null);
             while(resultSet.next())
                 result.add(resultSet.getString("TABLE_NAME"));
             resultSet.close();
@@ -154,10 +208,10 @@ public class Database {
         if(disconnected()) return result;
         if (withSystemTables)
             result.putAll(systemTableList);
-        for (Lever lever : Levers.list)
+        for (Lever lever : Levers.getList())
             if (lever.isStorable())
                 result.put(lever.getTableName(), lever.toValue());
-        for (Device device : Devices.list)
+        for (Device device : Devices.getList())
             for (Value value : device.getValues())
                 if (value.isStorable())
                     result.put(value.toValue().getTableName(), value.toValue());

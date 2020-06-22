@@ -10,7 +10,6 @@ import ru.staffbots.tools.dates.DateAccuracy;
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.tools.values.DateValue;
-import ru.staffbots.webserver.WebServer;
 
 import java.util.Date;
 import java.util.Map;
@@ -25,47 +24,92 @@ import java.sql.Timestamp;
  */
 public class Cleaner {
 
-    private Cleaner() { }
+    private Cleaner() {}
 
     private static final Cleaner instance = new Cleaner();
 
-    public static Cleaner getInstance() {
-        return instance;
-    }
+    private static final DateFormat dateFormat = DateFormat.DATETIME;
 
     // Количество (записей или суток) оставляемых в журнале
-    private long journalValue;
+    private static long journalValue;
+
     // Еденица измерения количества (записей или суток) оставляемых в журнале
     // true - если измеряется записями, в sys_setings пишется как "record"
     // false - если измеряется сутками, в sys_setings пишется как "day"
-    private boolean journalMeasureIsRecord;
+    private static boolean journalMeasureIsRecord;
+
     // Количество (записей или суток) оставляемых в таблицах значений
-    private long tablesValue;
+    private static long tablesValue;
+
     // Еденица измерения количества (записей или суток) оставляемых в таблицах значений
     // true - если измеряется записями, в sys_setings пишется как "record"
     // false - если измеряется сутками, в sys_setings пишется как "day"
-    private boolean tablesMeasureIsRecord;
-    private boolean autoCleaning;
-    private long autoValue;
-    private DateAccuracy autoMeasure;
-    // Формат даты автозапуска
-    public static final DateFormat DATE_FORMAT = DateFormat.DATETIME;
-    // Дата автозапуска
-    private Date autoStart = new Date();
-    private boolean timerIsRuning = false;
-    private Timer timer;
+    private static boolean tablesMeasureIsRecord;
 
-    public void refresh(){
-        if(Database.disconnected())
-            return;
+    private static boolean autoCleaning;
+
+    private static long autoValue;
+
+    private static DateAccuracy autoMeasure;
+
+    // Формат даты автозапуска
+    // Дата автозапуска
+    private static Date autoStart = new Date();
+
+    private static boolean timerIsRuning = false;
+
+    private static Timer timer;
+
+    private static void loadSettings(){
+        journalValue = Settings.loadAsLong("dbclean_journal_value",99);
+        journalMeasureIsRecord = Settings.loadAsBollean("dbclean_journal_measure","record", true);
+        tablesValue = Settings.loadAsLong("dbclean_tables_value",30);
+        tablesMeasureIsRecord = Settings.loadAsBollean("dbclean_tables_measure", "record", false);
+        autoCleaning = Settings.loadAsBollean("dbclean_auto_cleaning", "on", false);
+        autoValue = Settings.loadAsLong("dbclean_auto_value",1);
+        autoMeasure = DateAccuracy.fromString(Settings.load("dbclean_auto_measure"), DateAccuracy.DAY);
+        autoStart = DateValue.fromString(Settings.load("dbclean_auto_start"), dateFormat, autoStart);
+    }
+
+    private static void saveSettings(){
+        Settings.save("dbclean_journal_value", Long.toString(journalValue));
+        Settings.save("dbclean_journal_measure", journalMeasureIsRecord ? "record" : "day");
+        Settings.save("dbclean_tables_value", Long.toString(tablesValue));
+        Settings.save("dbclean_tables_measure", tablesMeasureIsRecord ? "record" : "day");
+        Settings.save("dbclean_auto_cleaning", autoCleaning ? "on" : "off");
+        Settings.save("dbclean_auto_value", Long.toString(autoValue));
+        Settings.save("dbclean_auto_measure", autoMeasure.toString().toLowerCase());
+        Settings.save("dbclean_auto_start", DateValue.toString(autoStart, dateFormat));
+    }
+
+    private static long cleanByCount(DBTable table, long count){
+        long recordsCount = table.getRows();
+        if (recordsCount <= count) return 0;
+        Executor executor = new Executor(null);
+        return executor.execUpdate("DELETE FROM " + table.getTableName() +
+                " ORDER BY moment ASC LIMIT " + (recordsCount - count));
+    }
+
+    private static long cleanByDate(DBTable table, long days){
+        Executor executor = new Executor(null);
+        long lastTime = System.currentTimeMillis() - days * DateAccuracy.DAY.getMilliseconds();
+        return executor.execUpdate("DELETE FROM " + table.getTableName() + " WHERE moment < ?",
+                new Timestamp(lastTime).toString());
+    }
+
+    public static Cleaner getTable() {
+        return instance;
+    }
+
+    public static void reload(){
         loadSettings();
         saveSettings();
     }
 
-    public void update(){
-        refresh();
+    public static void restart(){
+        reload();
         if (timerIsRuning) {
-            timer.cancel() ;
+            timer.cancel();
             timer.purge();
         }
         if (autoCleaning) {
@@ -74,7 +118,7 @@ public class Cleaner {
             TimerTask cleanTask = new TimerTask() {
                 @Override
                 public void run() {
-                    Cleaner.getInstance().clean();
+                    clean();
                 }
             };
             long dt = System.currentTimeMillis() - autoStart.getTime();
@@ -82,15 +126,15 @@ public class Cleaner {
                     new Date(autoStart.getTime() + period * (long) Math.ceil((double) dt/period));
             timer.scheduleAtFixedRate(cleanTask, delay, period);
             timerIsRuning = true;
-            Journal.add(NoteType.WARNING, "turnon_clean", Long.toString(autoValue), autoMeasure.getDescription(Languages.getDefaultCode()), DateValue.toString(delay, DATE_FORMAT));
+            Journal.add(NoteType.WARNING, "turnon_clean", Long.toString(autoValue), autoMeasure.getDescription(Languages.getDefaultCode()), DateValue.toString(delay, dateFormat));
         } else {
             timerIsRuning = false;
             Journal.add(NoteType.WARNING, "turnoff_clean");
         }
     }
 
-    public void clean(){
-        refresh();
+    public static void clean(){
+        reload();
         long valueRecords = 0;
         Map<String, DBTable> tableList = Database.getTableList(false);
         for (String tableName: tableList.keySet())
@@ -103,47 +147,8 @@ public class Cleaner {
         Journal.add(NoteType.WARNING, "clean_database", Long.toString(valueRecords), Long.toString(journalNotes));
     }
 
-    private void loadSettings(){
-        Settings settings = Settings.getInstance();
-        journalValue = settings.loadAsLong("dbclean_journal_value",99);
-        journalMeasureIsRecord = settings.loadAsBollean("dbclean_journal_measure","record", true);
-        tablesValue = settings.loadAsLong("dbclean_tables_value",30);
-        tablesMeasureIsRecord = settings.loadAsBollean("dbclean_tables_measure", "record", false);
-        autoCleaning = settings.loadAsBollean("dbclean_auto_cleaning", "on", false);
-        autoValue = settings.loadAsLong("dbclean_auto_value",1);
-        try {
-            autoMeasure = DateAccuracy.valueOf(settings.load("dbclean_auto_measure").toUpperCase());
-        } catch (Exception exception) {
-            autoMeasure = DateAccuracy.DAY;
-        }
-        autoStart = DateValue.fromString(settings.load("dbclean_auto_start"), DATE_FORMAT, autoStart);
-    }
-
-    private void saveSettings(){
-        Settings settings = Settings.getInstance();
-        settings.save("dbclean_journal_value", Long.toString(journalValue));
-        settings.save("dbclean_journal_measure", journalMeasureIsRecord ? "record" : "day");
-        settings.save("dbclean_tables_value", Long.toString(tablesValue));
-        settings.save("dbclean_tables_measure", tablesMeasureIsRecord ? "record" : "day");
-        settings.save("dbclean_auto_cleaning", autoCleaning ? "on" : "off");
-        settings.save("dbclean_auto_value", Long.toString(autoValue));
-        settings.save("dbclean_auto_measure", autoMeasure.toString().toLowerCase());
-        settings.save("dbclean_auto_start", DateValue.toString(autoStart, DATE_FORMAT));
-    }
-
-    private long cleanByCount(DBTable table, long count){
-        long recordsCount = table.getRows();
-        if (recordsCount <= count) return 0;
-        Executor executor = new Executor(null);
-        return executor.execUpdate("DELETE FROM " + table.getTableName() +
-                " ORDER BY moment ASC LIMIT " + (recordsCount - count));
-    }
-
-    private long cleanByDate(DBTable table, long days){
-        Executor executor = new Executor(null);
-        long lastTime = System.currentTimeMillis() - days * DateAccuracy.DAY.getMilliseconds();
-        return executor.execUpdate("DELETE FROM " + table.getTableName() + " WHERE moment < ?",
-                new Timestamp(lastTime).toString());
+    public static String getFormat() {
+        return dateFormat.getFormat();
     }
 
 }

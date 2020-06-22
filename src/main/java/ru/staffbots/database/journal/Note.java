@@ -2,7 +2,6 @@ package ru.staffbots.database.journal;
 
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.languages.Language;
-import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.tools.values.DateValue;
 
 import java.util.Date;

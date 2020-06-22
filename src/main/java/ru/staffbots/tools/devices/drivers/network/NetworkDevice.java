@@ -114,7 +114,7 @@ public abstract class NetworkDevice extends Device {
      **/
     protected String getInoResourceLink(String className){
         String shortClassName = className.replaceFirst("Device", "");
-        return "resource?ino/" + Staffbot.solutionName.toLowerCase() + "/" + shortClassName + ".ino"
+        return "resource?ino/" + Staffbot.getSolutionName().toLowerCase() + "/" + shortClassName + ".ino"
                 + "&" + name;
     }
 

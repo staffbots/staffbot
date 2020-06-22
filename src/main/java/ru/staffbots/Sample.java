@@ -1,7 +1,7 @@
 package ru.staffbots;
 
 import com.pi4j.io.gpio.RaspiPin;
-import com.pi4j.system.SystemInfo;
+import com.pi4j.system.SystemInfo.BoardType;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
 import ru.staffbots.tools.devices.Device;
@@ -27,8 +27,8 @@ public class Sample extends Staffbot {
     }
 
     static {
-        boardType = SystemInfo.BoardType.RaspberryPi_3B;
-        solutionName = MethodHandles.lookup().lookupClass().getSimpleName(); // current class name
+        setBoardType(BoardType.RaspberryPi_3B);
+        setSolutionName(MethodHandles.lookup().lookupClass().getSimpleName()); // current class name
     }
 
     /////////////////////////////////////////////////////////////

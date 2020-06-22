@@ -1,11 +1,10 @@
 package ru.staffbots;
 
 import com.pi4j.io.gpio.RaspiPin;
-import com.pi4j.system.SystemInfo;
+import com.pi4j.system.SystemInfo.BoardType;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.journal.Journal;
 import ru.staffbots.database.journal.NoteType;
-import ru.staffbots.tools.colors.ColorSchema;
 import ru.staffbots.tools.ParsableProperties;
 import ru.staffbots.tools.devices.CoolingDevice;
 import ru.staffbots.tools.devices.Device;
@@ -96,34 +95,48 @@ import java.util.Properties;
  */
 public abstract class Staffbot {
 
-    public static SystemInfo.BoardType boardType = SystemInfo.BoardType.UNKNOWN;
+    private static BoardType boardType = BoardType.UNKNOWN;
+
+    public static BoardType getBoardType() {
+        return boardType;
+    }
+
+    public static void setBoardType(BoardType value) {
+        boardType = value;
+    }
 
     /**
      * <b>Project name</b><br>
      * Value is current class name - {@code Staffbot}
      **/
-    public static final String projectName = MethodHandles.lookup().lookupClass().getSimpleName();
+    private static final String projectName = MethodHandles.lookup().lookupClass().getSimpleName();
 
-    /**
-     * <b>Solution name</b><br>
-     * Value is name of inherited class, set by default is <em>Solution</em><br>
-     * Initialized in {@code solutionInit()}-method
-     **/
-    public static String solutionName = "Solution";
+    public static String getProjectName() {
+        return projectName;
+    }
 
     /**
      * Название версия проекта,
      * Определяется параметром version в файле ресурсов properties
      * Используется в наименовании файлов .jar и .cfg и в заголовке главного окна
      */
-    public static String projectVersion = "0.00";
+    private static String projectVersion = "0.00";
+
 
     /**
-     * Адрес веб-сайта проекта в www
-     * Определяется параметром website в файле ресурсов properties
-     * Используется при формировании ссылки на описание устройств
-     */
-    public static String projectWebsite = "http://www.staffbots.ru";
+     * <b>Solution name</b><br>
+     * Value is name of inherited class, set by default is <em>Solution</em><br>
+     * Initialized in {@code solutionInit()}-method
+     **/
+    private static String solutionName = "Solution";
+
+    public static String getSolutionName() {
+        return solutionName;
+    }
+
+    public static void setSolutionName(String value) {
+        solutionName = value;
+    }
 
     public static String getShortName(){
         return projectName + "." + solutionName;
@@ -133,6 +146,17 @@ public abstract class Staffbot {
         return getShortName() + "-" + projectVersion;
     }
 
+    /**
+     * Адрес веб-сайта проекта в www
+     * Определяется параметром website в файле ресурсов properties
+     * Используется при формировании ссылки на описание устройств
+     */
+    private static String projectWebsite = "http://www.staffbots.ru";
+
+    public static String getProjectWebsite() {
+        return projectWebsite;
+    }
+
     public static void solutionInit(Device[] devices, Lever[] levers, Task[] tasks) {
         solutionInit(devices, (Object[]) levers, tasks);
     }
@@ -140,8 +164,8 @@ public abstract class Staffbot {
     public static void solutionInit(Device[] devices, Object[] levers, Task[] tasks) {
         solutionInit(
                 ()->{
-                    Levers.init(levers); // Инициализируем список элементов управления
-                    Devices.init(devices); // Инициализируем список устройств
+                    Levers.addObjects(levers); // Инициализируем список элементов управления
+                    Devices.addDevices(devices); // Инициализируем список устройств
                     Tasks.init(tasks);
                 }
         );
@@ -150,7 +174,7 @@ public abstract class Staffbot {
     public static void solutionInit(Runnable solutionInitAction){
         Staffbot.solutionName = solutionName;
         propertiesInit(); // Загружаем свойства из cfg-файла
-        Database.init(); // Подключаемся к базе данных
+        Database.connect(); // Подключаемся к базе данных
         solutionInitAction.run(); // Инициализируем решение (Levers, Devices and Tasks)
         Database.dropUnusingTables();
         WebServer.getInstance().init(); // Запускаем веб-сервер
@@ -201,15 +225,16 @@ public abstract class Staffbot {
             webServer.setUpdateDelay(properties.getIntegerProperty("web.update_delay"));
 
             Database.setServer(properties.getProperty("db.server"));
-            Database.PORT = properties.getIntegerProperty("db.port", Database.PORT);
-            Database.NAME = properties.getProperty("db.name", (projectName + "_" + solutionName).toLowerCase());
-            Database.USER = properties.getProperty("db.user", Database.USER);
-            Database.PASSWORD = properties.getProperty("db.password", Database.PASSWORD).trim();
-            Database.DROP = properties.getBooleanProperty("db.drop", Database.DROP);
+            Database.setPort(properties.getIntegerProperty("db.port"));
+            Database.setName((projectName + "_" + solutionName).toLowerCase());
+            Database.setName(properties.getProperty("db.name"));
+            Database.setUser(properties.getProperty("db.user"));
+            Database.setPassword(properties.getProperty("db.password"));
+            Database.setDrop(properties.getBooleanProperty("db.drop"));
 
             int fanPin = properties.getIntegerProperty("pi.fan_pin", -1);
             double cpuTemperature = properties.getDoubleProperty("pi.cpu_temperature", 50);
-            Devices.coolingDevice = new CoolingDevice(RaspiPin.getPinByAddress(fanPin), cpuTemperature);
+            CoolingDevice.init(RaspiPin.getPinByAddress(fanPin), cpuTemperature);
 
             MainWindow.setFrameUsed(properties.getBooleanProperty("ui.frame_used"));
             webServer.setColorSchema(properties.getProperty("ui.main_color"));

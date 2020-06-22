@@ -9,8 +9,6 @@ public abstract class DBTable {
 
     private String name;
 
-    private String note;
-
     private String fields;
 
     public String getTableName(){

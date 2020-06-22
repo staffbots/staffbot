@@ -1,59 +1,72 @@
 package ru.staffbots.tools.levers;
 
 import ru.staffbots.tools.values.Value;
+import ru.staffbots.tools.values.ValueType;
 
-import java.io.Serializable;
 import java.io.StringReader;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
- *
+ * Levers set, singleton class
  */
 public class Levers extends ArrayList<Lever> {
 
-    /**
-     * <b>Список рычагов управления</b>, тех что отображаются на закладке "Управление"
-     */
-    public static ArrayList<Lever> list = new ArrayList();
-
-    public static void initGroup(String groupName, Lever... levers) {
-        list.add(new GroupLever(groupName));
-        init(levers);
+    private Levers() {
+        super(0);
     }
 
-    public static void init(Lever... levers) {
-        for (Lever lever:levers) {
-            if (list.contains(lever)) continue;
-            list.add(lever);
-            Value value = lever.toValue();
-            if (value.isStorable()) {
-                value.createTable();
-                value.set(value.get());
-            }
+    private static final Levers instance = new Levers();
+
+    private static void initValue(Value value) {
+        if (value.isStorable()) {
+            value.createTable();
+            value.set(value.get());
         }
     }
 
-    public static void init(Object... levers) {
-        if (levers == null) levers = new Object[0];
+    public static boolean addLever(Lever lever) {
+        if (instance.contains(lever)) return false;
+        boolean result = instance.add(lever);
+        if (result) lever.toValue().dbInit();
+        return result;
+    }
+
+    public static int addLevers(Lever... levers) {
+        int result = 0;
+        for (Lever lever:levers)
+            if (addLever(lever)) result++;
+        return result;
+    }
+
+    public static boolean addGroup(String groupName) {
+        return addLever(new GroupLever(groupName));
+    }
+
+    public static int addGroup(String groupName, Lever... levers) {
+        if (!addGroup(groupName)) return 0;
+        return addLevers(levers) + 1;
+    }
+
+    public static int addObjects(Object... levers) {
+        int result = 0;
         for (Object lever:levers) {
-            if ((lever == null)||(lever instanceof String))
-                initGroup((String) lever);
+            if (lever == null) continue;
+            if (lever instanceof String)
+                if (!addGroup((String) lever)) continue;
             if (lever instanceof Lever)
-                init((Lever) lever);
+                if (!addLever((Lever) lever)) continue;
+            result ++;
         }
+        return result;
     }
 
-    public static void reset(){
-        for (Lever lever: Levers.list)
-            lever.toValue().reset();
+    public static ArrayList<Lever> getList() {
+        return instance;
     }
 
     public static int getMaxStringValueSize(){
         int maxSize = 0;
-        for (Lever lever: Levers.list) {
+        for (Lever lever: instance) {
             if (!lever.toValue().getValueType().isSizeble()) continue;
             int size = lever.toValue().getStringValueSize();
             if (size > maxSize) maxSize = size;
@@ -63,7 +76,7 @@ public class Levers extends ArrayList<Lever> {
 
     public static ArrayList<ButtonLever> getButtonList(){
         ArrayList<ButtonLever> result = new ArrayList();
-        for (Lever lever: Levers.list)
+        for (Lever lever: instance)
             if (lever.isButton())
                 try {
                     ButtonLever buttonLever = (ButtonLever)lever;
@@ -76,8 +89,8 @@ public class Levers extends ArrayList<Lever> {
 
     public static String toConfigValue(){
         Map<String, String> nameValues = new HashMap<>();
-        for (Lever lever : list)
-            if (!lever.isGroup())
+        for (Lever lever : instance)
+            if (lever.toValue().getValueType() != ValueType.VOID)
                 nameValues.put(
                         lever.toValue().getName(),
                         Long.toString(lever.toValue().get()));
@@ -95,21 +108,14 @@ public class Levers extends ArrayList<Lever> {
         } catch (Exception e) {
             return false;
         }
-        for (Lever lever : Levers.list)
-            if (!lever.isGroup())
+        for (Lever lever : instance)
+            if (lever.toValue().getValueType() != ValueType.VOID)
                 if (properties.containsKey(lever.getName()))
                     lever.set(
                             Long.parseLong(
                                     properties.getProperty(
                                             lever.getName())));
         return true;
-    }
-
-    public static Lever getLeverByName(String leverName){
-        for (Lever lever : Levers.list)
-            if (lever.getName().equalsIgnoreCase(leverName))
-                return lever;
-        return null;
     }
 
 }

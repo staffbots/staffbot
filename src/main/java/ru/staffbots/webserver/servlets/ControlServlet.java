@@ -88,7 +88,7 @@ public class ControlServlet extends BaseServlet {
     private boolean buttonSaveClick(HttpServletRequest request) {
         buttonApplyClick(request);
         String configName = accountService.setAttribute(request,"config_name");
-        Configs.getInstance().save(configName);
+        Configs.save(configName);
         return true;
     }
 
@@ -96,7 +96,7 @@ public class ControlServlet extends BaseServlet {
     private boolean buttonLoadClick(HttpServletRequest request) {
         buttonApplyClick(request);
         String configName = accountService.setAttribute(request,"config_name");
-        Configs.getInstance().load(configName);
+        Configs.load(configName);
         return true;
     }
 
@@ -104,7 +104,7 @@ public class ControlServlet extends BaseServlet {
     private boolean buttonDeleteClick(HttpServletRequest request) {
         buttonApplyClick(request);
         String configName = request.getParameter("config_name");
-        Configs.getInstance().delete(configName);
+        Configs.delete(configName);
         accountService.setAttribute(request,"config_name", "");
         return true;
     }
@@ -142,7 +142,7 @@ public class ControlServlet extends BaseServlet {
     }
 
     private Boolean setLeverList(HttpServletRequest request) {
-        for (Lever lever : Levers.list) {
+        for (Lever lever : Levers.getList()) {
             if (!lever.isChangeable()) continue;
             Value value = lever.toValue();
             if (value.getValueType() == ValueType.VOID) continue;
@@ -160,7 +160,7 @@ public class ControlServlet extends BaseServlet {
         String context = "";
         Map<String, Object> pageVariables = new HashMap();
         int maxSize = Levers.getMaxStringValueSize();
-        for (Lever lever : Levers.list){
+        for (Lever lever : Levers.getList()){
             if (!lever.isChangeable()) continue;
             pageVariables.put("lever_name", lever.getName().toLowerCase() + "_lever");
             String value = lever.toValue().toHtmlString();
@@ -174,7 +174,7 @@ public class ControlServlet extends BaseServlet {
 
     private String getConfigList() {
         String context = "";
-        for (String configName : Configs.getInstance().getList())
+        for (String configName : Configs.getList())
             context += getConfig(configName);
         return context;
     }

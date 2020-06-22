@@ -66,7 +66,7 @@ public abstract class I2CBusDevice extends Device {
     }
 
     private Pin getPin(int busNumber, int pinNumber){
-        switch (Staffbot.boardType) {
+        switch (Staffbot.getBoardType()) {
             case RaspberryPi_B_Plus:
             case RaspberryPi_2B:
             case RaspberryPi_3B:

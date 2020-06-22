@@ -38,4 +38,5 @@ public class User {
         return "login: " + login +
                "\nrole: " + role.getDescription(Languages.getDefaultCode());
     }
+
 }

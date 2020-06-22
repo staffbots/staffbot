@@ -2,6 +2,7 @@ package ru.staffbots.webserver.servlets;
 
 import ru.staffbots.Staffbot;
 import ru.staffbots.database.Database;
+import ru.staffbots.database.users.Users;
 import ru.staffbots.tools.languages.Language;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
@@ -32,7 +33,7 @@ public class EntryServlet extends BaseServlet {
 
         Map<String, Object> pageVariables = language.getSection(PageType.ENTRY.getName());
         pageVariables.put("page_title", Staffbot.getShortName() + " - " + pageType.getCaption(language.getCode()));
-        pageVariables.put("website_link", Staffbot.projectWebsite);
+        pageVariables.put("website_link", Staffbot.getProjectWebsite());
         pageVariables.put("login_input", login);
 
         String result = fillTemplate("html/entry.html", pageVariables);
@@ -49,7 +50,7 @@ public class EntryServlet extends BaseServlet {
         String password = request.getParameter("password_input");
         if (accountService.verifyUser(login, password) > -1) {
             accountService.addSession(request.getSession(), login);
-            accountService.setUserLanguage(request, Database.users.getLanguage(login));
+            accountService.setUserLanguage(request, Users.getLanguage(login));
             response.sendRedirect("/control");
         } else doGet(request, response);
     }

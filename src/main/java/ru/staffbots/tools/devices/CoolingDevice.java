@@ -13,7 +13,7 @@ import java.io.InputStreamReader;
 import java.lang.invoke.MethodHandles;
 
 /**
- * <b>Cooling device</b><br>
+ * <b>Cooling device</b>, singleton class<br>
  * Integrated device for CPU cooling<br>
  * The device consists of a fan connected via a NPN-transistor to a standard GPIO. <br>
  * The only class instance is created at the time of loading the parameters (see cfg-file): <br>
@@ -28,47 +28,7 @@ public class CoolingDevice extends Device {
 
     private DoubleValue temperature;
 
-    public CoolingDevice(Pin pin, double temperature) {
-        init(pin, temperature, ValueMode.TEMPORARY);
-    }
-
-    public CoolingDevice(Pin pin, double temperature, ValueMode valueMode) {
-        init( pin, temperature, valueMode);
-    }
-
-    private void init(Pin pin, double temperature, ValueMode valueMode) {
-        model = "Fan relay"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
-        note = "CPU cooling fan relay"; // Описание устройства (например, "Сонар для измерения уровня воды")
-        name = "coolingDevice"; // Уникальное имя устройства, используется для именования таблиц в БД (например, "WaterSonar")
-        this.fanRelay = new BooleanValue(name + "_fanrelay", "Реле вентилятора", valueMode, false);
-        this.temperature = new DoubleValue(name + "_temperature", "Температура CPU, C", valueMode, 2, temperature);
-        values.add(this.fanRelay);
-        values.add(this.temperature);
-        if (pin == null) return;
-        putPin(pin, "");
-    }
-
-    @Override
-    public boolean initPins() {
-        if (!Devices.isRaspbian) return false;
-        if (getPins().size() == 0) return false;
-        gpioPin = Devices.gpioController.provisionDigitalOutputPin(getPins().get(0), getName(), PinState.HIGH);
-        gpioPin.setShutdownOptions(true, PinState.LOW);
-        coolingThread.start();
-        return true;
-    }
-
-    public static double getTemperature(double defaultValue){
-        if (!Devices.isRaspbian) return defaultValue;
-        try (FileInputStream fstream = new FileInputStream("/sys/class/thermal/thermal_zone0/temp")) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-            return Integer.parseInt(br.readLine())/1000d;
-        }
-        catch(Exception exception){
-            exception.printStackTrace();
-            return defaultValue;
-        }
-    }
+    private CoolingDevice() {}
 
     private Thread coolingThread = new Thread(() -> {
         while (true) {
@@ -91,10 +51,16 @@ public class CoolingDevice extends Device {
         }
     }, "Cooling thread");
 
-    /**
-     * <b>Получить значение для отображения</b><br>
-     * @return Значение для отображения
-     */
+    @Override
+    public boolean initPins() {
+        if (!Devices.isRaspbian) return false;
+        if (getPins().size() == 0) return false;
+        gpioPin = Devices.gpioController.provisionDigitalOutputPin(getPins().get(0), getName(), PinState.HIGH);
+        gpioPin.setShutdownOptions(true, PinState.LOW);
+        coolingThread.start();
+        return true;
+    }
+
     @Override
     public String toString(){
         return model;
@@ -103,6 +69,40 @@ public class CoolingDevice extends Device {
     @Override
     public String getClassName() {
         return MethodHandles.lookup().lookupClass().getSimpleName();
+    }
+
+    private static final CoolingDevice instance = new CoolingDevice();
+
+    public static CoolingDevice getInstance() {
+        return instance;
+    }
+
+    public static void init(Pin pin, double temperature) {
+        init(pin, temperature, ValueMode.TEMPORARY);
+    }
+
+    public static void init(Pin pin, double temperature, ValueMode valueMode) {
+        instance.model = "Fan relay"; // Тип устройства - тип и модель датчика (например, "Сонар HC-SR04")
+        instance.note = "CPU cooling fan relay"; // Описание устройства (например, "Сонар для измерения уровня воды")
+        instance.name = "coolingDevice"; // Уникальное имя устройства, используется для именования таблиц в БД (например, "WaterSonar")
+        instance.fanRelay = new BooleanValue(instance.name + "_fanrelay", "Реле вентилятора", valueMode, false);
+        instance.temperature = new DoubleValue(instance.name + "_temperature", "Температура CPU, C", valueMode, 2, temperature);
+        instance.values.add(instance.fanRelay);
+        instance.values.add(instance.temperature);
+        if (pin == null) return;
+        instance.putPin(pin, "");
+    }
+
+    public static double getTemperature(double defaultValue){
+        if (!Devices.isRaspbian) return defaultValue;
+        try (FileInputStream fstream = new FileInputStream("/sys/class/thermal/thermal_zone0/temp")) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
+            return Integer.parseInt(br.readLine())/1000d;
+        }
+        catch(Exception exception){
+            exception.printStackTrace();
+            return defaultValue;
+        }
     }
 
 }

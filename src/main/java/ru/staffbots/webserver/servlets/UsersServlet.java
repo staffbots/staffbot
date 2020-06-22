@@ -3,6 +3,7 @@ package ru.staffbots.webserver.servlets;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.users.User;
 import ru.staffbots.database.users.UserRole;
+import ru.staffbots.database.users.Users;
 import ru.staffbots.tools.languages.Language;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
@@ -40,7 +41,7 @@ public class UsersServlet extends BaseServlet {
         Language language = accountService.getUserLanguage(request);
 
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
-        ArrayList<User> userList = Database.users.getUserList();
+        ArrayList<User> userList = Users.getUserList();
 
 
         pageVariables.put("login_list", getLoginList(userList, login));
@@ -65,14 +66,14 @@ public class UsersServlet extends BaseServlet {
         String password = request.getParameter("users_password");
         String languageCode = accountService.getUserLanguage(request).getCode();
         if (!login.equals(""))
-            Database.users.setUser(new User(login, password, languageCode, role));
+            Users.setUser(new User(login, password, languageCode, role));
         return true;
     }
 
     // Обработка кнопок для работы с конфигурацией (удалить)
     private boolean buttonDeleteClick(HttpServletRequest request) {
         String login = getLoginFromRequest(request);
-        Database.users.delete(login);
+        Users.delete(login);
         return true;
     }
 
@@ -92,7 +93,7 @@ public class UsersServlet extends BaseServlet {
 
     private String getRoleList(HttpServletRequest request) {
         String login = request.getParameter("login_name");
-        UserRole selectedRole = Database.users.getRole(login);
+        UserRole selectedRole = Users.getRole(login);
         Language language = accountService.getUserLanguage(request);
         String roles = "";
         for (UserRole role : UserRole.values())

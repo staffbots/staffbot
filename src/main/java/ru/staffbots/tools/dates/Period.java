@@ -49,7 +49,6 @@ public class Period {
         toDate = null;
     }
 
-
     public void set(String fromDate, String toDate){
         set(DateValue.fromString(fromDate, dateFormat, null),
             DateValue.fromString(toDate, dateFormat, null));
@@ -96,6 +95,5 @@ public class Period {
         long roundingDownTime = date.getTime() - date.getTime() % dateAccuracy.getMilliseconds(); // Начало периода в рамках dateAccuracy
         return new Date(roundingDownTime + (roundingUp ? dateAccuracy.getMilliseconds() - 1 : 0 )); // Конец периода в рамках dateAccuracy
     }
-
 
 }

@@ -1,13 +1,13 @@
 package ru.staffbots.database.journal;
 
 import ru.staffbots.database.DBTable;
+import ru.staffbots.database.Database;
 import ru.staffbots.database.Executor;
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.dates.Period;
 import ru.staffbots.tools.languages.Language;
 import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.tools.values.LongValue;
-import ru.staffbots.tools.values.ValueMode;
 
 import java.sql.*;
 import java.util.*;
@@ -20,38 +20,32 @@ import java.util.Date;
 public class Journal extends DBTable {
 
     public static final String defaultNoteName = "any_message";
-    private static final String staticTableName = "sys_journal";
-    private static final String staticTableFields =
-            "moment TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3), " +
-            "noteType INT DEFAULT 0, " +
-            "noteName VARCHAR(50) CHARACTER SET utf8, " +
-            "noteVariables VARCHAR(500) CHARACTER SET utf8";
 
     private Journal(){
-        super(staticTableName, staticTableFields);
+        super("sys_journal",
+        "moment TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP(3), " +
+             "noteType INT DEFAULT 0, " +
+             "noteName VARCHAR(50) CHARACTER SET utf8, " +
+             "noteVariables VARCHAR(500) CHARACTER SET utf8");
     }
+
+    private static volatile Journal instance = null;
 
     public static Journal getInstance() {
-        return JournalHolder.HOLDER_INSTANCE;
+        if (instance == null)
+            if (Database.connected())
+                synchronized (Journal.class) {
+                    if (instance == null)
+                        instance = new Journal();
+                }
+        return instance;
     }
 
-    private static class JournalHolder {
-        private static final Journal HOLDER_INSTANCE = new Journal();
-    }
+    private static final long minNoteCount = 5;
 
-    public Journal(String fromDate, String toDate){
-        super(staticTableName, staticTableFields);
-        period.set(fromDate, toDate);
-    }
-
-    public Journal(Date fromDate, Date toDate){
-        super(staticTableName, staticTableFields);
-        period.set(fromDate, toDate);
-    }
+    public static final long defaultNoteCount = 25;
 
     private static final long maxNoteCount = 99;
-
-    private static final long defaultNoteCount = 20;
 
     public static final DateFormat dateFormat = DateFormat.DATETIME;
 
@@ -83,9 +77,10 @@ public class Journal extends DBTable {
     }
 
     private static boolean insertNote(Note note){
+        if (instance == null) return false;
         Executor executor = new Executor(null);
         return executor.execUpdate(
-                "INSERT INTO " + staticTableName + " (moment, noteType, noteName, noteVariables) VALUES (?, ?, ?, ?)",
+                "INSERT INTO " + instance.getTableName() + " (moment, noteType, noteName, noteVariables) VALUES (?, ?, ?, ?)",
                 new Timestamp(note.getDate().getTime()).toString(),
                 String.valueOf(note.getType().getValue()),
                 note.getName(),
@@ -93,37 +88,15 @@ public class Journal extends DBTable {
                 ) > 0;
     }
 
-    public Period period = new Period(dateFormat);
-
-    private LongValue noteCount = new LongValue("","", ValueMode.TEMPORARY, 1, defaultNoteCount, maxNoteCount);
-
-    public void setCount(long newCount){
-        noteCount.setValue(newCount);
+    public static ArrayList<Note> getJournal(Date fromDate, Date toDate, Map<Integer, Boolean> noteTypes, String searchStr, String countStr, Language language){
+        return getJournal(new Period(dateFormat, fromDate, toDate), noteTypes, searchStr, countStr, language);
     }
 
-    public void setCount(String newCount){
-        try {
-            noteCount.setValue(Long.parseLong(newCount));
-        } catch (NumberFormatException e) {
-            noteCount.reset();
-        }
+    public static ArrayList<Note> getJournal(String fromDate, String toDate, Map<Integer, Boolean> noteTypes, String searchStr, String countStr, Language language){
+        return getJournal(new Period(dateFormat, fromDate, toDate), noteTypes, searchStr, countStr, language);
     }
 
-    public long getCount(){
-        return noteCount.getValue();
-    }
-
-    public ArrayList<Note> getJournal(Date fromDate, Date toDate, Map<Integer, Boolean> noteTypes, String searchString, Language language){
-        period.set(fromDate, toDate);
-        return getJournal(noteTypes, searchString, language);
-    }
-
-    public ArrayList<Note> getJournal(String fromDate, String toDate, Map<Integer, Boolean> noteTypes, String searchString, Language language){
-        period.set(fromDate, toDate);
-        return getJournal(noteTypes, searchString, language);
-    }
-
-    public ArrayList<Note> getJournal(Map<Integer, Boolean> noteTypes, String searchString, Language language){
+    public static ArrayList<Note> getJournal(Period period, Map<Integer, Boolean> noteTypes, String searchStr, String countStr, Language language){
         String condition = "((noteName IS NULL)";
         for (NoteType noteType : NoteType.values())
             if (noteTypes.containsKey(noteType.getValue()))
@@ -132,7 +105,7 @@ public class Journal extends DBTable {
         condition += ")";
         String fromCondition = (period.getFromDate() == null) ? "" : " AND (? <= moment)";
         String toCondition = (period.getToDate() == null) ? "" : " AND (moment <= ?)";
-        String query ="SELECT moment, noteType, noteName, noteVariables FROM " + getTableName()
+        String query ="SELECT moment, noteType, noteName, noteVariables FROM " + getInstance().getTableName()
                 + " WHERE " + condition + fromCondition + toCondition
                 + " ORDER BY moment DESC ";
         ArrayList<String> parameters = new ArrayList();
@@ -140,20 +113,26 @@ public class Journal extends DBTable {
             parameters.add(new Timestamp(period.getFromDate().getTime()).toString());
         if (period.getToDate() != null)
             parameters.add(new Timestamp(period.getToDate().getTime()).toString());
+
+        long count = LongValue.fromString(countStr, defaultNoteCount);
+        if (count > maxNoteCount) count = maxNoteCount;
+        if (count < minNoteCount) count = minNoteCount;
+        final long noteCount = count;
+
         Executor<ArrayList<Note>> executor = new Executor(null);
         return executor.execQuery(query,
                 (resultSet) -> {
                     ArrayList<Note> result = new ArrayList();
-                    while (resultSet.next() && (result.size() < getCount())) {
+                    while (resultSet.next() && (result.size() < noteCount)) {
                         Date date = new Date(resultSet.getTimestamp(1).getTime());
                         Note note = new Note(
                                 date,
                                 NoteType.valueOf(resultSet.getInt(2)),
                                 resultSet.getString(3),
                                 resultSet.getString(4));
-                        if ((searchString == null) || searchString.trim().isEmpty())
+                        if ((searchStr == null) || searchStr.trim().isEmpty())
                             result.add(note);
-                        else if (note.toString(language).toLowerCase().indexOf(searchString.trim().toLowerCase()) > -1)
+                        else if (note.toString(language).toLowerCase().indexOf(searchStr.trim().toLowerCase()) > -1)
                             result.add(note);
                     }
                     return result;

@@ -46,8 +46,8 @@ public class RegularESP32Device extends NetworkDevice {
     }
 
     @Override
-    public void initValues() {
-        super.initValues();
+    public void dbInit() {
+        super.dbInit();
         setValveRelay(valveRelay.getValue());
         getLightLevel();
     }

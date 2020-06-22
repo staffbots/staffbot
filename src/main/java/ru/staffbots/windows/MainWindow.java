@@ -3,6 +3,7 @@ package ru.staffbots.windows;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URL;
 import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
@@ -80,7 +81,7 @@ public class MainWindow extends JFrame {
         button.addActionListener( new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 try {
-                    Desktop.getDesktop().browse(WebServer.getInstance().getLocalURL(сheckBox.isSelected()).toURI());
+                    openBrowse(WebServer.getInstance().getLocalURL(сheckBox.isSelected()).toString());
                 } catch (Exception exception) {
                     Journal.add(NoteType.ERROR, "open_browser", exception.getMessage());
                 }
@@ -99,6 +100,15 @@ public class MainWindow extends JFrame {
         setSize(width, height);
         setVisible(true); // Open window
         //button.doClick(); // Run browser for management
+    }
+
+    private void openBrowse(String url) throws Exception{
+        if(Desktop.isDesktopSupported() && Desktop.getDesktop().isSupported(Desktop.Action.BROWSE))
+            Desktop.getDesktop().browse(new URL(url).toURI());
+        else {
+            Runtime runtime = Runtime.getRuntime();
+            runtime.exec("xdg-open " + url);
+        }
     }
 
 }

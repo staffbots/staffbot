@@ -93,6 +93,15 @@ public class LongValue extends Value {
      *****         Преобразование типов                *****
      *******************************************************/
 
+    public static boolean isLong(String value){
+        try {
+            Long.parseLong(value);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
     public static long fromString(String value) throws Exception{
         return Long.parseLong(value);
     }
