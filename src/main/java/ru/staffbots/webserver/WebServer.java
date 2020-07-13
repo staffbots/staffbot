@@ -5,8 +5,8 @@ import org.eclipse.jetty.server.handler.HandlerList;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
 import org.eclipse.jetty.util.ssl.SslContextFactory;
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.database.tables.journal.Journal;
+import ru.staffbots.database.tables.journal.NoteType;
 import ru.staffbots.tools.colors.ColorSchema;
 import ru.staffbots.tools.resources.Resources;
 import ru.staffbots.webserver.servlets.*;
@@ -22,6 +22,10 @@ public class WebServer {
 
     public static WebServer getInstance() {
         return instance;
+    }
+
+    public static void start() {
+        instance.init();
     }
 
     ////////////////////////////////////////////////////////////////

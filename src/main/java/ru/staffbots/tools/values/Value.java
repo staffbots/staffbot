@@ -1,10 +1,10 @@
 package ru.staffbots.tools.values;
 
-import ru.staffbots.database.DBTable;
+import ru.staffbots.database.tables.DBTable;
 import ru.staffbots.database.ValueDataSet;
 import ru.staffbots.database.Executor;
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.database.tables.journal.Journal;
+import ru.staffbots.database.tables.journal.NoteType;
 import ru.staffbots.tools.dates.Period;
 import ru.staffbots.tools.levers.LeverMode;
 import ru.staffbots.webserver.WebServer;
@@ -34,6 +34,10 @@ abstract public class Value extends DBTable {
 
     public ValueType getValueType() {
         return valueType;
+    }
+
+    public boolean typeIs(ValueType valueType) {
+        return this.valueType == valueType;
     }
 
     /**

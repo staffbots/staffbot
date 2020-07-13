@@ -89,11 +89,13 @@ public class Levers extends ArrayList<Lever> {
 
     public static String toConfigValue(){
         Map<String, String> nameValues = new HashMap<>();
-        for (Lever lever : instance)
-            if (lever.toValue().getValueType() != ValueType.VOID)
-                nameValues.put(
-                        lever.toValue().getName(),
-                        Long.toString(lever.toValue().get()));
+        Value value;
+        for (Lever lever : instance) {
+            if (!lever.isChangeable()) continue;
+            value = lever.toValue();
+            if (value.typeIs(ValueType.VOID)) continue;
+            nameValues.put(value.getName(), Long.toString(value.get()));
+        }
         String rawConfigValue = nameValues.toString();
         return rawConfigValue.substring(1, rawConfigValue.length() - 1).replace(", ", "\n");
     }

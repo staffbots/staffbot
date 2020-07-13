@@ -1,7 +1,7 @@
 package ru.staffbots.windows;
 
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.database.tables.journal.Journal;
+import ru.staffbots.database.tables.journal.NoteType;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 

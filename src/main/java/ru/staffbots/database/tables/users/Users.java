@@ -1,10 +1,10 @@
-package ru.staffbots.database.users;
+package ru.staffbots.database.tables.users;
 
-import ru.staffbots.database.DBTable;
+import ru.staffbots.database.tables.DBTable;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.Executor;
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.database.tables.journal.Journal;
+import ru.staffbots.database.tables.journal.NoteType;
 import ru.staffbots.tools.languages.Language;
 import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.webserver.WebServer;
@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class Users extends DBTable {
 
     private Users(){
-        super("sys_users", "login VARCHAR(16), password VARCHAR(32), role INT, language VARCHAR(2)");
+        super("sys_users", "login VARCHAR(16) NOT NULL UNIQUE, password VARCHAR(32), role INT, language VARCHAR(2)");
     }
 
     private static Users instance = null;

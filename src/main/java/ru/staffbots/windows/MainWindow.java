@@ -1,15 +1,13 @@
 package ru.staffbots.windows;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.net.URL;
 import javax.swing.JFrame;
 import javax.swing.JButton;
 import javax.swing.JCheckBox;
 
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.database.tables.journal.Journal;
+import ru.staffbots.database.tables.journal.NoteType;
 import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.tools.resources.Resources;
 import ru.staffbots.webserver.WebServer;
@@ -51,7 +49,7 @@ public class MainWindow extends JFrame {
     /*
      * Initializing a single instance of a class - {@code mainWindow}
      */
-    synchronized public static void init(String windowTilte) {
+    synchronized public static void open(String windowTilte) {
         if (instance != null)
             return;
         if (frameUsed) {
@@ -78,13 +76,11 @@ public class MainWindow extends JFrame {
         сheckBox.setSelected(true);
         JButton button = new JButton(Languages.get().getValue("frame", "button_caption"));
         button.setToolTipText(Languages.get().getValue("frame", "button_hint"));
-        button.addActionListener( new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    openBrowse(WebServer.getInstance().getLocalURL(сheckBox.isSelected()).toString());
-                } catch (Exception exception) {
-                    Journal.add(NoteType.ERROR, "open_browser", exception.getMessage());
-                }
+        button.addActionListener(e -> {
+            try {
+                openBrowse(WebServer.getInstance().getLocalURL(сheckBox.isSelected()).toString());
+            } catch (Exception exception) {
+                Journal.add(NoteType.ERROR, "open_browser", exception.getMessage());
             }
         });
         container.add(button);

@@ -1,15 +1,10 @@
 package ru.staffbots.tools.resources;
 
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.jar.JarEntry;
-import java.util.jar.JarFile;
 
 // Контейнер методов для работы с ресурсами из jar-файла
 public class Resources {

@@ -1,8 +1,8 @@
 package ru.staffbots.tools.devices.drivers;
 
 import com.pi4j.io.gpio.PinState;
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.database.tables.journal.Journal;
+import ru.staffbots.database.tables.journal.NoteType;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.devices.drivers.i2c.I2CBusDevice;
 import ru.staffbots.tools.values.DoubleValue;

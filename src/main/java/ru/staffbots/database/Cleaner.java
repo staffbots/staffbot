@@ -1,11 +1,9 @@
-package ru.staffbots.database.cleaner;
+package ru.staffbots.database;
 
-import ru.staffbots.database.DBTable;
-import ru.staffbots.database.Database;
-import ru.staffbots.database.Executor;
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
-import ru.staffbots.database.settings.Settings;
+import ru.staffbots.database.tables.DBTable;
+import ru.staffbots.database.tables.Variables;
+import ru.staffbots.database.tables.journal.Journal;
+import ru.staffbots.database.tables.journal.NoteType;
 import ru.staffbots.tools.dates.DateAccuracy;
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.languages.Languages;
@@ -60,26 +58,26 @@ public class Cleaner {
 
     private static Timer timer;
 
-    private static void loadSettings(){
-        journalValue = Settings.loadAsLong("dbclean_journal_value",99);
-        journalMeasureIsRecord = Settings.loadAsBollean("dbclean_journal_measure","record", true);
-        tablesValue = Settings.loadAsLong("dbclean_tables_value",30);
-        tablesMeasureIsRecord = Settings.loadAsBollean("dbclean_tables_measure", "record", false);
-        autoCleaning = Settings.loadAsBollean("dbclean_auto_cleaning", "on", false);
-        autoValue = Settings.loadAsLong("dbclean_auto_value",1);
-        autoMeasure = DateAccuracy.fromString(Settings.load("dbclean_auto_measure"), DateAccuracy.DAY);
-        autoStart = DateValue.fromString(Settings.load("dbclean_auto_start"), dateFormat, autoStart);
+    private static void loadVariables(){
+        journalValue = Variables.loadAsLong("dbclean_journal_value",99);
+        journalMeasureIsRecord = Variables.loadAsBollean("dbclean_journal_measure","record", true);
+        tablesValue = Variables.loadAsLong("dbclean_tables_value",30);
+        tablesMeasureIsRecord = Variables.loadAsBollean("dbclean_tables_measure", "record", false);
+        autoCleaning = Variables.loadAsBollean("dbclean_auto_cleaning", "on", false);
+        autoValue = Variables.loadAsLong("dbclean_auto_value",1);
+        autoMeasure = DateAccuracy.fromString(Variables.load("dbclean_auto_measure"), DateAccuracy.DAY);
+        autoStart = DateValue.fromString(Variables.load("dbclean_auto_start"), dateFormat, autoStart);
     }
 
-    private static void saveSettings(){
-        Settings.save("dbclean_journal_value", Long.toString(journalValue));
-        Settings.save("dbclean_journal_measure", journalMeasureIsRecord ? "record" : "day");
-        Settings.save("dbclean_tables_value", Long.toString(tablesValue));
-        Settings.save("dbclean_tables_measure", tablesMeasureIsRecord ? "record" : "day");
-        Settings.save("dbclean_auto_cleaning", autoCleaning ? "on" : "off");
-        Settings.save("dbclean_auto_value", Long.toString(autoValue));
-        Settings.save("dbclean_auto_measure", autoMeasure.toString().toLowerCase());
-        Settings.save("dbclean_auto_start", DateValue.toString(autoStart, dateFormat));
+    private static void saveVariables(){
+        Variables.save("dbclean_journal_value", Long.toString(journalValue));
+        Variables.save("dbclean_journal_measure", journalMeasureIsRecord ? "record" : "day");
+        Variables.save("dbclean_tables_value", Long.toString(tablesValue));
+        Variables.save("dbclean_tables_measure", tablesMeasureIsRecord ? "record" : "day");
+        Variables.save("dbclean_auto_cleaning", autoCleaning ? "on" : "off");
+        Variables.save("dbclean_auto_value", Long.toString(autoValue));
+        Variables.save("dbclean_auto_measure", autoMeasure.toString().toLowerCase());
+        Variables.save("dbclean_auto_start", DateValue.toString(autoStart, dateFormat));
     }
 
     private static long cleanByCount(DBTable table, long count){
@@ -102,8 +100,8 @@ public class Cleaner {
     }
 
     public static void reload(){
-        loadSettings();
-        saveSettings();
+        loadVariables();
+        saveVariables();
     }
 
     public static void restart(){

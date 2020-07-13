@@ -1,7 +1,7 @@
 package ru.staffbots.webserver.servlets;
 
 import ru.staffbots.database.ValueDataSet;
-import ru.staffbots.database.journal.Journal;
+import ru.staffbots.database.tables.journal.Journal;
 import ru.staffbots.tools.dates.Period;
 import ru.staffbots.tools.languages.Language;
 import ru.staffbots.tools.tasks.Tasks;
@@ -17,10 +17,8 @@ import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
 import ru.staffbots.webserver.WebServer;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.*;
 
 /**

@@ -2,7 +2,7 @@ package ru.staffbots.tools.devices.drivers;
 
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.wiringpi.Gpio;
-import ru.staffbots.database.journal.Journal;
+import ru.staffbots.database.tables.journal.Journal;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.values.DoubleValue;

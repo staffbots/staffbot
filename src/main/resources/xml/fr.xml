@@ -12,10 +12,10 @@
             checkbox_hint    = Use SSL-protocol
         </frame>
         <database>
-            sys_configs    = Configurations
             sys_journal    = Journal
-            sys_settings   = System settings
             sys_users      = Users
+            sys_variables  = Variables
+            sys_leverssets = Levers sets
         </database>
     </application>
 
@@ -199,7 +199,7 @@
     <journal>
         <information>
             any_message     = %s%
-            init_properties = Project properties loaded
+            apply_properties = Project properties loaded
             init_configs    = Project configuration loaded
             init_database   = Database %s% is ready to use
             create_table    = Table %s% created
@@ -243,7 +243,7 @@
         </warning>
         <error>
             any_message     = %s%
-            init_properties = Error loading project properties. Message: %s%
+            apply_properties = Error loading project properties. Message: %s%
             init_configs    = Error loading project configuration. Message: %s%
             table_exists    = Table %s% search error. Message: %s%
             create_table    = Table %s% create error. Message: %s%

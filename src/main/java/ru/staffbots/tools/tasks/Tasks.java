@@ -1,9 +1,8 @@
 package ru.staffbots.tools.tasks;
 
-import ru.staffbots.database.Database;
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
-import ru.staffbots.database.settings.Settings;
+import ru.staffbots.database.tables.Variables;
+import ru.staffbots.database.tables.journal.Journal;
+import ru.staffbots.database.tables.journal.NoteType;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -104,7 +103,7 @@ public class Tasks {
     }
 
     public static long getStartTime(){
-        String startTimeString = Settings.load("control_start_time");
+        String startTimeString = Variables.load("control_start_time");
         if (startTimeString == null) return startTime;
         try {
             startTime = Long.parseLong(startTimeString);
@@ -116,10 +115,10 @@ public class Tasks {
 
     private static void setStartTime(long time){
         if ((time == 0) && (startTime != 0))
-            Settings.delete("control_start_time");
+            Variables.delete("control_start_time");
         startTime = time;
         if (startTime != 0)
-            Settings.save("control_start_time", Long.toString(startTime));
+            Variables.save("control_start_time", Long.toString(startTime));
     }
 
 }

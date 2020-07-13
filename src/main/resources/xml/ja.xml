@@ -12,10 +12,10 @@
             checkbox_hint    = Использовать SSL-протокол
         </frame>
         <database>
-            sys_configs    = Конфигурации
             sys_journal    = Журнал
-            sys_settings   = Настройки системы
             sys_users      = Пользователи
+            sys_variables  = Системные переменные
+            sys_leverssets = Наборы параметров управления
         </database>
     </application>
 
@@ -200,7 +200,7 @@
     <journal>
         <information>
             any_message     = %s%
-            init_properties = Свойства проекта загружены
+            apply_properties = Свойства проекта загружены
             init_configs    = Конфигурация проекта загружена
             init_database   = База данных %s% готова к использованию
             create_table    = Таблица %s% создана
@@ -244,7 +244,7 @@
         </warning>
         <error>
             any_message     = %s%
-            init_properties = Ошибка загрузки свойств проекта
+            apply_properties = Ошибка загрузки свойств проекта
             init_configs    = Ошибка загрузки конфигурации проекта
             table_exists    = Ошибка поиска таблицы %s%. Сообщение: %s%
             create_table    = Ошибка создания таблицы %s%. Сообщение: %s%

@@ -2,8 +2,8 @@ package ru.staffbots;
 
 import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.system.SystemInfo.BoardType;
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.database.tables.journal.Journal;
+import ru.staffbots.database.tables.journal.NoteType;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.levers.DoubleLever;
 import ru.staffbots.tools.levers.Lever;
@@ -23,7 +23,7 @@ public class Sample extends Staffbot {
         Device[] devices = {ledDevice}; // Инициализируем список устройств
         Lever[] levers = {frequencyLever}; // Инициализируем список элементов управления
         Task[] tasks = {ledFlashingTask}; // Инициализируем список заданий
-        solutionInit(devices, levers, tasks);
+        initiateSolution(devices, levers, tasks);
     }
 
     static {

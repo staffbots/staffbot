@@ -1,8 +1,8 @@
 package ru.staffbots.tools.devices;
 
 import com.pi4j.io.gpio.*;
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.database.tables.journal.Journal;
+import ru.staffbots.database.tables.journal.NoteType;
 import ru.staffbots.tools.devices.drivers.i2c.I2CBusDevice;
 
 import java.io.BufferedReader;

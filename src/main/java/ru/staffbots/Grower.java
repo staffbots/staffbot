@@ -1,8 +1,8 @@
 package ru.staffbots;
 
 import com.pi4j.system.SystemInfo;
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.database.tables.journal.Journal;
+import ru.staffbots.database.tables.journal.NoteType;
 import ru.staffbots.tools.dates.DateAccuracy;
 import ru.staffbots.tools.dates.Period;
 import ru.staffbots.tools.dates.DateFormat;
@@ -29,7 +29,7 @@ public class Grower extends Staffbot {
 
     // Точка входа при запуске приложения
     public static void main(String[] args) {
-        solutionInit(()->{
+        initiateSolution(()->{
                     Levers.addGroup("Освещение и вентиляция", sunriseLever, sunsetLever, funUsedLever, funDelayLever);
                     Levers.addGroup("Подготовка раствора", phLever, ecLever, soluteLever, volumeLever);
                     Levers.addGroup("Орошение", dayRateLever, nightRateLever, durationLever);

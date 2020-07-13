@@ -1,4 +1,4 @@
-package ru.staffbots.database.journal;
+package ru.staffbots.database.tables.journal;
 
 import ru.staffbots.tools.languages.Languages;
 import java.util.HashMap;

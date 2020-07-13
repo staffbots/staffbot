@@ -1,7 +1,7 @@
 package ru.staffbots.tools.languages;
 
 import org.w3c.dom.Document;
-import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.database.tables.journal.NoteType;
 import ru.staffbots.tools.resources.Resources;
 import ru.staffbots.webserver.PageType;
 

@@ -1,7 +1,6 @@
 package ru.staffbots.webserver.servlets;
 
-import ru.staffbots.database.Database;
-import ru.staffbots.database.configs.Configs;
+import ru.staffbots.database.tables.LeversSets;
 import ru.staffbots.tools.languages.Language;
 import ru.staffbots.tools.tasks.Tasks;
 import ru.staffbots.tools.tasks.TasksStatus;
@@ -14,10 +13,8 @@ import ru.staffbots.tools.values.ValueType;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -87,24 +84,24 @@ public class ControlServlet extends BaseServlet {
     // Обработка кнопок для работы с конфигурацией (сохранить)
     private boolean buttonSaveClick(HttpServletRequest request) {
         buttonApplyClick(request);
-        String configName = accountService.setAttribute(request,"config_name");
-        Configs.save(configName);
+        String setName = accountService.setAttribute(request,"config_name");
+        LeversSets.save(setName);
         return true;
     }
 
     // Обработка кнопок для работы с конфигурацией (загрузить)
     private boolean buttonLoadClick(HttpServletRequest request) {
         buttonApplyClick(request);
-        String configName = accountService.setAttribute(request,"config_name");
-        Configs.load(configName);
+        String setName = accountService.setAttribute(request,"config_name");
+        LeversSets.load(setName);
         return true;
     }
 
     // Обработка кнопок для работы с конфигурацией (удалить)
     private boolean buttonDeleteClick(HttpServletRequest request) {
         buttonApplyClick(request);
-        String configName = request.getParameter("config_name");
-        Configs.delete(configName);
+        String setName = request.getParameter("config_name");
+        LeversSets.delete(setName);
         accountService.setAttribute(request,"config_name", "");
         return true;
     }
@@ -174,7 +171,7 @@ public class ControlServlet extends BaseServlet {
 
     private String getConfigList() {
         String context = "";
-        for (String configName : Configs.getList())
+        for (String configName : LeversSets.getList())
             context += getConfig(configName);
         return context;
     }

@@ -1,8 +1,8 @@
 package ru.staffbots.webserver.servlets;
 
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.Note;
-import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.database.tables.journal.Journal;
+import ru.staffbots.database.tables.journal.Note;
+import ru.staffbots.database.tables.journal.NoteType;
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.dates.Period;
 import ru.staffbots.tools.languages.Language;

@@ -1,5 +1,8 @@
 package ru.staffbots.tools;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Properties;
 
 /**
@@ -78,6 +81,19 @@ public class ParsableProperties extends Properties {
     public String getProperty(String key, String defaultValue){
         String property = (defaultValue == null) ? super.getProperty(key) : super.getProperty(key, defaultValue);
         return (property == null) ? null : property.trim();
+    }
+
+    public String[] getStringsProperty(String key){
+        return getStringsProperty(key, ",");
+    }
+
+    public String[] getStringsProperty(String key, String separator){
+        List<String> result = new ArrayList();
+        String[] values = getProperty(key, "").split(separator);
+        for(String value: values)
+            if (!value.trim().isEmpty())
+                result.add(value.trim());
+        return result.toArray(new String[result.size()]);
     }
 
 }

@@ -1,11 +1,11 @@
 package ru.staffbots.database;
 
-import ru.staffbots.database.cleaner.Cleaner;
-import ru.staffbots.database.configs.Configs;
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
-import ru.staffbots.database.settings.Settings;
-import ru.staffbots.database.users.Users;
+import ru.staffbots.database.tables.DBTable;
+import ru.staffbots.database.tables.LeversSets;
+import ru.staffbots.database.tables.Variables;
+import ru.staffbots.database.tables.journal.Journal;
+import ru.staffbots.database.tables.journal.NoteType;
+import ru.staffbots.database.tables.users.Users;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.languages.Languages;
@@ -165,8 +165,8 @@ public abstract class Database {
             addSystemTable(Journal.getInstance());
             Journal.add(null);
             Journal.add("init_database", name);
-            addSystemTable(Configs.getInstance());
-            addSystemTable(Settings.getInstance());
+            addSystemTable(LeversSets.getInstance());
+            addSystemTable(Variables.getInstance());
             addSystemTable(Users.getInstance());
             Languages.loadDefaultCode();
             Cleaner.restart();

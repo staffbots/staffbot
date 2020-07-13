@@ -2,7 +2,7 @@ package ru.staffbots.tools;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
-import ru.staffbots.database.journal.Journal;
+import ru.staffbots.database.tables.journal.Journal;
 import ru.staffbots.tools.resources.Resources;
 
 import java.io.InputStream;

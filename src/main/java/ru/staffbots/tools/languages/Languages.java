@@ -1,6 +1,6 @@
 package ru.staffbots.tools.languages;
 
-import ru.staffbots.database.settings.Settings;
+import ru.staffbots.database.tables.Variables;
 
 import java.util.HashMap;
 
@@ -14,13 +14,17 @@ public class Languages extends HashMap<String, Language> {
 
     private static String defaultCode = null;
 
-    public static boolean put(String languageCode) {
-        if (languageCode == null) return false;
-        languageCode = languageCode.toLowerCase().trim();
-        if (instance.containsKey(languageCode)) return false;
-        instance.put(languageCode, new Language(languageCode));
-        if (defaultCode == null) setDefaultCode(languageCode);
-        return true;
+    public static int put(String... languageCodes) {
+        int result = 0;
+        for (String languageCode: languageCodes) {
+            if (languageCode == null) continue;
+            languageCode = languageCode.toLowerCase().trim();
+            if (instance.containsKey(languageCode)) continue;
+            instance.put(languageCode, new Language(languageCode));
+            if (defaultCode == null) setDefaultCode(languageCode);
+            result++;
+        }
+        return result;
     }
 
     public static Language get() {
@@ -47,14 +51,14 @@ public class Languages extends HashMap<String, Language> {
     }
 
     public static void loadDefaultCode() {
-        setDefaultCode(Settings.loadAsString("default_language_code", defaultCode));
+        setDefaultCode(Variables.loadAsString("default_language_code", defaultCode));
     }
 
     public static boolean setDefaultCode(String languageCode) {
         if (languageCode == null) return false;
         languageCode = languageCode.toLowerCase().trim();
         if (instance.containsKey(languageCode)) defaultCode = languageCode;
-        Settings.save("default_language_code", defaultCode);
+        Variables.save("default_language_code", defaultCode);
         return true;
     }
 

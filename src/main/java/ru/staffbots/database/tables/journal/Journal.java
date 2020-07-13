@@ -1,6 +1,6 @@
-package ru.staffbots.database.journal;
+package ru.staffbots.database.tables.journal;
 
-import ru.staffbots.database.DBTable;
+import ru.staffbots.database.tables.DBTable;
 import ru.staffbots.database.Database;
 import ru.staffbots.database.Executor;
 import ru.staffbots.tools.dates.DateFormat;
@@ -14,8 +14,7 @@ import java.util.*;
 import java.util.Date;
 
 /**
- * <b>Системный журнал</b><br>
- * Экземпляр описан как статическое поле в классе Database
+ * System journal
  */
 public class Journal extends DBTable {
 

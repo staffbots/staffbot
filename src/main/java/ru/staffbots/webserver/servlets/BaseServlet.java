@@ -2,7 +2,7 @@ package ru.staffbots.webserver.servlets;
 
 import ru.staffbots.Staffbot;
 import ru.staffbots.database.Database;
-import ru.staffbots.database.users.Users;
+import ru.staffbots.database.tables.users.Users;
 import ru.staffbots.tools.TemplateFillable;
 import ru.staffbots.tools.languages.Language;
 import ru.staffbots.tools.languages.Languages;

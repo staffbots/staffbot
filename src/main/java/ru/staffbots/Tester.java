@@ -1,8 +1,8 @@
 package ru.staffbots;
 
 import com.pi4j.system.SystemInfo;
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.database.tables.journal.Journal;
+import ru.staffbots.database.tables.journal.NoteType;
 import ru.staffbots.tools.dates.DateAccuracy;
 import ru.staffbots.tools.dates.Period;
 import ru.staffbots.tools.dates.DateFormat;
@@ -23,7 +23,7 @@ public class Tester extends Staffbot {
 
     // Точка входа при запуске приложения
     public static void main(String[] args) {
-        solutionInit(
+        initiateSolution(
 //                new Device[] {regularDevice, bh1750Device, distanceDevice, sensorDevice, buttonDevice}, // Инициализируем список устройств
 //                new Lever[] {buttonLever, distanceLever}, // Инициализируем список элементов управления
                 new Device[] {mainDevice, regularDevice}, // Инициализируем список устройств

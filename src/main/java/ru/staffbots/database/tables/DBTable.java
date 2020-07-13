@@ -1,9 +1,10 @@
-package ru.staffbots.database;
+package ru.staffbots.database.tables;
+
+import ru.staffbots.database.Database;
+import ru.staffbots.database.Executor;
 
 /*
- * Таблица БД,
- * Предоставляет интерфейс общий для всех таблиц БД,
- * является родителем для классов Value, Journal, Settings, Configs, Users
+ * Database table interface for Journal, Variables, Users, LeversSets and Value
  */
 public abstract class DBTable {
 

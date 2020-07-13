@@ -1,4 +1,4 @@
-package ru.staffbots.database.users;
+package ru.staffbots.database.tables.users;
 
 import ru.staffbots.tools.languages.Language;
 import ru.staffbots.tools.languages.Languages;

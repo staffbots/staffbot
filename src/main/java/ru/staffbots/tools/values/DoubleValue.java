@@ -1,9 +1,8 @@
 package ru.staffbots.tools.values;
 
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.database.tables.journal.Journal;
+import ru.staffbots.database.tables.journal.NoteType;
 
-import java.nio.ByteBuffer;
 import java.util.Date;
 import java.util.Locale;
 

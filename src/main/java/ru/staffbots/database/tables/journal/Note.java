@@ -1,4 +1,4 @@
-package ru.staffbots.database.journal;
+package ru.staffbots.database.tables.journal;
 
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.languages.Language;

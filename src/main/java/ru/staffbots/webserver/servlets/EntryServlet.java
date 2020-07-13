@@ -1,13 +1,11 @@
 package ru.staffbots.webserver.servlets;
 
 import ru.staffbots.Staffbot;
-import ru.staffbots.database.Database;
-import ru.staffbots.database.users.Users;
+import ru.staffbots.database.tables.users.Users;
 import ru.staffbots.tools.languages.Language;
 import ru.staffbots.webserver.AccountService;
 import ru.staffbots.webserver.PageType;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;

@@ -1,7 +1,7 @@
 package ru.staffbots.tools.tasks;
 
-import ru.staffbots.database.journal.Journal;
-import ru.staffbots.database.journal.NoteType;
+import ru.staffbots.database.tables.journal.Journal;
+import ru.staffbots.database.tables.journal.NoteType;
 import ru.staffbots.tools.dates.DateFormat;
 import ru.staffbots.tools.languages.Languages;
 import ru.staffbots.tools.values.DateValue;
