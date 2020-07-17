@@ -3,6 +3,8 @@ package ru.staffbots.tools.devices;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.PinState;
+import ru.staffbots.Staffbot;
+import ru.staffbots.tools.SystemInformation;
 import ru.staffbots.tools.values.BooleanValue;
 import ru.staffbots.tools.values.DoubleValue;
 import ru.staffbots.tools.values.ValueMode;
@@ -34,11 +36,11 @@ public class CoolingDevice extends Device {
         while (true) {
             try {
                 Thread.sleep(10000);
-                double t = getTemperature(temperature.getValue());
+                double t = SystemInformation.getCPUTemperature(temperature.getValue());
                 System.out.println("Temperature = " + t );
                 temperature.setValue(t);
                 fanRelay.setValue(t > temperature.getDefaultValue());
-                if(!Devices.isRaspbian) continue;
+                if(!SystemInformation.isRaspbian) continue;
                 if (fanRelay.getValue()) {
                     gpioPin.high();
                 } else {
@@ -53,7 +55,7 @@ public class CoolingDevice extends Device {
 
     @Override
     public boolean initPins() {
-        if (!Devices.isRaspbian) return false;
+        if (!SystemInformation.isRaspbian) return false;
         if (getPins().size() == 0) return false;
         gpioPin = Devices.gpioController.provisionDigitalOutputPin(getPins().get(0), getName(), PinState.HIGH);
         gpioPin.setShutdownOptions(true, PinState.LOW);
@@ -93,16 +95,7 @@ public class CoolingDevice extends Device {
         instance.putPin(pin, "");
     }
 
-    public static double getTemperature(double defaultValue){
-        if (!Devices.isRaspbian) return defaultValue;
-        try (FileInputStream fstream = new FileInputStream("/sys/class/thermal/thermal_zone0/temp")) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(fstream));
-            return Integer.parseInt(br.readLine())/1000d;
-        }
-        catch(Exception exception){
-            exception.printStackTrace();
-            return defaultValue;
-        }
+    public static boolean used() {
+        return SystemInformation.isRaspbian && (getInstance().getPins().size() > 0);
     }
-
 }

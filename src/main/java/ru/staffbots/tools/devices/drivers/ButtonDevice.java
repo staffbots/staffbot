@@ -3,6 +3,8 @@ package ru.staffbots.tools.devices.drivers;
 import com.pi4j.io.gpio.*;
 import com.pi4j.io.gpio.event.GpioPinDigitalStateChangeEvent;
 import com.pi4j.io.gpio.event.GpioPinListenerDigital;
+import ru.staffbots.Staffbot;
+import ru.staffbots.tools.SystemInformation;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.values.BooleanValue;
@@ -41,7 +43,7 @@ public class ButtonDevice extends Device {
 
     @Override
     public boolean initPins() {
-        if (!Devices.isRaspbian) return false;
+        if (!SystemInformation.isRaspbian) return false;
         if (getPins().size() < 1) return false;
         gpioPin = Devices.gpioController.provisionDigitalInputPin(getPins().get(0), PinPullResistance.PULL_DOWN);
         //gpioPin.setShutdownOptions(true, PinState.LOW);

@@ -2,7 +2,9 @@ package ru.staffbots.tools.devices.drivers;
 
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.wiringpi.Gpio;
+import ru.staffbots.Staffbot;
 import ru.staffbots.database.tables.journal.Journal;
+import ru.staffbots.tools.SystemInformation;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.values.DoubleValue;
@@ -52,7 +54,8 @@ public class SensorDHT22Device extends Device {
 
     @Override
     public boolean initPins() {
-        if (!Devices.isRaspbian) return false;
+
+        if (!SystemInformation.isRaspbian) return false;
         if (getPins().size() < 1) return false;
         if (Gpio.wiringPiSetup() == -1)
             Journal.addAnyNote(getName() + ": GPIO wiringPiSetup Failed!");

@@ -6,6 +6,7 @@ import com.pi4j.io.i2c.I2CBus;
 import com.pi4j.io.i2c.I2CDevice;
 import com.pi4j.io.i2c.I2CFactory;
 import ru.staffbots.Staffbot;
+import ru.staffbots.tools.SystemInformation;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import java.io.IOException;
@@ -47,7 +48,7 @@ public abstract class I2CBusDevice extends Device {
         for (int pinNumber = 0; pinNumber < 2; pinNumber++)
             putPin(getPin(busNumber, pinNumber),getPinNote(pinNumber));
 
-        if (!Devices.isRaspbian) return;
+        if (!SystemInformation.isRaspbian) return;
 
         try {
 

@@ -17,6 +17,7 @@ import ru.staffbots.tools.tasks.Task;
 import ru.staffbots.tools.tasks.Tasks;
 import ru.staffbots.webserver.WebServer;
 import ru.staffbots.windows.MainWindow;
+
 import java.io.FileInputStream;
 import java.lang.invoke.MethodHandles;
 
@@ -88,11 +89,11 @@ public abstract class Staffbot {
     }
 
     public static String getShortName(){
-        return projectName + "." + solutionName;
+        return solutionName + "-" + projectVersion;
     }
 
     public static String getFullName(){
-        return getShortName() + "-" + projectVersion;
+        return projectName + "." + getShortName();
     }
 
     /**
@@ -154,7 +155,7 @@ public abstract class Staffbot {
      */
     private static void loadCongigure(){
         ParsableProperties properties = new ParsableProperties();
-        String projectCfgFileName = "pattern.cfg"; // default cfg-file from jar-package resources
+        String projectCfgFileName = "cfg/pattern.cfg"; // default cfg-file from jar-package resources
         String solutionCfgFileName = getFullName() + ".cfg"; // specific cfg-file from jar-directory
         Resources.getAsFile(projectCfgFileName, solutionCfgFileName, false); // Extract cfg-file from jar-package
         try {

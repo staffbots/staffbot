@@ -3,7 +3,9 @@ package ru.staffbots.tools.devices.drivers;
 import com.pi4j.io.gpio.GpioPinDigitalInput;
 import com.pi4j.io.gpio.GpioPinDigitalOutput;
 import com.pi4j.io.gpio.Pin;
+import ru.staffbots.Staffbot;
 import ru.staffbots.database.tables.journal.Journal;
+import ru.staffbots.tools.SystemInformation;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.values.DoubleValue;
@@ -62,7 +64,7 @@ public class SonarHCSR04Device extends Device {
 
     @Override
     public boolean initPins() {
-        if (!Devices.isRaspbian) return false;
+        if (!SystemInformation.isRaspbian) return false;
         if (getPins().size() < 2) return false;
         gpioPinTRIG = Devices.gpioController.provisionDigitalOutputPin(getPins().get(0));
         gpioPinECHO = Devices.gpioController.provisionDigitalInputPin(getPins().get(1));

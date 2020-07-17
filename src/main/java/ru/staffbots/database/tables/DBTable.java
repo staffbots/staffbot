@@ -29,7 +29,7 @@ public abstract class DBTable {
     }
 
     public boolean tableExists(){
-        return (Database.findTable(name).size() > 0);
+        return (Database.findTables(name).size() > 0);
     }
 
     public boolean createTable(){

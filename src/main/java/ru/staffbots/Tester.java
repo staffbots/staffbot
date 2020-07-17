@@ -3,6 +3,7 @@ package ru.staffbots;
 import com.pi4j.system.SystemInfo;
 import ru.staffbots.database.tables.journal.Journal;
 import ru.staffbots.database.tables.journal.NoteType;
+import ru.staffbots.tools.SystemInformation;
 import ru.staffbots.tools.dates.DateAccuracy;
 import ru.staffbots.tools.dates.Period;
 import ru.staffbots.tools.dates.DateFormat;
@@ -102,7 +103,7 @@ public class Tester extends Staffbot {
         },
         () -> { // Задание
 
-            if (!Devices.isRaspbian) return;
+            if (!SystemInformation.isRaspbian) return;
             try {
                 for (Device device: Devices.getList()) {
                     device.dataRead();

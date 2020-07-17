@@ -3,6 +3,8 @@ package ru.staffbots.tools.devices.drivers;
 import com.pi4j.io.gpio.Pin;
 import com.pi4j.io.gpio.RaspiPin;
 import com.pi4j.io.serial.*;
+import ru.staffbots.Staffbot;
+import ru.staffbots.tools.SystemInformation;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.values.DoubleValue;
@@ -48,7 +50,7 @@ public abstract class UARTProbeDevice extends Device {
 
 //        if (!Devices.putDevice(this)) return;
 
-        if (!Devices.isRaspbian) return;
+        if (!SystemInformation.isRaspbian) return;
 
         serial.addListener(new SerialDataEventListener() {
             @Override

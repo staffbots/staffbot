@@ -102,7 +102,7 @@ public abstract class BaseServlet extends HttpServlet implements TemplateFillabl
         String languageCode = language.getCode();
 
         Map<String, Object> pageVariables = language.getSection(PageType.BASE.getName());
-        pageVariables.put("page_title", Staffbot.getShortName() + " - " + pageType.getCaption(languageCode));
+        pageVariables.put("page_title", Staffbot.getSolutionName() + " - " + pageType.getCaption(languageCode));
         pageVariables.put("main_menu", getMenu(accountService.getUserAccessLevel(login), languageCode));
         pageVariables.put("page_content", content);
         pageVariables.put("login_value", login);

@@ -16,7 +16,11 @@ import java.util.ArrayList;
 public class Users extends DBTable {
 
     private Users(){
-        super("sys_users", "login VARCHAR(16) NOT NULL UNIQUE, password VARCHAR(32), role INT, language VARCHAR(2)");
+        super("sys_users",
+                "login VARCHAR(16) NOT NULL UNIQUE, " +
+                "password VARCHAR(32), " +
+                "role INT, " +
+                "language VARCHAR(2)");
     }
 
     private static Users instance = null;

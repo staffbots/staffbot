@@ -1,8 +1,10 @@
 package ru.staffbots.tools.devices.drivers;
 
 import com.pi4j.io.gpio.PinState;
+import ru.staffbots.Staffbot;
 import ru.staffbots.database.tables.journal.Journal;
 import ru.staffbots.database.tables.journal.NoteType;
+import ru.staffbots.tools.SystemInformation;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.devices.drivers.i2c.I2CBusDevice;
 import ru.staffbots.tools.values.DoubleValue;
@@ -49,7 +51,7 @@ public class BH1750Device extends I2CBusDevice {
 
     @Override
     public boolean initPins() {
-        if (!Devices.isRaspbian) return false;
+        if (!SystemInformation.isRaspbian) return false;
         return true;
     }
 

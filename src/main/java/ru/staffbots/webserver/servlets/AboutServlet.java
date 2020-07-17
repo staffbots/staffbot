@@ -1,8 +1,10 @@
 package ru.staffbots.webserver.servlets;
 
 import com.pi4j.io.gpio.Pin;
+import com.pi4j.system.SystemInfo;
 import ru.staffbots.Staffbot;
 import ru.staffbots.database.Database;
+import ru.staffbots.tools.SystemInformation;
 import ru.staffbots.tools.devices.CoolingDevice;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
@@ -30,19 +32,19 @@ public class AboutServlet extends BaseServlet {
     // Вызывается при запросе странице с сервера
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) {
+
         if (isAccessDenied(request, response)) return;
         Language language = accountService.getUserLanguage(request);
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
         pageVariables.put("board_info", getBoardInfo(language));
-        pageVariables.put("osname_value", System.getProperty("os.name"));
-        pageVariables.put("osversion_value", System.getProperty("os.version"));
-        pageVariables.put("osarch_value", System.getProperty("os.arch"));
+        pageVariables.put("osname_value", SystemInformation.osName + " " + SystemInformation.osRelease);
+        pageVariables.put("osversion_value", SystemInformation.osVersion);
         pageVariables.put("javaversion_value", System.getProperty("java.version"));
         pageVariables.put("dbserver_value", Database.getServer());
         pageVariables.put("dbmsystem_value", Database.getDBMSystem());
         pageVariables.put("dbname_value", Database.getName());
         pageVariables.put("project_value", Staffbot.getProjectName());
-        pageVariables.put("solution_value", Staffbot.getSolutionName());
+        pageVariables.put("solution_value", Staffbot.getShortName());
         pageVariables.put("website_link", Staffbot.getProjectWebsite());
         pageVariables.put("device_list", getDeviceList(language));
         pageVariables.put("dberror_message", Database.connected() ? "" : Database.getException().getMessage());
@@ -99,12 +101,12 @@ public class AboutServlet extends BaseServlet {
     }
 
     private String getBoardInfo(Language language){
-        if (!Devices.isRaspbian)
+        if (!SystemInformation.isRaspbian)
             return "";
         Map<String, Object> pageVariables = language.getSection(pageType.getName());
         pageVariables.put("board_value", Staffbot.getBoardType());
         pageVariables.put("board_link", Staffbot.getProjectWebsite() + "/" + Staffbot.getBoardType());
-        pageVariables.put("temperature_value", CoolingDevice.getTemperature(0));
+        pageVariables.put("temperature_value", SystemInformation.getCPUTemperature(0));
         return fillTemplate("html/about/board.html", pageVariables);
     }
 

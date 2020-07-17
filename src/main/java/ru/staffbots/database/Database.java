@@ -179,7 +179,7 @@ public abstract class Database {
         return connected();
     }
 
-    public static ArrayList<String> findTable(String pattern){
+    public static ArrayList<String> findTables(String pattern){
         ArrayList<String> result = new ArrayList();
         if(disconnected())
             return result;
@@ -216,7 +216,7 @@ public abstract class Database {
                 if (value.isStorable())
                     result.put(value.toValue().getTableName(), value.toValue());
         if (withUnusingTables)
-            for (String tableName : findTable(null)) // All tables list
+            for (String tableName : findTables(null)) // All tables list
                 if (!systemTableList.containsKey(tableName))
                     if (!result.containsKey(tableName))
                         result.put(tableName, null);

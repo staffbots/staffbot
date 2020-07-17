@@ -1,6 +1,8 @@
 package ru.staffbots.tools.devices.drivers;
 
 import com.pi4j.io.gpio.*;
+import ru.staffbots.Staffbot;
+import ru.staffbots.tools.SystemInformation;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
 import ru.staffbots.tools.values.BooleanValue;
@@ -41,7 +43,7 @@ public class RelayDevice extends Device {
 
     @Override
     public boolean initPins() {
-        if (!Devices.isRaspbian) return false;
+        if (!SystemInformation.isRaspbian) return false;
         if (getPins().size() < 1) return false;
         gpioPin = Devices.gpioController.provisionDigitalOutputPin(getPins().get(0), getName(), PinState.LOW);
         gpioPin.setShutdownOptions(true, PinState.LOW);
@@ -50,7 +52,7 @@ public class RelayDevice extends Device {
 
     public Boolean set(Boolean value) {
         Boolean acceptedValue = this.value.setValue(value);
-        if (!Devices.isRaspbian) return acceptedValue;
+        if (!SystemInformation.isRaspbian) return acceptedValue;
         if (value) {
             gpioPin.high();
         } else {

@@ -2,6 +2,7 @@ package ru.staffbots.webserver.servlets;
 
 import ru.staffbots.Staffbot;
 import ru.staffbots.database.Database;
+import ru.staffbots.tools.SystemInformation;
 import ru.staffbots.tools.colors.ColorSchema;
 import ru.staffbots.tools.devices.Device;
 import ru.staffbots.tools.devices.Devices;
@@ -67,7 +68,7 @@ public class ResourceServlet extends BaseServlet {
                     pageVariables.put("half_color", colorSchema.getHalfColor());
                     pageVariables.put("font_family", WebServer.getInstance().getFontFamily());
                     pageVariables.put("dberror_display", Database.connected() ? "none" : "inline-table");
-                    pageVariables.put("piwarning_display", Devices.isRaspbian || Database.disconnected() ? "none" : "inline-table");
+                    pageVariables.put("piwarning_display", SystemInformation.isRaspbian || Database.disconnected() ? "none" : "inline-table");
                     break;
                 case INO:
                     String deviceName = requests.length > 1 ? requests[1] : null;
