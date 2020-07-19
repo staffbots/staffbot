@@ -59,7 +59,7 @@ public class LeversSets extends DBTable {
 
     public static void save(String setName) {
         if (!checkName(setName)) return;
-        Executor executor = new Executor("save_config", setName);
+        Executor executor = new Executor("save_leversset", setName);
         String update = configExists(setName) ?
                 "UPDATE " + instance.getTableName() + " SET setvalue = ?" + condition :
                 "INSERT INTO " + instance.getTableName() + " (setvalue, setname) VALUES (?, ?)";
@@ -69,12 +69,12 @@ public class LeversSets extends DBTable {
     public static void load(String setName) {
         if (!checkName(setName)) return;
         if (Levers.fromConfigValue(loadConfigValue(setName)))
-            Journal.add(NoteType.INFORMATION, "load_config", setName);
+            Journal.add(NoteType.INFORMATION, "load_leversset", setName);
     }
 
     public static void delete(String setName) {
         if (!checkName(setName)) return;
-        Executor executor = new Executor<>("delete_config", setName);
+        Executor executor = new Executor<>("delete_leversset", setName);
         executor.execUpdate("DELETE FROM " + instance.getTableName() + condition, setName);
     }
 

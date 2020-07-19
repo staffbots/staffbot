@@ -180,8 +180,7 @@ public abstract class Staffbot {
 
         Database.setServer(properties.getProperty("db.server"));
         Database.setPort(properties.getIntegerProperty("db.port"));
-        Database.setName((projectName + "_" + solutionName).toLowerCase());
-        Database.setName(properties.getProperty("db.name"));
+        Database.setName(properties.getProperty("db.name", (projectName + "_" + solutionName).toLowerCase()));
         Database.setUser(properties.getProperty("db.user"));
         Database.setPassword(properties.getProperty("db.password"));
         Database.setDrop(properties.getBooleanProperty("db.drop"));

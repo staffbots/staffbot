@@ -1,4 +1,4 @@
 # Project properties
-staffbot.version = 1.34
+staffbot.version = 1.35
 staffbot.website = http://www.staffbots.ru
-staffbot.languages = ru, zh, en
+staffbot.languages = ru, en

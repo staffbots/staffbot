@@ -206,12 +206,12 @@
             erase_table     = Table %s% erased
             drop_table      = Table %s% deleted
             delete_table    = Deletion in table %s%
-            save_settings   = Settings %s% saved (value is %s%)
-            load_settings   = Setting %s% loaded
-            delete_settings = Setting %s% deleted
-            save_config     = Management parameters configuration %s% saved
-            load_config     = Management parameters configuration %s% loaded
-            delete_config   = Management parameters configuration %s% deleted
+            save_variables   = Settings %s% saved (value is %s%)
+            load_variables   = Setting %s% loaded
+            delete_variables = Setting %s% deleted
+            save_leversset     = Management parameters configuration %s% saved
+            load_leversset     = Management parameters configuration %s% loaded
+            delete_leversset   = Management parameters configuration %s% deleted
             add_user        = User %s% with role %s% added
             change_user     = User %s% with role %s% changed
             delete_user     = User %s% deleted
@@ -252,12 +252,12 @@
             read_table      = Error querying table %s%. Message: %s%
             delete_table    = Error deleting in a table %s%. Message: %s%
             init_database   = Database %s% initialization error. Message: %s%
-            save_settings   = Settings updating error (%s% = %s%). Message: %s%
-            load_settings   = Setting loading error (%s%). Message: %s%
-            delete_settings = Setting deleting error (%s%). Message: %s%
-            save_config     = Error saving a configuration %s%. Message: %s%
-            save_config     = Error loading a configuration %s%. Message: %s%
-            delete_config   = Error deleting a configuration %s%. Message: %s%
+            save_variables   = Settings updating error (%s% = %s%). Message: %s%
+            load_variables   = Setting loading error (%s%). Message: %s%
+            delete_variables = Setting deleting error (%s%). Message: %s%
+            save_leversset     = Error saving a configuration %s%. Message: %s%
+            save_leversset     = Error loading a configuration %s%. Message: %s%
+            delete_leversset   = Error deleting a configuration %s%. Message: %s%
             delete_user     = Error deleting user. Message: %s%
             add_user        = User creation error. Message: %s%
             change_user     = User change error. Message: %s%
