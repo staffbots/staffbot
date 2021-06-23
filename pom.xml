@@ -18,7 +18,7 @@
         <maven.compiler.version>3.8.1</maven.compiler.version>
         <exec.maven.version>1.6.0</exec.maven.version>
         <maven.shade.version>3.2.1</maven.shade.version>
-        <org.eclipse.jetty.version>9.4.18.v20190429</org.eclipse.jetty.version>
+        <org.eclipse.jetty.version>9.4.41.v20210516</org.eclipse.jetty.version>
         <org.freemarker.version>2.3.28</org.freemarker.version>
         <mysql.version>8.0.16</mysql.version>
         <pi4j.version>1.2</pi4j.version>
