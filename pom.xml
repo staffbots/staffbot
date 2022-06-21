@@ -20,7 +20,7 @@
         <maven.shade.version>3.2.1</maven.shade.version>
         <org.eclipse.jetty.version>9.4.18.v20190429</org.eclipse.jetty.version>
         <org.freemarker.version>2.3.28</org.freemarker.version>
-        <mysql.version>8.0.16</mysql.version>
+        <mysql.version>8.0.28</mysql.version>
         <pi4j.version>1.2</pi4j.version>
     </properties>
     <!--==============-->
